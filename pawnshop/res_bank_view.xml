@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    	<!--  Cash Account -->
+        <record id="view_partner_bank_cash_form" model="ir.ui.view">
+            <field name="name">res.partner.bank.form</field>
+            <field name="model">res.partner.bank</field>
+            <field name="arch" type="xml">
+                <form string="Bank account" version="7.0">
+                    <group col="4">
+                        <field name="bank_name" string="Cash Name" required="1"/>
+                        <field name="is_cash" readonly="1"/>
+                        <field name="company_id" groups="base.group_multi_company" on_change="onchange_company_id(company_id)"
+                            invisible="context.get('company_hide', True)" widget="selection"/>
+                    </group>
+                    <group>
+                        <group name="owner" string="Cash Account Owner">
+                            <field name="partner_id" on_change="onchange_partner_id(partner_id)"/>
+                            <label for="street" string="Address"/>
+                            <div>
+                                <field name="owner_name" placeholder="Name"/>
+                                <field name="street" placeholder="Street"/>
+                                <div>
+                                    <field name="zip" class="oe_inline" placeholder="ZIP"/>
+                                    <field name="city" class="oe_inline" placeholder="City"/>
+                                </div>
+                                <field name="state_id" placeholder="State" options='{"no_open": True}'/>
+                                <field name="country_id" placeholder="Country" options='{"no_open": True}'/>
+                            </div>
+                        </group><group/>
+		                <group name="accounting" >
+		                    <separator string="Accounting Information" colspan="2"/>
+                            <field name="pawn_shop_id" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
+		                    <field name="journal_id" domain="[('type','=','cash')]" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
+		                    <field name="currency_id" groups="base.group_multi_currency"/>
+		                    <field name="balance"/>
+		                </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record id="view_partner_bank_cash_tree" model="ir.ui.view">
+            <field name="name">res.partner.bank.tree</field>
+            <field name="model">res.partner.bank</field>
+            <field name="arch" type="xml">
+                <tree string="Cash Accounts">
+                    <field name="bank_name"/>
+                	<field name="pawn_shop_id" />
+                    <field name="state" invisible="1"/>
+                    <field name="sequence" invisible="1"/>
+                    <field name="balance"/>
+                    <field name="company_id" invisible="context.get('company_hide', True)"/>
+                    <field name="footer" invisible="context.get('footer_hide', True)"/>
+                    <field name="partner_id"/>
+                </tree>
+            </field>
+        </record>
+    
+    	<!-- Cash Account -->
+        <record id="view_partner_bank_cash_search" model="ir.ui.view">
+            <field name="name">res.partner.bank.cash.search</field>
+            <field name="model">res.partner.bank</field>
+            <field name="arch" type="xml">
+                <search string="Cash Accounts">
+                    <filter name="my_bank" icon="terp-check" string="My Banks" domain="[('company_id','&lt;&gt;',False)]" help="Bank accounts belonging to one of your companies"/>
+                    <field name="partner_id"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Shop" domain="[]" context="{'group_by':'pawn_shop_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="action_res_partner_bank_cash" model="ir.actions.act_window">
+            <field name="name">Cash Accounts</field>
+            <field name="res_model">res.partner.bank</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_partner_bank_cash_search"/>
+            <field name="context">{'is_cash': True}</field>
+            <field name="domain">[('is_cash','=',True)]</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a cash account.
+              </p>
+            </field>
+        </record>
+        <record id="action_res_partner_bank_cash_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_partner_bank_cash_tree"/>
+            <field name="act_window_id" ref="action_res_partner_bank_cash"/>
+        </record>
+        <record id="action_res_partner_bank_cash_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_partner_bank_cash_form"/>
+            <field name="act_window_id" ref="action_res_partner_bank_cash"/>
+        </record>
+        <menuitem 
+        	action="action_res_partner_bank_cash"
+        	id="menu_action_res_partner_bank_cash_form"
+            parent="menu_pawn_cash"
+            groups="group_pawn_accountant,group_pawn_manager,group_pawn_stock"
+            sequence="5"/>
+            
+            
+        <!-- Bank Account -->
+        <record id="view_partner_bank_search_ext" model="ir.ui.view">
+            <field name="name">res.partner.bank.search.ext</field>
+            <field name="model">res.partner.bank</field>
+            <field name="inherit_id" ref="base.view_partner_bank_search" />
+            <field name="arch" type="xml">
+	           	<field name="partner_id" position="after">
+                    <group expand="0" string="Group By...">
+                        <filter string="Shop" domain="[]" context="{'group_by':'pawn_shop_id'}"/>
+                    </group>
+	           	</field>
+            </field>
+        </record>
+        
+        <record id="view_partner_bank_tree_ext" model="ir.ui.view">
+            <field name="name">view.partner.bank.tree.ext</field>
+            <field name="model">res.partner.bank</field>
+            <field name="inherit_id" ref="base.view_partner_bank_tree" />
+            <field name="arch" type="xml">
+            	<field name="bank_name" position="replace"/>
+	           	<field name="acc_number" position="before">
+	           		<field name="state" />
+					<field name="bank_name" />
+					<field name="pawn_shop_id" />
+	           	</field>
+            </field>
+        </record>
+        
+        <record id="view_partner_bank_form_ext" model="ir.ui.view">
+            <field name="name">view.partner.bank.form.ext</field>
+            <field name="model">res.partner.bank</field>
+            <field name="inherit_id" ref="base.view_partner_bank_form" />
+            <field name="arch" type="xml">
+	           	<field name="bank_name" position="after">
+					<field name="is_cash" attrs="{'invisible': [('is_cash','=',False)]}"/>
+	           	</field>
+	           	<field name="state" position="attributes">
+	           		<attribute name="attrs">{'required': [('is_cash','=',False)]}</attribute>
+	           	</field>
+            </field>
+        </record>
+        <record id="view_partner_bank_form_inherit2" model="ir.ui.view">
+            <field name="name">view.partner.bank.form.inherit2</field>
+            <field name="model">res.partner.bank</field>
+            <field name="inherit_id" ref="account.view_partner_bank_form_inherit" />
+            <field name="arch" type="xml">
+	           	<field name="journal_id" position="replace">
+	           		<field name="pawn_shop_id" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
+		            <field name="journal_id" domain="[('type','=','bank')]" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
+	           	</field>
+            </field>
+        </record>
+        
+        
+        <record id="base.action_res_partner_bank_account_form" model="ir.actions.act_window">
+            <field name="context">{'is_cash': False}</field>
+            <field name="domain">[('is_cash','=',False)]</field>
+        </record>        
+        
+        <menuitem 
+        	action="base.action_res_partner_bank_account_form"
+        	id="base.menu_action_res_partner_bank_form"
+            parent="menu_pawn_cash"
+            groups="group_pawn_accountant,group_pawn_manager,group_pawn_stock"
+            sequence="6"/>
+            	
+            	
+        <menuitem
+        	action="base.action_res_bank_form"
+         	id="base.menu_action_res_bank_form" 
+            parent="menu_pawnshop_config"
+            groups="group_pawn_accountant,group_pawn_admin"
+            sequence="110"/>
+        
+        <menuitem 
+        	action="base.action_res_partner_bank_type_form"
+        	id="base.menu_action_res_partner_bank_typeform" 
+            parent="menu_pawnshop_config"
+            groups="group_pawn_accountant"     
+            sequence="120"/>
+    </data>
+</openerp>

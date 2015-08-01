@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        
+		<!-- ITEM PROPERTY -->
+        <record id="view_item_property" model="ir.ui.view">
+            <field name="model">item.property</field>
+            <field name="arch" type="xml">
+                <tree string="Item Property">
+                    <field name="name"/>
+                    <field name="selection_list"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="view_item_property_form" model="ir.ui.view">
+            <field name="name">item.property.form</field>
+            <field name="model">item.property</field>
+            <field name="arch" type="xml">
+                <form string="Item Property" version="7.0">
+                <sheet>
+                    <div class="oe_title">
+                        <div class="oe_edit_only">
+                            <label for="name" name='label_name' string="Name"/>
+                        </div>
+                  		<h1>
+                  		    <field name="name" select="1"/>
+                  		</h1>   
+                  	</div>
+                    <notebook>
+                    	<page string="Property List">                        
+							<field name="line_ids" widget="one2many_list" colspan="4" nolabel="1" >
+								<tree string="Selection List" editable="bottom">
+	                                <field name="name"/>
+	                                <field name="allow_text"/>
+	                            </tree>
+	                        </field>
+		            	</page>				
+		            </notebook>
+				</sheet>
+                </form>
+            </field>
+        </record>        
+        
+        
+        <record model="ir.actions.act_window" id="action_item_property">
+            <field name="name">Item Property</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">item.property</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_item_property"/>
+        </record>
+        
+        <!-- Menu -->
+        <menuitem name="Item Property" id="menu_item_property" parent="menu_pawnshop_config" 
+			groups="group_pawn_accountant"         
+            action="action_item_property"  sequence="20"/>
+    </data>
+</openerp>

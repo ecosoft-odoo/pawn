@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="pawn_jor7_wizard" model="ir.ui.view">
+            <field name="name">Jor7 Report</field>
+            <field name="model">pawn.jor7.wizard</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Selection Criteria" version="7.0">
+                    <group>
+	                    <group>
+                    		<field name="report_type"/>
+                    		<field name="journal_id" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
+	                    </group>
+                        <group>
+                    		<field name="period_id" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
+                    		<field name="pawn_shop_id" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
+                        </group>
+                    </group>
+                	<footer>
+                        <button string="Execute Report" name="start_report" type="object" default_focus="1" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_pawn_jor7_wizard" model="ir.actions.act_window">
+            <field name="name">Jor7 Report</field>
+            <field name="res_model">pawn.jor7.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="pawn_jor7_wizard"/>
+            <field name="target">new</field>
+            <field name="help">Print Jor7 Report</field>
+        </record>
+
+        <menuitem action="action_pawn_jor7_wizard"
+            id="menu_pawn_jor7_report"
+        	groups="group_pawn_accountant,group_pawn_manager,group_pawn_officer"
+            parent="menu_pawn_report" sequence="25" /> 
+
+    </data>
+</openerp>

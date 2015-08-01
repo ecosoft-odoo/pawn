@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_item_split_wizard" model="ir.ui.view">
+            <field name="name">view.item.split.wizard</field>
+            <field name="model">item.split</field>
+            <field name="arch" type="xml">
+                <form string="Item Split" version="7.0">
+                    <group>
+                    	<h1>
+                        	<field name="item_id" class="oe_inline"/>
+                    	</h1>               
+	                </group>      
+	                <field name="split_line" widget="one2many_list" colspan="4" nolabel="1" context="{'active_id': item_id}">
+                        <tree string="Split Lines" editable="bottom">
+                            <field name="description"/>
+                            <field name="product_qty" sum="Total Quantity"/>
+                        </tree>
+	                </field>
+                    <footer>
+                        <button name="action_split" string="Split" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Close" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_item_split" model="ir.actions.act_window">
+            <field name="name">Split Item</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">item.split</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+    </data>
+</openerp>

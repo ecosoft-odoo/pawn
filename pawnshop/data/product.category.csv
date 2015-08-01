@@ -1,0 +1,15 @@
+id,name,parent_id/id,type,uom_ids
+product.product_category_all,ทั้งหมด,,View,
+product_categ_gold,ทอง,product.product_category_all,View,
+product_categ_gold_1,ทองแท่ง,product_categ_gold,Normal,แท่ง
+product_categ_gold_2,ทองรูปพรรณ,product_categ_gold,Normal,"ชิ้น,ตัวเรือน,ห่อ"
+product_categ_gold_3,ทองเค,product_categ_gold,Normal,ชิ้น
+product_categ_diamond,เพชร,product.product_category_all,Normal,"เม็ด,ห่อ,กะรัต"
+product_categ_diamond_2,เครื่องประดับเพชร,product_categ_diamond,Normal,ชิ้น
+product_categ_gem,พลอย,product.product_category_all,View,"เม็ด,ห่อ,กะรัต"
+product_categ_gem_2,เครื่องประดับพลอย,product_categ_gem,Normal,ชิ้น
+product_categ_silver,เครื่องเงิน,product.product_category_all,Normal,ชิ้น
+product_categ_pen,ปากกา,product.product_category_all,Normal,ชิ้น
+product_categ_watch,นาฬิกา,product.product_category_all,Normal,ชิ้น
+product_categ_fashion,สินค้าแฟชั่น,product.product_category_all,Normal,ชิ้น
+product_categ_misc,เบ็ดเตล็ด,product.product_category_all,Normal,ชิ้น

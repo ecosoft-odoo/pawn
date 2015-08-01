@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        
+        <report 
+            auto="False"
+            id="1_col_report"
+            menu="True"
+            model="wizard.report"
+            name="pawn.afr.1cols"
+            rml="pawn_account_financial_report/report/balance_full.rml"
+            string="Balance 1 Columna"
+            header="False"
+        />
+        
+        <report 
+            auto="False"
+            id="2_col_report"
+            menu="True"
+            model="wizard.report"
+            name="pawn.afr.2cols"
+            rml="pawn_account_financial_report/report/balance_full_2_cols.rml"
+            string="Balance 2 Columnas"
+            header="False"
+        />
+
+        <report 
+            auto="False"
+            id="4_col_report"
+            menu="True"
+            model="wizard.report"
+            name="pawn.afr.4cols"
+            rml="pawn_account_financial_report/report/balance_full_4_cols.rml"
+            string="Balance 4 Columnas"
+            header="False"
+        />
+        
+        <report 
+            auto="False"
+            id="analytic_ledger_report"
+            menu="True"
+            model="wizard.report"
+            name="pawn.afr.analytic.ledger"
+            rml="pawn_account_financial_report/report/balance_full_4_cols_analytic_ledger.rml"
+            string="Analytic Ledger"
+            header="False"
+        />
+        
+        <report 
+            auto="False"
+            id="partner_balance_report"
+            menu="True"
+            model="wizard.report"
+            name="pawn.afr.partner.balance"
+            rml="pawn_account_financial_report/report/balance_full_4_cols_partner_balance.rml"
+            string="Partner Balance"
+            header="False"
+        />
+        
+        <report 
+            auto="False"
+            id="journal_ledger_report"
+            menu="True"
+            model="wizard.report"
+            name="pawn.afr.journal.ledger"
+            rml="pawn_account_financial_report/report/balance_full_4_cols_journal_ledger.rml"
+            string="journal Ledger"
+            header="False"
+        />
+
+        <report 
+            auto="False"
+            id="5_col_report"
+            menu="True"
+            model="wizard.report"
+            name="pawn.afr.5cols"
+            rml="pawn_account_financial_report/report/balance_full_5_cols.rml"
+            string="Balance 5 Columnas"
+            header="False"
+        />
+
+        <report 
+            auto="False"
+            id="qtr_col_report"
+            menu="True"
+            model="wizard.report"
+            name="pawn.afr.qtrcols"
+            rml="pawn_account_financial_report/report/balance_full_qtr_cols.rml"
+            string="Balance QTRs Columnas"
+            header="False"
+        />
+
+        <report 
+            auto="False"
+            id="13_col_report"
+            menu="True"
+            model="wizard.report"
+            name="pawn.afr.13cols"
+            rml="pawn_account_financial_report/report/balance_full_13_cols.rml"
+            string="Balance 13 Columnas"
+            header="False"
+        />
+        
+
+    </data>
+</openerp>

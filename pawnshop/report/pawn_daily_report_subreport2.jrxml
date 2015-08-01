@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="pawn_daily_report_subreport1" language="groovy" pageWidth="752" pageHeight="572" orientation="Landscape" columnWidth="752" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.8181818181818181"/>
+	<property name="ireport.x" value="135"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="stk1_journal_id" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="stk2_journal_id" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="pawn_shop_id" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="date" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="accrued_interest_account_id" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="interest_account_id" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="sale_account_id" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="refund_account_id" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="interest_disc_account_id" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="interest_add_account_id" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+-- Stock 1 Balance
+(select coalesce(sum(amount_pawned),0) balance
+from pawn_order pw
+where pw.pawn_shop_id = $P{pawn_shop_id}
+and pw.date_order <= $P{date} and (pw.date_redeem > $P{date} or pw.date_redeem is null)
+and pw.journal_id in ($P{stk1_journal_id})
+and pw.state not in ('draft', 'cancel')) as stk1_balance
+,
+-- Stock 2 Balance
+(select coalesce(sum(amount_pawned),0) balance
+from pawn_order pw
+where pw.pawn_shop_id = $P{pawn_shop_id}
+and pw.date_order <= $P{date} and (pw.date_redeem > $P{date} or pw.date_redeem is null)
+and pw.journal_id in ($P{stk2_journal_id})
+and pw.state not in ('draft', 'cancel')) as stk2_balance]]>
+	</queryString>
+	<field name="stk1_balance" class="java.lang.Double"/>
+	<field name="stk2_balance" class="java.lang.Double"/>
+	<variable name="total_balance" class="java.lang.Double">
+		<variableExpression><![CDATA[$F{stk1_balance}+$F{stk2_balance}]]></variableExpression>
+	</variable>
+	<summary>
+		<band height="48">
+			<staticText>
+				<reportElement x="3" y="0" width="101" height="18"/>
+				<textElement lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[เป้าหมาย]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="43" y="18" width="120" height="15" isPrintInFirstWholeBand="true"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[% บัญชีผู้จัดการ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="43" y="33" width="120" height="15" isPrintInFirstWholeBand="true"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[% บัญชีผู้ช่วย]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement isPrintRepeatedValues="false" x="163" y="18" width="72" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Monospaced" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$V{total_balance} == 0 ? 0 : $F{stk1_balance}/$V{total_balance} * 100]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement isPrintRepeatedValues="false" x="163" y="33" width="72" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Monospaced" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$V{total_balance} == 0 ? 0 : $F{stk2_balance}/$V{total_balance} * 100]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

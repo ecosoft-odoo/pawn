@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="pawn_wh_cash_report_subreport1" language="groovy" pageWidth="752" pageHeight="572" orientation="Landscape" columnWidth="752" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="journal_id" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="pawn_shop_id" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="date" class="java.util.Date" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[select * from
+(
+-- Beginning Balance
+select 1 as sequence, 'ยอดยกมา'::varchar as desc1, ''::varchar as desc2, coalesce(sum(l.debit),0) - coalesce(sum(l.credit),0) as balance
+from account_move_line l
+where
+-- (l.pawn_order_id is not null or l.statement_id is not null)
+l.account_id = (select default_debit_account_id from account_journal where id = $P{journal_id})
+and l.journal_id = $P{journal_id}
+and l.pawn_shop_id = $P{pawn_shop_id}
+and l.date < $P{date}
+UNION
+-- Transfer from Shop
+select 2 as sequence, desc1::varchar, desc2::varchar as desc2, balance from
+(select 'เงินสดเข้า จากหน้าร้าน' as desc1, '' as desc2, coalesce(sum(l.debit),0) as balance
+from account_move_line l
+join account_voucher av on av.move_id = l.move_id
+join account_transfer at on at.id = av.transfer_id
+where av.transfer_id is not null
+and at.dst_journal_id in (select id from account_journal where type = 'cash')
+and at.src_journal_id in (select id from account_journal where type = 'cash')
+and l.account_id = (select default_debit_account_id from account_journal where id = $P{journal_id})
+and l.journal_id = $P{journal_id}
+and l.pawn_shop_id = $P{pawn_shop_id}
+and l.date = $P{date}) a
+--where balance !=0
+UNION
+-- Transfer To Shop
+select 3 as sequence, desc1::varchar, desc2::varchar as desc2, balance from
+(select 'เงินสดออก ไปหน้าร้าน' as desc1, '' as desc2, -coalesce(sum(l.credit),0) as balance
+from account_move_line l
+join account_voucher av on av.move_id = l.move_id
+join account_transfer at on at.id = av.transfer_id
+where av.transfer_id is not null
+and at.dst_journal_id in (select id from account_journal where type = 'cash')
+and at.src_journal_id in (select id from account_journal where type = 'cash')
+and l.account_id = (select default_debit_account_id from account_journal where id = $P{journal_id})
+and l.journal_id = $P{journal_id}
+and l.pawn_shop_id = $P{pawn_shop_id}
+and l.date = $P{date}) a
+--where balance !=0
+UNION
+-- Transfer from Bank
+select 4 as sequence, desc1::varchar, desc2::varchar as desc2, balance from
+(select 'เงินสดเข้า ถอนจากธนาคาร' as desc1, '' as desc2, coalesce(sum(l.debit),0) as balance
+from account_move_line l
+join account_voucher av on av.move_id = l.move_id
+join account_transfer at on at.id = av.transfer_id
+where av.transfer_id is not null
+and (at.dst_journal_id in (select id from account_journal where type = 'bank')
+or at.src_journal_id in (select id from account_journal where type = 'bank'))
+and l.account_id = (select default_debit_account_id from account_journal where id = $P{journal_id})
+and l.journal_id = $P{journal_id}
+and l.pawn_shop_id = $P{pawn_shop_id}
+and l.date = $P{date}) a
+--where balance !=0
+UNION
+-- Transfer To Bank
+select 5 as sequence, desc1::varchar, desc2::varchar as desc2, balance from
+(select 'เงินสดออก ฝากเข้าธนาคาร' as desc1, '' as desc2, -coalesce(sum(l.credit),0) as balance
+from account_move_line l
+join account_voucher av on av.move_id = l.move_id
+join account_transfer at on at.id = av.transfer_id
+where av.transfer_id is not null
+and (at.dst_journal_id in (select id from account_journal where type = 'bank')
+or at.src_journal_id in (select id from account_journal where type = 'bank'))
+and l.account_id = (select default_debit_account_id from account_journal where id = $P{journal_id})
+and l.journal_id = $P{journal_id}
+and l.pawn_shop_id = $P{pawn_shop_id}
+and l.date = $P{date}) a
+--where balance !=0
+-- END
+) a
+order by sequence]]>
+	</queryString>
+	<field name="sequence" class="java.lang.Integer"/>
+	<field name="desc1" class="java.lang.String"/>
+	<field name="desc2" class="java.lang.String"/>
+	<field name="balance" class="java.math.BigDecimal"/>
+	<variable name="total_balance" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{balance}]]></variableExpression>
+	</variable>
+	<detail>
+		<band height="17" splitType="Stretch">
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="4" y="2" width="153" height="15"/>
+				<textElement>
+					<font fontName="Monospaced" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{desc1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="156" y="2" width="156" height="15"/>
+				<textElement>
+					<font fontName="Monospaced" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{desc2}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="false">
+				<reportElement x="312" y="2" width="145" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Monospaced" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{balance}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="20" splitType="Stretch">
+			<rectangle>
+				<reportElement x="312" y="0" width="151" height="20"/>
+			</rectangle>
+			<textField pattern="#,##0.00" isBlankWhenNull="false">
+				<reportElement x="312" y="0" width="145" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Monospaced" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{total_balance}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="0" y="0" width="312" height="20"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="4" y="0" width="308" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ยอดยกไป]]></text>
+			</staticText>
+		</band>
+	</columnFooter>
+</jasperReport>

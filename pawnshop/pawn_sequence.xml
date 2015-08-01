@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <!-- Sequences for pawn.order --> 
+        <record id="seq_type_pawn_order" model="ir.sequence.type">
+            <field name="name">Pawn Ticket</field>
+            <field name="code">pawn.order</field>
+        </record>
+        <record id="seq_pawn_order" model="ir.sequence">
+            <field name="name">Pawn Ticket</field>
+            <field name="code">pawn.order</field>
+            <field name="prefix">PW</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+        
+        <!-- Sequences for pawn.item -->
+        <!-- record id="seq_type_pawn_item" model="ir.sequence.type">
+            <field name="name">Pawn Item</field>
+            <field name="code">pawn.item</field>
+        </record>
+        <record id="seq_pawn_item" model="ir.sequence">
+            <field name="name">Pawn Item</field>
+            <field name="code">pawn.item</field>
+            <field name="prefix">ITEM</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>        
+        </record -->
+    </data>
+</openerp>

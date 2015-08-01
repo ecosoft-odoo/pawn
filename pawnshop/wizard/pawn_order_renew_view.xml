@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_pawn_order_renew" model="ir.ui.view">
+            <field name="name">view.pawn.order.renew</field>
+            <field name="model">pawn.order.renew</field>
+            <field name="arch" type="xml">
+                <form string="Renew" version="7.0">
+                    <group>
+                    	<group name="label" colspan="2">
+                        	<label string="Please confirm renew amount as following,"/>
+                        </group>
+                        <group name="amount">
+                            <field name="date_renew" />
+                            <field name="pawn_amount" string="Initial" />
+                            <field name="interest_amount" string="+ Interest Amount" />
+                            <field name="discount" string="- Discount" on_change="onchange_amount('discount', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
+                            <field name="addition" string="+ Addition" on_change="onchange_amount('addition', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
+                         </group>
+                         <group class="oe_subtotal_footer oe_left" >
+                         	<div colspan="2">
+	                         	<h3>
+		                     	 	<label string="Pay Interest Amount"/>
+		                         	<field name="pay_interest_amount" on_change="onchange_amount('pay_interest_amount', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)" class="oe_inline"  />
+	                     	 	</h3>
+		                        <h3>
+	                         		<label string="+/- Pawn Amount"/>
+	                         		<field name="increase_pawn_amount" on_change="onchange_amount('increase_pawn_amount', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)" class="oe_inline" />
+	                         	</h3>
+                         	</div>
+                          	<div class="oe_subtotal_footer_separator oe_inline" colspan="2">
+	                         	<h3>
+	                         	 	<label for="new_pawn_amount"/>
+	                             	<field name="new_pawn_amount" on_change="onchange_amount('new_pawn_amount', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)" class="oe_inline" />
+	                         	</h3>
+                            </div>
+                         </group>
+                    </group>
+                    <footer>
+                        <button string="Renew" name="action_renew" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+               </form>
+            </field>
+        </record>
+        <record id="action_pawn_order_renew" model="ir.actions.act_window">
+            <field name="name">Renew</field>
+            <field name="res_model">pawn.order.renew</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+           <field name="view_id" ref="view_pawn_order_renew"/>
+           <field name="target">new</field>
+        </record>
+    </data>
+</openerp>

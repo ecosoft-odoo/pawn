@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_pawn_order_pawn" model="ir.ui.view">
+            <field name="name">view.pawn.order.pawn</field>
+            <field name="model">pawn.order.pawn</field>
+            <field name="arch" type="xml">
+                <form string="Pawn" version="7.0">
+                    <group>
+                         <group name="label" colspan="2">
+                             <label string="Please select journal"/>
+                         </group>
+                         <group name="amount">
+                             <field name="journal_id" attrs="{'readonly': [('parent_id', '!=', False )]}" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
+                             <field name="parent_id" invisible="1" />
+                         </group>
+                         <group >
+                         	 <h2>
+                         	 	<label for="amount" />
+                             	<field name="amount" class="oe_inline" />
+                         	 </h2>
+                         </group>
+                    </group>
+                    <footer>
+                        <button string="Pawn" name="action_pawn" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+               </form>
+            </field>
+        </record>
+        <record id="action_pawn_order_pawn" model="ir.actions.act_window">
+            <field name="name">Pawn</field>
+            <field name="res_model">pawn.order.pawn</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+           <field name="view_id" ref="view_pawn_order_pawn"/>
+           <field name="target">new</field>
+        </record>
+    </data>
+</openerp>

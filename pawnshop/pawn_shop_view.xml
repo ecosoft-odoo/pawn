@@ -1,0 +1,116 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="view_pawn_shop_tree">
+            <field name="name">view.pawn.shop.tree</field>
+            <field name="model">pawn.shop</field>
+            <field name="arch" type="xml">
+                <tree string="Pawn Shops">
+                    <field name="name"  select="1"/>
+                    <field name="code"  select="1"/>
+                    <field name="tr_code"  select="1"/>
+                    <field name="pc_code"  select="1"/>
+                    <field name="srec_code"  select="1"/>
+                    <field name="sref_code"  select="1"/>
+                    <field name="user_ids"  />
+                    <field name="target_ratio" />
+                    <field name="last_period_ratio"  />
+                    <field name="overall_ratio" invisible="1" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_pawn_shop_form">
+            <field name="name">view.pawn.shop.form</field>
+            <field name="model">pawn.shop</field>
+            <field name="arch" type="xml">
+                <form string="Pawn Shop" version="7.0">
+                <sheet>
+                    <div class="oe_title">
+                        <div class="oe_edit_only">
+                            <label for="name" name='label_name' string="Name"/>
+                        </div>
+                  		<h1>
+                  		    <field name="name" select="1"/>
+                  		</h1>   
+                  	</div>
+                    <group>
+	                    <group>
+	                        <label for="target_ratio"/>
+	                        <div name="target_ratio" >
+	                            <field name="target_ratio" class="oe_inline"/> %%
+	                        </div>	    
+	                        <label for="last_period_ratio"/>
+	                        <div name="last_period_ratio" >
+	                            <field name="last_period_ratio" class="oe_inline"/> %%
+	                        </div>	      
+	                        <label for="overall_ratio"  invisible="1"/>
+	                        <div name="overall_ratio"  invisible="1">
+	                            <field name="overall_ratio" class="oe_inline"/> %%
+	                        </div>
+	                    </group>
+	                    <group/>
+                  	</group>
+                  	<group>
+		                <group string="Document Prefix">
+		                	<field name="code" select="1"/>
+		                  	<field name="tr_code" select="1"/>
+		                  	<field name="pc_code" select="1"/>
+                    		<field name="srec_code"  select="1"/>
+                    		<field name="sref_code"  select="1"/>
+		                </group>
+	                    <group string="Secret Keys">
+	                    	<field name="company_id" invisible="1"/>
+                  		    <field name="secret_key"/>
+                  		    <field name="secret_key2"/>
+	                    </group>  
+	                </group>
+                    <notebook>
+                        <page string="Users">     
+                  			<field name="user_ids" nolabel="1"/>
+	                  	</page>
+                        <page string="Pawn Amount by Period">     
+                  			<field name="pawn_amount_by_period" nolabel="1">
+                  				<tree string="Pwan Amount by Period">
+                  					<field name="pawn_shop_id"/>
+                  					<field name="year" />
+                  					<field name="month" />
+                  					<field name="amount_pawned" sum="Pawned Amount"/>
+                  					<field name="amount_pawned_1" sum="Stock 1"/>
+                  					<field name="amount_pawned_2" sum="Stock 2"/>
+                  					<field name="ratio_1_2" />
+	                  			</tree>
+                  			</field>
+                  		</page>
+                        <page string="OtherInfo">
+                        	<group>
+	                        	<group string="Registration">
+									<field name="reg_book"/>
+	                        		<field name="reg_number"/>                  		
+	                        	</group>
+	                        	<group string="Address">
+									<field name="full_address" nolabel="1"/>               		
+	                        	</group>
+                        	</group>
+                  		</page>
+	                </notebook>
+				</sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_pawn_shop_form">
+            <field name="name">Pawn Shops</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">pawn.shop</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_pawn_shop_tree"/>
+        </record>
+        
+        <!-- Menu -->
+        <menuitem name="Pawn Shops" id="menu_pawn_shop" parent="menu_pawn_master" 
+            action="action_pawn_shop_form" groups="group_pawn_accountant" sequence="200"/> 
+    </data>
+</openerp>

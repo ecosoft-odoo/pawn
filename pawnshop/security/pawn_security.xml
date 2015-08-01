@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data noupdate="0">
+	
+	    <record id="group_pawn_accountant" model="res.groups">
+	        <field name="name">Accountant</field>
+	        <field name="category_id" ref="module_category_pawn_management"/>
+	        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+	        <field name="users" eval="[(4, ref('base.user_root'))]"/>
+	    </record>
+	    
+	    <record id="group_pawn_manager" model="res.groups">
+	        <field name="name">Manager</field>
+	        <field name="category_id" ref="module_category_pawn_management"/>
+	        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+	        <field name="users" eval="[(4, ref('base.user_root'))]"/>
+	    </record>
+	    
+	    <record id="group_pawn_stock" model="res.groups">
+	        <field name="name">Stock</field>
+	        <field name="category_id" ref="module_category_pawn_management"/>
+	        <field name="implied_ids" eval="[(4, ref('base.group_user')),(4, ref('account_transfer.group_transfer_manager'))]"/>
+	        <field name="users" eval="[(4, ref('base.user_root'))]"/>
+	    </record>
+	    
+	    <record id="group_pawn_officer" model="res.groups">
+	        <field name="name">Officer</field>
+	        <field name="category_id" ref="module_category_pawn_management"/>
+	        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+	        <field name="users" eval="[(4, ref('base.user_root'))]"/>
+	    </record>
+	
+	    <!-- This is the super group of all Pawnshop's Groups -->
+	    <record id="group_pawn_admin" model="res.groups">
+	        <field name="name">Pawn Admin</field>
+	        <field name="category_id" ref="module_category_pawn_management"/>
+	        <field name="implied_ids" eval="[(4, ref('group_pawn_accountant')),(4, ref('base.group_system'))]"/>
+	        <field name="users" eval="[(4, ref('base.user_root'))]"/>
+	    </record>
+	    
+	    <!-- Rule -->
+	    <record id="pawn_order_by_shop_rule" model="ir.rule">
+	        <field name="name">Pawn Ticket by Shop</field>
+	        <field name="model_id" ref="model_pawn_order"/>
+	        <field name="domain_force">[('pawn_shop_id', 'in', [x.id for x in user.pawn_shop_ids])]</field>
+	        <field name="groups" eval="[(4, ref('group_pawn_manager')), (4, ref('group_pawn_stock')), (4, ref('group_pawn_officer'))]"/>
+	    </record>
+	    
+	    <record id="pawn_item_by_shop_rule" model="ir.rule">
+	        <field name="name">Pawn Item by Shop</field>
+	        <field name="model_id" ref="model_product_product"/>
+	        <field name="domain_force">['|',('pawn_shop_id', 'in', [x.id for x in user.pawn_shop_ids]),('hr_expense_ok','=','False')]</field>
+	        <field name="groups" eval="[(4, ref('group_pawn_manager')), (4, ref('group_pawn_stock')), (4, ref('group_pawn_officer'))]"/>
+	    </record>
+	    
+	    <record id="pawn_shop_rule" model="ir.rule">
+	        <field name="name">Pawn Shop</field>
+	        <field name="model_id" ref="model_pawn_shop"/>
+	        <field name="domain_force">[('id', 'in', [x.id for x in user.pawn_shop_ids])]</field>
+	        <field name="groups" eval="[(4, ref('group_pawn_manager')), (4, ref('group_pawn_stock')), (4, ref('group_pawn_officer'))]"/>
+	    </record>
+	    
+	    <record id="pawn_res_partner_bank_rule" model="ir.rule">
+	        <field name="name">Bank/Cash Account by Shop</field>
+	        <field name="model_id" ref="model_res_partner_bank"/>
+	        <field name="domain_force">[('pawn_shop_id', 'in', [x.id for x in user.pawn_shop_ids])]</field>
+	        <field name="groups" eval="[(4, ref('group_pawn_manager')), (4, ref('group_pawn_stock')), (4, ref('group_pawn_officer'))]"/>
+	    </record>	    
+	    
+	    <record id="pawn_res_partner_bank_rule_acct" model="ir.rule">
+	        <field name="name">Bank/Cash Account by Shop for Accountant</field>
+	        <field name="model_id" ref="model_res_partner_bank"/>
+	        <field name="domain_force"></field>
+	        <field name="groups" eval="[(4, ref('group_pawn_accountant'))]"/>
+	    </record>	    
+	    <!-- Pawn Analysis Report to only display =within pawnshop -->
+	    <record id="pawn_report" model="ir.rule">
+	        <field name="name">Pawn Analysis</field>
+	        <field name="model_id" ref="model_pawn_report"/>
+	        <field name="domain_force">[('pawn_shop_id', 'in', [x.id for x in user.pawn_shop_ids])]</field>
+	        <field name="groups" eval="[(4, ref('group_pawn_manager')), (4, ref('group_pawn_stock')), (4, ref('group_pawn_officer'))]"/>
+	    </record>  
+	    <!--  -->
+	    <record id="pawn_account_bank_statement_by_shop" model="ir.rule">
+	        <field name="name">Bank Statements</field>
+	        <field name="model_id" ref="model_account_bank_statement"/>
+	        <field name="domain_force">[('pawn_shop_id', 'in', [x.id for x in user.pawn_shop_ids])]</field>
+	        <field name="groups" eval="[(4, ref('group_pawn_manager')), (4, ref('group_pawn_stock')), (4, ref('group_pawn_officer'))]"/>
+	    </record>
+	    <record id="pawn_account_bank_statement_by_shop" model="ir.rule">
+	        <field name="name">Bank Statements</field>
+	        <field name="model_id" ref="model_account_bank_statement"/>
+	        <field name="domain_force">[('pawn_shop_id', 'in', [x.id for x in user.pawn_shop_ids])]</field>
+	        <field name="groups" eval="[(4, ref('group_pawn_manager')), (4, ref('group_pawn_stock')), (4, ref('group_pawn_officer'))]"/>
+	    </record>
+	    <record id="pawn_account_transfer_by_shop" model="ir.rule">
+	        <field name="name">Transfer</field>
+	        <field name="model_id" ref="model_account_transfer"/>
+	        <field name="domain_force">[('pawn_shop_id', 'in', [x.id for x in user.pawn_shop_ids])]</field>
+	        <field name="groups" eval="[(4, ref('group_pawn_manager')), (4, ref('group_pawn_stock')), (4, ref('group_pawn_officer'))]"/>
+	    </record>
+	    <record id="pawn_interest_report_by_shop" model="ir.rule">
+	        <field name="name">Interest Report</field>
+	        <field name="model_id" ref="model_pawn_interest_report"/>
+	        <field name="domain_force">[('pawn_shop_id', 'in', [x.id for x in user.pawn_shop_ids])]</field>
+	        <field name="groups" eval="[(4, ref('group_pawn_manager')), (4, ref('group_pawn_stock')), (4, ref('group_pawn_officer'))]"/>
+	    </record>
+	    
+	    <!-- Accountant should be able to edit only Expense -->
+	    <record id="accountant_expense_only" model="ir.rule">
+	        <field name="name">Only Expense Editable</field>
+	        <field name="model_id" ref="model_product_product"/>
+	        <field name="domain_force">[('hr_expense_ok', '=', True)]</field>
+	        <field name="groups" eval="[(4, ref('group_pawn_accountant'))]"/>
+	    </record>
+	    
+	    <!-- Accountant should be able to edit only Expense -->
+	    <record id="accountant_non_expense_readonly" model="ir.rule">
+	        <field name="name">Non Expense Readonly</field>
+	        <field name="model_id" ref="model_product_product"/>
+	        <field name="domain_force">[('hr_expense_ok', '!=', True)]</field>
+	        <field name="groups" eval="[(4, ref('group_pawn_accountant'))]"/>
+	        <field eval="0" name="perm_unlink"/>
+	        <field eval="0" name="perm_write"/>
+	        <field eval="1" name="perm_read"/>
+	        <field eval="0" name="perm_create"/>
+	    </record>
+
+	</data>
+</openerp>

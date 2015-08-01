@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        
+		<!-- PAWN RULE -->
+
+        <record model="ir.ui.view" id="view_pawn_rule_tree">
+            <field name="name">view.pawn.rule.tree</field>
+            <field name="model">pawn.rule</field>
+            <field name="arch" type="xml">
+                <tree string="Pawn Rules">
+                    <field name="name"  select="1"/>
+                    <field name="interest_type"  select="1"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="view_pawn_rule_form">
+            <field name="name">view.pawn.rule.form</field>
+            <field name="model">pawn.rule</field>
+            <field name="arch" type="xml">
+                <form string="Pawn Rule" version="7.0">
+                <sheet>
+                    <div class="oe_title">
+                        <div class="oe_edit_only">
+                            <label for="name" name='label_name' string="Name"/>
+                        </div>
+                  		<h1>
+                  		    <field name="name" select="1"/>
+                  		</h1>   
+                  	</div>
+                    <group>
+                        <group>
+		                    <label for="length_month" string="Pawn Period"/>
+		                    <div>
+		                        <field name="length_month" class="oe_inline"/>
+		                        <field name="length_day" class="oe_inline"/>
+		                    </div> 
+	                    </group>  
+	                    <group>
+<!--	                    	<field name="interest_period" /-->
+	                    </group>  
+                  	</group>
+                    <notebook>
+                    	<page string="Interest Rates">
+                        	<group>
+                        	    <group>
+	                    	    	<field name="interest_type" select="1"/>
+                    	    	</group>
+                        	    <group>
+                    	    		<field name="interest_fixed_rate" attrs="{'invisible':[('interest_type','!=','fixed_rate')]}"/>
+								</group>
+							</group>	                        
+							<field name="interest_amount_rates" widget="one2many_list" colspan="4" nolabel="1"  attrs="{'invisible':[('interest_type','not in',('amount_rate'))]}">
+								<tree string="Amount Rates" editable="bottom">
+	                                <field name="amount_upto"/>
+	                                <field name="rate"/>
+	                            </tree>
+	                        </field>
+		            	</page>				
+		            </notebook>
+				</sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_pawn_rule_form">
+            <field name="name">Pawn Rules</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">pawn.rule</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_pawn_rule_tree"/>
+        </record>
+        
+        <!-- Menu -->
+        
+        <menuitem name="Configuration" id="menu_pawnshop_config" parent="menu_pawn_root" groups="" sequence="200"/>
+
+        <menuitem name="Pawn Rules" id="menu_pawn_rule" parent="menu_pawnshop_config" groups="group_pawn_accountant"
+            action="action_pawn_rule_form"  sequence="10"/>
+    </data>
+</openerp>

@@ -1,0 +1,17 @@
+name,code,report_type,close_method,note
+Root/View,Root/view,/,None,this is for financial report grouping
+View,view,/,None,this is for summary account
+Assets,asset,Balance Sheet (Asset account),Balance,
+Current Assets,CA,Balance Sheet (Asset account),Balance,
+Receivable,receivable,Balance Sheet (Asset account),Unreconciled,
+Fixed Assets,FA,Balance Sheet (Asset account),Balance,
+Other Assets,NCA,Balance Sheet (Asset account),Balance,
+Liabilities and Shareholders' Equity,liability,Balance Sheet (Liability account),Balance,
+Current Liabilities,CL,Balance Sheet (Liability account),Balance,
+Payable,payable,Balance Sheet (Liability account),Unreconciled,
+Non-Current Liabilities,NCL,Balance Sheet (Liability account),Balance,
+Partners' Equity,equity,Balance Sheet (Liability account),Balance,
+Revenue,revenue,Profit & Loss (Income account),None,
+Expenses,expense,Profit & Loss (Expense account),None,
+Cost of Goods Sold,CoGS,Profit & Loss (Expense account),None,
+Selling & Administrative Expenses,SG&A,Profit & Loss (Expense account),None,

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="pawn_daily_report_subreport1" language="groovy" pageWidth="752" pageHeight="572" orientation="Landscape" columnWidth="752" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.8181818181818181"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="stk1_journal_id" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="stk2_journal_id" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="pawn_shop_id" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="date" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="accrued_interest_account_id" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="interest_account_id" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="sale_account_id" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="refund_account_id" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="interest_disc_account_id" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="interest_add_account_id" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select * from
+(
+-- Pawned
+select 1 as sequence, 'จำนำ' as desc1, coalesce(count(*),0) qty, coalesce(sum(amount_pawned),0) balance
+from pawn_order pw
+where pw.pawn_shop_id = $P{pawn_shop_id}
+and pw.date_order = $P{date}
+and pw.journal_id in ($P{stk1_journal_id}, $P{stk2_journal_id})
+and pw.state not in ('draft', 'cancel')
+UNION
+select 2 as sequence, 'ไถ่ถอน' as desc1, coalesce(count(*),0) qty, coalesce(sum(amount_pawned),0) balance
+from pawn_order pw
+where pw.pawn_shop_id = $P{pawn_shop_id}
+and pw.date_redeem = $P{date}
+and pw.journal_id in ($P{stk1_journal_id}, $P{stk2_journal_id})
+UNION
+select 3 as sequence, 'ของหลุด' as desc1, coalesce(count(*),0) qty, coalesce(sum(amount_pawned),0) balance
+from pawn_order pw
+where pw.pawn_shop_id = $P{pawn_shop_id}
+and pw.date_expired = $P{date}
+and pw.journal_id in ($P{stk1_journal_id}, $P{stk2_journal_id})
+UNION
+select 4 as sequence, 'ของเล้า' as desc1, coalesce(count(*),0) qty, coalesce(sum(amount_pawned),0) balance
+from pawn_order pw
+where pw.pawn_shop_id = $P{pawn_shop_id}
+and pw.date_expired = $P{date}
+and pw.journal_id in ($P{stk1_journal_id}, $P{stk2_journal_id})
+UNION
+select 6 as sequence, 'รายได้จากดอกเบี้ย' as desc1, -1 qty, coalesce(sum(l.credit),0) - coalesce(sum(l.debit),0) as balance
+from account_move_line l
+join pawn_order pw on pw.id = l.pawn_order_id
+where l.pawn_order_id is not null and pw.state = 'redeem'
+and l.account_id in ($P{accrued_interest_account_id}, $P{interest_account_id}, $P{interest_disc_account_id}, $P{interest_add_account_id})
+and l.profit_center in (select profit_center from account_journal where id in ($P{stk1_journal_id}, $P{stk2_journal_id}))
+and l.pawn_shop_id = $P{pawn_shop_id}
+and l.date = $P{date}
+UNION
+select 7 as sequence, 'รายได้จากการขาย' as desc1, -1 qty, coalesce(sum(l.credit),0) - coalesce(sum(l.debit),0) as balance
+from account_move_line l
+join pawn_order pw on pw.id = l.pawn_order_id
+where l.pawn_order_id is not null and pw.state = 'expire'
+and l.account_id in ($P{sale_account_id}, $P{refund_account_id})
+and l.profit_center in (select profit_center from account_journal where id in ($P{stk1_journal_id}, $P{stk2_journal_id}))
+and l.pawn_shop_id = $P{pawn_shop_id}
+and l.date = $P{date}
+UNION
+select 8 as sequence, 'รายได้อื่นๆ' as desc1, -1 qty, coalesce(sum(l.credit),0) as balance
+from account_move_line l
+join account_bank_statement st on st.id = l.statement_id
+join account_journal aj on aj.id = st.journal_id
+where l.statement_id is not null and st.state = 'confirm'
+and l.account_id not in (aj.default_credit_account_id, aj.default_debit_account_id)
+and l.profit_center in (select profit_center from account_journal where id in ($P{stk1_journal_id}, $P{stk2_journal_id}))
+and l.pawn_shop_id = $P{pawn_shop_id}
+and l.date = $P{date}
+UNION
+select 9 as sequence, 'สต๊อกคงเหลือ ณ สิ้นวัน' as desc1, coalesce(count(*),0) qty, coalesce(sum(amount_pawned),0) balance
+from pawn_order pw
+where pw.pawn_shop_id = $P{pawn_shop_id}
+and pw.date_order <= $P{date} and (pw.date_redeem > $P{date} or pw.date_redeem is null)
+and pw.journal_id in ($P{stk1_journal_id}, $P{stk2_journal_id})
+and pw.state not in ('draft', 'cancel')
+) a
+order by sequence]]>
+	</queryString>
+	<field name="sequence" class="java.lang.Integer"/>
+	<field name="desc1" class="java.lang.String"/>
+	<field name="qty" class="java.lang.Number"/>
+	<field name="balance" class="java.lang.Double"/>
+	<variable name="total_balance" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{balance}]]></variableExpression>
+	</variable>
+	<variable name="balance_1" class="java.lang.Double" resetType="Column" calculation="First">
+		<variableExpression><![CDATA[$F{balance}]]></variableExpression>
+	</variable>
+	<detail>
+		<band height="17" splitType="Stretch">
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="20" y="2" width="232" height="15"/>
+				<textElement>
+					<font fontName="Monospaced" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{desc1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="312" y="2" width="145" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Monospaced" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{balance}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="252" y="2" width="60" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Monospaced" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{qty} == -1 ? null :
+$F{qty} == null ? 0.0 : $F{qty}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

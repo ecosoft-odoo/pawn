@@ -1,0 +1,3 @@
+id,name,interest_type,length_month,length_day,interest_amount_rates/amount_upto,interest_amount_rates/rate
+pawn_rule_4_30,4-30,Interest Rate By Amount,4 months,30 days,2000,2
+,,,,,100000000,1.25

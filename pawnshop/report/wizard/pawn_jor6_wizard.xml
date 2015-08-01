@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="pawn_jor6_wizard" model="ir.ui.view">
+            <field name="name">Jor6 Report</field>
+            <field name="model">pawn.jor6.wizard</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Selection Criteria" version="7.0">
+                    <group>
+                        <group>
+                    		<field name="pawn_shop_id" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
+                    		<field name="journal_id" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
+                        </group>
+	                    <group>
+                    		<field name="pawn_rule_id" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
+	                    </group>
+                    </group>
+                    <group>
+						<group string="Report Period (Past 10 Days)">            		
+							<field string="From" name="report_from_date" /> 
+							<field string="To" name="report_to_date"/>       
+						</group>      
+						<group string="For">            		
+							<field string="Announce Date" name="announce_date" /> 
+							<field string="Reposessed Date" name="reposessed_date"/>       
+						</group>             
+                    </group>
+                	<footer>
+                        <button string="Execute Report" name="start_report" type="object" default_focus="1" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_pawn_jor6_wizard" model="ir.actions.act_window">
+            <field name="name">Jor6 Report</field>
+            <field name="res_model">pawn.jor6.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="pawn_jor6_wizard"/>
+            <field name="target">new</field>
+            <field name="help">Print Jor6 Report</field>
+        </record>
+
+        <menuitem action="action_pawn_jor6_wizard"
+            id="menu_pawn_jor6_report"
+        	groups="group_pawn_accountant,group_pawn_manager,group_pawn_officer"
+            parent="menu_pawn_report" sequence="20" />
+
+    </data>
+</openerp>

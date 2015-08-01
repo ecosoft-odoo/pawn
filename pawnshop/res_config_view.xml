@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_pawn_config_settings" model="ir.ui.view">
+            <field name="name">pawn settings</field>
+            <field name="model">pawn.config.settings</field>
+            <field name="arch" type="xml">
+                <form string="Configure Accounting" version="7.0" class="oe_form_configuration">
+                    <header>
+                        <button string="Apply" type="object" name="execute" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" type="object" name="cancel" class="oe_link"/>
+                    </header>
+                    <separator string="Accounting Configuration"/>
+                    <group>
+                        <label for="id" string="Pawn"/>
+                        <div>
+                            <div>
+                                <label for="default_interest_interval" string="Interest Interval"/>
+                                <field name="default_interest_interval" class="oe_inline"/> 
+                            </div>
+                            <div>
+                                <label for="property_account_pawn_asset" string="Pawn Ticket Account"/>
+                                <field name="property_account_pawn_asset" class="oe_inline"/> 
+                            </div>
+                            <div>
+                                <label for="property_journal_accrued_interest" string="Accrued Interest Journal"/>
+                                <field name="property_journal_accrued_interest" class="oe_inline"/> 
+                            </div>
+                        </div>
+                        <label for="id" string="Pay Interest / Redeem"/>
+                        <div>
+                            <div>
+                                <label for="property_journal_actual_interest" string="Actual Interest Journal"/>
+                                <field name="property_journal_actual_interest" class="oe_inline"/> 
+                            </div>
+                            <div>
+                                <label for="property_account_interest_discount" string="Discount Account"/>
+                                <field name="property_account_interest_discount" class="oe_inline"/> 
+                            </div>
+                            <div>
+                                <label for="property_account_interest_addition" string="Addition Account"/>
+                                <field name="property_account_interest_addition" class="oe_inline"/> 
+                            </div>
+                        </div>
+                        <label for="id" string="Expire"/>
+                        <div>
+                            <div>
+                                <label for="property_account_expire_asset" string="Expired Ticket Account"/>
+                                <field name="property_account_expire_asset" class="oe_inline"/> 
+                            </div>
+                        </div>
+                        <label for="id" string="Sales/Refund Receipt"/>
+                        <div>
+                            <div>
+                                <label for="property_account_revenue_reposessed_asset" string="Revenue Reposessed Ticket Account"/>
+                                <field name="property_account_revenue_reposessed_asset" class="oe_inline"/> 
+                            </div>
+                            <div>
+                                <label for="property_account_refund_reposessed_asset" string="Refund Reposessed Ticket Account"/>
+                                <field name="property_account_refund_reposessed_asset" class="oe_inline"/> 
+                            </div>
+                            <div>
+                                <label for="property_account_cost_reposessed_asset" string="Cost Reposessed Ticket Account"/>
+                                <field name="property_account_cost_reposessed_asset" class="oe_inline"/> 
+                            </div>
+                        </div>
+                    </group>
+            	</form>
+            </field>
+        </record>
+
+        <record id="action_config_pawn_account" model="ir.actions.act_window">
+            <field name="name">Pawnshop Accounting</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">pawn.config.settings</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+        </record>
+
+        <menuitem name="Accounting" id="menu_config_pawn_account" parent="menu_pawnshop_config" 
+            action="action_config_pawn_account" groups="group_pawn_accountant" sequence="20"/>
+
+    </data>
+</openerp>

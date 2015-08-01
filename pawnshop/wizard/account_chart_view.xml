@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- Bank Account -->
+        <record id="view_account_chart_ext" model="ir.ui.view">
+            <field name="name">view.account.chart.ext</field>
+            <field name="model">account.chart</field>
+            <field name="inherit_id" ref="account.view_account_chart" />
+            <field name="arch" type="xml">
+	           	<footer position="before">
+		            <group>
+		            	<group>
+		            		<field name="pawn_shop_id" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
+		            	</group>
+		            	<group>
+							<field name="profit_center"/>
+		            	</group>
+		            </group>
+	           	</footer>
+            </field>
+        </record>
+        
+    </data>
+</openerp>

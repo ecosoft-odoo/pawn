@@ -1,0 +1,2668 @@
+# Translation of OpenERP Server.
+# This file contains the translation of the following modules:
+#	* pawnshop
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenERP Server 7.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-08-04 18:11+0000\n"
+"PO-Revision-Date: 2014-08-04 18:11+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: pawnshop
+#: report:pawn.receipt.form:0
+msgid "invoice_line/name"
+msgstr "invoice_line/name"
+
+#. module: pawnshop
+#: field:res.partner,partner_title:0
+msgid "Title"
+msgstr "คำนำหน้าชื่อ"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "โปรดไถ่ถอนหรือส่งดอกเบี้ยภายใน 4 เดือน 30 วัน"
+msgstr "โปรดไถ่ถอนหรือส่งดอกเบี้ยภายใน 4 เดือน 30 วัน"
+
+#. module: pawnshop
+#: field:item.property.line,allow_text:0
+msgid "Allow Text"
+msgstr "อนุญาตข้อความ"
+
+#. module: pawnshop
+#: field:pawn.order,item_state:0
+msgid "Item State"
+msgstr "Item State"
+
+#. module: pawnshop
+#: view:pawn.order:0
+msgid "pawn Order"
+msgstr "ตั๋วจำนำ"
+
+#. module: pawnshop
+#: field:pawn.order,item_id:0
+#: field:product.product,parent_id:0
+msgid "Pawn Asset"
+msgstr "สินทรัพย์จำนำ"
+
+#. module: pawnshop
+#: view:pawn.order:0
+msgid "Create Account Entry"
+msgstr "สร้างรายการบัญชี"
+
+#. module: pawnshop
+#: selection:pawn.rule,length_month:0
+msgid "2 months"
+msgstr "2 เดือน"
+
+#. module: pawnshop
+#: report:pawn.receipt.form:0
+msgid "invoice_line/uos_id/name"
+msgstr "invoice_line/uos_id/name"
+
+#. module: pawnshop
+#: field:pawn.rule,interest_type:0
+msgid "Type of Interest"
+msgstr "ประเภทของดอกเบี้ย"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "$F{card_type}"
+msgstr "$F{card_type}"
+
+#. module: pawnshop
+#: model:ir.ui.menu,name:pawnshop.menu_normal_customer
+msgid "Buyer"
+msgstr "ผู้ซื้อ"
+
+#. module: pawnshop
+#: view:pawn.order:0
+msgid "Approved pawn orders"
+msgstr "ตั๋วจำนำได้รับการอนุมัติ"
+
+#. module: pawnshop
+#: view:pawn.order:0
+msgid "Total Credit"
+msgstr "ยอดรวมเครดิต"
+
+#. module: pawnshop
+#: view:pawn.order:0
+msgid "Cancel Order"
+msgstr "ยกเลิกตั๋วจำนำ"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "ชื่อผู้จำนำ (Name)"
+msgstr "ชื่อผู้จำนำ (Name)"
+
+#. module: pawnshop
+#: selection:pawn.rule,length_day:0
+msgid "20 days"
+msgstr "20 วัน"
+
+#. module: pawnshop
+#: field:pawn.order.line,property_ids:0
+msgid "Pawn Line Properties"
+msgstr "คุณสมบัติรายการจำนำ"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "date_expired"
+msgstr "date_expired"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "$F{nationality}"
+msgstr "$F{nationality}"
+
+#. module: pawnshop
+#: selection:res.partner,partner_title:0
+msgid "Mrs."
+msgstr "นาง"
+
+#. module: pawnshop
+#: view:pawn.order:0
+msgid "Total Debit"
+msgstr "ยอดรวมเดบิต"
+
+#. module: pawnshop
+#: selection:res.partner,partner_title:0
+msgid "Miss."
+msgstr "นางสาว"
+
+#. module: pawnshop
+#: view:pawn.order:0
+msgid "Search Pawn Order"
+msgstr "ค้นหาตั๋วจำนำ"
+
+#. module: pawnshop
+#: model:ir.actions.act_window,name:pawnshop.action_return_item_for_sale
+msgid "Return Items For Sales"
+msgstr "ย้ายคืนเพื่อขาย"
+
+#. module: pawnshop
+#: field:pawn.order,date_redeem:0
+msgid "Redeem Date"
+msgstr "Redeem Date"
+
+#. module: pawnshop
+#: help:pawn.order,message_unread:0
+msgid "If checked new messages require your attention."
+msgstr "ถ้าเลือก ข้อความใหม่ต้องการความสนใจของคุณ"
+
+#. module: pawnshop
+#: selection:pawn.rule,length_day:0
+msgid "0 days"
+msgstr "0 วัน"
+
+#. module: pawnshop
+#: model:product.category,name:pawnshop.product_categ_diamond_2
+msgid "เครื่องประดับเพชร"
+msgstr "เครื่องประดับเพชร"
+
+#. module: pawnshop
+#: view:pawn.order:0
+msgid "Reference"
+msgstr "อ้างอิง"
+
+#. module: pawnshop
+#: code:addons/pawnshop/wizard/pawn_item_location_status.py:74
+#, python-format
+msgid "Selected item(s) are not in 'Borrowed' status"
+msgstr "ของที่เลือกไม่ได้อยู่ในสถานะ 'ถูกยืม'"
+
+#. module: pawnshop
+#: help:pawn.order,message_summary:0
+msgid "Holds the Chatter summary (number of messages, ...). This summary is directly in html format in order to be inserted in kanban views."
+msgstr "Holds the Chatter summary (number of messages, ...). This summary is directly in html format in order to be inserted in kanban views."
+
+#. module: pawnshop
+#: code:addons/pawnshop/pawn.py:377
+#: code:addons/pawnshop/res_partner.py:86
+#: code:addons/pawnshop/res_partner.py:94
+#: code:addons/pawnshop/res_partner.py:100
+#: code:addons/pawnshop/wizard/item_split.py:62
+#: code:addons/pawnshop/wizard/item_split.py:69
+#: code:addons/pawnshop/wizard/pawn_item_create_invoice.py:55
+#: code:addons/pawnshop/wizard/pawn_item_location_status.py:52
+#: code:addons/pawnshop/wizard/pawn_item_location_status.py:74
+#, python-format
+msgid "Warning!"
+msgstr "คำเตือน!"
+
+#. module: pawnshop
+#: selection:pawn.order,card_type:0
+#: selection:res.partner,card_type:0
+msgid "Passport Number"
+msgstr "หมายเลขหนังสือเดินทาง"
+
+#. module: pawnshop
+#: model:ir.model,name:pawnshop.model_res_partner
+#: view:pawn.order:0
+#: field:pawn.order.line,partner_id:0
+msgid "Partner"
+msgstr "คู่ค้า"
+
+#. module: pawnshop
+#: view:pawn.rule:0
+msgid "Pawn Period"
+msgstr "ระยะเวลาจำนำ"
+
+#. module: pawnshop
+#: model:ir.actions.act_window,name:pawnshop.action_pawn_asset_expired
+#: model:ir.ui.menu,name:pawnshop.menu_pawn_asset_expired
+msgid "Asset Expired"
+msgstr "สินทรัพย์หมดอายุ"
+
+#. module: pawnshop
+#: report:pawn.receipt.form:0
+msgid "โทรศัพท์ 02-552-1530 โทรสาร 02-552-6052"
+msgstr "โทรศัพท์ 02-552-1530 โทรสาร 02-552-6052"
+
+#. module: pawnshop
+#: field:pawn.order,number:0
+msgid "Number"
+msgstr "Number"
+
+#. module: pawnshop
+#: view:item.split:0
+#: field:item.split,split_line:0
+msgid "Split Lines"
+msgstr "Split Lines"
+
+#. module: pawnshop
+#: report:pawn.receipt.form:0
+msgid "\"(\"+(new Scriptlet()).getAmtInWords((new BigDecimal(($F{amount_total}==null?0.00:$F{amount_total}).toString())).setScale(2).toString(),\"THB\")+\")\""
+msgstr "\"(\"+(new Scriptlet()).getAmtInWords((new BigDecimal(($F{amount_total}==null?0.00:$F{amount_total}).toString())).setScale(2).toString(),\"THB\")+\")\""
+
+#. module: pawnshop
+#: field:pawn.order.pay.interest,interest_amount:0
+#: field:pawn.order.redeem,interest_amount:0
+#: field:pawn.order.renew,interest_amount:0
+msgid "Interest"
+msgstr "ดอกเบี้ย"
+
+#. module: pawnshop
+#: code:addons/pawnshop/wizard/pawn_item_create_invoice.py:76
+#, python-format
+msgid "Please define income account for this product: \"%s\" (id:%d)."
+msgstr "Please define income account for this product: \"%s\" (id:%d)."
+
+#. module: pawnshop
+#: report:pawn.receipt.form:0
+msgid "invoice_line/price_subtotal"
+msgstr "invoice_line/price_subtotal"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "บัตรประจำตัว (Card Type)"
+msgstr "บัตรประจำตัว (Card Type)"
+
+#. module: pawnshop
+#: report:pawn.receipt.form:0
+msgid "เลขที่เช็ค"
+msgstr "เลขที่เช็ค"
+
+#. module: pawnshop
+#: view:pawn.config.settings:0
+msgid "Accounting Configuration"
+msgstr "Accounting Configuration"
+
+#. module: pawnshop
+#: view:item.property:0
+msgid "Property List"
+msgstr "รายชื่อคุณสมบติ"
+
+#. module: pawnshop
+#: view:pawn.order:0
+msgid "Pawn Orders which are in draft state"
+msgstr "ตั๋วจำนำที่อยู่ในสถานะร่าง"
+
+#. module: pawnshop
+#: model:ir.model,name:pawnshop.model_pawn_order_interest
+#: field:pawn.order,accrued_interest_ids:0
+msgid "Pawn Order Interest"
+msgstr "ดอกเบี้ยตั๋วจำนำ"
+
+#. module: pawnshop
+#: field:pawn.interest.rate,amount_upto:0
+msgid "Amount Up-To"
+msgstr "Amount Up-To"
+
+#. module: pawnshop
+#: field:product.uom,categ_ids:0
+msgid "Categories"
+msgstr "Categories"
+
+#. module: pawnshop
+#: selection:pawn.order,state:0
+#: selection:pawn.order.line,state:0
+#: selection:product.product,state:0
+msgid "Redeemed"
+msgstr "ไถ่ถอนแล้ว"
+
+#. module: pawnshop
+#: model:ir.ui.menu,name:pawnshop.menu_pawn_items_action_form
+msgid "Items"
+msgstr "ของจำนำ"
+
+#. module: pawnshop
+#: field:pawn.order,age:0
+#: field:res.partner,age:0
+msgid "Age"
+msgstr "อายุ"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "เสียดอกเบี้ยเดือนละ (Interest Per Month)"
+msgstr "เสียดอกเบี้ยเดือนละ (Interest Per Month)"
+
+#. module: pawnshop
+#: model:ir.actions.act_window,name:pawnshop.action_pawn_assets
+msgid "Pawn Assets"
+msgstr "Pawn Assets"
+
+#. module: pawnshop
+#: help:pawn.order,date_order:0
+msgid "Date on which this document has been pawned."
+msgstr "Date on which this document has been pawned."
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "address"
+msgstr "address"
+
+#. module: pawnshop
+#: field:item.property.line,name:0
+msgid "Selection"
+msgstr "การเลือก"
+
+#. module: pawnshop
+#: field:pawn.order,amount_net:0
+#: field:pawn.order.pawn,amount:0
+msgid "Net Amount"
+msgstr "Net Amount"
+
+#. module: pawnshop
+#: model:ir.ui.menu,name:pawnshop.menu_pawn_master
+msgid "Master Data"
+msgstr "ข้อมูลหลัก"
+
+#. module: pawnshop
+#: field:pawn.order,child_id:0
+msgid "New Pawn Order"
+msgstr "ตั๋วจำนำใหม่"
+
+#. module: pawnshop
+#: model:ir.model,name:pawnshop.model_product_location_status
+msgid "Location Status of Products"
+msgstr "สถานะตำแหน่งของสินทรัพย์"
+
+#. module: pawnshop
+#: field:pawn.order.line,categ_id:0
+#: view:product.product:0
+#: field:product.product.line,categ_id:0
+msgid "Category"
+msgstr "หมวดหมู่"
+
+#. module: pawnshop
+#: model:product.category,name:pawnshop.product_categ_gem
+msgid "พลอย"
+msgstr "พลอย"
+
+#. module: pawnshop
+#: field:pawn.order,card_type:0
+#: field:res.partner,card_type:0
+msgid "Card Type"
+msgstr "ประเภทบัตร"
+
+#. module: pawnshop
+#: field:pawn.order.line,order_id:0
+msgid "Pawn Order Reference"
+msgstr "อ้างอิงตั๋วจำนำ"
+
+#. module: pawnshop
+#: view:pawn.asset.to.for.sale:0
+msgid "This action will change Expired Asset to \"Items for Sale\""
+msgstr "This action will change Expired Asset to \"Items for Sale\""
+
+#. module: pawnshop
+#: model:ir.model,name:pawnshop.model_item_property
+#: field:product.category,property_line_ids:0
+msgid "Item Properties"
+msgstr "คุณสมบัติของจำนำ"
+
+#. module: pawnshop
+#: code:addons/pawnshop/pawn.py:784
+#, python-format
+msgid "Configuration Error !"
+msgstr "การกำหนดค่าผิดพลาด!"
+
+#. module: pawnshop
+#: report:pawn.receipt.form:0
+msgid "$F{product_name}"
+msgstr "$F{product_name}"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "$F{card_number}"
+msgstr "$F{card_number}"
+
+#. module: pawnshop
+#: view:pawn.order:0
+#: field:pawn.order,state:0
+#: view:product.product:0
+#: field:product.product,state:0
+msgid "Status"
+msgstr "สถานะ"
+
+#. module: pawnshop
+#: model:ir.ui.menu,name:pawnshop.menu_pawn_customer
+msgid "Customers"
+msgstr "ลูกค้า"
+
+#. module: pawnshop
+#: code:addons/pawnshop/pawn.py:785
+#, python-format
+msgid "Please activate the sequence of selected journal !"
+msgstr "กรุณาเปิดการใช้งานเลขลำดับของสมุดรายวันที่เลือก!"
+
+#. module: pawnshop
+#: field:pawn.order,move_line_ids:0
+msgid "Move Lines"
+msgstr "รายการย้าย"
+
+#. module: pawnshop
+#: field:account.move.line,pawn_order_id:0
+#: model:ir.actions.report.xml,name:pawnshop.pawn_order_form_1
+#: model:ir.model,name:pawnshop.model_pawn_order
+#: field:pawn.accrued.interest,pawn_id:0
+#: field:pawn.actual.interest,pawn_id:0
+#: view:pawn.order:0
+#: field:product.template,order_id:0
+msgid "Pawn Order"
+msgstr "ตั๋วจำนำ"
+
+#. module: pawnshop
+#: model:ir.model,name:pawnshop.model_pawn_item_location_status
+#: model:ir.model,name:pawnshop.model_pawn_item_to_borrowed
+#: model:ir.model,name:pawnshop.model_pawn_item_to_for_sale
+msgid "Change location status of items"
+msgstr "ย้ายตำแหน่งเก็บของจำนำ"
+
+#. module: pawnshop
+#: view:pawn.order:0
+msgid "Number:"
+msgstr "Number:"
+
+#. module: pawnshop
+#: model:product.category,name:pawnshop.product_categ_diamond
+msgid "เพชร"
+msgstr "เพชร"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "\"(\"+(new Scriptlet()).getAmtInWords((new BigDecimal(($F{amount_pawned}==null?0.00:$F{amount_pawned}).toString())).setScale(2).toString(),\"THB\")+\")\""
+msgstr "\"(\"+(new Scriptlet()).getAmtInWords((new BigDecimal(($F{amount_pawned}==null?0.00:$F{amount_pawned}).toString())).setScale(2).toString(),\"THB\")+\")\""
+
+#. module: pawnshop
+#: selection:pawn.rule,length_month:0
+msgid "3 months"
+msgstr "3 เดือน"
+
+#. module: pawnshop
+#: field:pawn.order,message_summary:0
+msgid "Summary"
+msgstr "สรุป"
+
+#. module: pawnshop
+#: code:addons/pawnshop/pawn.py:791
+#, python-format
+msgid "Please define a sequence on the journal."
+msgstr "กรุณากำหนดเลขที่สำหรับสมุดรายวัน"
+
+#. module: pawnshop
+#: view:pawn.order:0
+msgid "Quotations"
+msgstr "ใบเสนอราคา"
+
+#. module: pawnshop
+#: model:ir.model,name:pawnshop.model_pawn_order_interest_paid
+#: view:pawn.order:0
+#: field:pawn.order,actual_interest_ids:0
+msgid "Paid Interest"
+msgstr "ดอกเบี้ยจ่าย"
+
+#. module: pawnshop
+#: view:pawn.order.pawn:0
+msgid "Please select journal"
+msgstr "กรุณาเลือกสมุดรายวัน"
+
+#. module: pawnshop
+#: field:pawn.order.line,product_qty:0
+#: field:product.product.line,product_qty:0
+msgid "Quantity"
+msgstr "จำนวน"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "จำนวน"
+msgstr "จำนวน"
+
+#. module: pawnshop
+#: field:pawn.order.renew,redeem_amount:0
+msgid "Redeem Amount"
+msgstr "จำนวนเงินไถ่ถอน"
+
+#. module: pawnshop
+#: view:pawn.order:0
+msgid "Pawn Ticket"
+msgstr "ตั๋วจำนำ"
+
+#. module: pawnshop
+#: model:ir.model,name:pawnshop.model_pawn_asset_to_for_sale
+msgid "Change asset status to For Sale"
+msgstr "Change asset status to For Sale"
+
+#. module: pawnshop
+#: view:item.property:0
+#: field:item.property,line_ids:0
+#: field:item.property,selection_list:0
+msgid "Selection List"
+msgstr "รายชื่อเลือก"
+
+#. module: pawnshop
+#: field:pawn.order,period_id:0
+msgid "Period"
+msgstr "รอบบัญชี"
+
+#. module: pawnshop
+#: model:product.category,name:pawnshop.product_categ_silver
+msgid "เครื่องเงิน"
+msgstr "เครื่องเงิน"
+
+#. module: pawnshop
+#: field:pawn.config.settings,default_interest_interval:0
+msgid "Interest Calculation Interval"
+msgstr "ช่วงเวลาคำนวณดอกเบี้ย"
+
+#. module: pawnshop
+#: selection:pawn.order,state:0
+#: selection:pawn.order.line,state:0
+msgid "Draft Pawn Ticket"
+msgstr "ตั๋วจำนำร่าง"
+
+#. module: pawnshop
+#: help:pawn.order,amount_net:0
+msgid "For renew case only, amount_net represent amount left over from previous order, pawnshop need to pay (or receive) to customer."
+msgstr "For renew case only, amount_net represent amount left over from previous order, pawnshop need to pay (or receive) to customer."
+
+#. module: pawnshop
+#: model:product.category,name:pawnshop.product_categ_gold_1
+msgid "ทองแท่ง"
+msgstr "ทองแท่ง"
+
+#. module: pawnshop
+#: view:pawn.order.pay.interest:0
+msgid "Please specify amount of interest you want to pay,"
+msgstr "กรุณาระบุจำนวนดอกเบี้ยที่คุณต้องการจ่าย"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "เลขที่บัตร (ID number)"
+msgstr "เลขที่บัตร (ID number)"
+
+#. module: pawnshop
+#: view:res.partner:0
+msgid "Put an internal note..."
+msgstr "ใส่หมายเหตุ"
+
+#. module: pawnshop
+#: selection:res.partner,partner_title:0
+msgid "Mr."
+msgstr "นาย"
+
+#. module: pawnshop
+#: model:ir.actions.act_window,name:pawnshop.action_pawn_asset_to_for_sale
+msgid "Expired Asset to For Sale"
+msgstr "Expired Asset to For Sale"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "$F{date_order}"
+msgstr "$F{date_order}"
+
+#. module: pawnshop
+#: field:pawn.order.line,pawn_price_unit:0
+#: field:pawn.order.line,price_unit:0
+msgid "Unit Price"
+msgstr "ราคาต่อหน่วย"
+
+#. module: pawnshop
+#: model:ir.actions.act_window,name:pawnshop.action_pawn_items
+#: view:product.product:0
+msgid "Pawn Items"
+msgstr "ของจำนำ"
+
+#. module: pawnshop
+#: model:ir.model,name:pawnshop.model_pawn_order_line_properties
+msgid "Pawn Order Line Properties"
+msgstr "คุณสมบัติรายการในตั๋วจำนำ"
+
+#. module: pawnshop
+#: view:item.split:0
+#: view:pawn.order:0
+msgid "Total Quantity"
+msgstr "จำนวนหน่วยรวม"
+
+#. module: pawnshop
+#: field:pawn.config.settings,property_account_pawn_asset:0
+#: field:product.product,property_account_pawn_asset:0
+msgid "Pawned Asset Account"
+msgstr "Pawned Asset Account"
+
+#. module: pawnshop
+#: model:ir.model,name:pawnshop.model_account_journal
+#: view:pawn.order:0
+#: field:pawn.order,journal_id:0
+#: field:pawn.order.pawn,journal_id:0
+msgid "Journal"
+msgstr "สมุดรายวัน"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+#: report:pawn.receipt.form:0
+msgid "id"
+msgstr "id"
+
+#. module: pawnshop
+#: selection:pawn.rule,length_day:0
+msgid "25 days"
+msgstr "25 วัน"
+
+#. module: pawnshop
+#: selection:pawn.order,state:0
+#: selection:pawn.order.line,state:0
+#: selection:product.product,state:0
+msgid "Expired"
+msgstr "หมดอายุแล้ว"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "วันที่หมดอายุ (Date of Expiration)"
+msgstr "วันที่หมดอายุ (Date of Expiration)"
+
+#. module: pawnshop
+#: code:addons/pawnshop/wizard/pawn_item_create_invoice.py:85
+#, python-format
+msgid "There is no Fiscal Position defined or Income category account defined for default properties of Product categories."
+msgstr "There is no Fiscal Position defined or Income category account defined for default properties of Product categories."
+
+#. module: pawnshop
+#: model:ir.actions.act_window,name:pawnshop.action_pawn_order_renew
+#: view:pawn.order:0
+#: view:pawn.order.renew:0
+msgid "Renew"
+msgstr "ต่ออายุ"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "$F{age}"
+msgstr "$F{age}"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "partner_title"
+msgstr "partner_title"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "$F{expiry_date}"
+msgstr "$F{expiry_date}"
+
+#. module: pawnshop
+#: view:item.split:0
+#: view:pawn.asset.to.for.sale:0
+#: view:pawn.config.settings:0
+#: view:pawn.item.create.invoice:0
+#: view:pawn.item.to.borrowed:0
+#: view:pawn.item.to.for.sale:0
+#: view:pawn.line.property:0
+#: view:pawn.order.pawn:0
+#: view:pawn.order.pay.interest:0
+#: view:pawn.order.redeem:0
+#: view:pawn.order.renew:0
+msgid "or"
+msgstr "หรือ"
+
+#. module: pawnshop
+#: view:pawn.config.settings:0
+msgid "Apply"
+msgstr "ตกลง"
+
+#. module: pawnshop
+#: model:ir.actions.act_window,name:pawnshop.action_pawn_order_pay_interest
+#: view:pawn.order:0
+#: view:pawn.order.pay.interest:0
+msgid "Pay Interest"
+msgstr "จ่ายดอกเบี้ย"
+
+#. module: pawnshop
+#: selection:pawn.rule,length_day:0
+msgid "15 days"
+msgstr "15 วัน"
+
+#. module: pawnshop
+#: model:ir.actions.act_window,name:pawnshop.action_pawn_items_borrowed
+#: model:ir.ui.menu,name:pawnshop.menu_pawn_items_borrowed
+msgid "Items Borrowed"
+msgstr "ของถูกยืม"
+
+#. module: pawnshop
+#: model:ir.ui.menu,name:pawnshop.menu_item_category_action_form
+msgid "Items Categories"
+msgstr "หมวดหมู่ของจำนำ"
+
+#. module: pawnshop
+#: model:ir.model,name:pawnshop.model_pawn_accrued_interest
+#: view:pawn.order:0
+msgid "Accrued Interest"
+msgstr "ดอกเบี้ยค้างรับ"
+
+#. module: pawnshop
+#: view:pawn.config.settings:0
+#: field:pawn.config.settings,property_account_expire_asset:0
+#: field:product.product,property_account_expire_asset:0
+msgid "Expired Asset Account"
+msgstr "Expired Asset Account"
+
+#. module: pawnshop
+#: model:ir.actions.act_window,name:pawnshop.action_asset_move_kanban
+#: model:ir.ui.menu,name:pawnshop.menu_action_asset_move_kanban
+msgid "Incoming Asset"
+msgstr "รับเข้าสินทรัพย์"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "** วันครบกำหนดการรับจำนำ 4 เดือน:"
+msgstr "** วันครบกำหนดการรับจำนำ 4 เดือน:"
+
+#. module: pawnshop
+#: sql_constraint:product.product:0
+msgid "Item code must be unique per pawn shop!"
+msgstr "Item code must be unique per pawn shop!"
+
+#. module: pawnshop
+#: field:pawn.order.pay.interest,pawn_amount:0
+#: field:pawn.order.redeem,pawn_amount:0
+#: field:pawn.order.renew,pawn_amount:0
+msgid "Initial Amount"
+msgstr "จำนวนเงินตั้งต้น"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "$F{doc_name}"
+msgstr "$F{doc_name}"
+
+#. module: pawnshop
+#: field:pawn.order.line,price_subtotal:0
+msgid "Subtotal"
+msgstr "ราคาประเมินเบื้องต้น"
+
+#. module: pawnshop
+#: help:pawn.accrued.interest,interest_date:0
+#: help:pawn.actual.interest,interest_date:0
+msgid "Date on which this interest journal will be created"
+msgstr "Date on which this interest journal will be created"
+
+#. module: pawnshop
+#: view:pawn.order:0
+msgid "Not Extend"
+msgstr "ไม่เล้า"
+
+#. module: pawnshop
+#: view:pawn.config.settings:0
+msgid "Pay Interest / Redeem"
+msgstr "Pay Interest / Redeem"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "รับจำนำวันที / เวลา (Pawn date/time)"
+msgstr "รับจำนำวันที / เวลา (Pawn date/time)"
+
+#. module: pawnshop
+#: field:item.property,name:0
+msgid "Property Name"
+msgstr "ชื่อคุณสมบัติ"
+
+#. module: pawnshop
+#: report:pawn.receipt.form:0
+msgid "amount_total"
+msgstr "amount_total"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "name"
+msgstr "name"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+#: report:pawn.receipt.form:0
+msgid "/data/record"
+msgstr "/data/record"
+
+#. module: pawnshop
+#: view:pawn.order:0
+msgid "Accrued Interest Table"
+msgstr "ตารางดอกเบี้ยค้าง"
+
+#. module: pawnshop
+#: selection:pawn.rule,length_day:0
+msgid "30 days"
+msgstr "30 วัน"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "รายละเอียดตั๋วเดิม เล่มที่              เลขที่                    วันที่"
+msgstr "รายละเอียดตั๋วเดิม เล่มที่              เลขที่                    วันที่"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "$F{pawnshop}"
+msgstr "$F{pawnshop}"
+
+#. module: pawnshop
+#: view:item.split:0
+msgid "Split"
+msgstr "Split"
+
+#. module: pawnshop
+#: model:ir.model,name:pawnshop.model_interest_amount_rate
+#: model:ir.model,name:pawnshop.model_pawn_interest_rate
+#: view:pawn.rule:0
+#: field:pawn.rule,interest_amount_rates:0
+msgid "Amount Rates"
+msgstr "อัตรา"
+
+#. module: pawnshop
+#: field:pawn.order,order_line:0
+msgid "Order Lines"
+msgstr "รายการในตั๋วจำนำ"
+
+#. module: pawnshop
+#: view:pawn.line.property:0
+msgid "Save"
+msgstr "บันทึก"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+#: report:pawn.receipt.form:0
+msgid "$F{product_uom}"
+msgstr "$F{product_uom}"
+
+#. module: pawnshop
+#: report:pawn.receipt.form:0
+msgid "เช็ค"
+msgstr "เช็ค"
+
+#. module: pawnshop
+#: field:account.journal,profit_center:0
+#: field:account.move.line,profit_center:0
+msgid "Profit Center"
+msgstr "Profit Center"
+
+#. module: pawnshop
+#: help:pawn.order,actual_interest_ids:0
+msgid "This shows interest already paid by customer. This amount will deduct the full amount when redeem."
+msgstr "This shows interest already paid by customer. This amount will deduct the full amount when redeem."
+
+#. module: pawnshop
+#: help:pawn.order,pricelist_id:0
+msgid "The pricelist sets the currency used for this pawn ticket. It also computes the price for the selected products/quantities."
+msgstr "The pricelist sets the currency used for this pawn ticket. It also computes the price for the selected products/quantities."
+
+#. module: pawnshop
+#: model:ir.actions.act_window,name:pawnshop.action_pawn_order_redeem
+#: model:ir.model,name:pawnshop.model_pawn_order_pay_interest
+#: model:ir.model,name:pawnshop.model_pawn_order_redeem
+#: view:pawn.order:0
+#: view:pawn.order.pay.interest:0
+#: view:pawn.order.redeem:0
+msgid "Redeem"
+msgstr "ไถ่ถอน"
+
+#. module: pawnshop
+#: model:ir.model,name:pawnshop.model_pawn_rule
+#: field:pawn.interest.rate,rule_id:0
+#: field:pawn.order,rule_id:0
+#: view:pawn.rule:0
+msgid "Pawn Rule"
+msgstr "กฎการจำนำ"
+
+#. module: pawnshop
+#: field:pawn.order,pricelist_id:0
+msgid "Pricelist"
+msgstr "รายการราคา"
+
+#. module: pawnshop
+#: report:pawn.receipt.form:0
+msgid "ที่อยู่"
+msgstr "ที่อยู่"
+
+#. module: pawnshop
+#: view:pawn.config.settings:0
+msgid "Pawn Asset Account"
+msgstr "บัญชีสินทรัพย์จำนำ"
+
+#. module: pawnshop
+#: view:pawn.order:0
+msgid "Order Date"
+msgstr "วันที่ตั๋ว"
+
+#. module: pawnshop
+#: help:product.location.status,sequence:0
+msgid "Gives the sequence order when displaying a list of stages."
+msgstr "Gives the sequence order when displaying a list of stages."
+
+#. module: pawnshop
+#: field:pawn.order,image_small:0
+#: field:pawn.order.line,image_small:0
+msgid "Small-sized image"
+msgstr "Small-sized image"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "สัญชาติ (Nationality)"
+msgstr "สัญชาติ (Nationality)"
+
+#. module: pawnshop
+#: model:ir.actions.act_window,name:pawnshop.action_pawn_line_property
+#: model:ir.model,name:pawnshop.model_pawn_line_property
+#: view:pawn.line.property:0
+#: field:pawn.line.property.line,pawn_line_property_id:0
+msgid "Pawn Line Property"
+msgstr "คุณสมบัติรายการจำนำ"
+
+#. module: pawnshop
+#: field:account.move.line,pawn_shop_id:0
+#: model:ir.model,name:pawnshop.model_pawn_shop
+#: view:pawn.shop:0
+msgid "Pawn Shop"
+msgstr "โรงรับจำนำ"
+
+#. module: pawnshop
+#: selection:pawn.order,card_type:0
+#: selection:res.partner,card_type:0
+msgid "Citizen ID"
+msgstr "หมายเลขประชาชน"
+
+#. module: pawnshop
+#: report:pawn.receipt.form:0
+msgid "ผู้รับเงิน"
+msgstr "ผู้รับเงิน"
+
+#. module: pawnshop
+#: view:pawn.order:0
+msgid "Total Interest"
+msgstr "ดอกเบี้ยรวม"
+
+#. module: pawnshop
+#: view:pawn.order:0
+#: view:res.partner:0
+msgid "Years"
+msgstr "ปี"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "partner_id/issue_date"
+msgstr "partner_id/issue_date"
+
+#. module: pawnshop
+#: field:pawn.order,currency_id:0
+msgid "Currency"
+msgstr "สกุลเงิน"
+
+#. module: pawnshop
+#: model:ir.model,name:pawnshop.model_pawn_order_renew
+msgid "renew"
+msgstr "ต่ออายุ"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "สิ่ง"
+msgstr "สิ่ง"
+
+#. module: pawnshop
+#: view:product.product:0
+msgid "Spit Item"
+msgstr "Spit Item"
+
+#. module: pawnshop
+#: view:product.product:0
+msgid "Item Name"
+msgstr "ชื่อของจำนำ"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+#: report:pawn.receipt.form:0
+msgid "วันที่"
+msgstr "วันที่"
+
+#. module: pawnshop
+#: view:res.partner:0
+msgid "Partners"
+msgstr "คู่ค้า"
+
+#. module: pawnshop
+#: field:pawn.order,amount_interest_todate:0
+msgid "Interest To-Date"
+msgstr "ดอกเบี้ยจนถึงวันนี้"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+#: report:pawn.receipt.form:0
+msgid "number"
+msgstr "number"
+
+#. module: pawnshop
+#: code:addons/pawnshop/pawn.py:825
+#, python-format
+msgid "No pawn asset account found for the item %s"
+msgstr "ไม่มีบัญชีสินทรัพย์สำหรับของจำนำ %s"
+
+#. module: pawnshop
+#: field:pawn.order,notes:0
+msgid "Terms and Conditions"
+msgstr "ข้อตกลงและเงื่อนไข"
+
+#. module: pawnshop
+#: model:ir.actions.act_window,help:pawnshop.action_sales_invoice
+msgid "<p class=\"oe_view_nocontent_create\">\n"
+"                Click to create a invoice / payment.\n"
+"              </p>\n"
+"            "
+msgstr "<p class=\"oe_view_nocontent_create\">\n"
+"                คลิกเพื่อสร้าง ใบแจ้งหนี/จ่ายเงิน.\n"
+"              </p>\n"
+"            "
+
+#. module: pawnshop
+#: view:product.category:0
+msgid "Property Selection"
+msgstr "ตัวเลือกคุณสมบัติ"
+
+#. module: pawnshop
+#: view:pawn.order:0
+msgid "Total Amount"
+msgstr "ยอดรวมทั้งสิ้น"
+
+#. module: pawnshop
+#: view:product.product:0
+#: field:product.product,price_estimated:0
+msgid "Estimated Price"
+msgstr "ราคาประเมิน"
+
+#. module: pawnshop
+#: view:pawn.rule:0
+msgid "Interest Rates"
+msgstr "อัตราดอกเบี้ย"
+
+#. module: pawnshop
+#: field:pawn.order,message_is_follower:0
+msgid "Is a Follower"
+msgstr "เป็นผู้ติดตาม"
+
+#. module: pawnshop
+#: field:pawn.order,previous_pawn_ids:0
+msgid "Previous Pawn Orders"
+msgstr "ตั่วจำนำก่อนหน้า"
+
+#. module: pawnshop
+#: selection:pawn.order,card_type:0
+#: selection:res.partner,card_type:0
+msgid "Government Officer ID"
+msgstr "หมายเลขข้าราชการ"
+
+#. module: pawnshop
+#: field:pawn.accrued.interest,interest_date:0
+#: field:pawn.actual.interest,interest_date:0
+#: field:pawn.order.pay.interest,date_pay_interest:0
+#: field:pawn.order.redeem,date_redeem:0
+#: field:pawn.order.renew,date_renew:0
+msgid "Date"
+msgstr "วันที่"
+
+#. module: pawnshop
+#: report:pawn.receipt.form:0
+msgid "invoice_line/quantity"
+msgstr "invoice_line/quantity"
+
+#. module: pawnshop
+#: model:ir.actions.act_window,name:pawnshop.action_pawn_items_sold
+#: model:ir.ui.menu,name:pawnshop.menu_pawn_items_sold
+msgid "Items Sold"
+msgstr "ของขายแล้ว"
+
+#. module: pawnshop
+#: report:pawn.receipt.form:0
+msgid "ชำระโดย"
+msgstr "ชำระโดย"
+
+#. module: pawnshop
+#: field:pawn.order,card_number:0
+msgid "Card Number"
+msgstr "หมายเลขบัตร"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "$V{product_qty}"
+msgstr "$V{product_qty}"
+
+#. module: pawnshop
+#: report:pawn.receipt.form:0
+msgid "date_invoice"
+msgstr "date_invoice"
+
+#. module: pawnshop
+#: field:pawn.config.settings,property_account_interest_discount:0
+msgid "Interest Discount"
+msgstr "Interest Discount"
+
+#. module: pawnshop
+#: code:addons/pawnshop/wizard/item_split.py:62
+#, python-format
+msgid "At least 2 split line must be created!"
+msgstr "At least 2 split line must be created!"
+
+#. module: pawnshop
+#: help:pawn.order,amount_pawned:0
+msgid "Pawned Amount is the amount that will be used for interest calculation."
+msgstr "จำนวนเงินที่จำนำเป็นจำนวนเงินที่จะใช้ในการคำนวณดอกเบี้ย"
+
+#. module: pawnshop
+#: code:addons/pawnshop/pawn.py:378
+#, python-format
+msgid "Pawn Order do not have any line items. It can not be pawned."
+msgstr "Pawn Order do not have any line items. It can not be pawned."
+
+#. module: pawnshop
+#: view:pawn.order:0
+msgid "Paid Interest Table"
+msgstr "ตารางดอกเบี้ยจ่าย"
+
+#. module: pawnshop
+#: field:pawn.order,date_due:0
+msgid "Grace Period End Date"
+msgstr "วันสิ้นสุดระยะผ่อนผัน"
+
+#. module: pawnshop
+#: view:pawn.order:0
+msgid "Interest Update Status"
+msgstr "สถานะปรับปรุงดอกเบี้ย"
+
+#. module: pawnshop
+#: view:pawn.config.settings:0
+#: field:pawn.config.settings,property_journal_accrued_interest:0
+#: field:pawn.order,property_journal_accrued_interest:0
+msgid "Accrued Interest Journal"
+msgstr "Accrued Interest Journal"
+
+#. module: pawnshop
+#: view:pawn.item.to.for.sale:0
+msgid "When items are return for sales, their location status will be changed to \"For Sales\"\n"
+"                    	It will be moved from menu \"Borrowed Items\" to \"Items for Sale\""
+msgstr "When items are return for sales, their location status will be changed to \"For Sales\"\n"
+"                    	It will be moved from menu \"Borrowed Items\" to \"Items for Sale\""
+
+#. module: pawnshop
+#: view:product.product:0
+msgid "For Sales"
+msgstr "สำหรับขาย"
+
+#. module: pawnshop
+#: field:pawn.order.line,state:0
+msgid "State"
+msgstr "สถานะ"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "$F{date_expired}"
+msgstr "$F{date_expired}"
+
+#. module: pawnshop
+#: view:pawn.asset.to.for.sale:0
+#: view:pawn.config.settings:0
+#: view:pawn.item.create.invoice:0
+#: view:pawn.item.to.borrowed:0
+#: view:pawn.item.to.for.sale:0
+#: view:pawn.order.pawn:0
+#: view:pawn.order.pay.interest:0
+#: view:pawn.order.redeem:0
+#: view:pawn.order.renew:0
+msgid "Cancel"
+msgstr "ยกเลิก"
+
+#. module: pawnshop
+#: field:pawn.order,date_order:0
+#: field:pawn.order.line,date_order:0
+msgid "Pawn Date"
+msgstr "จำนำวันที่"
+
+#. module: pawnshop
+#: view:product.product:0
+msgid "Information"
+msgstr "ข้อมูล"
+
+#. module: pawnshop
+#: model:ir.model,name:pawnshop.model_pawn_order_line
+#: field:pawn.order.line.properties,order_line_id:0
+#: field:product.product,order_line_id:0
+msgid "Pawn Order Line"
+msgstr "รายการในตั๋วจำนำ"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "ใบอนุญาตตั้งโรงรับจำนำ เล่มที่ xxxxx เลขที่ yyyyy"
+msgstr "ใบอนุญาตตั้งโรงรับจำนำ เล่มที่ xxxxx เลขที่ yyyyy"
+
+#. module: pawnshop
+#: field:pawn.line.property.line,other_property:0
+#: field:pawn.order.line.properties,other_property:0
+msgid "Other"
+msgstr "อื่นๆ"
+
+#. module: pawnshop
+#: code:addons/pawnshop/res_partner.py:87
+#, python-format
+msgid "Please select Card Type"
+msgstr "โปรดเลือกชนิดของบัตร"
+
+#. module: pawnshop
+#: view:pawn.order:0
+msgid "pawn Orders"
+msgstr "ตั๋วจำนำ"
+
+#. module: pawnshop
+#: model:ir.model,name:pawnshop.model_res_users
+#: field:pawn.shop,user_ids:0
+msgid "Users"
+msgstr "ผู้ใช้"
+
+#. module: pawnshop
+#: view:pawn.order.redeem:0
+msgid "Please confirm redeem amount as following,"
+msgstr "กรุณายืนยันการยอดไถ่ถอนตามด้านล่าง"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+#: report:pawn.receipt.form:0
+msgid "$F{number}"
+msgstr "$F{number}"
+
+#. module: pawnshop
+#: field:product.location.status,fold:0
+msgid "Hide in views if empty"
+msgstr "Hide in views if empty"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+#: report:pawn.receipt.form:0
+msgid "บาท"
+msgstr "บาท"
+
+#. module: pawnshop
+#: model:ir.actions.act_window,name:pawnshop.action_sales_invoice
+#: model:ir.ui.menu,name:pawnshop.menu_action_sales_invoice
+msgid "Sales Invoice/Payment"
+msgstr "่ใบขาย/ชำระเงิน"
+
+#. module: pawnshop
+#: field:pawn.order,name:0
+msgid "Internal Number"
+msgstr "Internal Number"
+
+#. module: pawnshop
+#: field:pawn.line.property,property_line:0
+msgid "Property Lines"
+msgstr "รายการคุณสมบัติ"
+
+#. module: pawnshop
+#: model:ir.model,name:pawnshop.model_product_category_property
+msgid "product.category.property"
+msgstr "product.category.property"
+
+#. module: pawnshop
+#: view:item.property:0
+#: view:pawn.rule:0
+#: field:pawn.rule,name:0
+#: view:pawn.shop:0
+#: field:pawn.shop,name:0
+#: field:product.location.status,name:0
+#: view:res.partner:0
+msgid "Name"
+msgstr "ชื่อ"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "order_line/name"
+msgstr "order_line/name"
+
+#. module: pawnshop
+#: model:ir.actions.act_window,name:pawnshop.action_item_category
+msgid "Item Categories"
+msgstr "หมวดหมู่ของจำนำ"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+#: report:pawn.receipt.form:0
+msgid "\"/home/kittiu/workspace/openerp_tt/tt-addons/jrxml_reports/custom_reports/\""
+msgstr "\"/home/kittiu/workspace/openerp_tt/tt-addons/jrxml_reports/custom_reports/\""
+
+#. module: pawnshop
+#: model:ir.model,name:pawnshop.model_pawn_item_create_invoice
+msgid "Create invoic from selected pawn items"
+msgstr "สร้างใบขายสำหรับรายการของที่เลือก"
+
+#. module: pawnshop
+#: help:pawn.order,message_ids:0
+msgid "Messages and communication history"
+msgstr "ข้อความและประวัติการสนทนา"
+
+#. module: pawnshop
+#: report:pawn.receipt.form:0
+msgid "โรงรับจำนำชนานุเคราะห์"
+msgstr "โรงรับจำนำชนานุเคราะห์"
+
+#. module: pawnshop
+#: model:ir.actions.act_window,name:pawnshop.action_pawn_order_pawn
+#: model:ir.model,name:pawnshop.model_pawn_order_pawn
+#: model:ir.ui.menu,name:pawnshop.menu_pawn_management
+#: view:pawn.config.settings:0
+#: view:pawn.order:0
+#: view:pawn.order.pawn:0
+msgid "Pawn"
+msgstr "จำนำ"
+
+#. module: pawnshop
+#: model:ir.actions.act_window,help:pawnshop.pawn_form_action
+msgid "<p class=\"oe_view_nocontent_create\">\n"
+"                Click to create a quotation that will be converted into a pawn order. \n"
+"              </p><p>\n"
+"                Use this menu to search within your pawn orders by\n"
+"                references, supplier, products, etc. For each pawn order,\n"
+"                you can track the related discussion with the supplier, control\n"
+"                the products received and control the supplier invoices.\n"
+"              </p>\n"
+"            "
+msgstr "<p class=\"oe_view_nocontent_create\">\n"
+"                Click to create a quotation that will be converted into a pawn order. \n"
+"              </p><p>\n"
+"                Use this menu to search within your pawn orders by\n"
+"                references, supplier, products, etc. For each pawn order,\n"
+"                you can track the related discussion with the supplier, control\n"
+"                the products received and control the supplier invoices.\n"
+"              </p>\n"
+"            "
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "มาจำนำไว้เป็นเงิน (Total Amount)"
+msgstr "มาจำนำไว้เป็นเงิน (Total Amount)"
+
+#. module: pawnshop
+#: model:ir.ui.menu,name:pawnshop.menu_config_pawn_account
+#: view:pawn.order:0
+#: view:product.product:0
+msgid "Accounting"
+msgstr "การบัญชี"
+
+#. module: pawnshop
+#: code:addons/pawnshop/wizard/pawn_item_create_invoice.py:55
+#, python-format
+msgid "Selected item(s) are already Sold Out"
+msgstr "ของที่เลือกถูกขายไปแล้ว"
+
+#. module: pawnshop
+#: field:pawn.accrued.interest,reverse_move_id:0
+msgid "Reveresed Entry"
+msgstr "Reveresed Entry"
+
+#. module: pawnshop
+#: selection:pawn.rule,interest_type:0
+msgid "Fixed interest Rate"
+msgstr "อัตราดอกเบี้ยคงที่"
+
+#. module: pawnshop
+#: model:ir.module.category,name:pawnshop.module_category_pawn_management
+#: model:ir.ui.menu,name:pawnshop.menu_pawn_root
+msgid "Pawnshop"
+msgstr "โรงรับจำนำ"
+
+#. module: pawnshop
+#: field:pawn.order,amount_total:0
+msgid "Estimated Amount"
+msgstr "จำนวนประเมิน"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+#: report:pawn.receipt.form:0
+msgid "จำนวนเงิน"
+msgstr "จำนวนเงิน"
+
+#. module: pawnshop
+#: view:pawn.order:0
+msgid "Group By..."
+msgstr "จัดกลุ่มตาม..."
+
+#. module: pawnshop
+#: selection:pawn.rule,length_month:0
+msgid "1 month"
+msgstr "1 เดือน"
+
+#. module: pawnshop
+#: view:product.product:0
+#: field:product.product.line,uom_id:0
+msgid "Unit of Measure"
+msgstr "หน่วยนับ"
+
+#. module: pawnshop
+#: view:pawn.order:0
+msgid "Extend"
+msgstr "เล้า"
+
+#. module: pawnshop
+#: report:pawn.receipt.form:0
+msgid "เลขประจำตัวผู้เสียภาษี 0103501005074"
+msgstr "เลขประจำตัวผู้เสียภาษี 0103501005074"
+
+#. module: pawnshop
+#: view:pawn.order:0
+#: field:pawn.order,message_unread:0
+msgid "Unread Messages"
+msgstr "ข้อความที่ยังไม่ได้อ่าน"
+
+#. module: pawnshop
+#: help:pawn.order,accrued_interest_ids:0
+msgid "This shows estimated interest to be move_created for this pawn order."
+msgstr "This shows estimated interest to be move_created for this pawn order."
+
+#. module: pawnshop
+#: field:pawn.order,monthly_interest:0
+msgid "Monthly Interest"
+msgstr "ดอกเบี้ยรายเดือน"
+
+#. module: pawnshop
+#: report:pawn.receipt.form:0
+msgid "รายการ"
+msgstr "รายการ"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+#: report:pawn.receipt.form:0
+msgid "partner_id/name"
+msgstr "partner_id/name"
+
+#. module: pawnshop
+#: model:ir.ui.menu,name:pawnshop.menu_pawn_assets_action_form
+msgid "Assets"
+msgstr "สินทรัพย์"
+
+#. module: pawnshop
+#: field:pawn.accrued.interest,num_days:0
+#: field:pawn.actual.interest,num_days:0
+#: field:pawn.rule,length_day:0
+msgid "Days"
+msgstr "วัน"
+
+#. module: pawnshop
+#: field:pawn.line.property.line,property_line_id:0
+#: field:pawn.order.line.properties,property_line_id:0
+msgid "Value"
+msgstr "มูลค่า"
+
+#. module: pawnshop
+#: help:product.location.status,fold:0
+msgid "This stage is not visible, for example in status bar or kanban view, when there are no records in that stage to display."
+msgstr "This stage is not visible, for example in status bar or kanban view, when there are no records in that stage to display."
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+#: report:pawn.receipt.form:0
+msgid "$F{cust_name}"
+msgstr "$F{cust_name}"
+
+#. module: pawnshop
+#: field:pawn.shop,code:0
+#: field:product.location.status,code:0
+msgid "Code"
+msgstr "Code"
+
+#. module: pawnshop
+#: model:product.category,name:pawnshop.product_categ_watch
+msgid "นาฬิกา"
+msgstr "นาฬิกา"
+
+#. module: pawnshop
+#: field:pawn.order.pay.interest,pay_interest_amount:0
+#: view:pawn.order.renew:0
+#: field:pawn.order.renew,pay_interest_amount:0
+msgid "Pay Interest Amount"
+msgstr "จ่ายดอกเบี้ย"
+
+#. module: pawnshop
+#: field:pawn.interest.rate,rate:0
+msgid "Interest Rate (%)"
+msgstr "Interest Rate (%)"
+
+#. module: pawnshop
+#: field:product.category,uom_ids:0
+msgid "Unit of Measures"
+msgstr "Unit of Measures"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "partner_id/card_number"
+msgstr "partner_id/card_number"
+
+#. module: pawnshop
+#: view:pawn.order:0
+msgid "Terms and conditions..."
+msgstr "ข้อกำหนดและเงื่อนไข..."
+
+#. module: pawnshop
+#: code:addons/pawnshop/pawn.py:624
+#, python-format
+msgid "Invalid Action!"
+msgstr "ไม่ถูกต้อง!"
+
+#. module: pawnshop
+#: code:addons/pawnshop/wizard/item_split.py:53
+#: model:ir.actions.act_window,name:pawnshop.action_pawn_items_for_sale
+#: model:ir.ui.menu,name:pawnshop.menu_pawn_items_for_sale
+#, python-format
+msgid "Items For Sales"
+msgstr "ของจำนำสำหรับการขาย"
+
+#. module: pawnshop
+#: selection:pawn.rule,length_month:0
+msgid "5 months"
+msgstr "5 เดือน"
+
+#. module: pawnshop
+#: help:pawn.line.property,image:0
+#: help:pawn.order,image:0
+#: help:pawn.order.line,image:0
+msgid "This field holds the image used as image for the product, limited to 1024x1024px."
+msgstr "This field holds the image used as image for the product, limited to 1024x1024px."
+
+#. module: pawnshop
+#: field:pawn.order,daily_interest:0
+msgid "Daily Interest"
+msgstr "ดอกเบี้ยรายวัน"
+
+#. module: pawnshop
+#: code:addons/pawnshop/pawn.py:905
+#, python-format
+msgid "Accounting is not set for %s"
+msgstr "Accounting is not set for %s"
+
+#. module: pawnshop
+#: view:product.product:0
+msgid "Location"
+msgstr "ตำแหน่ง"
+
+#. module: pawnshop
+#: field:pawn.order.renew,increase_pawn_amount:0
+msgid "Increase Pawn Amount"
+msgstr "เพิ่มเงินจำนำ"
+
+#. module: pawnshop
+#: view:pawn.config.settings:0
+msgid "Interest Interval"
+msgstr "Interest Interval"
+
+#. module: pawnshop
+#: model:ir.ui.menu,name:pawnshop.menu_product_uom_form_action
+msgid "Units of Measure"
+msgstr "Units of Measure"
+
+#. module: pawnshop
+#: help:pawn.order,date_redeem:0
+msgid "Date on which this document has been redeemed."
+msgstr "Date on which this document has been redeemed."
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "$F{book}"
+msgstr "$F{book}"
+
+#. module: pawnshop
+#: field:pawn.order,parent_id:0
+#: field:pawn.order.pawn,parent_id:0
+msgid "Previous Pawn Order"
+msgstr "ตั๋วจำนำก่อนหน้า"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "$F{amount_pawned}"
+msgstr "$F{amount_pawned}"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "วันที่ออกบัตร (Date of Issue)"
+msgstr "วันที่ออกบัตร (Date of Issue)"
+
+#. module: pawnshop
+#: view:product.product:0
+msgid "Price:"
+msgstr "ราคา:"
+
+#. module: pawnshop
+#: field:pawn.order,image_medium:0
+#: field:pawn.order.line,image_medium:0
+msgid "Medium-sized image"
+msgstr "Medium-sized image"
+
+#. module: pawnshop
+#: report:pawn.receipt.form:0
+msgid "ธนาคาร"
+msgstr "ธนาคาร"
+
+#. module: pawnshop
+#: field:pawn.order.renew,new_pawn_amount:0
+msgid "New Pawn Amount"
+msgstr "จำนวนเงินที่จำนำใหม่"
+
+#. module: pawnshop
+#: selection:pawn.config.settings,default_interest_interval:0
+#: selection:pawn.order,interest_interval:0
+msgid "Everyday"
+msgstr "ทุกวัน"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "partner_id/country_id/name"
+msgstr "partner_id/country_id/name"
+
+#. module: pawnshop
+#: field:pawn.order,interest_interval:0
+msgid "Calculation Interval"
+msgstr "ช่วงเวลาการคำนวณ"
+
+#. module: pawnshop
+#: model:ir.model,name:pawnshop.model_product_uom
+#: field:pawn.order.line,product_uom:0
+msgid "Product Unit of Measure"
+msgstr "หน่วยนับของสินค้า"
+
+#. module: pawnshop
+#: view:pawn.order.pay.interest:0
+#: view:pawn.order.redeem:0
+#: view:pawn.order.renew:0
+msgid "Initial"
+msgstr "เริ่มต้น"
+
+#. module: pawnshop
+#: field:pawn.item.create.invoice,note:0
+msgid "Note"
+msgstr "Note"
+
+#. module: pawnshop
+#: view:item.split:0
+#: field:item.split.line,item_id:0
+msgid "Item Split"
+msgstr "Item Split"
+
+#. module: pawnshop
+#: selection:pawn.rule,length_month:0
+msgid "6 months"
+msgstr "6 เดือน"
+
+#. module: pawnshop
+#: model:ir.actions.act_window,name:pawnshop.action_item_property
+#: model:ir.ui.menu,name:pawnshop.menu_item_property
+#: view:item.property:0
+#: field:item.property.line,property_id:0
+msgid "Item Property"
+msgstr "คุณสมบัติของจำนำ"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "$F{monthly_interest}"
+msgstr "$F{monthly_interest}"
+
+#. module: pawnshop
+#: view:pawn.order.renew:0
+msgid "+/- Pawn Amount"
+msgstr "+/- จำนวนเงินจำนำ"
+
+#. module: pawnshop
+#: field:res.partner,card_number:0
+msgid "ID Number"
+msgstr "หมายเลข ID"
+
+#. module: pawnshop
+#: model:ir.model,name:pawnshop.model_product_product_line
+msgid "product.product.line"
+msgstr "product.product.line"
+
+#. module: pawnshop
+#: field:pawn.actual.interest,discount:0
+#: field:pawn.order.pay.interest,discount:0
+#: field:pawn.order.redeem,discount:0
+#: field:pawn.order.renew,discount:0
+msgid "Discount"
+msgstr "Discount"
+
+#. module: pawnshop
+#: view:pawn.config.settings:0
+#: view:pawn.order:0
+msgid "Expire"
+msgstr "หมดอายุ"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "ที่อยู่ (Address)"
+msgstr "ที่อยู่ (Address)"
+
+#. module: pawnshop
+#: field:pawn.accrued.interest,parent_state:0
+#: field:pawn.actual.interest,parent_state:0
+msgid "State of Pawn Order"
+msgstr "State of Pawn Order"
+
+#. module: pawnshop
+#: field:pawn.accrued.interest,active:0
+#: field:product.category.property,active:0
+msgid "Active"
+msgstr "ใช้งาน"
+
+#. module: pawnshop
+#: code:addons/pawnshop/wizard/pawn_item_location_status.py:52
+#, python-format
+msgid "Selected item(s) are not in 'For Sales' status"
+msgstr "ของที่เลือกไม่ได้อยู่ในสถานะ 'เพื่อขาย'"
+
+#. module: pawnshop
+#: field:pawn.rule,length_month:0
+msgid "Months"
+msgstr "เดือน"
+
+#. module: pawnshop
+#: model:product.category,name:pawnshop.product_categ_gem_2
+msgid "เครื่องประดับพลอย"
+msgstr "เครื่องประดับพลอย"
+
+#. module: pawnshop
+#: view:pawn.config.settings:0
+#: field:pawn.config.settings,property_journal_actual_interest:0
+#: field:pawn.order,property_journal_actual_interest:0
+msgid "Actual Interest Journal"
+msgstr "Actual Interest Journal"
+
+#. module: pawnshop
+#: help:account.journal,profit_center:0
+#: help:account.move.line,profit_center:0
+msgid "Profit Center will be posted in account move line"
+msgstr "Profit Center will be posted in account move line"
+
+#. module: pawnshop
+#: model:ir.actions.act_window,name:pawnshop.action_pawn_shop_form
+#: model:ir.ui.menu,name:pawnshop.menu_pawn_shop
+#: view:pawn.shop:0
+#: field:res.users,pawn_shop_ids:0
+msgid "Pawn Shops"
+msgstr "โรงรับจำนำ"
+
+#. module: pawnshop
+#: model:ir.actions.report.xml,name:pawnshop.pawn_receipt_form
+msgid "Receipt"
+msgstr "ใบเสร็จรับเงิน"
+
+#. module: pawnshop
+#: model:ir.ui.menu,name:pawnshop.menu_pawn_for_sale
+msgid "Sales"
+msgstr "ขาย"
+
+#. module: pawnshop
+#: selection:pawn.rule,length_day:0
+msgid "10 days"
+msgstr "10 วัน"
+
+#. module: pawnshop
+#: model:ir.model,name:pawnshop.model_account_invoice
+msgid "Invoice"
+msgstr "ใบแจ้งหนี้"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "partner_id/card_type"
+msgstr "partner_id/card_type"
+
+#. module: pawnshop
+#: field:res.partner,birth_date:0
+msgid "Birth Date"
+msgstr "เกิดวันที่"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "partner_id/expiry_date"
+msgstr "partner_id/expiry_date"
+
+#. module: pawnshop
+#: field:pawn.order,create_uid:0
+msgid "Responsible"
+msgstr "รับผิดชอบ"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "ปี (Years)"
+msgstr "ปี (Years)"
+
+#. module: pawnshop
+#: field:res.partner,issue_date:0
+msgid "Date of Issue"
+msgstr "วันที่ออก"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "ลายมือชื่อผู้จำนำ หรือ ลายพิมพ์นิ้วมือผู้จำนำ (Customer 's Fingerprint)"
+msgstr "ลายมือชื่อผู้จำนำ หรือ ลายพิมพ์นิ้วมือผู้จำนำ (Customer 's Fingerprint)"
+
+#. module: pawnshop
+#: code:addons/pawnshop/wizard/item_split.py:69
+#, python-format
+msgid "Sum of quantity must equal to the original quantity"
+msgstr "Sum of quantity must equal to the original quantity"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "ตั๋วรับจำนำ"
+msgstr "ตั๋วรับจำนำ"
+
+#. module: pawnshop
+#: sql_constraint:pawn.order:0
+msgid "Pawn Order Reference must be unique per Pawn Shop!"
+msgstr "Pawn Order Reference must be unique per Pawn Shop!"
+
+#. module: pawnshop
+#: field:item.split.line,product_qty:0
+#: field:product.product,product_qty:0
+msgid "Item Quantity"
+msgstr "จำนวนของ"
+
+#. module: pawnshop
+#: model:ir.model,name:pawnshop.model_product_product
+#: field:item.split,item_id:0
+msgid "Product"
+msgstr "สินค้า"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+#: report:pawn.receipt.form:0
+msgid "เลขที่"
+msgstr "เลขที่"
+
+#. module: pawnshop
+#: model:ir.actions.act_window,name:pawnshop.action_item_create_inovice
+msgid "To Sales invoice"
+msgstr "ออกใบขาย"
+
+#. module: pawnshop
+#: view:product.product:0
+msgid "Group by..."
+msgstr "จัดกลุ่มโดย..."
+
+#. module: pawnshop
+#: report:pawn.receipt.form:0
+msgid "กรณีชำระเงินด้วยเช็คใบเสร็จจะสมบูรณ์เมื่อเช็คได้เรียกเก็บเงินจากธนาคารได้ครบถ้วนแล้ว"
+msgstr "กรณีชำระเงินด้วยเช็คใบเสร็จจะสมบูรณ์เมื่อเช็คได้เรียกเก็บเงินจากธนาคารได้ครบถ้วนแล้ว"
+
+#. module: pawnshop
+#: model:ir.actions.act_window,help:pawnshop.action_pawn_assets
+#: model:ir.actions.act_window,help:pawnshop.action_pawn_items
+msgid "<p class=\"oe_view_nocontent_create\">\n"
+"                Click to define a new Pawn Item.\n"
+"              </p>\n"
+"            "
+msgstr "<p class=\"oe_view_nocontent_create\">\n"
+"                คลิกเพื่อสร้างของจำนำ.\n"
+"              </p>\n"
+"            "
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "สิ่ง (Pieces)"
+msgstr "สิ่ง (Pieces)"
+
+#. module: pawnshop
+#: model:ir.actions.act_window,name:pawnshop.action_asset_move_out_kanban
+#: model:ir.ui.menu,name:pawnshop.menu_action_asset_move_out_kanban
+msgid "Outgoing Asset"
+msgstr "จ่ายออกสินทรัพย์"
+
+#. module: pawnshop
+#: field:pawn.order,address:0
+msgid "Address"
+msgstr "ที่อยู่"
+
+#. module: pawnshop
+#: view:res.partner:0
+msgid "Nationality"
+msgstr "สัญชาติ"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "เล่มที่"
+msgstr "เล่มที่"
+
+#. module: pawnshop
+#: selection:pawn.config.settings,default_interest_interval:0
+#: selection:pawn.order,interest_interval:0
+msgid "15th of month"
+msgstr "15 ของเดือน"
+
+#. module: pawnshop
+#: view:pawn.order:0
+msgid "Pawn Order Lines"
+msgstr "รายการในตั๋วจำนำ"
+
+#. module: pawnshop
+#: selection:pawn.order,card_type:0
+#: selection:res.partner,card_type:0
+msgid "Driving License ID"
+msgstr "หมายเลขใบขับขี่"
+
+#. module: pawnshop
+#: view:pawn.config.settings:0
+#: field:pawn.order,property_account_interest_discount:0
+msgid "Discount Account"
+msgstr "Discount Account"
+
+#. module: pawnshop
+#: field:pawn.line.property,order_line_id:0
+msgid "Item"
+msgstr "ของ"
+
+#. module: pawnshop
+#: model:product.category,name:pawnshop.product_categ_fashion
+msgid "สินค้าแฟชั่น"
+msgstr "สินค้าแฟชั่น"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+#: report:pawn.receipt.form:0
+msgid "$F{address}"
+msgstr "$F{address}"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+#: report:pawn.receipt.form:0
+msgid "$F{product_qty}"
+msgstr "$F{product_qty}"
+
+#. module: pawnshop
+#: model:ir.actions.act_window,name:pawnshop.action_config_pawn_account
+msgid "Pawnshop Accounting"
+msgstr "บัญชีโรงรับจำนำ"
+
+#. module: pawnshop
+#: report:pawn.receipt.form:0
+msgid "เงินสด"
+msgstr "เงินสด"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "ชนานุเคราะห์"
+msgstr "ชนานุเคราะห์"
+
+#. module: pawnshop
+#: report:pawn.receipt.form:0
+msgid "partner_id/address_full"
+msgstr "partner_id/address_full"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "amount_pawned"
+msgstr "amount_pawned"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "order_line/product_qty"
+msgstr "order_line/product_qty"
+
+#. module: pawnshop
+#: model:product.category,name:pawnshop.product_categ_misc
+msgid "เบ็ดเตล็ด"
+msgstr "เบ็ดเตล็ด"
+
+#. module: pawnshop
+#: model:res.groups,name:pawnshop.group_pawn_manager
+msgid "Manager"
+msgstr "ผู้จัดการ"
+
+#. module: pawnshop
+#: model:ir.actions.act_window,help:pawnshop.action_asset_move_kanban
+#: model:ir.actions.act_window,help:pawnshop.action_asset_move_out_kanban
+msgid "<p class=\"oe_view_nocontent_create\">\n"
+"                Click to define a new Pawn Asset.\n"
+"              </p>\n"
+"            "
+msgstr "<p class=\"oe_view_nocontent_create\">\n"
+"                คลิกเพื่อสร้างสินทรัพย์ใหม่.\n"
+"              </p>\n"
+"            "
+
+#. module: pawnshop
+#: help:pawn.order,name:0
+msgid "Cross shop reference number"
+msgstr "Cross shop reference number"
+
+#. module: pawnshop
+#: field:pawn.order,amount_pawned:0
+msgid "Pawned Amount"
+msgstr "จำนำเงินรับจำนำ"
+
+#. module: pawnshop
+#: view:pawn.order.pay.interest:0
+#: view:pawn.order.redeem:0
+#: view:pawn.order.renew:0
+msgid "- Discount"
+msgstr "- ส่วนลด"
+
+#. module: pawnshop
+#: code:addons/pawnshop/pawn.py:905
+#, python-format
+msgid "Accounting Error!"
+msgstr "Accounting Error!"
+
+#. module: pawnshop
+#: view:pawn.line.property:0
+msgid "Pawn Line Property Lines"
+msgstr "Pawn Line Property Lines"
+
+#. module: pawnshop
+#: help:pawn.order,state:0
+#: help:pawn.order,user_id:0
+msgid "The status of the pawn order"
+msgstr "สถานะตั๋วจำนำ"
+
+#. module: pawnshop
+#: view:product.product:0
+#: field:product.product,line_ids:0
+msgid "Item Detail"
+msgstr "รายละเอียดของจำนำ"
+
+#. module: pawnshop
+#: report:pawn.receipt.form:0
+msgid "จำนวนเงิน (บาท)"
+msgstr "จำนวนเงิน (บาท)"
+
+#. module: pawnshop
+#: code:addons/pawnshop/res_partner.py:95
+#, python-format
+msgid "Citizen ID must be 13 digits"
+msgstr "Citizen ID must be 13 digits"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "$F{name}"
+msgstr "$F{name}"
+
+#. module: pawnshop
+#: code:addons/pawnshop/pawn.py:624
+#, python-format
+msgid "In order to delete a pawn order, you must cancel it first."
+msgstr "เพื่อลบตั๋วจำนำคุณต้องยกเลิกมันเสียก่อน"
+
+#. module: pawnshop
+#: field:pawn.order,company_id:0
+#: field:pawn.order.line,company_id:0
+#: field:pawn.shop,company_id:0
+msgid "Company"
+msgstr "ชื่อบริษัท"
+
+#. module: pawnshop
+#: field:res.partner,address_full:0
+msgid "Full Address"
+msgstr "ที่อยู่เต็ม"
+
+#. module: pawnshop
+#: selection:product.product,state:0
+msgid "For Sale"
+msgstr "สำหรับขาย"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "9/423-9/424 ถนนรามอินทรา แขวงอนุสาวรีย์ เขตบางเขน กรุงเทพมหานคร 10220 โทร. 02-552-1530"
+msgstr "9/423-9/424 ถนนรามอินทรา แขวงอนุสาวรีย์ เขตบางเขน กรุงเทพมหานคร 10220 โทร. 02-552-1530"
+
+#. module: pawnshop
+#: model:product.category,name:pawnshop.product_categ_gold
+msgid "ทอง"
+msgstr "ทอง"
+
+#. module: pawnshop
+#: model:ir.actions.act_window,name:pawnshop.action_borrow_item
+#: view:pawn.asset.to.for.sale:0
+#: view:pawn.item.create.invoice:0
+#: view:pawn.item.to.borrowed:0
+#: view:pawn.item.to.for.sale:0
+msgid "Borrow Items"
+msgstr "ยืมของ"
+
+#. module: pawnshop
+#: field:pawn.order,message_ids:0
+msgid "Messages"
+msgstr "ข้อความ"
+
+#. module: pawnshop
+#: code:addons/pawnshop/pawn.py:790
+#: code:addons/pawnshop/pawn.py:820
+#: code:addons/pawnshop/pawn.py:825
+#: code:addons/pawnshop/pawn.py:1127
+#: code:addons/pawnshop/wizard/pawn_item_create_invoice.py:75
+#: code:addons/pawnshop/wizard/pawn_item_create_invoice.py:84
+#: code:addons/pawnshop/wizard/pawn_item_create_invoice.py:110
+#, python-format
+msgid "Error!"
+msgstr "ข้อผิดพลาด!"
+
+#. module: pawnshop
+#: field:pawn.order,user_id:0
+msgid "Officer"
+msgstr "เจ้าหน้าที่"
+
+#. module: pawnshop
+#: field:pawn.order,is_interest_updated:0
+msgid "Interested Updated"
+msgstr "คำนวณดอกเบี้ยแล้ว"
+
+#. module: pawnshop
+#: selection:pawn.order,state:0
+#: selection:pawn.order.line,state:0
+#: selection:product.product,state:0
+msgid "Cancelled"
+msgstr "ยกเลิกแล้ว"
+
+#. module: pawnshop
+#: field:product.product,location_status:0
+msgid "Location Status"
+msgstr "สถานะสถานที่"
+
+#. module: pawnshop
+#: field:pawn.order,pawn_shop_id:0
+#: field:product.template,pawn_shop_id:0
+msgid "Shop"
+msgstr "โรงจำนำ"
+
+#. module: pawnshop
+#: sql_constraint:product.category.property:0
+msgid "Duplicated Property!"
+msgstr "ทรัพย์สินซ้ำ!"
+
+#. module: pawnshop
+#: field:pawn.order,last_interest_date:0
+msgid "Last Interest Date"
+msgstr "วันที่ดอกเบี้ยล่าสุด"
+
+#. module: pawnshop
+#: field:pawn.order,book:0
+msgid "Book"
+msgstr "Book"
+
+#. module: pawnshop
+#: code:addons/pawnshop/wizard/pawn_item_create_invoice.py:111
+#, python-format
+msgid "Please define sales journal for this company: \"%s\" (id:%d)."
+msgstr "Please define sales journal for this company: \"%s\" (id:%d)."
+
+#. module: pawnshop
+#: view:pawn.order:0
+msgid "Total Pawned Amount"
+msgstr "จำนวนเงินรับจำนำรวม"
+
+#. module: pawnshop
+#: view:pawn.asset.to.for.sale:0
+#: view:pawn.item.create.invoice:0
+#: view:pawn.item.to.borrowed:0
+#: view:pawn.item.to.for.sale:0
+msgid "Confirm"
+msgstr "ยืนยัน"
+
+#. module: pawnshop
+#: field:pawn.accrued.interest,interest_amount:0
+#: field:pawn.actual.interest,interest_amount:0
+msgid "Interest Amount"
+msgstr "Interest Amount"
+
+#. module: pawnshop
+#: report:pawn.receipt.form:0
+msgid "$F{date_invoice}"
+msgstr "$F{date_invoice}"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "บาท (Bath)"
+msgstr "บาท (Bath)"
+
+#. module: pawnshop
+#: report:pawn.receipt.form:0
+msgid "เลขที่ 9/423-9/424 ถนนรามอินทรา แขวงอนุสาวรีย์ เขตบางเขน กรุงเทพมหานคร 10220"
+msgstr "เลขที่ 9/423-9/424 ถนนรามอินทรา แขวงอนุสาวรีย์ เขตบางเขน กรุงเทพมหานคร 10220"
+
+#. module: pawnshop
+#: field:pawn.order,message_follower_ids:0
+msgid "Followers"
+msgstr "ผู้ติดตาม"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "order_line/product_uom/name"
+msgstr "order_line/product_uom/name"
+
+#. module: pawnshop
+#: model:ir.model,name:pawnshop.model_product_category
+#: field:product.category.property,category_id:0
+msgid "Product Category"
+msgstr "หมวดหมู่สินค้า"
+
+#. module: pawnshop
+#: report:pawn.receipt.form:0
+msgid "ใบเสร็จรับเงิน"
+msgstr "ใบเสร็จรับเงิน"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "ลายมือชื่อผู้รับจำนำ"
+msgstr "ลายมือชื่อผู้รับจำนำ"
+
+#. module: pawnshop
+#: model:ir.ui.menu,name:pawnshop.menu_pawnshop_config
+msgid "Configuration"
+msgstr "การตั้งค่า"
+
+#. module: pawnshop
+#: field:pawn.order,date_expired:0
+msgid "Expired Date"
+msgstr "วันหมดอายุ"
+
+#. module: pawnshop
+#: field:res.partner,expiry_date:0
+msgid "Date of Expiry"
+msgstr "วันที่หมดอายุ"
+
+#. module: pawnshop
+#: view:pawn.config.settings:0
+msgid "Configure Accounting"
+msgstr "กำหนดค่าบัญชี"
+
+#. module: pawnshop
+#: field:product.product.line,parent_id:0
+msgid "Pawn Asset Reference"
+msgstr "อ้างอิงนสินทรัพย์จำนำ"
+
+#. module: pawnshop
+#: field:pawn.line.property.line,property_id:0
+#: view:pawn.order:0
+#: field:pawn.order.line.properties,property_id:0
+#: field:product.category.property,property_id:0
+msgid "Property"
+msgstr "คุณสมบัติ"
+
+#. module: pawnshop
+#: view:product.product:0
+#: field:product.product,price_pawned:0
+msgid "Pawned Price"
+msgstr "ราคารับจำนำ"
+
+#. module: pawnshop
+#: field:pawn.item.create.invoice,item_ids:0
+msgid "Invoices"
+msgstr "ใบแจ้งหนี้"
+
+#. module: pawnshop
+#: field:pawn.line.property,image:0
+#: field:pawn.order,image:0
+#: field:pawn.order.line,image:0
+msgid "Image"
+msgstr "Image"
+
+#. module: pawnshop
+#: report:pawn.receipt.form:0
+msgid "ลงวันที่"
+msgstr "ลงวันที่"
+
+#. module: pawnshop
+#: view:pawn.order:0
+msgid "Total Discount"
+msgstr "Total Discount"
+
+#. module: pawnshop
+#: help:pawn.order,amount_total:0
+msgid "The total amount"
+msgstr "จำนวนเงินทั้งหมด"
+
+#. module: pawnshop
+#: code:addons/pawnshop/wizard/pawn_item_create_invoice.py:140
+#, python-format
+msgid "Advance Invoice"
+msgstr "Advance Invoice"
+
+#. module: pawnshop
+#: model:ir.model,name:pawnshop.model_pawn_line_property_line
+msgid "Item Property Lines"
+msgstr "รายการของจำนำ"
+
+#. module: pawnshop
+#: view:pawn.order:0
+msgid "Pawn Order "
+msgstr "ตั๋วจำนำ "
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "ต้องนำบัตรประชาชนมาแสดงทุกครั้ง"
+msgstr "ต้องนำบัตรประชาชนมาแสดงทุกครั้ง"
+
+#. module: pawnshop
+#: selection:product.product,state:0
+msgid "Draft"
+msgstr "ร่าง"
+
+#. module: pawnshop
+#: model:product.category,name:pawnshop.product_categ_pen
+msgid "ปากกา"
+msgstr "ปากกา"
+
+#. module: pawnshop
+#: model:ir.model,name:pawnshop.model_pawn_actual_interest
+msgid "Actual Interest"
+msgstr "ดอกเบี้ยจริง"
+
+#. module: pawnshop
+#: code:addons/pawnshop/pawn.py:820
+#, python-format
+msgid "No pawn asset associated with pawn order %s"
+msgstr "No pawn asset associated with pawn order %s"
+
+#. module: pawnshop
+#: view:pawn.order:0
+#: field:pawn.order,extended:0
+#: view:product.product:0
+#: field:product.product,extended:0
+msgid "Extended"
+msgstr "เล้า"
+
+#. module: pawnshop
+#: view:pawn.order.renew:0
+msgid "Please confirm renew amount as following,"
+msgstr "กรุณายืนยันจำนวนเงินการต่ออายุดังต่อไปนี้"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "รวม (Total)"
+msgstr "รวม (Total)"
+
+#. module: pawnshop
+#: report:pawn.receipt.form:0
+msgid "$F{amount_total}"
+msgstr "$F{amount_total}"
+
+#. module: pawnshop
+#: model:res.groups,name:pawnshop.group_pawn_user
+msgid "User"
+msgstr "User"
+
+#. module: pawnshop
+#: report:pawn.receipt.form:0
+msgid "ได้รับเงินจาก"
+msgstr "ได้รับเงินจาก"
+
+#. module: pawnshop
+#: view:pawn.order:0
+msgid "Book:"
+msgstr "Book:"
+
+#. module: pawnshop
+#: model:product.category,name:pawnshop.product_categ_gold_2
+msgid "ทองรูปพรรณ"
+msgstr "ทองรูปพรรณ"
+
+#. module: pawnshop
+#: report:pawn.receipt.form:0
+msgid "สาขา"
+msgstr "สาขา"
+
+#. module: pawnshop
+#: field:pawn.order.redeem,redeem_amount:0
+msgid "Final Redeem"
+msgstr "ยอดค่าไถ่ถอน"
+
+#. module: pawnshop
+#: selection:pawn.rule,length_month:0
+msgid "4 months"
+msgstr "4 เดือน"
+
+#. module: pawnshop
+#: code:addons/pawnshop/wizard/pawn_order_renew.py:137
+#: model:ir.actions.act_window,name:pawnshop.pawn_form_action
+#: model:ir.ui.menu,name:pawnshop.menu_pawn_form_action
+#, python-format
+msgid "Pawn Orders"
+msgstr "ตั๋วจำนำ"
+
+#. module: pawnshop
+#: code:addons/pawnshop/res_partner.py:101
+#, python-format
+msgid "Card Number of selected type can contain only number"
+msgstr "หมายเลขบัตรต้องเป็นตัวเลขเท่านั้น"
+
+#. module: pawnshop
+#: model:ir.actions.act_window,name:pawnshop.action_pawn_rule_form
+#: model:ir.ui.menu,name:pawnshop.menu_pawn_rule
+#: view:pawn.rule:0
+msgid "Pawn Rules"
+msgstr "กฎการจำนำ"
+
+#. module: pawnshop
+#: model:ir.actions.act_window,name:pawnshop.action_item_split
+#: model:ir.model,name:pawnshop.model_item_split
+msgid "Split Item"
+msgstr "Split Item"
+
+#. module: pawnshop
+#: model:ir.model,name:pawnshop.model_account_move_line
+msgid "Journal Items"
+msgstr "รายการบันทึกบัญชี"
+
+#. module: pawnshop
+#: code:addons/pawnshop/pawn.py:1127
+#, python-format
+msgid "Quantity can not be zero!"
+msgstr "จำนวนไม่สามารถเป็นศูนย์"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "ได้นำ (Details)"
+msgstr "ได้นำ (Details)"
+
+#. module: pawnshop
+#: view:item.split:0
+#: view:pawn.line.property:0
+msgid "Close"
+msgstr "ปิด"
+
+#. module: pawnshop
+#: selection:pawn.rule,interest_type:0
+msgid "Interest Rate By Amount"
+msgstr "อัตราดอกเบี้ยตามจำนวนเงิน"
+
+#. module: pawnshop
+#: help:product.product,price_pawned:0
+msgid "Price pawned"
+msgstr "Price pawned"
+
+#. module: pawnshop
+#: report:pawn.receipt.form:0
+msgid "$F{price_subtotal}"
+msgstr "$F{price_subtotal}"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "$F{issue_date}"
+msgstr "$F{issue_date}"
+
+#. module: pawnshop
+#: help:product.product,price_estimated:0
+msgid "Price estimated"
+msgstr "Price estimated"
+
+#. module: pawnshop
+#: view:product.product:0
+msgid "describe the item characteristics..."
+msgstr "describe the item characteristics..."
+
+#. module: pawnshop
+#: field:pawn.order,buddha_year:0
+msgid "Buddha Year"
+msgstr "Buddha Year"
+
+#. module: pawnshop
+#: view:pawn.order.pay.interest:0
+#: view:pawn.order.redeem:0
+#: view:pawn.order.renew:0
+msgid "+ Interest Amount"
+msgstr "+ จำนวนดอกเบี้ย"
+
+#. module: pawnshop
+#: help:pawn.rule,interest_type:0
+msgid "Determine type of interest to be used for calculation."
+msgstr "กำหนดประเภทของดอกเบี้ยที่จะใช้ในการคำนวณ"
+
+#. module: pawnshop
+#: field:product.product.line,price_pawned:0
+msgid "Pawn Price"
+msgstr "Pawn Price"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "date_order"
+msgstr "date_order"
+
+#. module: pawnshop
+#: field:item.split.line,description:0
+#: field:pawn.order.line,name:0
+#: view:product.product:0
+#: field:product.product,item_description:0
+#: field:product.product.line,description:0
+msgid "Description"
+msgstr "รายละเอียด"
+
+#. module: pawnshop
+#: model:ir.model,name:pawnshop.model_item_split_line
+msgid "Item Split Line"
+msgstr "Item Split Line"
+
+#. module: pawnshop
+#: selection:pawn.config.settings,default_interest_interval:0
+#: selection:pawn.order,interest_interval:0
+msgid "End of month"
+msgstr "สิ้นเดือน"
+
+#. module: pawnshop
+#: view:res.partner:0
+msgid "Internal Notes"
+msgstr "หมายเหตุภายใน"
+
+#. module: pawnshop
+#: help:pawn.order,image_small:0
+#: help:pawn.order.line,image_small:0
+msgid "Small-sized image of the product. It is automatically resized as a 64x64px image, with aspect ratio preserved. Use this field anywhere a small image is required."
+msgstr "Small-sized image of the product. It is automatically resized as a 64x64px image, with aspect ratio preserved. Use this field anywhere a small image is required."
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "book"
+msgstr "book"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+#: report:pawn.receipt.form:0
+msgid "$F{id}"
+msgstr "$F{id}"
+
+#. module: pawnshop
+#: view:product.product:0
+#: field:product.product.line,item_id:0
+msgid "Pawn Item"
+msgstr "ของจำนำ"
+
+#. module: pawnshop
+#: field:pawn.item.create.invoice,partner_id:0
+#: field:pawn.order,partner_id:0
+msgid "Customer"
+msgstr "ลูกค้า"
+
+#. module: pawnshop
+#: model:ir.model,name:pawnshop.model_pawn_config_settings
+msgid "pawn.config.settings"
+msgstr "pawn.config.settings"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "อายุ (Age)"
+msgstr "อายุ (Age)"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "monthly_interest"
+msgstr "monthly_interest"
+
+#. module: pawnshop
+#: model:ir.model,name:pawnshop.model_product_template
+msgid "Product Template"
+msgstr "แม่แบบสินค้า"
+
+#. module: pawnshop
+#: model:ir.module.category,description:pawnshop.module_category_pawn_management
+msgid "Helps you manage your pawn-related processes"
+msgstr "ช่วยให้คุณจัดการกระบวนการที่เกี่ยวข้องกับการจำนำ"
+
+#. module: pawnshop
+#: model:product.category,name:pawnshop.product_categ_gold_3
+msgid "ทองเค"
+msgstr "ทองเค"
+
+#. module: pawnshop
+#: field:pawn.accrued.interest,move_id:0
+#: field:pawn.actual.interest,move_id:0
+msgid "Account Entry"
+msgstr "Account Entry"
+
+#. module: pawnshop
+#: model:ir.model,name:pawnshop.model_item_property_line
+msgid "Item Property Selections"
+msgstr "เลือกรายการคุณสมบัติของจำนำ"
+
+#. module: pawnshop
+#: field:product.location.status,sequence:0
+msgid "Sequence"
+msgstr "Sequence"
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "age"
+msgstr "age"
+
+#. module: pawnshop
+#: selection:pawn.order,state:0
+#: selection:pawn.order.line,state:0
+#: selection:product.product,state:0
+msgid "Pawned"
+msgstr "จำนำแล้ว"
+
+#. module: pawnshop
+#: help:pawn.order,image_medium:0
+#: help:pawn.order.line,image_medium:0
+msgid "Medium-sized image of the product. It is automatically resized as a 128x128px image, with aspect ratio preserved, only when the image exceeds one of those sizes. Use this field in form views or some kanban views."
+msgstr "Medium-sized image of the product. It is automatically resized as a 128x128px image, with aspect ratio preserved, only when the image exceeds one of those sizes. Use this field in form views or some kanban views."
+
+#. module: pawnshop
+#: report:pawn.order.form:0
+msgid "pawn_shop_id/name"
+msgstr "pawn_shop_id/name"
+
+#. module: pawnshop
+#: view:pawn.order:0
+msgid "Previous Orders"
+msgstr "ตั๋วก่อนหน้า"
+
+#. module: pawnshop
+#: view:pawn.item.to.borrowed:0
+msgid "When items are borrowed, their location status will be changed to \"Borrowed Items\"\n"
+"                    	It will be moved from menu \"Items for Sale\" to \"Borrowed Items\""
+msgstr "When items are borrowed, their location status will be changed to \"Borrowed Items\"\n"
+"                    	It will be moved from menu \"Items for Sale\" to \"Borrowed Items\""
+
+#. module: pawnshop
+#: help:pawn.config.settings,default_interest_interval:0
+#: help:pawn.order,interest_interval:0
+msgid "Specify how often interest journal will be created."
+msgstr "Specify how often interest journal will be created."
+
+#. module: pawnshop
+#: help:pawn.accrued.interest,active:0
+msgid "If not active, journal will not be created"
+msgstr "If not active, journal will not be created"
+
+#. module: pawnshop
+#: field:pawn.rule,interest_fixed_rate:0
+msgid "Fixed Percentage"
+msgstr "ร้อยละคงที่"
+

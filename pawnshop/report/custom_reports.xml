@@ -1,0 +1,129 @@
+<?xml version="1.0"?>
+<openerp>
+<data>
+
+
+    <report string="TEST"
+        model="pawn.order"
+        auto="True"
+        name="TEST"
+        rml="pawnshop/report/test.jrxml"
+        id="test" 
+        menu="True"
+        header="False" 
+        />    
+    <record id="test" model="ir.actions.report.xml">
+        <field name="jasper_report">True</field>
+        <field name="jasper_output">pdf</field>
+    </record>
+
+    <report string="Pawn Ticket"
+        model="pawn.order"
+        auto="True"
+        name="pawn.order.form"
+        rml="pawnshop/report/pawn_order_form.jrxml"
+        id="pawn_order_form_1" 
+        menu="True"
+        header="False" 
+        />    
+    <record id="pawn_order_form_1" model="ir.actions.report.xml">
+        <field name="jasper_report">True</field>
+        <field name="jasper_output">pdf</field>
+    </record>
+
+    <report string="Receipt"
+        model="account.invoice"
+        auto="True"
+        name="pawn.receipt.form"
+        rml="pawnshop/report/pawn_receipt_form.jrxml"
+        id="pawn_receipt_form" 
+        menu="True"
+        header="False" 
+        />    
+    <record id="pawn_receipt_form" model="ir.actions.report.xml">
+        <field name="jasper_report">True</field>
+        <field name="jasper_output">pdf</field>
+    </record>
+
+    <record id="pawn_jor6_report" model="ir.actions.report.xml">
+        <field name="name">Jor6 Report</field>
+        <field name="type">ir.actions.report.xml</field>
+        <field name="model">pawn.order</field>
+        <field name="report_name">pawn_jor6_report</field>
+        <field name="report_rml">pawnshop/report/pawn_jor6_report.jrxml</field>
+        <field name="report_type">pdf</field>
+        <field name="jasper_report">True</field>
+        <field name="jasper_output">pdf</field>
+    </record>    
+
+    <record id="pawn_jor71_report" model="ir.actions.report.xml">
+        <field name="name">Jor7-1 Report</field>
+        <field name="type">ir.actions.report.xml</field>
+        <field name="model">pawn.order</field>
+        <field name="report_name">pawn_jor71_report</field>
+        <field name="report_rml">pawnshop/report/pawn_jor71_report.jrxml</field>
+        <field name="report_type">pdf</field>
+        <field name="jasper_report">True</field>
+        <field name="jasper_output">pdf</field>
+    </record>    
+
+    <record id="pawn_jor72_report" model="ir.actions.report.xml">
+        <field name="name">Jor7-2 Report</field>
+        <field name="type">ir.actions.report.xml</field>
+        <field name="model">pawn.order</field>
+        <field name="report_name">pawn_jor72_report</field>
+        <field name="report_rml">pawnshop/report/pawn_jor72_report.jrxml</field>
+        <field name="report_type">pdf</field>
+        <field name="jasper_report">True</field>
+        <field name="jasper_output">pdf</field>
+    </record>    
+
+    <record id="pawn_op_cash_report" model="ir.actions.report.xml">
+        <field name="name">Operation Cash Report</field>
+        <field name="type">ir.actions.report.xml</field>
+        <field name="model">pawn.order</field>
+        <field name="report_name">pawn_op_cash_report</field>
+        <field name="report_rml">pawnshop/report/pawn_op_cash_report.jrxml</field>
+        <field name="report_type">pdf</field>
+        <field name="jasper_report">True</field>
+        <field name="jasper_output">pdf</field>
+    </record>    
+
+    <record id="pawn_wh_cash_report" model="ir.actions.report.xml">
+        <field name="name">Warehouse Cash Report</field>
+        <field name="type">ir.actions.report.xml</field>
+        <field name="model">pawn.order</field>
+        <field name="report_name">pawn_wh_cash_report</field>
+        <field name="report_rml">pawnshop/report/pawn_wh_cash_report.jrxml</field>
+        <field name="report_type">pdf</field>
+        <field name="jasper_report">True</field>
+        <field name="jasper_output">pdf</field>
+    </record>    
+
+    <record id="pawn_daily_report" model="ir.actions.report.xml">
+        <field name="name">Daily Report</field>
+        <field name="type">ir.actions.report.xml</field>
+        <field name="model">pawn.order</field>
+        <field name="report_name">pawn_daily_report</field>
+        <field name="report_rml">pawnshop/report/pawn_daily_report.jrxml</field>
+        <field name="report_type">pdf</field>
+        <field name="jasper_report">True</field>
+        <field name="jasper_output">pdf</field>
+    </record>    
+    
+    <report string="Sales Receipt"
+        model="account.voucher"
+        auto="True"
+        name="pawn.sale.receipt.form"
+        rml="pawnshop/report/pawn_sale_receipt_form.jrxml"
+        id="pawn_sale_receipt_form" 
+        menu="True"
+        header="False" 
+        />    
+    <record id="pawn_sale_receipt_form" model="ir.actions.report.xml">
+        <field name="jasper_report">True</field>
+        <field name="jasper_output">pdf</field>
+    </record>
+    
+</data>
+</openerp>

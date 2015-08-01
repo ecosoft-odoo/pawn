@@ -1,0 +1,562 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="pawn_jor71_report" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="2.000000000000008"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="75"/>
+	<style name="table" lineSpacing="Single">
+		<box topPadding="0" leftPadding="2" bottomPadding="0" rightPadding="2">
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="detail" lineSpacing="Single">
+		<box topPadding="0" leftPadding="2" bottomPadding="0" rightPadding="2">
+			<pen lineWidth="1.0" lineColor="#000000"/>
+			<topPen lineWidth="0.25"/>
+			<leftPen lineWidth="0.0"/>
+			<bottomPen lineWidth="0.0"/>
+			<rightPen lineWidth="0.0"/>
+		</box>
+	</style>
+	<style name="bk_table" mode="Transparent" backcolor="#F0F8FF" lineSpacing="Single">
+		<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+			<topPen lineWidth="0.0" lineColor="#000000"/>
+			<leftPen lineWidth="1.0"/>
+			<bottomPen lineWidth="1.0" lineColor="#000000"/>
+			<rightPen lineWidth="1.0"/>
+		</box>
+	</style>
+	<parameter name="pawn_shop_id" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="journal_id" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="period_id" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select a.id, journal_id, pawn_shop_id, history_period_id, num_order, redeem_num_order, expire_num_order,
+amount, redeem_amount, expire_amount,
+people, redeem_people, expire_people,
+ap.name as period_name, ps.name as shop_name, ps.full_address
+from
+(
+select (period.journal_id::varchar || period.pawn_shop_id::varchar || period.history_period_id::varchar)::int id,
+    period.journal_id, period.pawn_shop_id, period.history_period_id,
+    pawn.num_order num_order,
+    redeem.num_order redeem_num_order, expire.num_order expire_num_order,
+    pawn.amount amount,
+    redeem.amount redeem_amount, expire.amount expire_amount,
+    pawn.people people,
+    redeem.people redeem_people, expire.people expire_people
+from -- PAWN ORDER NORMAL
+	-- start
+	(select distinct journal_id, pawn_shop_id, psh.period_id history_period_id
+	from pawn_order pw
+	join pawn_status_history psh on psh.order_id = pw.id
+	order by history_period_id)
+	-- end
+	period
+left outer join -- PAWN
+	-- start
+	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order
+	from
+	(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order
+	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned
+	from pawn_order pw
+	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in
+	(select max(id) from pawn_status_history group by period_id, order_id)
+	where pw.state not in ('draft', 'cancel')
+	order by order_id, psh.period_id) a
+	where a.state = 'pawn'
+	group by journal_id, pawn_shop_id, period_id) amount
+	join
+	(select journal_id, pawn_shop_id, period_id, count(partner_id) people
+	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id
+	from pawn_order pw
+	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in
+	(select max(id) from pawn_status_history group by period_id, order_id)
+	where pw.state not in ('draft', 'cancel')) a
+	where a.state = 'pawn'
+	group by journal_id, pawn_shop_id, period_id) people
+	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id)
+	-- end
+	pawn
+    on period.journal_id = pawn.journal_id and period.pawn_shop_id = pawn.pawn_shop_id and period.history_period_id = pawn.period_id
+left outer join -- REDEEM
+	-- start
+	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order
+	from
+	(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order
+	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned
+	from pawn_order pw
+	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in
+	(select max(id) from pawn_status_history group by period_id, order_id)
+	where pw.state not in ('draft', 'cancel')
+	order by order_id, psh.period_id) a
+	where a.state = 'redeem'
+	group by journal_id, pawn_shop_id, period_id) amount
+	join
+	(select journal_id, pawn_shop_id, period_id, count(partner_id) people
+	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id
+	from pawn_order pw
+	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in
+	(select max(id) from pawn_status_history group by period_id, order_id)
+	where pw.state not in ('draft', 'cancel')) a
+	where a.state = 'redeem'
+	group by journal_id, pawn_shop_id, period_id) people
+	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id)
+	-- end
+	redeem
+    on period.journal_id = redeem.journal_id and period.pawn_shop_id = redeem.pawn_shop_id and period.history_period_id = redeem.period_id
+left outer join -- EXPIRE
+	-- start
+	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order
+	from
+	(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order
+	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned
+	from pawn_order pw
+	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in
+	(select max(id) from pawn_status_history group by period_id, order_id)
+	where pw.state not in ('draft', 'cancel')
+	order by order_id, psh.period_id) a
+	where a.state = 'expire'
+	group by journal_id, pawn_shop_id, period_id) amount
+	join
+	(select journal_id, pawn_shop_id, period_id, count(partner_id) people
+	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id
+	from pawn_order pw
+	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in
+	(select max(id) from pawn_status_history group by period_id, order_id)
+	where pw.state not in ('draft', 'cancel')) a
+	where a.state = 'expire'
+	group by journal_id, pawn_shop_id, period_id) people
+	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id)
+	-- end
+	expire
+    on period.journal_id = expire.journal_id and period.pawn_shop_id = expire.pawn_shop_id and period.history_period_id = expire.period_id
+)
+a
+join pawn_shop ps on ps.id = pawn_shop_id
+join account_period ap on ap.id = history_period_id
+where journal_id = $P{journal_id} and pawn_shop_id = $P{pawn_shop_id} and history_period_id = $P{period_id}]]>
+	</queryString>
+	<field name="id" class="java.lang.Integer"/>
+	<field name="journal_id" class="java.lang.Integer"/>
+	<field name="pawn_shop_id" class="java.lang.Integer"/>
+	<field name="history_period_id" class="java.lang.Integer"/>
+	<field name="num_order" class="java.lang.Number"/>
+	<field name="redeem_num_order" class="java.lang.Number"/>
+	<field name="expire_num_order" class="java.lang.Number"/>
+	<field name="amount" class="java.lang.Number"/>
+	<field name="redeem_amount" class="java.lang.Number"/>
+	<field name="expire_amount" class="java.lang.Number"/>
+	<field name="people" class="java.lang.Number"/>
+	<field name="redeem_people" class="java.lang.Number"/>
+	<field name="expire_people" class="java.lang.Number"/>
+	<field name="period_name" class="java.lang.String"/>
+	<field name="shop_name" class="java.lang.String"/>
+	<field name="full_address" class="java.lang.String"/>
+	<background>
+		<band height="555" splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="153" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="12" width="555" height="33"/>
+				<textElement textAlignment="Center" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="18" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[รายงานกิจการโรงรับจำนำ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="54" width="81" height="16"/>
+				<textElement verticalAlignment="Bottom" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[แบบ สง.601]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" x="0" y="77" width="555" height="27"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Monospaced" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="8" y="77" width="184" height="27"/>
+				<textElement verticalAlignment="Middle" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[ส่ง    อธิบดีกรมการปกครอง]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="357" y="77" width="92" height="27"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[วันที่]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="389" y="54" width="96" height="16"/>
+				<textElement verticalAlignment="Bottom" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[ประจำเดือน]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" x="0" y="104" width="555" height="49"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Monospaced" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="">
+				<reportElement stretchType="RelativeToTallestObject" x="105" y="108" width="144" height="27"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Monospaced" size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{shop_name}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="8" y="108" width="104" height="27"/>
+				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[โรงรับจำนำ]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="">
+				<reportElement stretchType="RelativeToTallestObject" x="248" y="108" width="303" height="45"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Monospaced" size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{full_address}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="">
+				<reportElement stretchType="RelativeToTallestObject" x="460" y="54" width="113" height="16"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Monospaced" size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{period_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy">
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="424" y="77" width="134" height="27"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Monospaced" size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch">
+			<staticText>
+				<reportElement style="table" x="0" y="0" width="81" height="35"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Monospaced" size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ลำดับ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" x="81" y="0" width="239" height="35"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Monospaced" size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[รายการ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" x="320" y="0" width="104" height="35"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Monospaced" size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[จำนวนราย]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" x="424" y="0" width="131" height="35"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Monospaced" size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[จำนวนเงิน]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band/>
+	</columnHeader>
+	<detail>
+		<band height="544" splitType="Stretch">
+			<staticText>
+				<reportElement style="table" x="81" y="66" width="474" height="68"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Monospaced" size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" x="0" y="66" width="81" height="68"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Monospaced" size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" x="0" y="0" width="81" height="66"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Monospaced" size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" x="81" y="0" width="239" height="66"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Monospaced" size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" x="320" y="0" width="104" height="66"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Monospaced" size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" x="424" y="0" width="131" height="66"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Monospaced" size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="3" width="81" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[1]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="23" width="81" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[2]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="43" width="81" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[3]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="85" y="3" width="235" height="16"/>
+				<textElement verticalAlignment="Bottom" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[รับจำนำ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="85" y="23" width="235" height="16"/>
+				<textElement verticalAlignment="Bottom" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[ไถ่ถอน]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="85" y="43" width="235" height="16"/>
+				<textElement verticalAlignment="Bottom" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[ทรัพย์หลุด]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="#,##0">
+				<reportElement stretchType="RelativeToTallestObject" x="317" y="3" width="104" height="16"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{num_order} == null ? 0.0 : $F{num_order}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0">
+				<reportElement stretchType="RelativeToTallestObject" x="317" y="23" width="104" height="16"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{redeem_num_order} == null ? 0.0 : $F{redeem_num_order}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0">
+				<reportElement stretchType="RelativeToTallestObject" x="317" y="43" width="104" height="16"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{expire_num_order} == null ? 0.0 : $F{expire_num_order}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00">
+				<reportElement stretchType="RelativeToTallestObject" x="421" y="3" width="130" height="16"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount} == null ? 0.0 : $F{amount}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00">
+				<reportElement stretchType="RelativeToTallestObject" x="421" y="23" width="130" height="16"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{redeem_amount} == null ? 0.0 : $F{redeem_amount}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00">
+				<reportElement stretchType="RelativeToTallestObject" x="421" y="43" width="130" height="16"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{expire_amount} == null ? 0.0 : $F{expire_amount}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="111" width="81" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[6]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="85" y="90" width="235" height="16"/>
+				<textElement verticalAlignment="Bottom" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[อัตราค่าเก็บรักษา]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="90" width="81" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[5]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="85" y="111" width="235" height="16"/>
+				<textElement verticalAlignment="Bottom" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[อัตราค่าธรรมเนียม อื่น ๆ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="70" width="81" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[4]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="85" y="70" width="235" height="16"/>
+				<textElement verticalAlignment="Bottom" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[อัตราดอกเบี้ย]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="267" y="70" width="284" height="16"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[ร้อยละ 15%-24% ต่อปีของเงินรับจำนำ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="267" y="90" width="284" height="16"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[ร้อยละ 15%-24% ต่อปีของเงินรับจำนำ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="267" y="111" width="284" height="16"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[ร้อยละ 15%-24% ต่อปีของเงินรับจำนำ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="249" y="148" width="338" height="16"/>
+				<textElement verticalAlignment="Bottom" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[ขอรับรองว่ารายงานนี้ถูกต้องและเป็นจริง]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="256" y="177" width="411" height="16"/>
+				<textElement verticalAlignment="Bottom" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[ลงชื่อ ............................................]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="240" y="193" width="245" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[ผู้จัดการ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" x="0" y="221" width="555" height="305"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Monospaced" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="15" y="230" width="97" height="16"/>
+				<textElement verticalAlignment="Bottom" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="true" isUnderline="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[คำอธิบาย]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="15" y="256" width="200" height="245"/>
+				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[1. รับจำนำ
+
+
+2. ไถ่คืน
+
+
+3. ทรัพย์หลุด
+
+
+4. อัตราดอกเบี้ย
+
+
+5. อัตราเก็บรักษา
+
+
+6. อัตราค่าธรรมเนียมอื่นๆ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="197" y="256" width="453" height="245"/>
+				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[ให้รายงานจำนวนรายและจำนวนเงินที่รับจำนำไว้ในระหว่าง
+เดือนที่รายงานนี้
+
+ให้รายการจำนวนรายและจำนวนเงินที่ผู้จำนำได้มาไถ่คืนใน
+ระหว่างเดือนที่รายงานนี้
+
+ให้รายงานจำนวนรายและจำนวนเงินรับจำนำที่หลุดจริงใน
+ระหว่างเดือนที่รายงานนี้
+
+ให้รายงานอัตราดอกเบี้ยที่คิดเอาจากผู้จำนำในระหว่างเดือน
+ที่รายงานนี้ โดยคิดเป็นร้อยละต่อปี
+
+ให้รายงานอัตราเก็บรักษาของที่คิดเอาจากผู้จำนำในระหว่าง
+เดือนที่รายงานนี้ โดยคิดเป็นร้อยละต่อปี
+
+ให้รายงานอัตราค่าธรรมเนียม หรือค่าป่วยการอื่นๆที่คิดเอาจาก
+ผู้จำนำนอกเหนือจากข้อ 4 และ 5 ถ้ามี โดยคิดเป็นร้อยละต่อปี]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+</jasperReport>

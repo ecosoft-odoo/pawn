@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+    <record id="view_pawn_report_tree" model="ir.ui.view">
+        <field eval="1" name="priority"/>
+        <field name="name">pawn.report.tree</field>
+        <field name="model">pawn.report</field>
+        <field name="arch" type="xml">
+            <tree string="Pawn Analysis" create="false">
+                <field name="date" invisible="1"/>
+                <field name="date_expired" invisible="1"/>
+                <field name="date_redeem" invisible="1"/>
+                <field name="year" invisible="1"/>
+                <field name="day" invisible="1"/>
+                <field name="month" invisible="1"/>
+                <field name="pawn_shop_id" invisible="1"/>
+                <field name="partner_id" invisible="1"/>
+                <field name="categ_id" invisible="1"/>
+                <field name="nbr" sum="# of Lines"/>
+                <field name="product_uom_qty" sum="# of Qty"/>
+                <field name="product_uom" invisible="not context.get('set_visible',False)"/>
+                <field name="amount_estimated" sum="Estimated Amount"/>
+                <field name="amount_pawned" sum="Estimated Amount"/>
+                <field name="amount_pawned_1" string="Stock 1" sum="Stock 1"/>
+                <field name="amount_pawned_2" string="Stock 2" sum="Stock 2"/>
+                <field name="state" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_pawn_report_graph" model="ir.ui.view">
+         <field name="name">pawn.report.graph</field>
+         <field name="model">pawn.report</field>
+         <field name="arch" type="xml">
+             <graph string="Pawn Analysis" type="bar">
+                 <field name="pawn_shop_id"/>
+                 <field name="amount_pawned"/>
+                 <field name="profit_center" group="True"/>
+             </graph>
+         </field>
+    </record>
+
+    <record id="view_pawn_report_search" model="ir.ui.view">
+        <field name="name">pawn.report.search</field>
+        <field name="model">pawn.report</field>
+        <field name="arch" type="xml">
+            <search string="Pawn Analysis">
+                <field name="date"/>
+                <field name="date_expired"/>
+                <field name="date_redeem"/>
+                <filter name="draft" string="Draft" domain="[('state','=','draft')]"/>
+                <filter name="pawn" string="Pawned" domain="[('state','=','pawn')]"/>
+                <filter name="redeem" string="Redeemed" domain="[('state','=','redeem')]"/>
+                <filter name="expire" string="Expired" domain="[('state','=','expire')]"/>
+                <filter name="cancel" string="Cancelled" domain="[('state','=','cancel')]"/>
+                <separator/>
+                <filter string="Extended" domain="[('extended','=',True)]"/>
+                <separator/>
+                <field name="partner_id"/>
+                <field name="pawn_shop_id"/>
+                <field name="categ_id"/>
+                <group expand="1" string="Group By...">
+                    <filter string="Customer" icon="terp-partner"  name="Customer" context="{'group_by':'partner_id'}"/>
+                    <filter string="Reference Unit of Measure" icon="terp-mrp" context="{'group_by':'product_uom'}"/>
+                    <filter string="Category of Item" name="Category" context="{'group_by':'categ_id'}"/>
+                    <filter string="Status" context="{'group_by':'state'}"/>
+                    <filter string="Shop" context="{'group_by':'pawn_shop_id'}"/>
+                    <filter string="Year" name="year" context="{'group_by':'year'}" help="Pawned Year of the pawn ticket"/>
+                    <filter string="Month" name="month" context="{'group_by':'month'}" help="Pawned month of the pawn ticket"/>
+                    <filter string="Day" context="{'group_by':'day'}" help="Pawned date of the pawn ticket"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_pawn_report_all" model="ir.actions.act_window">
+        <field name="name">Pawn Analysis</field>
+        <field name="res_model">pawn.report</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,graph</field>
+        <field name="search_view_id" ref="view_pawn_report_search"/>
+        <field name="view_id" ref="view_pawn_report_tree"/>
+        <field name="context">{'search_default_pawn':1, 'search_default_redeem':1, 'search_default_expire':1, 'group_by_no_leaf':1,'group_by':[]}</field>
+        <field name="help">This report performs analysis on your pawn tickets. Analysis check your revenues and sort it by different group criteria (customer, category, etc.).</field>
+    </record>
+
+    <menuitem action="action_pawn_report_all" id="menu_pawn_report_all" 
+    	groups="group_pawn_accountant,group_pawn_manager"
+    	parent="menu_pawn_report" sequence="10"/> 
+</data>
+</openerp>

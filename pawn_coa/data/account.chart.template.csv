@@ -1,0 +1,2 @@
+id,name,account_root_id/id,tax_code_root_id/id,bank_account_view_id/id,property_account_receivable/id,property_account_payable/id,property_account_expense/id,property_account_income/id,property_account_expense_categ/id,property_account_income_categ/id
+chart,Thailand - Chart of Accounts for Pawnshop,0,,1113-01,1130-01,2120-01,5200-00,4100-00,5000-00,4000-00

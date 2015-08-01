@@ -1,0 +1,205 @@
+id,name,code,parent_id/id,type,user_type,reconcile
+0,Thailand - Chart of Accounts for Pawnshop,0,,View,Root/View,FALSE
+BS,Statement of Financial Position,BS,0,View,View,FALSE
+1000-00,Assets,1000-00,BS,View,View,FALSE
+1100-00,Current Assets,1100-00,1000-00,View,Assets,FALSE
+1110-00,Cash & Cash equivalents,1110-00,1100-00,View,Current Assets,FALSE
+1111-00,Cash,1111-00,1110-00,Liquidity,Current Assets,FALSE
+1111-10,Petty Cash,1111-10,1110-00,Liquidity,Current Assets,FALSE
+1112-00,Curent Deposit,1112-00,1110-00,View,Current Assets,FALSE
+1112-01,Current Deposit - xxxx,1112-01,1112-00,Liquidity,Current Assets,FALSE
+1112-02,Current Deposit - xxxx,1112-02,1112-00,Liquidity,Current Assets,FALSE
+1113-00,Savings Account,1113-00,1110-00,View,Current Assets,FALSE
+1113-01,Savings Account -xxxx,1113-01,1113-00,Liquidity,Current Assets,FALSE
+1120-00,Short Term Investment,1120-00,1100-00,Regular,Current Assets,FALSE
+1130-00,Accounts and Notes Receivable,1130-00,1100-00,View,Current Assets,FALSE
+1130-01,Accounts Receivable - Trade,1130-01,1130-00,Receivable,Receivable,TRUE
+1130-02,Note Receivable,1130-02,1130-00,Regular,Current Assets,FALSE
+1130-03,Post Date Cheque,1130-03,1130-00,Regular,Current Assets,FALSE
+1130-04,Allowance for Doubtful Accounts,1130-04,1130-00,Regular,Current Assets,FALSE
+1130-05,Other Accounts Receivable,1130-05,1130-00,Regular,Current Assets,FALSE
+1140-00,Pawn,1140-00,1100-00,Regular,Current Assets,FALSE
+1150-00,Reposessed Assets,1150-00,1100-00,Regular,Current Assets,FALSE
+1160-00,Other Current Assets,1160-00,1100-00,View,Current Assets,FALSE
+1161-00,Advance Payment,1161-00,1160-00,View,Current Assets,FALSE
+1161-01,Advance Staffs,1161-01,1161-00,Regular,Current Assets,FALSE
+1162-00,Prepaid Expenses,1162-00,1160-00,View,Current Assets,FALSE
+1162-01,Prepaid - Insurance Premium,1162-01,1162-00,Regular,Current Assets,FALSE
+1162-02,Prepaid Expenses - Rent,1162-02,1162-00,Regular,Current Assets,FALSE
+1162-03,Other Prepaid Expenses,1162-03,1162-00,Regular,Current Assets,FALSE
+1162-04,Prepaid Income Tax,1162-04,1162-00,Regular,Current Assets,FALSE
+1162-05,Withholding Tax,1162-05,1162-00,Regular,Current Assets,FALSE
+1163-00,Accrued Incomes,1163-00,1160-00,View,Current Assets,FALSE
+1163-01,Accrued Interest Income,1163-01,1163-00,Regular,Current Assets,FALSE
+1163-02,Other Accrued Income,1163-02,1163-00,Regular,Current Assets,FALSE
+1200-00,Receivables and Loans to Directors & Employees,1200-00,1000-00,View,Current Assets,FALSE
+1210-00,Receivables & Loans to ...,1210-00,1200-00,Regular,Current Assets,FALSE
+1300-00,Long-Term Investment,1300-00,1000-00,View,Current Assets,FALSE
+1300-01,Long-Term Investment-xxxx,1300-01,1300-00,Regular,Current Assets,FALSE
+1400-00,Fixed Assets,1400-00,1000-00,View,Assets,FALSE
+1410-00,"Property, Plant & Equipment",1410-00,1400-00,View,Fixed Assets,FALSE
+1410-01,Land,1410-01,1410-00,Regular,Fixed Assets,FALSE
+1410-02,Buildings,1410-02,1410-00,Regular,Fixed Assets,FALSE
+1410-03,Office Equipment,1410-03,1410-00,Regular,Fixed Assets,FALSE
+1410-04,Furniture & Fixtures,1410-04,1410-00,Regular,Fixed Assets,FALSE
+1410-05,Machine,1410-05,1410-00,Regular,Fixed Assets,FALSE
+1410-06,Software,1410-06,1410-00,Regular,Fixed Assets,FALSE
+1410-07,Vehicle,1410-07,1410-00,Regular,Fixed Assets,FALSE
+1420-00,Accumulated Depreciation,1420-00,1400-00,View,Fixed Assets,FALSE
+1420-02,Acc-Depreciation-Buildings,1420-02,1420-00,Regular,Fixed Assets,FALSE
+1420-03,Acc-Depreciation-Office Equipment,1420-03,1420-00,Regular,Fixed Assets,FALSE
+1420-04,Acc-Depreciation-Furniture & Fixtures,1420-04,1420-00,Regular,Fixed Assets,FALSE
+1420-05,Acc-Depreciation-Machine,1420-05,1420-00,Regular,Fixed Assets,FALSE
+1420-06,Acc-Depreciation-Software,1420-06,1420-00,Regular,Fixed Assets,FALSE
+1420-07,Acc-Depreciation-Vehicle,1420-07,1420-00,Regular,Fixed Assets,FALSE
+1430-00,Construction Intranit,1430-00,1400-00,View,Fixed Assets,FALSE
+1430-01,Construction Intranit,1430-01,1430-00,Regular,Fixed Assets,FALSE
+1500-00,Other Assets,1500-00,1000-00,View,Assets,FALSE
+1500-01,Fire Insurance Policy - Building,1500-01,1500-00,Regular,Other Assets,FALSE
+1500-02,Deposit Miscellaneous - Electricity,1500-02,1500-00,Regular,Other Assets,FALSE
+1500-04,Deposit - Expenses,1500-04,1500-00,Regular,Other Assets,FALSE
+1500-05,พันธบัตรการไฟฟ้า,1500-05,1500-00,Regular,Other Assets,FALSE
+1500-06,Leasehold,1500-06,1500-00,Regular,Other Assets,FALSE
+2000-00,Liabilities and Shareholders' Equity,2000-00,BS,View,View,FALSE
+2100-00,Current Liabilities,2100-00,2000-00,View,Liabilities and Shareholders' Equity,FALSE
+2110-00,Bank Overdraft and Short-trem borrowings from fianacial institutions,2110-00,2100-00,View,Current Liabilities,FALSE
+2111-00,Bank Overdraft & Loan,2111-00,2110-00,View,Current Liabilities,FALSE
+2111-01,Overdraft-xxxx,2111-01,2111-00,Regular,Current Liabilities,FALSE
+2111-02,Overdraft-xxxx,2111-02,2111-00,Regular,Current Liabilities,FALSE
+2111-03,Loan-xxxx,2111-03,2111-00,Regular,Current Liabilities,FALSE
+2120-00,Accounts and Notes Payable,2120-00,2100-00,View,Current Liabilities,FALSE
+2120-01,Accounts Payable,2120-01,2120-00,Payable,Payable,TRUE
+2120-02,Prepaid Cheque,2120-02,2120-00,Regular,Current Liabilities,FALSE
+2120-03,Note Payable,2120-03,2120-00,Regular,Current Liabilities,FALSE
+2130-00,Short - term borrowings,2130-00,2100-00,View,Current Liabilities,FALSE
+2130-01,Short - term Loans to Related Parties,2130-01,2130-00,Regular,Current Liabilities,FALSE
+2130-02,Other Short - term Loans,2130-02,2130-00,Regular,Current Liabilities,FALSE
+2140-00,Others Current Liabilities,2140-00,2100-00,View,Current Liabilities,FALSE
+2141-00,Accrued Expenses,2141-00,2140-00,View,Current Liabilities,FALSE
+2141-01,Accrued Salaries,2141-01,2141-00,Regular,Current Liabilities,FALSE
+2141-02,Accrued Wages,2141-02,2141-00,Regular,Current Liabilities,FALSE
+2141-03,Accrued Overtime Pay,2141-03,2141-00,Regular,Current Liabilities,FALSE
+2141-04,Accrued Bonus,2141-04,2141-00,Regular,Current Liabilities,FALSE
+2141-05,Accrued Social Security,2141-05,2141-00,Regular,Current Liabilities,FALSE
+2141-06,Accrued Workmen Compensation,2141-06,2141-00,Regular,Current Liabilities,FALSE
+2141-07,Accrued Telephone,2141-07,2141-00,Regular,Current Liabilities,FALSE
+2141-08,Accrued Internet,2141-08,2141-00,Regular,Current Liabilities,FALSE
+2141-09,Accrued Electricity,2141-09,2141-00,Regular,Current Liabilities,FALSE
+2141-10,Accrued Water Supplies,2141-10,2141-00,Regular,Current Liabilities,FALSE
+2141-11,Accrued Audit Fees,2141-11,2141-00,Regular,Current Liabilities,FALSE
+2141-12,Accrued Interest on Loan,2141-12,2141-00,Regular,Current Liabilities,FALSE
+2141-13,Dividend Payable,2141-13,2141-00,Regular,Current Liabilities,FALSE
+2141-14,Other Accrued Expenses,2141-14,2141-00,Regular,Current Liabilities,FALSE
+2142-00,Accrued Taxation,2142-00,2140-00,View,Current Liabilities,FALSE
+2142-01,Payment Withholding Tax 1,2142-01,2142-00,Regular,Current Liabilities,FALSE
+2142-02,"Payment Withholding Tax 2,3,53",2142-02,2142-00,Regular,Current Liabilities,FALSE
+2142-03,Accrued Corporate Income Tax,2142-03,2142-00,Regular,Current Liabilities,FALSE
+2142-04,Payment Existing Business Taxes,2142-04,2142-00,Regular,Current Liabilities,FALSE
+2143-00,Prepaid Income,2143-00,2140-00,View,Current Liabilities,FALSE
+2143-01,Prepaid Income - Rent,2143-01,2143-00,Regular,Current Liabilities,FALSE
+2143-02,Prepaid Income - Service,2143-02,2143-00,Regular,Current Liabilities,FALSE
+2143-03,Other Prepaid Income,2143-03,2143-00,Regular,Current Liabilities,FALSE
+2144-00,Deposit Received & Money Guarnatee,2144-00,2140-00,Regular,Current Liabilities,FALSE
+2145-00,Other Payable Government Revernue Dept.,2145-00,2140-00,Regular,Current Liabilities,FALSE
+2200-00,Non-Current Liabilities,2200-00,2100-00,View,Liabilities and Shareholders' Equity,FALSE
+2210-00,Long - Term Loan,2210-00,2200-00,View,Non-Current Liabilities,FALSE
+2210-01,Long - Term Loan,2210-01,2210-00,Regular,Non-Current Liabilities,FALSE
+2220-00,Other Long Term Loan,2220-00,2200-00,View,Non-Current Liabilities,FALSE
+2220-01,Other Long Term Loan - xxxx,2220-01,2220-00,Regular,Non-Current Liabilities,FALSE
+2230-00,Long - Term Loans from Related Parties,2230-00,2200-00,Regular,Non-Current Liabilities,FALSE
+2240-00,Other Long Term Liabilities,2240-00,2200-00,Regular,Non-Current Liabilities,FALSE
+2300-00,Employee Benefit Obligations,2300-00,2100-00,Regular,Current Liabilities,FALSE
+2400-00,Long - Term Provisions,2400-00,2100-00,Regular,Current Liabilities,FALSE
+2500-00,Other Non-Current Liabilities,2500-00,2100-00,Regular,Current Liabilities,FALSE
+3000-00,Partners' Equity,3000-00,BS,View,View,FALSE
+3100-00,Capital Stock,3100-00,3000-00,Regular,Partners' Equity,FALSE
+3200-00,Retained earnings Appropriated,3200-00,3000-00,Regular,Partners' Equity,FALSE
+3300-00,Profit & Loss For Annual A/C,3300-00,3000-00,Regular,Partners' Equity,FALSE
+PL,Statement of Income,PL,0,View,View,FALSE
+4000-00,Revenue,4000-00,PL,View,View,FALSE
+4100-00,Revenue from Pawn Operations,4100-00,4000-00,View,Revenue,FALSE
+4100-01,Interest Income - Pawn,4100-01,4100-00,Regular,Revenue,FALSE
+4100-02,Income from Sale of Reposessed Goods,4100-02,4100-00,Regular,Revenue,FALSE
+4100-03,Sale Return,4100-03,4100-00,Regular,Revenue,FALSE
+4100-04,Sale Discount,4100-04,4100-00,View,Revenue,FALSE
+4200-00,Other Income,4200-00,4000-00,View,Revenue,FALSE
+4200-01,Interest Income - Bank,4200-01,4200-00,Regular,Revenue,FALSE
+4200-02,Profit & Loss on Disposal of Fixed Assets,4200-02,4200-00,Regular,Revenue,FALSE
+4200-03,Other Income,4200-03,4200-00,View,Revenue,FALSE
+5000-00,Expenses,5000-00,PL,View,View,FALSE
+5100-00,Cost of Goods Sold,5100-00,5000-00,View,Cost of Goods Sold,FALSE
+5110-00,Cost of Reposessed Goods,5110-00,5100-00,View,Cost of Goods Sold,FALSE
+5200-00,Selling & Administrative Expenses,5200-00,5000-00,View,Expenses,FALSE
+5210-00,Personnel Cost & Benefits,5210-00,5200-00,View,Selling & Administrative Expenses,FALSE
+5210-01,Salaries,5210-01,5210-00,Regular,Selling & Administrative Expenses,FALSE
+5210-02,Wages,5210-02,5210-00,Regular,Selling & Administrative Expenses,FALSE
+5210-03,Overtime Pay,5210-03,5210-00,Regular,Selling & Administrative Expenses,FALSE
+5210-04,Allowance,5210-04,5210-00,Regular,Selling & Administrative Expenses,FALSE
+5210-05,Bouns,5210-05,5210-00,Regular,Selling & Administrative Expenses,FALSE
+5210-06,Extra Bouns,5210-06,5210-00,Regular,Selling & Administrative Expenses,FALSE
+5210-07,Social Insurance Fund,5210-07,5210-00,Regular,Selling & Administrative Expenses,FALSE
+5210-08,Workmen Compensation Foun,5210-08,5210-00,Regular,Selling & Administrative Expenses,FALSE
+5210-09,Medical Expense,5210-09,5210-00,Regular,Selling & Administrative Expenses,FALSE
+5210-10,Seminar,5210-10,5210-00,Regular,Selling & Administrative Expenses,FALSE
+5210-11,Uniform,5210-11,5210-00,Regular,Selling & Administrative Expenses,FALSE
+5210-12,Food and Beverage for Employee,5210-12,5210-00,Regular,Selling & Administrative Expenses,FALSE
+5210-13,Staff Entertain,5210-13,5210-00,Regular,Selling & Administrative Expenses,FALSE
+5210-14,Staff Welfare Other,5210-14,5210-00,Regular,Selling & Administrative Expenses,FALSE
+5210-15,Employee Benefit Obligations,5210-15,5210-00,View,Selling & Administrative Expenses,FALSE
+5220-00,Office Expenses,5220-00,5200-00,View,Selling & Administrative Expenses,FALSE
+5220-01,Stationery & Printing,5220-01,5220-00,Regular,Selling & Administrative Expenses,FALSE
+5220-02,E.D.P. Supplies,5220-02,5220-00,Regular,Selling & Administrative Expenses,FALSE
+5220-03,Office Supplies & Materials,5220-03,5220-00,Regular,Selling & Administrative Expenses,FALSE
+5220-04,Building - Rep.& Maint.,5220-04,5220-00,Regular,Selling & Administrative Expenses,FALSE
+5220-05,Equipment - Rep.& Maint.,5220-05,5220-00,Regular,Selling & Administrative Expenses,FALSE
+5220-06,Furniture & Fixtures Rep.& Maint.,5220-06,5220-00,Regular,Selling & Administrative Expenses,FALSE
+5220-07,General Rep.& Maint.,5220-07,5220-00,Regular,Selling & Administrative Expenses,FALSE
+5220-08,Subscriptions & Membership Fees,5220-08,5220-00,Regular,Selling & Administrative Expenses,FALSE
+5220-09,Building Rentals,5220-09,5220-00,Regular,Selling & Administrative Expenses,FALSE
+5220-10,Cleaning Expenses,5220-10,5220-00,Regular,Selling & Administrative Expenses,FALSE
+5220-11,Petrol & Travel Expenses,5220-11,5220-00,Regular,Selling & Administrative Expenses,FALSE
+5220-12,Meeting Expenses,5220-12,5220-00,Regular,Selling & Administrative Expenses,FALSE
+5220-13,Management Service Charge,5220-13,5220-00,Regular,Selling & Administrative Expenses,FALSE
+5220-14,Other Service,5220-14,5220-00,View,Selling & Administrative Expenses,FALSE
+5230-00,Utilities,5230-00,5200-00,View,Selling & Administrative Expenses,FALSE
+5230-01,Telephone Expenses,5230-01,5230-00,Regular,Selling & Administrative Expenses,FALSE
+5230-02,Internet Expenses,5230-02,5230-00,Regular,Selling & Administrative Expenses,FALSE
+5230-03,Electricity Expenses,5230-03,5230-00,Regular,Selling & Administrative Expenses,FALSE
+5230-04,Water Supplies Expenses,5230-04,5230-00,Regular,Selling & Administrative Expenses,FALSE
+5230-05,Postage Expenses,5230-05,5230-00,View,Selling & Administrative Expenses,FALSE
+5240-00,Depreciation Assets,5240-00,5200-00,View,Selling & Administrative Expenses,FALSE
+5240-02,Depreciation - Building,5240-02,5240-00,Regular,Selling & Administrative Expenses,FALSE
+5240-03,Depreciation - Office Equipment,5240-03,5240-00,Regular,Selling & Administrative Expenses,FALSE
+5240-04,Depreciation - Furniture & Fixture,5240-04,5240-00,Regular,Selling & Administrative Expenses,FALSE
+5240-05,Depreciation - Machine,5240-05,5240-00,Regular,Selling & Administrative Expenses,FALSE
+5240-06,Depreciation - Software,5240-06,5240-00,Regular,Selling & Administrative Expenses,FALSE
+5240-07,Depreciation - Motor Vehicle,5240-07,5240-00,View,Selling & Administrative Expenses,FALSE
+5250-00,Insurance Premium,5250-00,5200-00,View,Selling & Administrative Expenses,FALSE
+5250-02,Fire Insurance Premium,5250-02,5250-00,Regular,Selling & Administrative Expenses,FALSE
+5250-03,Motor Vehicle Insurance Premium,5250-03,5250-00,View,Selling & Administrative Expenses,FALSE
+5260-00,Taxes &,5260-00,5200-00,View,Selling & Administrative Expenses,FALSE
+5260-01,Existing Business Taxes,5260-01,5260-00,Regular,Selling & Administrative Expenses,FALSE
+5260-02,Building & Land Taxes,5260-02,5260-00,Regular,Selling & Administrative Expenses,FALSE
+5260-03,Signboard Taxes,5260-03,5260-00,Regular,Selling & Administrative Expenses,FALSE
+5260-04,Motor Vehicle Taxes and Fees,5260-04,5260-00,Regular,Selling & Administrative Expenses,FALSE
+5260-05,Audit Fee,5260-05,5260-00,Regular,Selling & Administrative Expenses,FALSE
+5260-06,Accounting Fee,5260-06,5260-00,Regular,Selling & Administrative Expenses,FALSE
+5260-07,Law Fee,5260-07,5260-00,Regular,Selling & Administrative Expenses,FALSE
+5260-08,Registration Fees,5260-08,5260-00,Regular,Selling & Administrative Expenses,FALSE
+5260-09,Guarantee Fee,5260-09,5260-00,Regular,Selling & Administrative Expenses,FALSE
+5260-10,Bank Charges,5260-10,5260-00,Regular,Selling & Administrative Expenses,FALSE
+5260-11,Other Fee,5260-11,5260-00,View,Selling & Administrative Expenses,FALSE
+5270-00,Other Expenses,5270-00,5200-00,View,Selling & Administrative Expenses,FALSE
+5270-01,Interest On Loan,5270-01,5270-00,Regular,Selling & Administrative Expenses,FALSE
+5270-02,Interest On O/D,5270-02,5270-00,Regular,Selling & Administrative Expenses,FALSE
+5270-03,Interest On P/N,5270-03,5270-00,Regular,Selling & Administrative Expenses,FALSE
+5270-04,Dividend Expense,5270-04,5270-00,Regular,Selling & Administrative Expenses,FALSE
+5270-05,Doubtfuls Debts,5270-05,5270-00,Regular,Selling & Administrative Expenses,FALSE
+5270-06,Entertainment,5270-06,5270-00,Regular,Selling & Administrative Expenses,FALSE
+5270-07,Donation,5270-07,5270-00,Regular,Selling & Administrative Expenses,FALSE
+5270-08,Sundries Expenses,5270-08,5270-00,Regular,Selling & Administrative Expenses,FALSE
+5280-00,Bad Debts,5280-00,5200-00,View,Selling & Administrative Expenses,FALSE
+5290-00,Non Cliam Expense,5290-00,5200-00,View,Selling & Administrative Expenses,FALSE
+5290-01,Tax Penalty,5290-01,5290-00,Regular,Selling & Administrative Expenses,FALSE
+6000-00,Corporate Income Taxes,6000-00,PL,Regular,Expenses,FALSE
+9999-99,Dummy Account,9999-99,PL,Regular,Expenses,FALSE

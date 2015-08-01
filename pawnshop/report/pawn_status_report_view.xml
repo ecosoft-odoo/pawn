@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+    <record id="view_pawn_status_report_tree" model="ir.ui.view">
+        <field eval="1" name="priority"/>
+        <field name="name">pawn.status.report.tree</field>
+        <field name="model">pawn.status.report</field>
+        <field name="arch" type="xml">
+            <tree string="Pawn Analysis" create="false">
+                <field name="journal_id" invisible="1"/>
+                <field name="pawn_shop_id" invisible="1"/>
+                <field name="order_period_id" invisible="1"/>
+                <field name="history_period_id" invisible="0"/>
+                <field name="begin_balance"/>
+                <field name="redeem_amount"/>
+                <field name="expire_amount"/>
+                <field name="end_balance"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_pawn_status_report_graph" model="ir.ui.view">
+         <field name="name">pawn.status.report.graph</field>
+         <field name="model">pawn.status.report</field>
+         <field name="arch" type="xml">
+             <graph string="Pawn Status Analysis" type="bar">
+                 <field name="history_period_id"/>
+                 <field name="begin_balance" operator="+"/>
+                 <field name="end_balance" operator="+"/>
+             </graph>
+         </field>
+    </record>
+
+    <record id="view_pawn_status_report_search" model="ir.ui.view">
+        <field name="name">pawn.status.report.search</field>
+        <field name="model">pawn.status.report</field>
+        <field name="arch" type="xml">
+            <search string="Pawn Status Analysis">
+                <field name="journal_id"/>
+                <field name="pawn_shop_id"/>
+                <group expand="1" string="Group By...">
+                    <filter string="Journal" name="group_journal" context="{'group_by':'journal_id'}"/>
+                    <filter string="Pawn Shop" name="group_pawn_shop" context="{'group_by':'pawn_shop_id'}"/>
+                    <filter string="Pawn Period" name="group_period" context="{'group_by':'order_period_id'}"/>
+                    <filter string="History Period" name="group_history_period" context="{'group_by':'history_period_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_pawn_status_report_all" model="ir.actions.act_window">
+        <field name="name">Pawn Status Analysis</field>
+        <field name="res_model">pawn.status.report</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,graph</field>
+        <field name="search_view_id" ref="view_pawn_status_report_search"/>
+        <field name="view_id" ref="view_pawn_status_report_tree"/>
+        <field name="context">{'search_default_group_journal':1, 'search_default_group_pawn_shop':1, 'search_default_group_period':1, 'search_default_group_history_period':0, 'group_by_no_leaf':0,'group_by':[]}</field>
+        <field name="help">This report performs analysis on your pawn tickets. Analysis check your revenues and sort it by different group criteria (customer, category, etc.).</field>
+    </record>
+
+    <menuitem action="action_pawn_status_report_all" id="menu_pawn_status_report_all" 
+    	groups="group_pawn_accountant,group_pawn_manager,group_pawn_officer"
+    	parent="menu_pawn_report" sequence="15"/> 
+</data>
+</openerp>

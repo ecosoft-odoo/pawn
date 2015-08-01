@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <record model="workflow" id="wkf_pawn">
+            <field name="name">pawn.wkf</field>
+            <field name="osv">pawn.order</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <record model="workflow.activity" id="act_draft">
+            <field name="wkf_id" ref="wkf_pawn" />
+            <field name="flow_start">True</field>
+            <field name="name">draft</field>
+            <field name="kind">function</field>
+            <field name="action">order_draft()</field>
+        </record>
+
+        <record model="workflow.activity" id="act_pawn">
+            <field name="wkf_id" ref="wkf_pawn" />
+            <field name="name">pawn</field>
+            <field name="kind">function</field>
+            <field name="action">order_pawn()</field>
+        </record>
+
+        <record model="workflow.activity" id="act_redeem">
+            <field name="wkf_id" ref="wkf_pawn" />
+            <field name="name">redeem</field>
+            <field name="kind">function</field>
+            <field name="action">order_redeem()</field>
+        </record>
+        
+        <record model="workflow.activity" id="act_expire">
+            <field name="wkf_id" ref="wkf_pawn" />
+            <field name="name">expire</field>
+            <field name="kind">function</field>
+            <field name="action">order_expire()</field>
+        </record>
+
+        <record model="workflow.activity" id="act_cancel">
+            <field name="wkf_id" ref="wkf_pawn" />
+            <field name="name">cancel</field>
+            <field name="kind">function</field>
+            <field name="action">order_cancel()</field>
+            <field name="flow_stop">True</field>
+        </record>
+
+        <record model="workflow.transition" id="trans_draft_pawn">
+            <field name="act_from" ref="act_draft" />
+            <field name="act_to" ref="act_pawn" />
+            <field name="signal">order_pawn</field>
+        </record>
+
+        <record model="workflow.transition" id="trans_pawn_redeem">
+            <field name="act_from" ref="act_pawn" />
+            <field name="act_to" ref="act_redeem" />
+            <field name="signal">order_redeem</field>
+        </record>
+
+        <record model="workflow.transition" id="trans_redeem_pawn">
+            <field name="act_from" ref="act_redeem" />
+            <field name="act_to" ref="act_pawn" />
+            <field name="signal">order_redeem_pawn</field>
+        </record>
+        
+        <record model="workflow.transition" id="trans_redeem_expire">
+            <field name="act_from" ref="act_redeem" />
+            <field name="act_to" ref="act_expire" />
+            <field name="signal">order_redeem_expire</field>
+        </record>
+
+        <record model="workflow.transition" id="trans_expire_redeem">
+            <field name="act_from" ref="act_expire" />
+            <field name="act_to" ref="act_redeem" />
+            <field name="signal">order_redeem</field>
+        </record>
+
+        <record model="workflow.transition" id="trans_pawn_expire">
+            <field name="act_from" ref="act_pawn" />
+            <field name="act_to" ref="act_expire" />
+            <field name="signal">order_expire</field>
+        </record>
+        
+        <record model="workflow.transition" id="trans_draft_cancel">
+            <field name="act_from" ref="act_draft" />
+            <field name="act_to" ref="act_cancel" />
+            <field name="signal">order_cancel</field>
+        </record>        
+        
+        <record model="workflow.transition" id="trans_pawn_cancel">
+            <field name="act_from" ref="act_pawn" />
+            <field name="act_to" ref="act_cancel" />
+            <field name="signal">order_cancel</field>
+        </record>      
+        
+    </data>
+</openerp>

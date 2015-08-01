@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_pawn_line_property_wizard" model="ir.ui.view">
+            <field name="name">view.pawn.line.property.wizard</field>
+            <field name="model">pawn.line.property</field>
+            <field name="arch" type="xml">
+                <form string="Pawn Line Property" version="7.0">
+                    <group>
+                    	<h1>
+							<field name="image" widget="image" class="oe_avatar oe_left"/>
+                        	<field name="order_line_id" class="oe_inline" on_change="onchange_order_line_id(order_line_id)"/>
+                    	</h1>               
+	                </group>      
+	                <field name="property_line" widget="one2many_list" colspan="4" nolabel="1">
+                        <tree string="Pawn Line Property Lines" editable="bottom" create="0">
+                            <field name="property_id" invisible="1"/>
+                            <field name="property_line_id"  invisible="1" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
+                            <field name="other_property" /> <!-- attrs="{'readonly':[('allow_text', '=', False)]}" -->
+                        </tree>
+	                </field>
+                    <footer>
+                        <button name="action_save" string="Save" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Close" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_pawn_line_property" model="ir.actions.act_window">
+            <field name="name">Pawn Line Property</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">pawn.line.property</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+    </data>
+</openerp>
