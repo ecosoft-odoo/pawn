@@ -110,7 +110,6 @@ class pawn_order(osv.osv):
         for pawn in self.browse(cr, uid, ids, context=context):
             res[pawn.id] = {
                 'date_expired': False,
-                'date_due': False,
                 'monthly_interest': False,
                 'daily_interest': False,
             }
@@ -118,14 +117,14 @@ class pawn_order(osv.osv):
             # Expired Date (i.e., 30 days after expired date)
             res[pawn.id]['date_expired'] = rule_obj._get_date_expired(cr, uid, pawn.rule_id.id, pawn.date_order, context=context)
             # Date Due (i.e., 30 days after expired date)
-            date_due = res[pawn.id]['date_expired'] + relativedelta(days=rule.length_day or 0.0)
-            res[pawn.id]['date_due'] = date_due
+            #date_due = res[pawn.id]['date_expired'] + relativedelta(days=rule.length_day or 0.0)
+            #res[pawn.id]['date_due'] = date_due
             # Monthly Interest
             res[pawn.id]['monthly_interest'] = rule_obj.calculate_monthly_interest(cr, uid, pawn.rule_id.id, pawn.amount_pawned, context=context)
             # Daily Interest (calculate from month only, i.e., 4 months + 1
-            total_interest = (rule.length_month + 1) * res[pawn.id]['monthly_interest']
+            total_interest = (rule.length_month) * res[pawn.id]['monthly_interest']
             start_date = datetime.strptime(pawn.date_order[:10], '%Y-%m-%d')
-            total_days = (date_due - start_date).days
+            total_days = (res[pawn.id]['date_expired'] - start_date).days
             res[pawn.id]['daily_interest'] = total_interest / total_days
         return res
 
@@ -281,10 +280,6 @@ class pawn_order(osv.osv):
             store={
                 'pawn.order': (lambda self, cr, uid, ids, c={}: ids, ['date_order', 'rule_id'], 10),
             }, multi='interest_calc1'),
-        'date_due': fields.function(_calculate_pawn_interest, type='date', string='Grace Period End Date',
-            store={
-                'pawn.order': (lambda self, cr, uid, ids, c={}: ids, ['date_order', 'rule_id'], 10),
-            }, multi='interest_calc1'),
         'monthly_interest': fields.function(_calculate_pawn_interest, type='float', string='Monthly Interest',
             store={
                 'pawn.order': (lambda self, cr, uid, ids, c={}: ids, ['date_order', 'rule_id', 'amount_pawned'], 20),
@@ -293,6 +288,8 @@ class pawn_order(osv.osv):
             store={
                 'pawn.order': (lambda self, cr, uid, ids, c={}: ids, ['date_order', 'rule_id', 'amount_pawned'], 20),
             }, multi='interest_calc1'),
+        'date_jor6': fields.date(string='Jor6 Submit Date', readonly=True),
+        'date_due': fields.date(string='Grace Period End Date', readonly=True),
         'amount_interest_todate': fields.function(_get_interest_todate, multi='interest_calc2', type='float', string='Interest To-Date'),
         'last_interest_date': fields.function(_get_interest_todate, multi='interest_calc2', type='date', string='Last Interest Date'),
         'is_interest_updated': fields.function(_get_interest_todate, multi='interest_calc2', type='boolean', string='Interested Updated'),
@@ -301,7 +298,6 @@ class pawn_order(osv.osv):
         'journal_id': fields.many2one('account.journal', 'Journal', domain="[('type','=','cash'), ('pawn_journal', '=', True), ('company_id','=',company_id)]", required=True, readonly=True, states={'draft': [('readonly', False)]},),
         'period_id': fields.many2one('account.period', 'Period', required=True, readonly=True, states={'draft': [('readonly', False)]}),
         'item_id': fields.many2one('product.product', 'Pawn Ticket', states={'draft': [('readonly', False)]}, domain=[('type', '=', 'pawn_asset')]),
-        'item_state': fields.related('item_id', 'state', type='char', string='Item State'),
         'property_account_interest_discount': fields.property(
             'account.account',
             type='many2one',
@@ -687,8 +683,12 @@ class pawn_order(osv.osv):
             return False
         accrued_interest_table = []
         pawn = self.browse(cr, uid, pawn_id, context=context)
-        dates = self._calculate_interest_date(cr, uid, pawn.interest_interval, pawn.date_order, pawn.date_due, context=context)
-        base_date = datetime.strptime(pawn.date_order[:10], '%Y-%m-%d') - relativedelta(days=1)
+        dates = context.get('date_due', False) \
+                    and self._calculate_interest_date(cr, uid, pawn.interest_interval, pawn.date_expired, pawn.date_due, context=context) \
+                    or self._calculate_interest_date(cr, uid, pawn.interest_interval, pawn.date_order, pawn.date_expired, context=context)
+        base_date = context.get('date_due', False) \
+                    and datetime.strptime(pawn.date_expired[:10], '%Y-%m-%d') - relativedelta(days=1) \
+                    or datetime.strptime(pawn.date_order[:10], '%Y-%m-%d') - relativedelta(days=1)
         for date in dates:
             num_days = (date - base_date).days
             interest_amount = num_days * pawn.daily_interest
@@ -728,6 +728,8 @@ class pawn_order(osv.osv):
         return True
         
     def write(self, cr, uid, ids, vals, context=None):
+        if context == None:
+            context = {}
         # Update Number
         pawn = self.browse(cr, uid, ids[0], context=context)
         period_id = vals.get('period_id', False)
@@ -756,12 +758,18 @@ class pawn_order(osv.osv):
             pawn = self.browse(cr, uid, ids[0], context=context)
             if not vals.get('amount_pawned', False):
                 self.write(cr, uid, [pawn.id], {'amount_pawned': pawn.amount_total})
-        # Interest table, if update in the following 3 fields
+        # Interest table, if update in the following 4 fields
         if [val for val in vals.keys() if val in ['amount_pawned', 'rule_id', 'date_order']]:
             pawn = self.browse(cr, uid, ids[0], context=context)
             pawn_interest = self.pool.get('pawn.accrued.interest')
-            if ids:
-                pawn_interest.unlink(cr, uid, pawn_interest.search(cr, uid, [('pawn_id', '=', pawn.id)]))
+            pawn_interest.unlink(cr, uid, pawn_interest.search(cr, uid, [('pawn_id', '=', pawn.id)]))
+            interest_table = self._calculate_interest_table(cr, uid, pawn.id, context=context)
+            self.write(cr, uid, [pawn.id], {'accrued_interest_ids': interest_table})
+        # Adding records in Interest table, if date_due is updated
+        if [val for val in vals.keys() if val in ['date_due']]:
+            pawn = self.browse(cr, uid, ids[0], context=context)
+            pawn_interest = self.pool.get('pawn.accrued.interest')
+            context.update({'date_due': vals.get('date_due')})
             interest_table = self._calculate_interest_table(cr, uid, pawn.id, context=context)
             self.write(cr, uid, [pawn.id], {'accrued_interest_ids': interest_table})
         # End, update state history
@@ -812,8 +820,6 @@ class pawn_order(osv.osv):
             'status_history_ids': [],
         })
         pawn_id = super(pawn_order, self).copy(cr, uid, id, default, context)
-#         interest_table = self._calculate_interest_table(cr, uid, pawn_id, context=context)
-#         self.write(cr, uid, [pawn_id], {'accrued_interest_ids': interest_table})
         return pawn_id
 
     # Onchange

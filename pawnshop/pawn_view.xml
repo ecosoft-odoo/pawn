@@ -37,14 +37,14 @@
                     <button name="%(action_pawn_order_pay_interest)d" invisible="1"
                     			states="pawn" string="Pay Interest" type="action" class="oe_highlight"/>
                     <button name="%(action_pawn_order_redeem)d" string="Redeem" type="action" class="oe_highlight"
-                    	attrs="{'invisible': ['|', ('state', '=', 'redeem'), '&amp;', ('state', '!=', 'pawn'), ('extended', '=', False)]}"/>
-                    <button name="order_expire" states="pawn" string="Expire"/>
+                    	attrs="{'invisible': ['|', ('state', '=', 'redeem'), ('state', '!=', 'pawn')]}"/>
+                    <button name="order_expire" states="pawn" string="Expire" invisible="1"/>
                     <button name="%(action_pawn_order_renew)d" string="Renew" type="action" 
                     	attrs="{'invisible': ['|', ('state', '=', 'redeem'), '&amp;', ('state', '!=', 'pawn'), ('extended', '=', False)]}"/> 
-                    <button name="action_extend" string="Extend" type="object"
-                    	attrs="{'invisible': ['|', '|', ('state', '!=', 'expire'), ('item_state', '!=', 'expire'), '&amp;', ('state', '=', 'expire'), ('extended', '=', True)]}"/>
+                    <button name="action_extend" string="Extend" type="object" 
+                    	attrs="{'invisible': ['|', ('state', 'not in', ('pawn','expire')), '&amp;', ('state', 'in', ('pawn','expire')), ('extended', '=', True), ]}"/>
                     <button name="action_unextend" string="Not Extend" type="object"
-                    	attrs="{'invisible': ['|', ('state', '!=', 'expire'), '&amp;', ('state', '=', 'expire'), ('extended', '=', False)]}"/>
+                    	attrs="{'invisible': ['|', ('state', 'not in', ('pawn','expire')), '&amp;', ('state', 'in', ('pawn','expire')), ('extended', '=', False)]}"/>
                     <button name="order_cancel" states="draft" string="Cancel Order" />
                     <button name="%(action_pawn_undo_cancel)d" type="action" states="pawn" string="Cancel Pawned Order" context="{'action_type': 'order_cancel'}"/>
                     <button name="action_cancel_draft" states="cancel" type="object" string="Set to Draft" />
@@ -90,7 +90,6 @@
                             <field name="pricelist_id" on_change="onchange_pricelist(pricelist_id, context)" invisible="1"/>
                             <field name="currency_id" invisible="1" />
                             <field name="item_id" readonly="1" invisible="1" />
-                            <field name="item_state" readonly="1" invisible="1" />
                         </group>
                         <group>
                         	<field name="period_id" invisible="1"/>
@@ -251,7 +250,8 @@
                     <field name="create_uid"/>
 					<separator/>
 					<filter name="today" string="Today's" domain="[('date_order','=',time.strftime('%%Y-%%m-%%d'))]" help="Pawn Tickets created today"/>
-                    <separator/>
+					<filter name="jor6_submit" string="Jor6 Submission" domain="[('state','=','pawn'), ('date_expired','&lt;',time.strftime('%%Y-%%m-%%d')), ('date_due','=',False)]" help="pawn Ticket eligible for Jor6 Submission"/>
+					<separator/>
                     <filter name="draft" string="Draft" domain="[('state','=','draft')]" help="Pawn Tickets which are in draft state"/>
                     <filter name="pawn" string="Pawned" domain="[('state','=','pawn')]" help="Pawn Tickets which are in pawned state"/>
                     <filter name="redeem" string="Redeemed" domain="[('state','=','redeem')]" help="Pawn Tickets which are in redeemed state"/>
@@ -354,7 +354,7 @@
                     </templates>
                 </kanban>
             </field>
-         </record>
+         </record>       
         	
     </data>
 </openerp>

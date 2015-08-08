@@ -170,6 +170,8 @@
 	                <header>
                     	<button name="action_asset_sale" string="For Sales" type="object" class="oe_highlight" 
                     			attrs="{'invisible': ['|', '|', ('extended', '=', True), ('state', 'not in', ('expire')), ('type', '!=', 'pawn_asset')]}" />	                    
+                    	<button name="%(action_asset_for_sale)d" string="For Sales" type="action" class="oe_highlight" 
+                    			attrs="{'invisible': ['|', '|', ('extended', '=', False), ('state', '!=', ('expire')), ('type', '!=', 'pawn_asset')]}" />	                    
                     	<button name="action_asset_sale_backto_expire" string="Back to Expire" type="object" class="oe_highlight" 
                     			attrs="{'invisible': ['|', '|', ('extended', '=', True), ('state', 'not in', ('for_sale')), ('type', '!=', 'pawn_asset')]}" />	                    
                     	<button name="%(action_item_split)d" string="Split Item" type="action" class="oe_highlight"

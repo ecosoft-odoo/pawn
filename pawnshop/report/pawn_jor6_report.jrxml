@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="pawn_jor6_report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
-	<property name="ireport.zoom" value="0.4787840987383284"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.zoom" value="1.241842646118316"/>
+	<property name="ireport.x" value="200"/>
 	<property name="ireport.y" value="0"/>
 	<style name="table" lineSpacing="Single">
 		<box topPadding="0" leftPadding="2" bottomPadding="0" rightPadding="2">
@@ -51,7 +51,8 @@
 	pw.date_order, pw.name pawn_number, rp.name cust_name,
 	rp.address_full cust_address, pwl.name item_desc, pwl.product_qty qty,
 	uom.name uom_name, pwl.carat, pwl.gram, plp.other_property,
-	floor(pp.price_pawned) baht, floor(pp.price_pawned % 1*100) satang
+	floor(pp.price_pawned) baht, floor(pp.price_pawned::numeric % 1 * 100) satang,
+	floor(pw.amount_pawned) total_baht, floor(pw.amount_pawned::int % 1*100) total_satang
 from pawn_order pw join pawn_shop shop on shop.id = pw.pawn_shop_id
 	join pawn_order_line pwl on pwl.order_id = pw.id
 	join product_product pp on pp.order_line_id = pwl.id
@@ -80,6 +81,11 @@ order by date_expired, pawn_number, pwl.id]]>
 	<field name="reg_book" class="java.lang.String"/>
 	<field name="shop_address" class="java.lang.String"/>
 	<field name="shop_name" class="java.lang.String"/>
+	<field name="total_baht" class="java.lang.Number"/>
+	<field name="total_satang" class="java.lang.Number"/>
+	<group name="number">
+		<groupExpression><![CDATA[$F{pawn_number}]]></groupExpression>
+	</group>
 	<background>
 		<band height="555" splitType="Stretch">
 			<staticText>
@@ -135,17 +141,34 @@ order by date_expired, pawn_number, pwl.id]]>
 		</band>
 	</background>
 	<title>
-		<band height="37" splitType="Stretch">
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="41" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="">
+				<reportElement x="500" y="22" width="529" height="15"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Monospaced" size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{shop_address}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="769" y="26" width="33" height="15"/>
+				<textElement verticalAlignment="Middle" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[จ.6]]></text>
+			</staticText>
 			<staticText>
 				<reportElement x="194" y="22" width="134" height="15"/>
-				<textElement verticalAlignment="Bottom" lineSpacing="Single" markup="none">
+				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[ใบอนุญาต เล่มที่]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="0" y="22" width="81" height="15"/>
-				<textElement textAlignment="Right" verticalAlignment="Bottom" lineSpacing="Single" markup="none">
+				<textElement textAlignment="Right" verticalAlignment="Top" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[โรงรับจำนำ]]></text>
@@ -159,57 +182,39 @@ order by date_expired, pawn_number, pwl.id]]>
 			</staticText>
 			<staticText>
 				<reportElement x="308" y="22" width="48" height="15"/>
-				<textElement verticalAlignment="Bottom" lineSpacing="Single" markup="none">
+				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[เลขที่]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="377" y="22" width="162" height="15"/>
-				<textElement verticalAlignment="Bottom" lineSpacing="Single" markup="none">
+				<reportElement x="394" y="22" width="162" height="15"/>
+				<textElement verticalAlignment="Top" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="12" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[ตั้งอยู ณ อาคารเลขที่]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="">
-				<reportElement stretchType="RelativeToTallestObject" x="94" y="22" width="160" height="15"/>
-				<textElement verticalAlignment="Bottom">
+				<reportElement x="94" y="22" width="160" height="15"/>
+				<textElement verticalAlignment="Top">
 					<font fontName="Monospaced" size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{shop_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="">
-				<reportElement stretchType="RelativeToTallestObject" x="279" y="22" width="91" height="15"/>
-				<textElement verticalAlignment="Bottom">
+				<reportElement x="279" y="22" width="91" height="15"/>
+				<textElement verticalAlignment="Top">
 					<font fontName="Monospaced" size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{reg_book}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="">
-				<reportElement stretchType="RelativeToTallestObject" x="341" y="22" width="91" height="15"/>
-				<textElement verticalAlignment="Bottom">
+				<reportElement x="341" y="22" width="91" height="15"/>
+				<textElement verticalAlignment="Top">
 					<font fontName="Monospaced" size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{reg_number}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="">
-				<reportElement stretchType="RelativeToTallestObject" x="485" y="22" width="529" height="15"/>
-				<textElement verticalAlignment="Bottom">
-					<font fontName="Monospaced" size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{shop_address}]]></textFieldExpression>
-			</textField>
-		</band>
-	</title>
-	<pageHeader>
-		<band height="15" splitType="Stretch">
-			<staticText>
-				<reportElement x="769" y="0" width="33" height="15"/>
-				<textElement verticalAlignment="Middle" lineSpacing="Single" markup="none">
-					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-				</textElement>
-				<text><![CDATA[จ.6]]></text>
-			</staticText>
 		</band>
 	</pageHeader>
 	<columnHeader>
@@ -340,7 +345,7 @@ order by date_expired, pawn_number, pwl.id]]>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{cust_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="">
-				<reportElement stretchType="RelativeToTallestObject" x="238" y="2" width="186" height="20"/>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="238" y="2" width="186" height="20"/>
 				<textElement verticalAlignment="Top">
 					<font fontName="Monospaced" size="9" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -354,18 +359,18 @@ order by date_expired, pawn_number, pwl.id]]>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{qty}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0">
-				<reportElement stretchType="RelativeToTallestObject" x="634" y="2" width="80" height="20"/>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="634" y="2" width="80" height="20" printWhenGroupChanges="number"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font fontName="Monospaced" size="9" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{baht}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{total_baht}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0">
-				<reportElement stretchType="RelativeToTallestObject" x="715" y="2" width="30" height="20"/>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="715" y="2" width="30" height="20" printWhenGroupChanges="number"/>
 				<textElement textAlignment="Center" verticalAlignment="Top">
 					<font fontName="Monospaced" size="9" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{satang}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{total_satang}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0">
 				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="0" y="2" width="31" height="20"/>

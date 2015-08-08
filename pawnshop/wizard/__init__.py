@@ -25,10 +25,12 @@ import pawn_order_redeem
 import pawn_order_renew
 import pawn_order_pay_interest
 import pawn_item_location_status
+import pawn_asset_for_sale
 #import pawn_item_create_invoice
 import pawn_item_create_receipt
 import pawn_undo_cancel
 import item_split
 import account_chart
+import pawn_jor6_submission
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
