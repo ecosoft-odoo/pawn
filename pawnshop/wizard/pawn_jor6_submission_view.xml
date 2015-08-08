@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+            	
+        <record id="view_pawn_jor6_submission" model="ir.ui.view">
+            <field name="name">view.pawn.jor6.submission</field>
+            <field name="model">pawn.jor6.submission</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Jor6 Submission" version="7.0">
+                    <group>
+	                    <group>
+        	                <field name="date"/>
+            	        </group>
+	                    <group>
+            	        </group>
+            	   	</group>
+                	<footer>
+                        <button string="Submit" name="pawn_jor6_submit" type="object" default_focus="1" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <act_window name="Jor6 Submission"
+	        res_model="pawn.jor6.submission"
+	        src_model="pawn.order"
+	        view_mode="form"
+	        target="new"
+	        key2="client_action_multi"
+	        id="action_pawn_jor6_submission"/>
+    </data>
+</openerp>

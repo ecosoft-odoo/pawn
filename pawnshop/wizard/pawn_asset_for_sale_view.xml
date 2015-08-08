@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_asset_for_sale" model="ir.ui.view">
+            <field name="name">view.asset.for.sale</field>
+            <field name="model">pawn.asset.for.sale</field>
+            <field name="arch" type="xml">
+                <form string="For Sales" version="7.0">
+                    <group>
+                        <group name="key">
+                         	 <h2>
+                         	 	<label for="secret_key" />
+                             	<field name="secret_key" password="1" class="oe_inline" />
+                         	 </h2>                         
+                         </group>
+                         <group>
+                         </group>
+                    </group>
+                    <footer>
+                        <button string="Execute" name="action_execute" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+               </form>
+            </field>
+        </record>
+        <record id="action_asset_for_sale" model="ir.actions.act_window">
+            <field name="name">For Sales</field>
+            <field name="res_model">pawn.asset.for.sale</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+           <field name="view_id" ref="view_asset_for_sale"/>
+           <field name="target">new</field>
+        </record>
+    </data>
+</openerp>
