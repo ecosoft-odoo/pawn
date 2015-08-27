@@ -45,7 +45,7 @@ class pawn_jor6_submission(osv.osv_memory):
         if pawn_ids:
             # Check all order are eligible, 1) date_expired < today, 2) no date_due yet
             valid_ids = self.pool.get('pawn.order').search(cr, uid, [('state','=','pawn'), ('date_expired','<', time.strftime('%Y-%m-%d')), ('date_due','=',False)], context=context)
-            if pawn_ids != valid_ids and set(pawn_ids) not in set(valid_ids):
+            if pawn_ids != valid_ids and not set(pawn_ids).issubset(set(valid_ids)):
                 raise osv.except_osv(_('Warning!'),
                                      _("""Some selection are not eligible for Jor6 Submission!\n
                                      Please filter with Jor6 Submission and try again."""))

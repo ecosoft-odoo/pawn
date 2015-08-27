@@ -128,6 +128,7 @@
                     <field name="uom_id" string="Unit of Measure" invisible="context.get('tree_view_type', False) in ['pawn_asset']"/>
                     <field name="price_pawned" string="Pawned Price" invisible="context.get('tree_view_type', False) not in ['pawn_asset']"/>
                     <field name="price_estimated" string="Estimated Price"/>
+                    <field name="price_pawned" string="Pawned Price"/>
                     <field name="state"/>
                     <field name="extended"/>
                     <field name="location_status" string="Location" />
@@ -628,7 +629,7 @@
   	
         <!-- Expired Tickets -->
         <record id="action_pawn_asset_expired" model="ir.actions.act_window">
-            <field name="name">Ticket Expired</field>
+            <field name="name">Ticket Grace Period End Date</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">product.product</field>
             <field name="view_type">form</field>
@@ -650,7 +651,7 @@
             <field name="view_id" ref="pawn_item_normal_form_view"/>
             <field name="act_window_id" ref="action_pawn_asset_expired"/>
         </record> 	               
-		<menuitem name="Ticket Expired" id="menu_pawn_asset_expired" action="action_pawn_asset_expired" sequence="2"
+		<menuitem name="Ticket Grace Period End Date" id="menu_pawn_asset_expired" action="action_pawn_asset_expired" sequence="2"
 		    parent="menu_pawn_for_sale"
 			groups="group_pawn_manager,group_pawn_stock,group_pawn_accountant,group_pawn_officer"/>	
 		    	

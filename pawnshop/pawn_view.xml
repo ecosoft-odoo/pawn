@@ -318,6 +318,29 @@
         <menuitem action="pawn_form_action" id="menu_pawn_form_action" parent="menu_pawn_management" sequence="1"
         	groups="group_pawn_accountant,group_pawn_manager,group_pawn_officer,group_pawn_stock"/>
 
+        <record id="pawn_jor6_submission_action" model="ir.actions.act_window">
+            <field name="name">Jor6 Submission</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">pawn.order</field>
+            <field name="view_mode">tree,form,graph</field>
+    		<field name="limit">20</field>
+            <field name="context">{"search_default_jor6_submit":1}</field>
+            <field name="search_view_id" ref="view_pawn_order_filter"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a quotation that will be converted into a pawn ticket. 
+              </p><p>
+                Use this menu to search within your pawn tickets by
+                references, supplier, products, etc. For each pawn ticket,
+                you can track the related discussion with the supplier, control
+                the products received and control the supplier invoices.
+              </p>
+            </field>
+        </record>
+        <menuitem action="pawn_jor6_submission_action" id="menu_pawn_jor6_submission_action" parent="menu_pawn_management" sequence="100"
+        	groups="group_pawn_accountant,group_pawn_manager,group_pawn_officer,group_pawn_stock"/>
+        		
+        		
         <!-- Pawn Ticket Kanban Move -->
         <record model="ir.ui.view" id="pawn_asset_move_kanban_view">
             <field name="name">Pawn Ticket Move Kanban</field>
