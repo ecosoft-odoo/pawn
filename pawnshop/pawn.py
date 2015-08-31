@@ -767,11 +767,11 @@ class pawn_order(osv.osv):
             self.write(cr, uid, [pawn.id], {'accrued_interest_ids': interest_table})
         # Adding records in Interest table, if date_due is updated
         if [val for val in vals.keys() if val in ['date_due']]:
-            pawn = self.browse(cr, uid, ids[0], context=context)
-            pawn_interest = self.pool.get('pawn.accrued.interest')
-            context.update({'date_due': vals.get('date_due')})
-            interest_table = self._calculate_interest_table(cr, uid, pawn.id, context=context)
-            self.write(cr, uid, [pawn.id], {'accrued_interest_ids': interest_table})
+            for pawn in self.browse(cr, uid, ids, context=context):
+                pawn_interest = self.pool.get('pawn.accrued.interest')
+                context.update({'date_due': vals.get('date_due')})
+                interest_table = self._calculate_interest_table(cr, uid, pawn.id, context=context)
+                self.write(cr, uid, [pawn.id], {'accrued_interest_ids': interest_table})
         # End, update state history
         if vals.get('state', False):
             ctx = dict(account_period_prefer_normal=True)
