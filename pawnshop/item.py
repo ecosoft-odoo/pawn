@@ -60,6 +60,10 @@ ASSET_STATUS_VS_INIT_LOC = {'redeem': ['asset_stock', 'asset_outgoing'],
 class product_template(osv.osv):
 
     _inherit = 'product.template'
+
+    def _get_product(self, cr, uid, ids, context=None):
+        return self.pool.get('product.template').search(cr, uid, [('order_id','in',ids)])
+
     _columns = {
         # No translation
         'name': fields.char('Name', size=128, required=True, translate=False, select=True),
@@ -74,7 +78,10 @@ class product_template(osv.osv):
         'pawn_shop_id': fields.related('order_id', 'pawn_shop_id', type='many2one', relation='pawn.shop', string='Shop', store=True, readonly=True),
         'order_id': fields.many2one('pawn.order', 'Pawn Ticket', ondelete='cascade'),
         'partner_customer_id': fields.related('order_id','partner_id',type='many2one',relation='res.partner',string='Customer', store=True, readonly=True),
-        'journal_id': fields.related('order_id', 'journal_id', type='many2one', relation='account.journal', string='Journal', store=True, readonly=True),
+        'journal_id': fields.related('order_id', 'journal_id', type='many2one', relation='account.journal', string='Journal', readonly=True,
+                                    store={
+                                        'pawn.order': (_get_product, ['journal_id'], 10),
+                                    },),
     }
 
 product_template()
