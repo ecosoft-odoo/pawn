@@ -234,6 +234,15 @@ class pawn_order(osv.osv):
 
     def _set_image(self, cr, uid, id, name, value, args, context=None):
         return self.write(cr, uid, [id], {'image': tools.image_resize_image_big(value)}, context=context)
+    
+    def _get_extended(self, cr, uid, ids, name, args, context=None):
+        res = {}
+        for pawn in self.browse( cr, uid, ids, context=context):
+            if pawn.extended:
+                res[pawn.id] = 'x'
+            else:
+                res[pawn.id] = ''
+        return res
 # 
 #     def _order_day(self, cr, uid, ids, field_name, arg, context=None):
 #         res = dict.fromkeys(ids, False)
@@ -337,6 +346,7 @@ class pawn_order(osv.osv):
         'interest_interval': fields.selection(res_config.INTEREST_INTERVAL, 'Calculation Interval', readonly=True, help="Specify how often interest journal will be created."),
         'actual_interest_ids': fields.one2many('pawn.actual.interest', 'pawn_id', 'Paid Interest', readonly=True, help="This shows interest already paid by customer. This amount will deduct the full amount when redeem."),
         'extended': fields.boolean('Extended', readonly=True),
+        'extended_x': fields.function(_get_extended, method=True, string='Extended', type='char'),
         'parent_id': fields.many2one('pawn.order', 'Previous Pawn Ticket', readonly=True),
         'child_id': fields.many2one('pawn.order', 'New Pawn Ticket', readonly=True),
         'previous_pawn_ids': fields.function(_get_previous_pawn_ids, method=True, type='one2many', relation='pawn.order', string='Previous Pawn Tickets'),

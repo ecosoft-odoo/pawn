@@ -30,7 +30,7 @@
             <field name="inherit_id" ref="account.view_account_journal_form"/>
             <field name="arch" type="xml">
                 <xpath expr="/form/group/group/field[@name='type']" position="after">
-                	<field name="profit_center" attrs="{'invisible': [('type', '!=', 'cash')]}"/>
+                	<field name="profit_center" attrs="{'invisible': [('type', '!=', 'cash'), ('type', '!=', 'bank')]}"/>
 					<field name="pawn_journal" />                	
                 </xpath>
             </field>
