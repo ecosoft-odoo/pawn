@@ -10,11 +10,17 @@
                     <group>
                         <group>
                     		<field name="pawn_shop_id" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
-                    		<field name="journal_id" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
-                        </group>
+                    		<!--field name="journal_id" options="{'limit': 10, 'create': false, 'create_edit': false}"/-->
+                    		<field name="journal_id" on_change="onchange_journal_id(journal_id)"
+                    			options="{'limit': 10, 'create': false, 'create_edit': false}"/>
+                    	</group>
 	                    <group>
                     		<field name="pawn_rule_id" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
-	                    </group>
+	                    	<!-- SAMPLE ONLY -->
+	                    	<field name="date_id" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
+	                    	<field name="date" invisible="1"/>   <!-- The selected date_id will be written as real date here -->
+							<!-- END SAMPLE -->	                    	
+                    	</group>
                     </group>
                     <group>
 						<group string="Report Period (Past 10 Days)">            		
