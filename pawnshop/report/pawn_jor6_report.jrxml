@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="pawn_jor6_report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.241842646118316"/>
-	<property name="ireport.x" value="200"/>
+	<property name="ireport.x" value="47"/>
 	<property name="ireport.y" value="0"/>
 	<style name="table" lineSpacing="Single">
 		<box topPadding="0" leftPadding="2" bottomPadding="0" rightPadding="2">
@@ -31,17 +31,11 @@
 	<parameter name="pawn_rule_id" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
-	<parameter name="report_from_date" class="java.lang.String">
-		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
-	</parameter>
-	<parameter name="report_to_date" class="java.lang.String">
+	<parameter name="report_date" class="java.lang.String">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<parameter name="from_date" class="java.util.Date">
-		<defaultValueExpression><![CDATA[(new java.text.SimpleDateFormat("yyyy-MM-dd")).parse($P{report_from_date})]]></defaultValueExpression>
-	</parameter>
-	<parameter name="to_date" class="java.util.Date">
-		<defaultValueExpression><![CDATA[(new java.text.SimpleDateFormat("yyyy-MM-dd")).parse($P{report_to_date})]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[(new java.text.SimpleDateFormat("yyyy-MM-dd")).parse($P{report_date})]]></defaultValueExpression>
 	</parameter>
 	<parameter name="journal_id" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -50,7 +44,9 @@
 		<![CDATA[select shop.name shop_name, shop.reg_book, shop.reg_number, shop.full_address shop_address,
 	pw.date_order, pw.name pawn_number, rp.name cust_name,
 	rp.address_full cust_address, pwl.name item_desc, pwl.product_qty qty,
-	uom.name uom_name, pwl.carat, pwl.gram, plp.other_property,
+	uom.name uom_name, coalesce(pwl.carat,0) as carat,
+	coalesce(pwl.gram,0) as gram,
+	plp.other_property,
 	floor(pp.price_pawned) baht, floor(pp.price_pawned::numeric % 1 * 100) satang,
 	floor(pw.amount_pawned) total_baht, floor(pw.amount_pawned::int % 1*100) total_satang
 from pawn_order pw join pawn_shop shop on shop.id = pw.pawn_shop_id
@@ -59,7 +55,7 @@ from pawn_order pw join pawn_shop shop on shop.id = pw.pawn_shop_id
 	join product_uom uom on uom.id = pwl.product_uom
 	join res_partner rp on rp.id = pw.partner_id
 	left outer join pawn_order_line_properties plp on plp.order_line_id = pwl.id
-where date_expired >= $P{from_date} and date_expired <= $P{to_date}
+where date_jor6 = $P{from_date}
 	and pawn_shop_id = $P{pawn_shop_id}
 	and journal_id = $P{journal_id}
 	and rule_id = $P{pawn_rule_id}
