@@ -49,6 +49,7 @@
         </field>
     </record>
 
+	<!-- Oct2015 Enhancement 
     <record id="action_pawn_status_report_all" model="ir.actions.act_window">
         <field name="name">Pawn Status Analysis</field>
         <field name="res_model">pawn.status.report</field>
@@ -63,5 +64,7 @@
     <menuitem action="action_pawn_status_report_all" id="menu_pawn_status_report_all" 
     	groups="group_pawn_accountant,group_pawn_manager,group_pawn_officer"
     	parent="menu_pawn_report" sequence="15"/> 
+	-->
+	
 </data>
 </openerp>

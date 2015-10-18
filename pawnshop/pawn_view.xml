@@ -284,6 +284,8 @@
                     <field name="number" invisible="1" />
                     <field name="name" string="Reference"/>
                     <field name="date_order" />
+                    <field name="date_jor6" />
+                    <field name="date_due" />
                     <field name="day_order" invisible="1"/>
                     <field name="date_redeem" />
                     <field name="partner_id"/>
@@ -291,7 +293,8 @@
                     <field name="amount_total" sum="Total Amount"/>
                     <field name="amount_pawned" sum="Total Pawned Amount"/>
                     <field name="state"/>
-                    <field name="extended"/>
+                    <field name="extended_x"/>
+                    <field name="jor6_submitted" invisible="1"/>
                 </tree>
             </field>
         </record>

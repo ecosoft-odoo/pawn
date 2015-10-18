@@ -11,8 +11,7 @@ def pawn_jor6_parser( cr, uid, ids, data, context ):
             'pawn_shop_id': data['form']['pawn_shop_id'],
             'journal_id': data['form']['journal_id'],
             'pawn_rule_id': data['form']['pawn_rule_id'],
-            'report_from_date': data['form']['report_from_date'],
-            'report_to_date': data['form']['report_to_date'],
+            'report_date': data['form']['report_date'],
         },
    }
 

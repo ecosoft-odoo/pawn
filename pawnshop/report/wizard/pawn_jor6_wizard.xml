@@ -9,21 +9,27 @@
                 <form string="Selection Criteria" version="7.0">
                     <group>
                         <group>
-                    		<field name="pawn_shop_id" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
-                    		<field name="journal_id" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
-                        </group>
+							<field name="pawn_shop_id" on_change="onchange_parameter(journal_id, pawn_shop_id, pawn_rule_id)"
+								options="{'limit': 10, 'create': false, 'create_edit': false, 'no_open': true}"/>
+                    		<field name="journal_id" on_change="onchange_parameter(journal_id, pawn_shop_id, pawn_rule_id)"
+                    			options="{'limit': 10, 'create': false, 'create_edit': false, 'no_open': true}"/>
+                    	</group>
 	                    <group>
-                    		<field name="pawn_rule_id" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
-	                    </group>
+                    		<field name="pawn_rule_id" on_change="onchange_parameter(journal_id, pawn_shop_id, pawn_rule_id)"
+                    			options="{'limit': 10, 'create': false, 'create_edit': false, 'no_open': true}"/>
+	                    	<field name="date" invisible="1"/>   
+                    	</group>
                     </group>
                     <group>
-						<group string="Report Period (Past 10 Days)">            		
-							<field string="From" name="report_from_date" /> 
-							<field string="To" name="report_to_date"/>       
+						<group string="Report Period (Past 10 Days)">      
+							<field name="jor6_to_submit_date_id" 
+								attrs="{'required': [('jor6_submitted_date_id','=', False)], 'readonly': [('jor6_submitted_date_id','!=', False)]}"
+								options="{'limit': 10, 'create': false, 'create_edit': false, 'no_open': true}"/>      		
+							<field name="jor6_submitted_date_id" 
+								attrs="{'required': [('jor6_to_submit_date_id','=', False)], 'readonly': [('jor6_to_submit_date_id','!=', False)]}" 
+								options="{'limit': 10, 'create': false, 'create_edit': false, 'no_open': true}"/>      		
 						</group>      
-						<group string="For">            		
-							<field string="Announce Date" name="announce_date" /> 
-							<field string="Reposessed Date" name="reposessed_date"/>       
+						<group string=" ">            		
 						</group>             
                     </group>
                 	<footer>

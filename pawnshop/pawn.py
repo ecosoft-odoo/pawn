@@ -234,6 +234,15 @@ class pawn_order(osv.osv):
 
     def _set_image(self, cr, uid, id, name, value, args, context=None):
         return self.write(cr, uid, [id], {'image': tools.image_resize_image_big(value)}, context=context)
+    
+    def _get_extended(self, cr, uid, ids, name, args, context=None):
+        res = {}
+        for pawn in self.browse( cr, uid, ids, context=context):
+            if pawn.extended:
+                res[pawn.id] = 'x'
+            else:
+                res[pawn.id] = ''
+        return res
 # 
 #     def _order_day(self, cr, uid, ids, field_name, arg, context=None):
 #         res = dict.fromkeys(ids, False)
@@ -290,6 +299,7 @@ class pawn_order(osv.osv):
             }, multi='interest_calc1'),
         'date_jor6': fields.date(string='Jor6 Submit Date', readonly=True),
         'date_due': fields.date(string='Grace Period End Date', readonly=True),
+        'jor6_submitted': fields.boolean('Jor6 Submitted', readonly=True),
         'amount_interest_todate': fields.function(_get_interest_todate, multi='interest_calc2', type='float', string='Interest To-Date'),
         'last_interest_date': fields.function(_get_interest_todate, multi='interest_calc2', type='date', string='Last Interest Date'),
         'is_interest_updated': fields.function(_get_interest_todate, multi='interest_calc2', type='boolean', string='Interested Updated'),
@@ -337,6 +347,7 @@ class pawn_order(osv.osv):
         'interest_interval': fields.selection(res_config.INTEREST_INTERVAL, 'Calculation Interval', readonly=True, help="Specify how often interest journal will be created."),
         'actual_interest_ids': fields.one2many('pawn.actual.interest', 'pawn_id', 'Paid Interest', readonly=True, help="This shows interest already paid by customer. This amount will deduct the full amount when redeem."),
         'extended': fields.boolean('Extended', readonly=True),
+        'extended_x': fields.function(_get_extended, method=True, string='Extended', type='char'),
         'parent_id': fields.many2one('pawn.order', 'Previous Pawn Ticket', readonly=True),
         'child_id': fields.many2one('pawn.order', 'New Pawn Ticket', readonly=True),
         'previous_pawn_ids': fields.function(_get_previous_pawn_ids, method=True, type='one2many', relation='pawn.order', string='Previous Pawn Tickets'),
@@ -376,6 +387,7 @@ class pawn_order(osv.osv):
         'pricelist_id': lambda self, cr, uid, context: context.get('partner_id', False) and self.pool.get('res.partner').browse(cr, uid, context['partner_id']).property_product_pricelist.id,
         'company_id': lambda self, cr, uid, c: self.pool.get('res.company')._company_default_get(cr, uid, 'pawn.order', context=c),
         'journal_id': _get_journal,
+        'jor6_submitted': False,
     }
     _sql_constraints = [
         ('name_uniq', 'unique(name, pawn_shop_id)', 'Pawn Ticket Reference must be unique per Pawn Shop!'),

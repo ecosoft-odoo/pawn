@@ -74,6 +74,7 @@
         </field>
     </record>
 
+	<!-- Oct2015 Enhancement 
     <record id="action_pawn_report_all" model="ir.actions.act_window">
         <field name="name">Pawn Analysis</field>
         <field name="res_model">pawn.report</field>
@@ -88,5 +89,6 @@
     <menuitem action="action_pawn_report_all" id="menu_pawn_report_all" 
     	groups="group_pawn_accountant,group_pawn_manager"
     	parent="menu_pawn_report" sequence="10"/> 
+	-->
 </data>
 </openerp>
