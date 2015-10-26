@@ -212,6 +212,16 @@ class product_product(osv.osv):
             result[line.parent_id.id] = True
         return result.keys()
 
+    def _get_extended(self, cr, uid, ids, name, args, context=None):
+        res = {}
+        for pawn in self.browse( cr, uid, ids, context=context):
+            if pawn.extended:
+                res[pawn.id] = 'x'
+            else:
+                res[pawn.id] = ''
+        return res
+
+
     _columns = {
         'parent_id': fields.many2one('product.product', 'Pawn Ticket', ondelete='cascade'),
         'item_ids': fields.one2many('product.product', 'parent_id', 'Items'),
@@ -219,6 +229,7 @@ class product_product(osv.osv):
         'line_ids': fields.one2many('product.product.line', 'parent_id', 'Item Detail'),
         'state': fields.selection(AVAILABLE_STATE, 'Status', readonly=True),
         'extended': fields.boolean('Extended', readonly=True),
+        'extended_x': fields.function(_get_extended, method=True, string='Extended', type='char'),
         'property_account_pawn_asset': fields.property(
             'account.account',
             type='many2one',

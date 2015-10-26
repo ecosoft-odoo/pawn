@@ -130,7 +130,7 @@
                     <field name="price_estimated" string="Estimated Price"/>
                     <field name="price_pawned" string="Pawned Price"/>
                     <field name="state"/>
-                    <field name="extended"/>
+                    <field name="extended_x"/>
                     <field name="location_status" string="Location" />
                 </tree>
             </field>
