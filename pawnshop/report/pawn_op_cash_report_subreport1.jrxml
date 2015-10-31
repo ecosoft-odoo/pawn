@@ -229,7 +229,7 @@ and l.date = $P{date}
 ) a
 -- END
 ) a
-order by sequence]]>
+order by sequence, desc2]]>
 	</queryString>
 	<field name="sequence" class="java.math.BigDecimal"/>
 	<field name="desc1" class="java.lang.String"/>
