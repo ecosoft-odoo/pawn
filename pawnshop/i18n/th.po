@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenERP Server 7.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-01 01:24+0000\n"
-"PO-Revision-Date: 2015-11-01 01:24+0000\n"
+"POT-Creation-Date: 2015-11-01 06:25+0000\n"
+"PO-Revision-Date: 2015-11-01 06:25+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -348,7 +348,7 @@ msgstr "Pawn Tickets which are in pawned state"
 #: view:pawn.order:0
 #: field:pawn.order.line,partner_id:0
 msgid "Partner"
-msgstr "คู่ค้า"
+msgstr "พาร์ตเนอร์"
 
 #. module: pawnshop
 #: view:pawn.rule:0
@@ -1189,7 +1189,7 @@ msgstr "$P{redeem_account_id}"
 #: view:product.product:0
 #: field:product.template,journal_id:0
 msgid "Journal"
-msgstr "สมุดรายวัน"
+msgstr "ลิ้นชัก"
 
 #. module: pawnshop
 #: view:res.partner.bank:0
@@ -1861,7 +1861,7 @@ msgstr "Date on which this document has been pawned."
 #. module: pawnshop
 #: field:pawn.jor6.wizard,jor6_submitted_date_id:0
 msgid "Jor6 Submitted Date"
-msgstr "Jor6 Submitted Date"
+msgstr "วันที่ยื่นรายงาน จ.6 แล้ว"
 
 #. module: pawnshop
 #: help:product.location.status,sequence:0
@@ -1883,7 +1883,7 @@ msgstr "ผู้รับเงิน"
 #. module: pawnshop
 #: field:pawn.order,jor6_submitted:0
 msgid "Jor6 Submitted"
-msgstr "Jor6 Submitted"
+msgstr "จ.6 นำส่งแล้ว"
 
 #. module: pawnshop
 #: selection:pawn.order,card_type:0
@@ -2383,7 +2383,7 @@ msgstr "There are no paid interest of today to undo"
 #. module: pawnshop
 #: model:ir.ui.menu,name:pawnshop.journal_cash_move_lines
 msgid "Cash Registers"
-msgstr "สมุดทะเบียนเงินสด"
+msgstr "เครืี่องบันทึกเงินสด"
 
 #. module: pawnshop
 #: code:addons/pawnshop/account_voucher.py:242
@@ -2465,7 +2465,7 @@ msgstr "วัน เดือน ปี ที่รับจำนำ"
 #. module: pawnshop
 #: field:pawn.order,date_jor6:0
 msgid "Jor6 Submit Date"
-msgstr "Jor6 Submit Date"
+msgstr "วันที่นำส่งรายงาน จ.6"
 
 #. module: pawnshop
 #: view:item.property:0
@@ -2831,7 +2831,7 @@ msgstr "Code"
 #: model:ir.actions.act_window,name:pawnshop.action_pawn_asset_expired
 #: model:ir.ui.menu,name:pawnshop.menu_pawn_asset_expired
 msgid "Ticket Grace Period End Date"
-msgstr "Ticket Grace Period End Date"
+msgstr "ตั๋วสิ้นสุดระยะผ่อนผัน"
 
 #. module: pawnshop
 #: model:product.category,name:pawnshop.product_categ_watch
@@ -3135,7 +3135,7 @@ msgstr "select a.id, journal_id, pawn_shop_id, history_period_id, num_order, red
 #. module: pawnshop
 #: field:pawn.jor6.wizard,jor6_to_submit_date_id:0
 msgid "Jor6 To-Submit Date"
-msgstr "Jor6 To-Submit Date"
+msgstr "วันที่ยื่นรายงาน จ.6"
 
 #. module: pawnshop
 #: report:pawn.order.form:0
@@ -5020,7 +5020,7 @@ msgstr "$P{interest_add_account_id}"
 #: view:pawn.jor6.submission:0
 #: view:pawn.order:0
 msgid "Jor6 Submission"
-msgstr "Jor6 Submission"
+msgstr "นำส่งรายงาน จ.6"
 
 #. module: pawnshop
 #: help:pawn.config.settings,default_interest_interval:0
