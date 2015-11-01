@@ -4525,8 +4525,7 @@ msgstr "ทองเค"
 #: model:ir.ui.menu,name:pawnshop.menu_action_sale_receipt
 #: view:res.partner:0
 msgid "Sales Receipts"
-msgstr "Sales Receipts\n"
-""
+msgstr "ใบเสร็จขาย"
 
 #. module: pawnshop
 #: view:item.split:0
@@ -4993,7 +4992,7 @@ msgstr "order_line/is_jewelry"
 #: model:ir.actions.act_window,name:pawnshop.action_product_expense
 #: model:ir.ui.menu,name:pawnshop.menu_product_expense
 msgid "Expenses"
-msgstr "Expenses"
+msgstr "ค่าใช้จ่าย"
 
 #. module: pawnshop
 #: field:res.partner,address_full:0
