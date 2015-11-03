@@ -94,7 +94,7 @@ class pawn_jor6_wizard(osv.osv_memory):
 
 pawn_jor6_wizard()
 
-class pawn_jor6_wizard_date(osv.osv):
+class pawn_jor6_wizard_date(osv.osv_memory):
     _name = "pawn.jor6.wizard.date"
     _description = "Date for Jor6"
     _auto = False
