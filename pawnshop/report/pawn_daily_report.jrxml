@@ -402,7 +402,7 @@ order by date]]>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="table_2" stretchType="RelativeToTallestObject" x="0" y="0" width="463" height="63" isPrintWhenDetailOverflows="true"/>
+				<reportElement style="table_2" stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="63" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Monospaced" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>

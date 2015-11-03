@@ -54,12 +54,6 @@ where pw.pawn_shop_id = $P{pawn_shop_id}
 and pw.date_expired = $P{date}
 and pw.journal_id in ($P{stk1_journal_id}, $P{stk2_journal_id})
 UNION
-select 4 as sequence, 'ของเล้า' as desc1, coalesce(count(*),0) qty, coalesce(sum(amount_pawned),0) balance
-from pawn_order pw
-where pw.pawn_shop_id = $P{pawn_shop_id}
-and pw.date_expired = $P{date}
-and pw.journal_id in ($P{stk1_journal_id}, $P{stk2_journal_id})
-UNION
 select 6 as sequence, 'รายได้จากดอกเบี้ย' as desc1, -1 qty, coalesce(sum(l.credit),0) - coalesce(sum(l.debit),0) as balance
 from account_move_line l
 join pawn_order pw on pw.id = l.pawn_order_id
@@ -78,7 +72,7 @@ and l.profit_center in (select profit_center from account_journal where id in ($
 and l.pawn_shop_id = $P{pawn_shop_id}
 and l.date = $P{date}
 UNION
-select 8 as sequence, 'รายได้อื่นๆ' as desc1, -1 qty, coalesce(sum(l.credit),0) as balance
+select 8 as sequence, 'อื่นๆ' as desc1, -1 qty, coalesce(sum(l.credit),0) as balance
 from account_move_line l
 join account_bank_statement st on st.id = l.statement_id
 join account_journal aj on aj.id = st.journal_id
