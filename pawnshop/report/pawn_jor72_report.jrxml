@@ -70,7 +70,7 @@ left outer join -- PAWN
 	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned
 	from pawn_order pw
 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in
-	(select max(id) from pawn_status_history group by period_id, order_id)
+	(select max(id) from pawn_status_history group by period_id, order_id, state)
 	where pw.state not in ('draft', 'cancel')
 	order by order_id, psh.period_id) a
 	where a.state = 'pawn'
@@ -80,7 +80,7 @@ left outer join -- PAWN
 	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id
 	from pawn_order pw
 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in
-	(select max(id) from pawn_status_history group by period_id, order_id)
+	(select max(id) from pawn_status_history group by period_id, order_id, state)
 	where pw.state not in ('draft', 'cancel')) a
 	where a.state = 'pawn'
 	group by journal_id, pawn_shop_id, period_id) people
@@ -96,7 +96,7 @@ left outer join -- REDEEM
 	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned
 	from pawn_order pw
 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in
-	(select max(id) from pawn_status_history group by period_id, order_id)
+	(select max(id) from pawn_status_history group by period_id, order_id, state)
 	where pw.state not in ('draft', 'cancel')
 	order by order_id, psh.period_id) a
 	where a.state = 'redeem'
@@ -106,7 +106,7 @@ left outer join -- REDEEM
 	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id
 	from pawn_order pw
 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in
-	(select max(id) from pawn_status_history group by period_id, order_id)
+	(select max(id) from pawn_status_history group by period_id, order_id, state)
 	where pw.state not in ('draft', 'cancel')) a
 	where a.state = 'redeem'
 	group by journal_id, pawn_shop_id, period_id) people
@@ -122,7 +122,7 @@ left outer join -- EXPIRE
 	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned
 	from pawn_order pw
 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in
-	(select max(id) from pawn_status_history group by period_id, order_id)
+	(select max(id) from pawn_status_history group by period_id, order_id, state)
 	where pw.state not in ('draft', 'cancel')
 	order by order_id, psh.period_id) a
 	where a.state = 'expire'
@@ -132,7 +132,7 @@ left outer join -- EXPIRE
 	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id
 	from pawn_order pw
 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in
-	(select max(id) from pawn_status_history group by period_id, order_id)
+	(select max(id) from pawn_status_history group by period_id, order_id, state)
 	where pw.state not in ('draft', 'cancel')) a
 	where a.state = 'expire'
 	group by journal_id, pawn_shop_id, period_id) people
