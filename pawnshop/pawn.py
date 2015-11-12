@@ -430,7 +430,7 @@ class pawn_order(osv.osv):
                 self.action_move_create(cr, uid, [pawn.id], context={'direction': 'redeem'})
         return True
 
-    def order_expire(self, cr, uid, ids, context=None): 
+    def order_expire(self, cr, uid, ids, context=None):
         # Reverse Accrued Interest
         self.action_move_reversed_accrued_interest_create(cr, uid, ids, context=context)
         # Inactive any left over accrued interest
@@ -743,40 +743,41 @@ class pawn_order(osv.osv):
         if context == None:
             context = {}
         # Update Number
-        pawn = self.browse(cr, uid, ids[0], context=context)
-        period_id = vals.get('period_id', False)
-        pawn_shop_id = vals.get('pawn_shop_id', False)
-        if period_id or pawn_shop_id: # Re assign number, if period or shop is changed
-            period_id = period_id or pawn.period_id.id
-            pawn_shop_id = pawn_shop_id or pawn.pawn_shop_id.id
-            name, book, number = self._get_next_pawn_name(cr, uid, period_id, pawn_shop_id, context=context)
-            self.write(cr, uid, [pawn.id], {'name': name, 'book': book, 'number': number})
-            vals.update({'name': name}) # To update pawn Ticket  
-        # For renew pawn oder only, if amount_pawned is changed, also update the amount_net
-        if vals.get('amount_pawned', False) and pawn.parent_id:
-            diff = vals.get('amount_pawned', False) - pawn.amount_pawned
-            if diff:
-                vals.update({'amount_net': pawn.amount_net + diff})
+        for pawn in self.browse(cr, uid, ids, context=context):
+            period_id = vals.get('period_id', False)
+            pawn_shop_id = vals.get('pawn_shop_id', False)
+            if period_id or pawn_shop_id: # Re assign number, if period or shop is changed
+                period_id = period_id or pawn.period_id.id
+                pawn_shop_id = pawn_shop_id or pawn.pawn_shop_id.id
+                name, book, number = self._get_next_pawn_name(cr, uid, period_id, pawn_shop_id, context=context)
+                self.write(cr, uid, [pawn.id], {'name': name, 'book': book, 'number': number})
+                vals.update({'name': name}) # To update pawn Ticket  
+            # For renew pawn oder only, if amount_pawned is changed, also update the amount_net
+            if vals.get('amount_pawned', False) and pawn.parent_id:
+                diff = vals.get('amount_pawned', False) - pawn.amount_pawned
+                if diff:
+                    vals.update({'amount_net': pawn.amount_net + diff})
         # Update Super
         res = super(pawn_order, self).write(cr, uid, ids, vals, context=context)
         # Update Pawn Ticket
-        if pawn.item_id:  # Update case
-            self._update_pawn_asset(cr, uid, pawn.item_id.id, pawn, vals)
-        else:  # Create case, no item_id yet
-            item_id = self._create_pawn_asset(cr, uid, pawn)
-            super(pawn_order, self).write(cr, uid, [pawn.id], {'item_id': item_id}, context=context)
+        for pawn in self.browse(cr, uid, ids, context=context):
+            if pawn.item_id:  # Update case
+                self._update_pawn_asset(cr, uid, pawn.item_id.id, pawn, vals)
+            else:  # Create case, no item_id yet
+                item_id = self._create_pawn_asset(cr, uid, pawn)
+                super(pawn_order, self).write(cr, uid, [pawn.id], {'item_id': item_id}, context=context)
         # Update pawn amount if total is updated
         if [val for val in vals.keys() if val in ['order_line']]:
-            pawn = self.browse(cr, uid, ids[0], context=context)
-            if not vals.get('amount_pawned', False):
-                self.write(cr, uid, [pawn.id], {'amount_pawned': pawn.amount_total})
+            for pawn in self.browse(cr, uid, ids, context=context):
+                if not vals.get('amount_pawned', False):
+                    self.write(cr, uid, [pawn.id], {'amount_pawned': pawn.amount_total})
         # Interest table, if update in the following 4 fields
         if [val for val in vals.keys() if val in ['amount_pawned', 'rule_id', 'date_order']]:
-            pawn = self.browse(cr, uid, ids[0], context=context)
-            pawn_interest = self.pool.get('pawn.accrued.interest')
-            pawn_interest.unlink(cr, uid, pawn_interest.search(cr, uid, [('pawn_id', '=', pawn.id)]))
-            interest_table = self._calculate_interest_table(cr, uid, pawn.id, context=context)
-            self.write(cr, uid, [pawn.id], {'accrued_interest_ids': interest_table})
+            for pawn in self.browse(cr, uid, ids, context=context):
+                pawn_interest = self.pool.get('pawn.accrued.interest')
+                pawn_interest.unlink(cr, uid, pawn_interest.search(cr, uid, [('pawn_id', '=', pawn.id)]))
+                interest_table = self._calculate_interest_table(cr, uid, pawn.id, context=context)
+                self.write(cr, uid, [pawn.id], {'accrued_interest_ids': interest_table})
         # Adding records in Interest table, if date_due is updated
         if [val for val in vals.keys() if val in ['date_due']]:
             for pawn in self.browse(cr, uid, ids, context=context):
@@ -788,10 +789,11 @@ class pawn_order(osv.osv):
         if vals.get('state', False):
             ctx = dict(account_period_prefer_normal=True)
             periods = self.pool.get('account.period').find(cr, uid, context=ctx)
-            status_history = {'order_id': pawn.id,
-                              'state': vals.get('state'),
-                              'period_id': periods and periods[0] or False}
-            self.pool.get('pawn.status.history').create(cr, uid, status_history, context=context)
+            for pawn in self.browse(cr, uid, ids, context=context):
+                status_history = {'order_id': pawn.id,
+                                  'state': vals.get('state'),
+                                  'period_id': periods and periods[0] or False}
+                self.pool.get('pawn.status.history').create(cr, uid, status_history, context=context)
         return res
 
     def unlink(self, cr, uid, ids, context=None):
