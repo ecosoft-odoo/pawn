@@ -813,6 +813,7 @@ class pawn_order(osv.osv):
         if not default:
             default = {}
         default.update({
+            'period_id': self._get_period(cr, uid),
             'state': 'draft',
             'date_order': fields.date.context_today(self, cr, uid, context=context),
             'date_redeem': False,
