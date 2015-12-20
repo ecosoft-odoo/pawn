@@ -412,7 +412,6 @@ class product_product(osv.osv):
 
     # Update status of asset and items to For Sales
     def action_asset_sale(self, cr, uid, ids, context=None):
-        print context
         # Do not allow for Extended Item
         res = [x['extended'] for x in self.read(cr, uid, ids, ['extended'], context=context)]
         if True in res and not context.get('allow_for_sale', False):
