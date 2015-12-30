@@ -285,7 +285,7 @@ class pawn_order(osv.osv):
                 'pawn.order.line': (_get_order, None, 10),
             }, multi="sums", help="The total amount"),
         'amount_pawned': fields.float('Pawned Amount', readonly=True, states={'draft': [('readonly', False)]}, help="Pawned Amount is the amount that will be used for interest calculation."),
-        'date_expired': fields.function(_calculate_pawn_interest, type='date', string='Expired Date',
+        'date_expired': fields.function(_calculate_pawn_interest, type='date', string='Ticket Expiry Date',
             store={
                 'pawn.order': (lambda self, cr, uid, ids, c={}: ids, ['date_order', 'rule_id'], 10),
             }, multi='interest_calc1'),
