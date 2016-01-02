@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Purchase Order" language="groovy" pageWidth="479" pageHeight="842" columnWidth="479" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="1.3636363636363673"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="544"/>
+	<property name="ireport.y" value="244"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;]"/>
 	<style name="table" lineSpacing="Single">
 		<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
@@ -303,14 +303,13 @@ $F{card_type} == "passport" ? "หมายเลขหนังสือเด�
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["("+(new Scriptlet()).getAmtInWords((new BigDecimal(($F{amount_pawned}==null?0.00:$F{amount_pawned}).toString())).setScale(2).toString(),"THB")+")"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd MMMMM yyyy" isBlankWhenNull="true">
 				<reportElement positionType="Float" mode="Transparent" x="306" y="0" width="175" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="16" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_expired}]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0" isBlankWhenNull="true">
 				<reportElement positionType="Float" mode="Transparent" x="58" y="42" width="74" height="17" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -366,7 +365,7 @@ $F{card_type} == "passport" ? "หมายเลขหนังสือเด�
 				<textElement textAlignment="Right" verticalAlignment="Top" lineSpacing="Single">
 					<font fontName="Monospaced" size="16" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<text><![CDATA[** วันครบกำหนดการรับจำนำ 4 เดือน:]]></text>
+				<text><![CDATA[]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement positionType="Float" mode="Transparent" x="362" y="308" width="116" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
