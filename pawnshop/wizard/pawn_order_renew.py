@@ -105,6 +105,12 @@ class pawn_order_renew(osv.osv_memory):
         pawn = pawn_obj.browse(cr, uid, pawn_id, context=context)
         wizard = self.browse(cr, uid, ids[0], context)
         date = wizard.date_renew
+        # Warning if today > date_due
+        if pawn.date_due and pawn.date_due < time.strftime('%Y-%m-%d'):
+            raise osv.except_osv(
+                _('Cannot renew!'),
+                _('Today is over grace period end date.\n'
+                  'Please use normal sales process for expired items.'))
         # Normal case, redeem after pawned
         if not pawn.extended:
             interest_amount = wizard.pay_interest_amount
