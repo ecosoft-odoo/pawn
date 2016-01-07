@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<openerp>
+<data>
+
+    <record id="pawn_jor6_old_report" model="ir.actions.report.xml">
+        <field name="name">Jor6 Old Report</field>
+        <field name="type">ir.actions.report.xml</field>
+        <field name="model">pawn.order</field>
+        <field name="report_name">pawn_jor6_old_report</field>
+        <field name="report_rml">pawn_jor6_old_report/report/pawn_jor6_old_report.jrxml</field>
+        <field name="report_type">pdf</field>
+        <field name="jasper_report">True</field>
+        <field name="jasper_output">pdf</field>
+    </record>    
+
+</data>
+</openerp>
