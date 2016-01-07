@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: OpenERP Server 7.0\n"
+"Project-Id-Version: OpenERP Server 7.0-20151019\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-01 06:25+0000\n"
-"PO-Revision-Date: 2015-11-01 06:25+0000\n"
+"POT-Creation-Date: 2016-01-07 09:10+0000\n"
+"PO-Revision-Date: 2016-01-07 09:10+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -31,10 +31,10 @@ msgid "$F{nationality} == \"Thailand\" ? \"ไทย\" : $F{nationality}"
 msgstr "$F{nationality} == \"Thailand\" ? \"ไทย\" : $F{nationality}"
 
 #. module: pawnshop
-#: code:addons/pawnshop/account_voucher.py:397
+#: code:addons/pawnshop/wizard/pawn_order_renew.py:111
 #, python-format
-msgid "Please verify that the total amount of this Sales Receipt is not zero!"
-msgstr "Please verify that the total amount of this Sales Receipt is not zero!"
+msgid "Cannot renew!"
+msgstr "ไม่สามารถต่อตั๋ว!"
 
 #. module: pawnshop
 #: field:item.property.line,allow_text:0
@@ -313,10 +313,10 @@ msgstr "ใบอนุญาต เล่มที่"
 
 #. module: pawnshop
 #: code:addons/pawnshop/account_bank_statement.py:44
-#: code:addons/pawnshop/item.py:419
-#: code:addons/pawnshop/item.py:447
+#: code:addons/pawnshop/item.py:418
+#: code:addons/pawnshop/item.py:446
 #: code:addons/pawnshop/pawn.py:415
-#: code:addons/pawnshop/pawn.py:1387
+#: code:addons/pawnshop/pawn.py:1393
 #: code:addons/pawnshop/report/wizard/pawn_daily_wizard.py:63
 #: code:addons/pawnshop/res_partner.py:128
 #: code:addons/pawnshop/res_partner.py:136
@@ -348,7 +348,7 @@ msgstr "Pawn Tickets which are in pawned state"
 #: view:pawn.order:0
 #: field:pawn.order.line,partner_id:0
 msgid "Partner"
-msgstr "พาร์ตเนอร์"
+msgstr "คู่ค้า"
 
 #. module: pawnshop
 #: view:pawn.rule:0
@@ -544,6 +544,12 @@ msgid "Redeemed"
 msgstr "ไถ่ถอนแล้ว"
 
 #. module: pawnshop
+#: report:pawn.receipt.form:0
+#: report:pawn.sale.receipt.form:0
+msgid "ที่อยู่"
+msgstr "ที่อยู่"
+
+#. module: pawnshop
 #: field:pawn.item.create.receipt,item_ids:0
 #: field:product.product,item_ids:0
 msgid "Items"
@@ -556,7 +562,7 @@ msgid "Age"
 msgstr "อายุ"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:804
+#: code:addons/pawnshop/pawn.py:806
 #, python-format
 msgid "In order to delete a pawn ticket, you must cancel it first."
 msgstr "In order to delete a pawn ticket, you must cancel it first."
@@ -578,7 +584,7 @@ msgid "Total Sold Price"
 msgstr "ราคาขายรวม"
 
 #. module: pawnshop
-#: code:addons/pawnshop/wizard/pawn_order_renew.py:151
+#: code:addons/pawnshop/wizard/pawn_order_renew.py:157
 #: model:ir.actions.act_window,name:pawnshop.action_pawn_assets
 #: model:ir.actions.act_window,name:pawnshop.pawn_form_action
 #: model:ir.ui.menu,name:pawnshop.menu_pawn_form_action
@@ -696,7 +702,7 @@ msgid "Pawn Ticket Reference"
 msgstr "Pawn Ticket Reference"
 
 #. module: pawnshop
-#: code:addons/pawnshop/item.py:447
+#: code:addons/pawnshop/item.py:446
 #, python-format
 msgid "This ticket can not be set back to expired!"
 msgstr "This ticket can not be set back to expired!"
@@ -713,7 +719,7 @@ msgid "Item Properties"
 msgstr "คุณสมบัติของจำนำ"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:905
+#: code:addons/pawnshop/pawn.py:911
 #, python-format
 msgid "Configuration Error !"
 msgstr "การกำหนดค่าผิดพลาด!"
@@ -789,7 +795,7 @@ msgid "Jor6 Submitted?"
 msgstr "Jor6 Submitted?"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:906
+#: code:addons/pawnshop/pawn.py:912
 #, python-format
 msgid "Please activate the sequence of selected journal !"
 msgstr "กรุณาเปิดการใช้งานเลขลำดับของสมุดรายวันที่เลือก!"
@@ -869,11 +875,6 @@ msgid "ตั๋ว"
 msgstr "ตั๋ว"
 
 #. module: pawnshop
-#: report:pawn.order.form:0
-msgid "\"(\"+(new Scriptlet()).getAmtInWords((new BigDecimal(($F{amount_pawned}==null?0.00:$F{amount_pawned}).toString())).setScale(2).toString(),\"THB\")+\")\""
-msgstr "\"(\"+(new Scriptlet()).getAmtInWords((new BigDecimal(($F{amount_pawned}==null?0.00:$F{amount_pawned}).toString())).setScale(2).toString(),\"THB\")+\")\""
-
-#. module: pawnshop
 #: selection:pawn.amount.by.period,month:0
 #: selection:pawn.interest.report,month:0
 #: selection:pawn.report,month:0
@@ -923,7 +924,7 @@ msgid "Pawned (1)"
 msgstr "จำนำแล้ว (1)"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:912
+#: code:addons/pawnshop/pawn.py:918
 #, python-format
 msgid "Please define a sequence on the journal."
 msgstr "กรุณากำหนดเลขที่สำหรับสมุดรายวัน"
@@ -1149,6 +1150,14 @@ msgid "Unit Price"
 msgstr "ราคาต่อหน่วย"
 
 #. module: pawnshop
+#: code:addons/pawnshop/wizard/pawn_order_renew.py:112
+#, python-format
+msgid "Today is over grace period end date.\n"
+"Please use normal sales process for expired items."
+msgstr "เนื่องจากเลยกำหนดวันที่ผ่อนผัน\n"
+"กรุณาดำเนินการตามการขายของหลุดปกติ"
+
+#. module: pawnshop
 #: model:ir.actions.act_window,name:pawnshop.action_pawn_items
 #: view:product.product:0
 msgid "Pawn Items"
@@ -1189,7 +1198,7 @@ msgstr "$P{redeem_account_id}"
 #: view:product.product:0
 #: field:product.template,journal_id:0
 msgid "Journal"
-msgstr "ลิ้นชัก"
+msgstr "สมุดรายวัน"
 
 #. module: pawnshop
 #: view:res.partner.bank:0
@@ -1249,7 +1258,7 @@ msgid "Expired"
 msgstr "หมดอายุแล้ว"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:939
+#: code:addons/pawnshop/pawn.py:945
 #, python-format
 msgid "No pawn ticket account found for the item %s"
 msgstr "No pawn ticket account found for the item %s"
@@ -1454,11 +1463,6 @@ msgid "March"
 msgstr "มีนาคม"
 
 #. module: pawnshop
-#: report:pawn.order.form:0
-msgid "** วันครบกำหนดการรับจำนำ 4 เดือน:"
-msgstr "** วันครบกำหนดการรับจำนำ 4 เดือน:"
-
-#. module: pawnshop
 #: report:pawn_daily_report:0
 #: report:pawn_op_cash_report:0
 #: report:pawn_wh_cash_report:0
@@ -1611,6 +1615,11 @@ msgstr "{'invisible': [('pawnshop', '=', True)]}"
 #: report:pawn.sale.receipt.form:0
 msgid "/data/record"
 msgstr "/data/record"
+
+#. module: pawnshop
+#: report:pawn_jor71_report:0
+msgid "select a.id, journal_id, pawn_shop_id, history_period_id, num_order, redeem_num_order, expire_num_order, amount, redeem_amount, expire_amount, people, redeem_people, expire_people, ap.name as period_name, ps.name as shop_name, ps.full_address from ( select (period.journal_id::varchar || period.pawn_shop_id::varchar || period.history_period_id::varchar)::int id,     period.journal_id, period.pawn_shop_id, period.history_period_id,     pawn.num_order num_order,     redeem.num_order redeem_num_order, expire.num_order expire_num_order,     pawn.amount amount,     redeem.amount redeem_amount, expire.amount expire_amount,     pawn.people people,     redeem.people redeem_people, expire.people expire_people from -- PAWN ORDER NORMAL 	-- start 	(select distinct journal_id, pawn_shop_id, psh.period_id history_period_id 	from pawn_order pw 	join pawn_status_history psh on psh.order_id = pw.id 	order by history_period_id) 	-- end 	period left outer join -- PAWN 	-- start 	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order 	from 		(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order 		from 			(select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned 			from pawn_order pw 			left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 			(select min(id) from pawn_status_history group by order_id, state) 			where pw.state not in ('draft', 'cancel') 			order by order_id, psh.period_id) a 		where a.state = 'pawn' 		group by journal_id, pawn_shop_id, period_id) amount 	join 	(select journal_id, pawn_shop_id, period_id, count(partner_id) people 	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select min(id) from pawn_status_history group by order_id, state) 	where pw.state not in ('draft', 'cancel')) a 	where a.state = 'pawn' 	group by journal_id, pawn_shop_id, period_id) people 	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id) 	-- end 	pawn 	on period.journal_id = pawn.journal_id and period.pawn_shop_id = pawn.pawn_shop_id and period.history_period_id = pawn.period_id left outer join -- REDEEM 	-- start 	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order 	from 	(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order 	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select min(id) from pawn_status_history group by order_id, state) 	where pw.state not in ('draft', 'cancel') 	order by order_id, psh.period_id) a 	where a.state = 'redeem' 	group by journal_id, pawn_shop_id, period_id) amount 	join 	(select journal_id, pawn_shop_id, period_id, count(partner_id) people 	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select min(id) from pawn_status_history group by order_id, state) 	where pw.state not in ('draft', 'cancel')) a 	where a.state = 'redeem' 	group by journal_id, pawn_shop_id, period_id) people 	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id) 	-- end 	redeem     on period.journal_id = redeem.journal_id and period.pawn_shop_id = redeem.pawn_shop_id and period.history_period_id = redeem.period_id left outer join -- EXPIRE 	-- start 	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order 	from 	(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order 	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select min(id) from pawn_status_history group by order_id, state) 	where pw.state not in ('draft', 'cancel') 	order by order_id, psh.period_id) a 	where a.state = 'expire' 	group by journal_id, pawn_shop_id, period_id) amount 	join 	(select journal_id, pawn_shop_id, period_id, count(partner_id) people 	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select min(id) from pawn_status_history group by order_id, state) 	where pw.state not in ('draft', 'cancel')) a 	where a.state = 'expire' 	group by journal_id, pawn_shop_id, period_id) people 	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id) 	-- end 	expire     on period.journal_id = expire.journal_id and period.pawn_shop_id = expire.pawn_shop_id and period.history_period_id = expire.period_id ) a join pawn_shop ps on ps.id = pawn_shop_id join account_period ap on ap.id = history_period_id where journal_id = $P{journal_id} and pawn_shop_id = $P{pawn_shop_id} and history_period_id = $P{period_id}"
+msgstr "select a.id, journal_id, pawn_shop_id, history_period_id, num_order, redeem_num_order, expire_num_order, amount, redeem_amount, expire_amount, people, redeem_people, expire_people, ap.name as period_name, ps.name as shop_name, ps.full_address from ( select (period.journal_id::varchar || period.pawn_shop_id::varchar || period.history_period_id::varchar)::int id,     period.journal_id, period.pawn_shop_id, period.history_period_id,     pawn.num_order num_order,     redeem.num_order redeem_num_order, expire.num_order expire_num_order,     pawn.amount amount,     redeem.amount redeem_amount, expire.amount expire_amount,     pawn.people people,     redeem.people redeem_people, expire.people expire_people from -- PAWN ORDER NORMAL 	-- start 	(select distinct journal_id, pawn_shop_id, psh.period_id history_period_id 	from pawn_order pw 	join pawn_status_history psh on psh.order_id = pw.id 	order by history_period_id) 	-- end 	period left outer join -- PAWN 	-- start 	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order 	from 		(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order 		from 			(select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned 			from pawn_order pw 			left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 			(select min(id) from pawn_status_history group by order_id, state) 			where pw.state not in ('draft', 'cancel') 			order by order_id, psh.period_id) a 		where a.state = 'pawn' 		group by journal_id, pawn_shop_id, period_id) amount 	join 	(select journal_id, pawn_shop_id, period_id, count(partner_id) people 	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select min(id) from pawn_status_history group by order_id, state) 	where pw.state not in ('draft', 'cancel')) a 	where a.state = 'pawn' 	group by journal_id, pawn_shop_id, period_id) people 	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id) 	-- end 	pawn 	on period.journal_id = pawn.journal_id and period.pawn_shop_id = pawn.pawn_shop_id and period.history_period_id = pawn.period_id left outer join -- REDEEM 	-- start 	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order 	from 	(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order 	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select min(id) from pawn_status_history group by order_id, state) 	where pw.state not in ('draft', 'cancel') 	order by order_id, psh.period_id) a 	where a.state = 'redeem' 	group by journal_id, pawn_shop_id, period_id) amount 	join 	(select journal_id, pawn_shop_id, period_id, count(partner_id) people 	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select min(id) from pawn_status_history group by order_id, state) 	where pw.state not in ('draft', 'cancel')) a 	where a.state = 'redeem' 	group by journal_id, pawn_shop_id, period_id) people 	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id) 	-- end 	redeem     on period.journal_id = redeem.journal_id and period.pawn_shop_id = redeem.pawn_shop_id and period.history_period_id = redeem.period_id left outer join -- EXPIRE 	-- start 	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order 	from 	(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order 	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select min(id) from pawn_status_history group by order_id, state) 	where pw.state not in ('draft', 'cancel') 	order by order_id, psh.period_id) a 	where a.state = 'expire' 	group by journal_id, pawn_shop_id, period_id) amount 	join 	(select journal_id, pawn_shop_id, period_id, count(partner_id) people 	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select min(id) from pawn_status_history group by order_id, state) 	where pw.state not in ('draft', 'cancel')) a 	where a.state = 'expire' 	group by journal_id, pawn_shop_id, period_id) people 	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id) 	-- end 	expire     on period.journal_id = expire.journal_id and period.pawn_shop_id = expire.pawn_shop_id and period.history_period_id = expire.period_id ) a join pawn_shop ps on ps.id = pawn_shop_id join account_period ap on ap.id = history_period_id where journal_id = $P{journal_id} and pawn_shop_id = $P{pawn_shop_id} and history_period_id = $P{period_id}"
 
 #. module: pawnshop
 #: model:ir.model,name:pawnshop.model_pawn_item_create_receipt
@@ -1831,10 +1840,9 @@ msgid "Ref Sales Receipt"
 msgstr "อ้างอิงใบเสร็จขาย"
 
 #. module: pawnshop
-#: report:pawn.receipt.form:0
-#: report:pawn.sale.receipt.form:0
-msgid "ที่อยู่"
-msgstr "ที่อยู่"
+#: report:pawn_jor72_report:0
+msgid "select a.id, journal_id, pawn_shop_id, history_period_id, num_order, redeem_num_order, expire_num_order, amount, redeem_amount, expire_amount, people, redeem_people, expire_people, ap.name as period_name, ps.name as shop_name, ps.full_address, ps.reg_book, ps.reg_number, -- amount_interest (select sum(interest_amount - discount + addition) from pawn_actual_interest pai join pawn_order po on po.id = pai.pawn_id where interest_date >= ap.date_start and interest_date <= ap.date_stop and po.journal_id = $P{journal_id} and po.pawn_shop_id = $P{pawn_shop_id}) amount_interest from ( select (period.journal_id::varchar || period.pawn_shop_id::varchar || period.history_period_id::varchar)::int id,     period.journal_id, period.pawn_shop_id, period.history_period_id,     pawn.num_order num_order,     redeem.num_order redeem_num_order, expire.num_order expire_num_order,     pawn.amount amount,     redeem.amount redeem_amount, expire.amount expire_amount,     pawn.people people,     redeem.people redeem_people, expire.people expire_people from -- PAWN ORDER NORMAL 	-- start 	(select distinct journal_id, pawn_shop_id, psh.period_id history_period_id 	from pawn_order pw 	join pawn_status_history psh on psh.order_id = pw.id 	order by history_period_id) 	-- end 	period left outer join -- PAWN 	-- start 	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order 	from 	(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order 	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select min(id) from pawn_status_history group by order_id, state) 	where pw.state not in ('draft', 'cancel') 	order by order_id, psh.period_id) a 	where a.state = 'pawn' 	group by journal_id, pawn_shop_id, period_id) amount 	join 	(select journal_id, pawn_shop_id, period_id, count(partner_id) people 	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select min(id) from pawn_status_history group by order_id, state) 	where pw.state not in ('draft', 'cancel')) a 	where a.state = 'pawn' 	group by journal_id, pawn_shop_id, period_id) people 	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id) 	-- end 	pawn     on period.journal_id = pawn.journal_id and period.pawn_shop_id = pawn.pawn_shop_id and period.history_period_id = pawn.period_id left outer join -- REDEEM 	-- start 	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order 	from 	(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order 	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select min(id) from pawn_status_history group by order_id, state) 	where pw.state not in ('draft', 'cancel') 	order by order_id, psh.period_id) a 	where a.state = 'redeem' 	group by journal_id, pawn_shop_id, period_id) amount 	join 	(select journal_id, pawn_shop_id, period_id, count(partner_id) people 	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select min(id) from pawn_status_history group by order_id, state) 	where pw.state not in ('draft', 'cancel')) a 	where a.state = 'redeem' 	group by journal_id, pawn_shop_id, period_id) people 	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id) 	-- end 	redeem     on period.journal_id = redeem.journal_id and period.pawn_shop_id = redeem.pawn_shop_id and period.history_period_id = redeem.period_id left outer join -- EXPIRE 	-- start 	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order 	from 	(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order 	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select min(id) from pawn_status_history group by order_id, state) 	where pw.state not in ('draft', 'cancel') 	order by order_id, psh.period_id) a 	where a.state = 'expire' 	group by journal_id, pawn_shop_id, period_id) amount 	join 	(select journal_id, pawn_shop_id, period_id, count(partner_id) people 	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select min(id) from pawn_status_history group by order_id, state) 	where pw.state not in ('draft', 'cancel')) a 	where a.state = 'expire' 	group by journal_id, pawn_shop_id, period_id) people 	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id) 	-- end 	expire     on period.journal_id = expire.journal_id and period.pawn_shop_id = expire.pawn_shop_id and period.history_period_id = expire.period_id ) a join pawn_shop ps on ps.id = pawn_shop_id join account_period ap on ap.id = history_period_id where journal_id = $P{journal_id} and pawn_shop_id = $P{pawn_shop_id} and history_period_id = $P{period_id}"
+msgstr "select a.id, journal_id, pawn_shop_id, history_period_id, num_order, redeem_num_order, expire_num_order, amount, redeem_amount, expire_amount, people, redeem_people, expire_people, ap.name as period_name, ps.name as shop_name, ps.full_address, ps.reg_book, ps.reg_number, -- amount_interest (select sum(interest_amount - discount + addition) from pawn_actual_interest pai join pawn_order po on po.id = pai.pawn_id where interest_date >= ap.date_start and interest_date <= ap.date_stop and po.journal_id = $P{journal_id} and po.pawn_shop_id = $P{pawn_shop_id}) amount_interest from ( select (period.journal_id::varchar || period.pawn_shop_id::varchar || period.history_period_id::varchar)::int id,     period.journal_id, period.pawn_shop_id, period.history_period_id,     pawn.num_order num_order,     redeem.num_order redeem_num_order, expire.num_order expire_num_order,     pawn.amount amount,     redeem.amount redeem_amount, expire.amount expire_amount,     pawn.people people,     redeem.people redeem_people, expire.people expire_people from -- PAWN ORDER NORMAL 	-- start 	(select distinct journal_id, pawn_shop_id, psh.period_id history_period_id 	from pawn_order pw 	join pawn_status_history psh on psh.order_id = pw.id 	order by history_period_id) 	-- end 	period left outer join -- PAWN 	-- start 	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order 	from 	(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order 	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select min(id) from pawn_status_history group by order_id, state) 	where pw.state not in ('draft', 'cancel') 	order by order_id, psh.period_id) a 	where a.state = 'pawn' 	group by journal_id, pawn_shop_id, period_id) amount 	join 	(select journal_id, pawn_shop_id, period_id, count(partner_id) people 	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select min(id) from pawn_status_history group by order_id, state) 	where pw.state not in ('draft', 'cancel')) a 	where a.state = 'pawn' 	group by journal_id, pawn_shop_id, period_id) people 	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id) 	-- end 	pawn     on period.journal_id = pawn.journal_id and period.pawn_shop_id = pawn.pawn_shop_id and period.history_period_id = pawn.period_id left outer join -- REDEEM 	-- start 	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order 	from 	(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order 	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select min(id) from pawn_status_history group by order_id, state) 	where pw.state not in ('draft', 'cancel') 	order by order_id, psh.period_id) a 	where a.state = 'redeem' 	group by journal_id, pawn_shop_id, period_id) amount 	join 	(select journal_id, pawn_shop_id, period_id, count(partner_id) people 	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select min(id) from pawn_status_history group by order_id, state) 	where pw.state not in ('draft', 'cancel')) a 	where a.state = 'redeem' 	group by journal_id, pawn_shop_id, period_id) people 	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id) 	-- end 	redeem     on period.journal_id = redeem.journal_id and period.pawn_shop_id = redeem.pawn_shop_id and period.history_period_id = redeem.period_id left outer join -- EXPIRE 	-- start 	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order 	from 	(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order 	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select min(id) from pawn_status_history group by order_id, state) 	where pw.state not in ('draft', 'cancel') 	order by order_id, psh.period_id) a 	where a.state = 'expire' 	group by journal_id, pawn_shop_id, period_id) amount 	join 	(select journal_id, pawn_shop_id, period_id, count(partner_id) people 	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select min(id) from pawn_status_history group by order_id, state) 	where pw.state not in ('draft', 'cancel')) a 	where a.state = 'expire' 	group by journal_id, pawn_shop_id, period_id) people 	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id) 	-- end 	expire     on period.journal_id = expire.journal_id and period.pawn_shop_id = expire.pawn_shop_id and period.history_period_id = expire.period_id ) a join pawn_shop ps on ps.id = pawn_shop_id join account_period ap on ap.id = history_period_id where journal_id = $P{journal_id} and pawn_shop_id = $P{pawn_shop_id} and history_period_id = $P{period_id}"
 
 #. module: pawnshop
 #: code:addons/pawnshop/account_voucher.py:489
@@ -2029,9 +2037,9 @@ msgid "Property Selection"
 msgstr "ตัวเลือกคุณสมบัติ"
 
 #. module: pawnshop
-#: model:product.category,name:pawnshop.product_categ_gold_2
-msgid "ทองรูปพรรณ"
-msgstr "ทองรูปพรรณ"
+#: field:pawn.order,date_expired:0
+msgid "Ticket Expiry Date"
+msgstr "วันที่ตั๋วครบ 4 เดือน"
 
 #. module: pawnshop
 #: view:pawn.order:0
@@ -2055,7 +2063,7 @@ msgid "Is a Follower"
 msgstr "เป็นผู้ติดตาม"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:934
+#: code:addons/pawnshop/pawn.py:940
 #, python-format
 msgid "No pawn ticket associated with pawn ticket %s"
 msgstr "No pawn ticket associated with pawn ticket %s"
@@ -2255,11 +2263,6 @@ msgid "Bank Statement"
 msgstr "ใบแจ้งยอดเงินฝากจากธนาคาร"
 
 #. module: pawnshop
-#: report:pawn.order.form:0
-msgid "$F{date_expired}"
-msgstr "$F{date_expired}"
-
-#. module: pawnshop
 #: report:pawn.sale.receipt.form:0
 msgid "ราคา (บาท)"
 msgstr "ราคา (บาท)"
@@ -2383,7 +2386,7 @@ msgstr "There are no paid interest of today to undo"
 #. module: pawnshop
 #: model:ir.ui.menu,name:pawnshop.journal_cash_move_lines
 msgid "Cash Registers"
-msgstr "เครืี่องบันทึกเงินสด"
+msgstr "สมุดทะเบียนเงินสด"
 
 #. module: pawnshop
 #: code:addons/pawnshop/account_voucher.py:242
@@ -2440,6 +2443,11 @@ msgstr "ลูกค้าของสาขา"
 #: field:pawn.order,name:0
 msgid "Internal Number"
 msgstr "หลายเลขภายใน"
+
+#. module: pawnshop
+#: model:product.category,name:pawnshop.product_categ_gold_2
+msgid "ทองรูปพรรณ"
+msgstr "ทองรูปพรรณ"
 
 #. module: pawnshop
 #: model:ir.actions.act_window,name:pawnshop.action_pawn_interest_report
@@ -2507,11 +2515,6 @@ msgstr "ประจำวันที่"
 #: report:pawn_op_cash_report:0
 msgid "$P{accrued_interest_account_id}"
 msgstr "$P{accrued_interest_account_id}"
-
-#. module: pawnshop
-#: report:pawn_jor71_report:0
-msgid "select a.id, journal_id, pawn_shop_id, history_period_id, num_order, redeem_num_order, expire_num_order, amount, redeem_amount, expire_amount, people, redeem_people, expire_people, ap.name as period_name, ps.name as shop_name, ps.full_address from ( select (period.journal_id::varchar || period.pawn_shop_id::varchar || period.history_period_id::varchar)::int id,     period.journal_id, period.pawn_shop_id, period.history_period_id,     pawn.num_order num_order,     redeem.num_order redeem_num_order, expire.num_order expire_num_order,     pawn.amount amount,     redeem.amount redeem_amount, expire.amount expire_amount,     pawn.people people,     redeem.people redeem_people, expire.people expire_people from -- PAWN ORDER NORMAL 	-- start 	(select distinct journal_id, pawn_shop_id, psh.period_id history_period_id 	from pawn_order pw 	join pawn_status_history psh on psh.order_id = pw.id 	order by history_period_id) 	-- end 	period left outer join -- PAWN 	-- start 	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order 	from 	(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order 	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select max(id) from pawn_status_history group by period_id, order_id) 	where pw.state not in ('draft', 'cancel') 	order by order_id, psh.period_id) a 	where a.state = 'pawn' 	group by journal_id, pawn_shop_id, period_id) amount 	join 	(select journal_id, pawn_shop_id, period_id, count(partner_id) people 	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select max(id) from pawn_status_history group by period_id, order_id) 	where pw.state not in ('draft', 'cancel')) a 	where a.state = 'pawn' 	group by journal_id, pawn_shop_id, period_id) people 	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id) 	-- end 	pawn     on period.journal_id = pawn.journal_id and period.pawn_shop_id = pawn.pawn_shop_id and period.history_period_id = pawn.period_id left outer join -- REDEEM 	-- start 	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order 	from 	(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order 	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select max(id) from pawn_status_history group by period_id, order_id) 	where pw.state not in ('draft', 'cancel') 	order by order_id, psh.period_id) a 	where a.state = 'redeem' 	group by journal_id, pawn_shop_id, period_id) amount 	join 	(select journal_id, pawn_shop_id, period_id, count(partner_id) people 	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select max(id) from pawn_status_history group by period_id, order_id) 	where pw.state not in ('draft', 'cancel')) a 	where a.state = 'redeem' 	group by journal_id, pawn_shop_id, period_id) people 	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id) 	-- end 	redeem     on period.journal_id = redeem.journal_id and period.pawn_shop_id = redeem.pawn_shop_id and period.history_period_id = redeem.period_id left outer join -- EXPIRE 	-- start 	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order 	from 	(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order 	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select max(id) from pawn_status_history group by period_id, order_id) 	where pw.state not in ('draft', 'cancel') 	order by order_id, psh.period_id) a 	where a.state = 'expire' 	group by journal_id, pawn_shop_id, period_id) amount 	join 	(select journal_id, pawn_shop_id, period_id, count(partner_id) people 	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select max(id) from pawn_status_history group by period_id, order_id) 	where pw.state not in ('draft', 'cancel')) a 	where a.state = 'expire' 	group by journal_id, pawn_shop_id, period_id) people 	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id) 	-- end 	expire     on period.journal_id = expire.journal_id and period.pawn_shop_id = expire.pawn_shop_id and period.history_period_id = expire.period_id ) a join pawn_shop ps on ps.id = pawn_shop_id join account_period ap on ap.id = history_period_id where journal_id = $P{journal_id} and pawn_shop_id = $P{pawn_shop_id} and history_period_id = $P{period_id}"
-msgstr "select a.id, journal_id, pawn_shop_id, history_period_id, num_order, redeem_num_order, expire_num_order, amount, redeem_amount, expire_amount, people, redeem_people, expire_people, ap.name as period_name, ps.name as shop_name, ps.full_address from ( select (period.journal_id::varchar || period.pawn_shop_id::varchar || period.history_period_id::varchar)::int id,     period.journal_id, period.pawn_shop_id, period.history_period_id,     pawn.num_order num_order,     redeem.num_order redeem_num_order, expire.num_order expire_num_order,     pawn.amount amount,     redeem.amount redeem_amount, expire.amount expire_amount,     pawn.people people,     redeem.people redeem_people, expire.people expire_people from -- PAWN ORDER NORMAL 	-- start 	(select distinct journal_id, pawn_shop_id, psh.period_id history_period_id 	from pawn_order pw 	join pawn_status_history psh on psh.order_id = pw.id 	order by history_period_id) 	-- end 	period left outer join -- PAWN 	-- start 	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order 	from 	(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order 	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select max(id) from pawn_status_history group by period_id, order_id) 	where pw.state not in ('draft', 'cancel') 	order by order_id, psh.period_id) a 	where a.state = 'pawn' 	group by journal_id, pawn_shop_id, period_id) amount 	join 	(select journal_id, pawn_shop_id, period_id, count(partner_id) people 	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select max(id) from pawn_status_history group by period_id, order_id) 	where pw.state not in ('draft', 'cancel')) a 	where a.state = 'pawn' 	group by journal_id, pawn_shop_id, period_id) people 	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id) 	-- end 	pawn     on period.journal_id = pawn.journal_id and period.pawn_shop_id = pawn.pawn_shop_id and period.history_period_id = pawn.period_id left outer join -- REDEEM 	-- start 	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order 	from 	(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order 	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select max(id) from pawn_status_history group by period_id, order_id) 	where pw.state not in ('draft', 'cancel') 	order by order_id, psh.period_id) a 	where a.state = 'redeem' 	group by journal_id, pawn_shop_id, period_id) amount 	join 	(select journal_id, pawn_shop_id, period_id, count(partner_id) people 	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select max(id) from pawn_status_history group by period_id, order_id) 	where pw.state not in ('draft', 'cancel')) a 	where a.state = 'redeem' 	group by journal_id, pawn_shop_id, period_id) people 	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id) 	-- end 	redeem     on period.journal_id = redeem.journal_id and period.pawn_shop_id = redeem.pawn_shop_id and period.history_period_id = redeem.period_id left outer join -- EXPIRE 	-- start 	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order 	from 	(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order 	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select max(id) from pawn_status_history group by period_id, order_id) 	where pw.state not in ('draft', 'cancel') 	order by order_id, psh.period_id) a 	where a.state = 'expire' 	group by journal_id, pawn_shop_id, period_id) amount 	join 	(select journal_id, pawn_shop_id, period_id, count(partner_id) people 	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select max(id) from pawn_status_history group by period_id, order_id) 	where pw.state not in ('draft', 'cancel')) a 	where a.state = 'expire' 	group by journal_id, pawn_shop_id, period_id) people 	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id) 	-- end 	expire     on period.journal_id = expire.journal_id and period.pawn_shop_id = expire.pawn_shop_id and period.history_period_id = expire.period_id ) a join pawn_shop ps on ps.id = pawn_shop_id join account_period ap on ap.id = history_period_id where journal_id = $P{journal_id} and pawn_shop_id = $P{pawn_shop_id} and history_period_id = $P{period_id}"
 
 #. module: pawnshop
 #: view:res.users:0
@@ -2640,7 +2643,7 @@ msgid "Secret Key 2"
 msgstr "รหัสลับ 2"
 
 #. module: pawnshop
-#: code:addons/pawnshop/item.py:419
+#: code:addons/pawnshop/item.py:418
 #, python-format
 msgid "Please do not choose ticket which are in extended status!"
 msgstr "Please do not choose ticket which are in extended status!"
@@ -2828,12 +2831,6 @@ msgid "Code"
 msgstr "Code"
 
 #. module: pawnshop
-#: model:ir.actions.act_window,name:pawnshop.action_pawn_asset_expired
-#: model:ir.ui.menu,name:pawnshop.menu_pawn_asset_expired
-msgid "Ticket Grace Period End Date"
-msgstr "ตั๋วสิ้นสุดระยะผ่อนผัน"
-
-#. module: pawnshop
 #: model:product.category,name:pawnshop.product_categ_watch
 msgid "นาฬิกา"
 msgstr "นาฬิกา"
@@ -2905,7 +2902,7 @@ msgstr "ถึง"
 #: code:addons/pawnshop/pawn.py:519
 #: code:addons/pawnshop/pawn.py:521
 #: code:addons/pawnshop/pawn.py:523
-#: code:addons/pawnshop/pawn.py:804
+#: code:addons/pawnshop/pawn.py:806
 #, python-format
 msgid "Invalid Action!"
 msgstr "ไม่ถูกต้อง!"
@@ -2946,7 +2943,7 @@ msgid "Daily Interest"
 msgstr "ดอกเบี้ยรายวัน"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:1001
+#: code:addons/pawnshop/pawn.py:1007
 #, python-format
 msgid "Accounting is not set for %s"
 msgstr "ยังไม่ได้ตั้งค่าบัญชีสำหรับ %s"
@@ -3022,6 +3019,12 @@ msgid "new Date()"
 msgstr "new Date()"
 
 #. module: pawnshop
+#: code:addons/pawnshop/account_voucher.py:397
+#, python-format
+msgid "Please verify that the total amount of this Sales Receipt is not zero!"
+msgstr "Please verify that the total amount of this Sales Receipt is not zero!"
+
+#. module: pawnshop
 #: model:ir.actions.act_window,name:pawnshop.action_asset_move_out_kanban
 #: model:ir.ui.menu,name:pawnshop.menu_action_asset_move_out_kanban
 msgid "Outgoing Ticket"
@@ -3081,7 +3084,7 @@ msgid "My Banks"
 msgstr "ธนาคารของฉัน"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:1388
+#: code:addons/pawnshop/pawn.py:1394
 #, python-format
 msgid "Line price equal to 0.0 is not allowed!"
 msgstr "Line price equal to 0.0 is not allowed!"
@@ -3126,11 +3129,6 @@ msgstr "ท่านต้องการย้ายรายการเหล
 #: report:pawn.order.form:0
 msgid "$F{amount_pawned}"
 msgstr "$F{amount_pawned}"
-
-#. module: pawnshop
-#: report:pawn_jor72_report:0
-msgid "select a.id, journal_id, pawn_shop_id, history_period_id, num_order, redeem_num_order, expire_num_order, amount, redeem_amount, expire_amount, people, redeem_people, expire_people, ap.name as period_name, ps.name as shop_name, ps.full_address, ps.reg_book, ps.reg_number, -- amount_interest (select sum(interest_amount - discount + addition) from pawn_actual_interest pai join pawn_order po on po.id = pai.pawn_id where interest_date >= ap.date_start and interest_date <= ap.date_stop and po.journal_id = $P{journal_id} and po.pawn_shop_id = $P{pawn_shop_id}) amount_interest from ( select (period.journal_id::varchar || period.pawn_shop_id::varchar || period.history_period_id::varchar)::int id,     period.journal_id, period.pawn_shop_id, period.history_period_id,     pawn.num_order num_order,     redeem.num_order redeem_num_order, expire.num_order expire_num_order,     pawn.amount amount,     redeem.amount redeem_amount, expire.amount expire_amount,     pawn.people people,     redeem.people redeem_people, expire.people expire_people from -- PAWN ORDER NORMAL 	-- start 	(select distinct journal_id, pawn_shop_id, psh.period_id history_period_id 	from pawn_order pw 	join pawn_status_history psh on psh.order_id = pw.id 	order by history_period_id) 	-- end 	period left outer join -- PAWN 	-- start 	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order 	from 	(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order 	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select max(id) from pawn_status_history group by period_id, order_id) 	where pw.state not in ('draft', 'cancel') 	order by order_id, psh.period_id) a 	where a.state = 'pawn' 	group by journal_id, pawn_shop_id, period_id) amount 	join 	(select journal_id, pawn_shop_id, period_id, count(partner_id) people 	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select max(id) from pawn_status_history group by period_id, order_id) 	where pw.state not in ('draft', 'cancel')) a 	where a.state = 'pawn' 	group by journal_id, pawn_shop_id, period_id) people 	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id) 	-- end 	pawn     on period.journal_id = pawn.journal_id and period.pawn_shop_id = pawn.pawn_shop_id and period.history_period_id = pawn.period_id left outer join -- REDEEM 	-- start 	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order 	from 	(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order 	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select max(id) from pawn_status_history group by period_id, order_id) 	where pw.state not in ('draft', 'cancel') 	order by order_id, psh.period_id) a 	where a.state = 'redeem' 	group by journal_id, pawn_shop_id, period_id) amount 	join 	(select journal_id, pawn_shop_id, period_id, count(partner_id) people 	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select max(id) from pawn_status_history group by period_id, order_id) 	where pw.state not in ('draft', 'cancel')) a 	where a.state = 'redeem' 	group by journal_id, pawn_shop_id, period_id) people 	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id) 	-- end 	redeem     on period.journal_id = redeem.journal_id and period.pawn_shop_id = redeem.pawn_shop_id and period.history_period_id = redeem.period_id left outer join -- EXPIRE 	-- start 	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order 	from 	(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order 	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select max(id) from pawn_status_history group by period_id, order_id) 	where pw.state not in ('draft', 'cancel') 	order by order_id, psh.period_id) a 	where a.state = 'expire' 	group by journal_id, pawn_shop_id, period_id) amount 	join 	(select journal_id, pawn_shop_id, period_id, count(partner_id) people 	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select max(id) from pawn_status_history group by period_id, order_id) 	where pw.state not in ('draft', 'cancel')) a 	where a.state = 'expire' 	group by journal_id, pawn_shop_id, period_id) people 	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id) 	-- end 	expire     on period.journal_id = expire.journal_id and period.pawn_shop_id = expire.pawn_shop_id and period.history_period_id = expire.period_id ) a join pawn_shop ps on ps.id = pawn_shop_id join account_period ap on ap.id = history_period_id where journal_id = $P{journal_id} and pawn_shop_id = $P{pawn_shop_id} and history_period_id = $P{period_id}"
-msgstr "select a.id, journal_id, pawn_shop_id, history_period_id, num_order, redeem_num_order, expire_num_order, amount, redeem_amount, expire_amount, people, redeem_people, expire_people, ap.name as period_name, ps.name as shop_name, ps.full_address, ps.reg_book, ps.reg_number, -- amount_interest (select sum(interest_amount - discount + addition) from pawn_actual_interest pai join pawn_order po on po.id = pai.pawn_id where interest_date >= ap.date_start and interest_date <= ap.date_stop and po.journal_id = $P{journal_id} and po.pawn_shop_id = $P{pawn_shop_id}) amount_interest from ( select (period.journal_id::varchar || period.pawn_shop_id::varchar || period.history_period_id::varchar)::int id,     period.journal_id, period.pawn_shop_id, period.history_period_id,     pawn.num_order num_order,     redeem.num_order redeem_num_order, expire.num_order expire_num_order,     pawn.amount amount,     redeem.amount redeem_amount, expire.amount expire_amount,     pawn.people people,     redeem.people redeem_people, expire.people expire_people from -- PAWN ORDER NORMAL 	-- start 	(select distinct journal_id, pawn_shop_id, psh.period_id history_period_id 	from pawn_order pw 	join pawn_status_history psh on psh.order_id = pw.id 	order by history_period_id) 	-- end 	period left outer join -- PAWN 	-- start 	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order 	from 	(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order 	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select max(id) from pawn_status_history group by period_id, order_id) 	where pw.state not in ('draft', 'cancel') 	order by order_id, psh.period_id) a 	where a.state = 'pawn' 	group by journal_id, pawn_shop_id, period_id) amount 	join 	(select journal_id, pawn_shop_id, period_id, count(partner_id) people 	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select max(id) from pawn_status_history group by period_id, order_id) 	where pw.state not in ('draft', 'cancel')) a 	where a.state = 'pawn' 	group by journal_id, pawn_shop_id, period_id) people 	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id) 	-- end 	pawn     on period.journal_id = pawn.journal_id and period.pawn_shop_id = pawn.pawn_shop_id and period.history_period_id = pawn.period_id left outer join -- REDEEM 	-- start 	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order 	from 	(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order 	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select max(id) from pawn_status_history group by period_id, order_id) 	where pw.state not in ('draft', 'cancel') 	order by order_id, psh.period_id) a 	where a.state = 'redeem' 	group by journal_id, pawn_shop_id, period_id) amount 	join 	(select journal_id, pawn_shop_id, period_id, count(partner_id) people 	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select max(id) from pawn_status_history group by period_id, order_id) 	where pw.state not in ('draft', 'cancel')) a 	where a.state = 'redeem' 	group by journal_id, pawn_shop_id, period_id) people 	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id) 	-- end 	redeem     on period.journal_id = redeem.journal_id and period.pawn_shop_id = redeem.pawn_shop_id and period.history_period_id = redeem.period_id left outer join -- EXPIRE 	-- start 	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order 	from 	(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order 	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select max(id) from pawn_status_history group by period_id, order_id) 	where pw.state not in ('draft', 'cancel') 	order by order_id, psh.period_id) a 	where a.state = 'expire' 	group by journal_id, pawn_shop_id, period_id) amount 	join 	(select journal_id, pawn_shop_id, period_id, count(partner_id) people 	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select max(id) from pawn_status_history group by period_id, order_id) 	where pw.state not in ('draft', 'cancel')) a 	where a.state = 'expire' 	group by journal_id, pawn_shop_id, period_id) people 	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id) 	-- end 	expire     on period.journal_id = expire.journal_id and period.pawn_shop_id = expire.pawn_shop_id and period.history_period_id = expire.period_id ) a join pawn_shop ps on ps.id = pawn_shop_id join account_period ap on ap.id = history_period_id where journal_id = $P{journal_id} and pawn_shop_id = $P{pawn_shop_id} and history_period_id = $P{period_id}"
 
 #. module: pawnshop
 #: field:pawn.jor6.wizard,jor6_to_submit_date_id:0
@@ -3345,7 +3343,7 @@ msgid "Card number must be unique!"
 msgstr "Card number must be unique!"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:1309
+#: code:addons/pawnshop/pawn.py:1315
 #, python-format
 msgid "Quantity can not be zero!"
 msgstr "จำนวนไม่สามารถเป็นศูนย์"
@@ -3790,7 +3788,7 @@ msgid "- Discount"
 msgstr "- ส่วนลด"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:1001
+#: code:addons/pawnshop/pawn.py:1007
 #, python-format
 msgid "Accounting Error!"
 msgstr "ข้อผิดพลาดทางบัญชี!"
@@ -4004,10 +4002,10 @@ msgstr "$P{sale_account_id}"
 #: code:addons/pawnshop/account_voucher.py:71
 #: code:addons/pawnshop/account_voucher.py:352
 #: code:addons/pawnshop/item.py:395
-#: code:addons/pawnshop/pawn.py:911
-#: code:addons/pawnshop/pawn.py:934
-#: code:addons/pawnshop/pawn.py:939
-#: code:addons/pawnshop/pawn.py:1309
+#: code:addons/pawnshop/pawn.py:917
+#: code:addons/pawnshop/pawn.py:940
+#: code:addons/pawnshop/pawn.py:945
+#: code:addons/pawnshop/pawn.py:1315
 #: code:addons/pawnshop/wizard/pawn_item_create_receipt.py:61
 #: code:addons/pawnshop/wizard/pawn_item_create_receipt.py:68
 #: code:addons/pawnshop/wizard/pawn_item_create_receipt.py:83
@@ -4219,9 +4217,11 @@ msgid "order_line/product_uom/name"
 msgstr "order_line/product_uom/name"
 
 #. module: pawnshop
-#: view:pawn.order:0
-msgid "Expired Pawned Orders which has been extended"
-msgstr "Expired Pawned Orders which has been extended"
+#: report:pawn_daily_report:0
+#: report:pawn_op_cash_report:0
+#: report:pawn_wh_cash_report:0
+msgid "$P{REPORT_CONNECTION}"
+msgstr "$P{REPORT_CONNECTION}"
 
 #. module: pawnshop
 #: model:ir.model,name:pawnshop.model_product_category
@@ -4276,7 +4276,6 @@ msgstr "การโอนเงิน"
 
 #. module: pawnshop
 #: field:pawn.interest.report,date_expire:0
-#: field:pawn.order,date_expired:0
 #: field:pawn.report,date_expired:0
 msgid "Expired Date"
 msgstr "วันหมดอายุ"
@@ -4525,7 +4524,8 @@ msgstr "ทองเค"
 #: model:ir.ui.menu,name:pawnshop.menu_action_sale_receipt
 #: view:res.partner:0
 msgid "Sales Receipts"
-msgstr "ใบเสร็จขาย"
+msgstr "Sales Receipts\n"
+""
 
 #. module: pawnshop
 #: view:item.split:0
@@ -4624,6 +4624,12 @@ msgstr "แยกของ"
 #: field:product.category.property,active:0
 msgid "Active"
 msgstr "ใช้งาน"
+
+#. module: pawnshop
+#: model:ir.actions.act_window,name:pawnshop.action_pawn_asset_expired
+#: model:ir.ui.menu,name:pawnshop.menu_pawn_asset_expired
+msgid "Grace Ended Tickets"
+msgstr "ตั๋วสิ้นสุดระยะผ่อนผัน"
 
 #. module: pawnshop
 #: view:product.product:0
@@ -4797,11 +4803,14 @@ msgid "May"
 msgstr "พฤษภาคม"
 
 #. module: pawnshop
-#: report:pawn_daily_report:0
-#: report:pawn_op_cash_report:0
-#: report:pawn_wh_cash_report:0
-msgid "$P{REPORT_CONNECTION}"
-msgstr "$P{REPORT_CONNECTION}"
+#: view:pawn.order:0
+msgid "Expired Pawned Orders which has been extended"
+msgstr "Expired Pawned Orders which has been extended"
+
+#. module: pawnshop
+#: field:res.partner,parent_name:0
+msgid "Parent name"
+msgstr "Parent name"
 
 #. module: pawnshop
 #: selection:pawn.config.settings,default_interest_interval:0
@@ -4992,7 +5001,7 @@ msgstr "order_line/is_jewelry"
 #: model:ir.actions.act_window,name:pawnshop.action_product_expense
 #: model:ir.ui.menu,name:pawnshop.menu_product_expense
 msgid "Expenses"
-msgstr "ค่าใช้จ่าย"
+msgstr "Expenses"
 
 #. module: pawnshop
 #: field:res.partner,address_full:0
@@ -5050,4 +5059,3 @@ msgstr "ร้อยละคงที่"
 #: report:pawn.order.form:0
 msgid "$F{prev_number}"
 msgstr "$F{prev_number}"
-
