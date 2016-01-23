@@ -59,6 +59,7 @@
         'wizard/item_split_view.xml',
         'wizard/account_chart_view.xml',
         'wizard/pawn_jor6_submission_view.xml',
+        'wizard/pawn_expire_final_view.xml',
         'res_partner_view.xml',
         'pawn_view.xml',
         'item_view.xml',    

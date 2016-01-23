@@ -19,19 +19,30 @@
 #
 ##############################################################################
 
-import pawn_line_property
-import pawn_order_pawn
-import pawn_order_redeem
-import pawn_order_renew
-import pawn_order_pay_interest
-import pawn_item_location_status
-import pawn_asset_for_sale
-#import pawn_item_create_invoice
-import pawn_item_create_receipt
-import pawn_undo_cancel
-import item_split
-import account_chart
-import pawn_jor6_submission
-import pawn_expire_final
+from openerp.osv import osv, fields
+from openerp.tools.translate import _
+
+
+class pawn_expire_final(osv.osv_memory):
+
+    _name = "pawn.expire.final"
+    _description = "Finalize Expired Ticket"
+    
+    def pawn_expire_final(self, cr, uid, ids, context=None):
+        if context is None:
+            context = {}
+        pawn_ids = context['active_ids']
+        if pawn_ids:
+            # Check all order are eligible, 1) date_expired < today, 2) no date_due yet
+            valid_ids = self.pool.get('pawn.order').search(cr, uid, [('ready_to_expire','=',True), ('state','=','pawn')], context=context)
+            if pawn_ids != valid_ids and not set(pawn_ids).issubset(set(valid_ids)):
+                raise osv.except_osv(_('Warning!'),
+                                     _("""Some selection are not eligible to finalize expired ticket"""))
+            # expire it.
+            self.pool.get('pawn.order').order_expire(cr, uid, pawn_ids, context=context)
+        return {'type': 'ir.actions.act_window_close'}
+
+pawn_expire_final()
+
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

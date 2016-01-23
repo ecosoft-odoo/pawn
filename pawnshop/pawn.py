@@ -71,7 +71,7 @@ class pawn_order(osv.osv):
     def process_expired_order(self, cr, uid, context=None):
         """
         This process will check for pawn_order with state = 'pawn', then check whether it expired.
-        If expired, set state = 'expire'
+        If expired, set ready_to_expire = True (then it will be processed again by process_expired_order_2
         """
         if context is None:
             context = {}
@@ -80,9 +80,29 @@ class pawn_order(osv.osv):
         ids = self.search(cr, uid, filters, context=context)
         try:
             if ids:
-                self.order_expire(cr, uid, ids, context=context)
+                # Now, when expired by system, just mark it "ready to expire"
+                # and show them in a new menu "Ended Tickets (Prelim)"
+                #self.order_expire(cr, uid, ids, context=context)
+                self.write(cr, uid, ids, {'ready_to_expire': True})
         except Exception:
             _logger.exception("Failed processing expired pawn ticket")
+
+#     def process_expired_order_2(self, cr, uid, ids, context=None):
+#         """ 
+#         """
+#         if context is None:
+#             context = {}
+#         now = fields.date.context_today(self, cr, uid, context=context)
+#         filters = [('state', '=', 'pawn'), ('date_due', '<', now)]
+#         ids = self.search(cr, uid, filters, context=context)
+#         try:
+#             if ids:
+#                 # Now, when expired by system, just mark it "ready to expire"
+#                 # and show them in a new menu "Ended Tickets (Prelim)"
+#                 #self.order_expire(cr, uid, ids, context=context)
+#                 self.write(cr, uid, ids, {'ready_to_expire': True})
+#         except Exception:
+#             _logger.exception("Failed processing expired pawn ticket")
 
     def _amount_all(self, cr, uid, ids, field_name, arg, context=None):
         res = {}
@@ -300,6 +320,7 @@ class pawn_order(osv.osv):
         'date_jor6': fields.date(string='Jor6 Submit Date', readonly=True),
         'date_due': fields.date(string='Grace Period End Date', readonly=True),
         'jor6_submitted': fields.boolean('Jor6 Submitted', readonly=True),
+        'ready_to_expire': fields.boolean('Ready to Expire', readonly=True),
         'amount_interest_todate': fields.function(_get_interest_todate, multi='interest_calc2', type='float', string='Interest To-Date'),
         'last_interest_date': fields.function(_get_interest_todate, multi='interest_calc2', type='date', string='Last Interest Date'),
         'is_interest_updated': fields.function(_get_interest_todate, multi='interest_calc2', type='boolean', string='Interested Updated'),

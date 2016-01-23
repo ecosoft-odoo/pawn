@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: OpenERP Server 7.0-20151019\n"
+"Project-Id-Version: OpenERP Server 7.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-07 09:10+0000\n"
-"PO-Revision-Date: 2016-01-07 09:10+0000\n"
+"POT-Creation-Date: 2016-01-23 03:23+0000\n"
+"PO-Revision-Date: 2016-01-23 03:23+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -31,10 +31,10 @@ msgid "$F{nationality} == \"Thailand\" ? \"ไทย\" : $F{nationality}"
 msgstr "$F{nationality} == \"Thailand\" ? \"ไทย\" : $F{nationality}"
 
 #. module: pawnshop
-#: code:addons/pawnshop/wizard/pawn_order_renew.py:111
+#: code:addons/pawnshop/account_voucher.py:397
 #, python-format
-msgid "Cannot renew!"
-msgstr "ไม่สามารถต่อตั๋ว!"
+msgid "Please verify that the total amount of this Sales Receipt is not zero!"
+msgstr "Please verify that the total amount of this Sales Receipt is not zero!"
 
 #. module: pawnshop
 #: field:item.property.line,allow_text:0
@@ -315,14 +315,15 @@ msgstr "ใบอนุญาต เล่มที่"
 #: code:addons/pawnshop/account_bank_statement.py:44
 #: code:addons/pawnshop/item.py:418
 #: code:addons/pawnshop/item.py:446
-#: code:addons/pawnshop/pawn.py:415
-#: code:addons/pawnshop/pawn.py:1393
+#: code:addons/pawnshop/pawn.py:436
+#: code:addons/pawnshop/pawn.py:1414
 #: code:addons/pawnshop/report/wizard/pawn_daily_wizard.py:63
 #: code:addons/pawnshop/res_partner.py:128
 #: code:addons/pawnshop/res_partner.py:136
 #: code:addons/pawnshop/res_partner.py:142
 #: code:addons/pawnshop/wizard/item_split.py:62
 #: code:addons/pawnshop/wizard/item_split.py:69
+#: code:addons/pawnshop/wizard/pawn_expire_final.py:39
 #: code:addons/pawnshop/wizard/pawn_item_create_receipt.py:55
 #: code:addons/pawnshop/wizard/pawn_item_location_status.py:52
 #: code:addons/pawnshop/wizard/pawn_item_location_status.py:74
@@ -348,7 +349,7 @@ msgstr "Pawn Tickets which are in pawned state"
 #: view:pawn.order:0
 #: field:pawn.order.line,partner_id:0
 msgid "Partner"
-msgstr "คู่ค้า"
+msgstr "พาร์ตเนอร์"
 
 #. module: pawnshop
 #: view:pawn.rule:0
@@ -485,9 +486,10 @@ msgid "Search Partner"
 msgstr "ค้นหาคู่ค้า"
 
 #. module: pawnshop
-#: selection:pawn.jor7.wizard,report_type:0
-msgid "Page 2"
-msgstr "หน้าสอง"
+#: model:ir.actions.act_window,name:pawnshop.pawn_ready_to_expire_action
+#: model:ir.ui.menu,name:pawnshop.menu_pawn_ready_to_expire_action
+msgid "Ends Ticket (prelim)"
+msgstr "ตั๋วสิ้นสุดระยะผ่อนผัน (ไม่คัด)"
 
 #. module: pawnshop
 #: selection:pawn.jor7.wizard,report_type:0
@@ -562,7 +564,7 @@ msgid "Age"
 msgstr "อายุ"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:806
+#: code:addons/pawnshop/pawn.py:827
 #, python-format
 msgid "In order to delete a pawn ticket, you must cancel it first."
 msgstr "In order to delete a pawn ticket, you must cancel it first."
@@ -719,7 +721,7 @@ msgid "Item Properties"
 msgstr "คุณสมบัติของจำนำ"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:911
+#: code:addons/pawnshop/pawn.py:932
 #, python-format
 msgid "Configuration Error !"
 msgstr "การกำหนดค่าผิดพลาด!"
@@ -795,7 +797,7 @@ msgid "Jor6 Submitted?"
 msgstr "Jor6 Submitted?"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:912
+#: code:addons/pawnshop/pawn.py:933
 #, python-format
 msgid "Please activate the sequence of selected journal !"
 msgstr "กรุณาเปิดการใช้งานเลขลำดับของสมุดรายวันที่เลือก!"
@@ -825,7 +827,7 @@ msgid "$F{total_baht}"
 msgstr "$F{total_baht}"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:493
+#: code:addons/pawnshop/pawn.py:514
 #, python-format
 msgid "Only pawn ticket in \"Pawned\" state can undo pay interest"
 msgstr "Only pawn ticket in \"Pawned\" state can undo pay interest"
@@ -924,7 +926,7 @@ msgid "Pawned (1)"
 msgstr "จำนำแล้ว (1)"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:918
+#: code:addons/pawnshop/pawn.py:939
 #, python-format
 msgid "Please define a sequence on the journal."
 msgstr "กรุณากำหนดเลขที่สำหรับสมุดรายวัน"
@@ -1048,6 +1050,14 @@ msgid "For renew case only, amount_net represent amount left over from previous 
 msgstr "For renew case only, amount_net represent amount left over from previous order, pawnshop need to pay (or receive) to customer."
 
 #. module: pawnshop
+#: view:pawn.config.settings:0
+#: field:pawn.config.settings,property_account_revenue_reposessed_asset:0
+#: field:product.product,property_account_refund_reposessed_asset:0
+#: field:product.product,property_account_revenue_reposessed_asset:0
+msgid "Revenue Reposessed Ticket Account"
+msgstr "บัญชีรายได้จากการขายตั๋วหลุด"
+
+#. module: pawnshop
 #: model:product.category,name:pawnshop.product_categ_gold_1
 msgid "ทองแท่ง"
 msgstr "ทองแท่ง"
@@ -1150,14 +1160,6 @@ msgid "Unit Price"
 msgstr "ราคาต่อหน่วย"
 
 #. module: pawnshop
-#: code:addons/pawnshop/wizard/pawn_order_renew.py:112
-#, python-format
-msgid "Today is over grace period end date.\n"
-"Please use normal sales process for expired items."
-msgstr "เนื่องจากเลยกำหนดวันที่ผ่อนผัน\n"
-"กรุณาดำเนินการตามการขายของหลุดปกติ"
-
-#. module: pawnshop
 #: model:ir.actions.act_window,name:pawnshop.action_pawn_items
 #: view:product.product:0
 msgid "Pawn Items"
@@ -1258,7 +1260,7 @@ msgid "Expired"
 msgstr "หมดอายุแล้ว"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:945
+#: code:addons/pawnshop/pawn.py:966
 #, python-format
 msgid "No pawn ticket account found for the item %s"
 msgstr "No pawn ticket account found for the item %s"
@@ -1269,7 +1271,7 @@ msgid "จำนวน (ชิ้น)"
 msgstr "จำนวน (ชิ้น)"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:466
+#: code:addons/pawnshop/pawn.py:487
 #, python-format
 msgid "Only today's pawn ticket can be cancelled"
 msgstr "Only today's pawn ticket can be cancelled"
@@ -1379,7 +1381,7 @@ msgid "ir.actions.report.xml"
 msgstr "ir.actions.report.xml"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:495
+#: code:addons/pawnshop/pawn.py:516
 #, python-format
 msgid "Only pawn ticket with interest paid, can be unpaid"
 msgstr "Only pawn ticket with interest paid, can be unpaid"
@@ -1674,7 +1676,7 @@ msgid "30 days"
 msgstr "30 วัน"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:468
+#: code:addons/pawnshop/pawn.py:489
 #, python-format
 msgid "Only pawn ticket in \"Draft\" or \"Pawned\" state can be cancelled"
 msgstr "Only pawn ticket in \"Draft\" or \"Pawned\" state can be cancelled"
@@ -1845,13 +1847,20 @@ msgid "select a.id, journal_id, pawn_shop_id, history_period_id, num_order, rede
 msgstr "select a.id, journal_id, pawn_shop_id, history_period_id, num_order, redeem_num_order, expire_num_order, amount, redeem_amount, expire_amount, people, redeem_people, expire_people, ap.name as period_name, ps.name as shop_name, ps.full_address, ps.reg_book, ps.reg_number, -- amount_interest (select sum(interest_amount - discount + addition) from pawn_actual_interest pai join pawn_order po on po.id = pai.pawn_id where interest_date >= ap.date_start and interest_date <= ap.date_stop and po.journal_id = $P{journal_id} and po.pawn_shop_id = $P{pawn_shop_id}) amount_interest from ( select (period.journal_id::varchar || period.pawn_shop_id::varchar || period.history_period_id::varchar)::int id,     period.journal_id, period.pawn_shop_id, period.history_period_id,     pawn.num_order num_order,     redeem.num_order redeem_num_order, expire.num_order expire_num_order,     pawn.amount amount,     redeem.amount redeem_amount, expire.amount expire_amount,     pawn.people people,     redeem.people redeem_people, expire.people expire_people from -- PAWN ORDER NORMAL 	-- start 	(select distinct journal_id, pawn_shop_id, psh.period_id history_period_id 	from pawn_order pw 	join pawn_status_history psh on psh.order_id = pw.id 	order by history_period_id) 	-- end 	period left outer join -- PAWN 	-- start 	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order 	from 	(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order 	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select min(id) from pawn_status_history group by order_id, state) 	where pw.state not in ('draft', 'cancel') 	order by order_id, psh.period_id) a 	where a.state = 'pawn' 	group by journal_id, pawn_shop_id, period_id) amount 	join 	(select journal_id, pawn_shop_id, period_id, count(partner_id) people 	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select min(id) from pawn_status_history group by order_id, state) 	where pw.state not in ('draft', 'cancel')) a 	where a.state = 'pawn' 	group by journal_id, pawn_shop_id, period_id) people 	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id) 	-- end 	pawn     on period.journal_id = pawn.journal_id and period.pawn_shop_id = pawn.pawn_shop_id and period.history_period_id = pawn.period_id left outer join -- REDEEM 	-- start 	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order 	from 	(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order 	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select min(id) from pawn_status_history group by order_id, state) 	where pw.state not in ('draft', 'cancel') 	order by order_id, psh.period_id) a 	where a.state = 'redeem' 	group by journal_id, pawn_shop_id, period_id) amount 	join 	(select journal_id, pawn_shop_id, period_id, count(partner_id) people 	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select min(id) from pawn_status_history group by order_id, state) 	where pw.state not in ('draft', 'cancel')) a 	where a.state = 'redeem' 	group by journal_id, pawn_shop_id, period_id) people 	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id) 	-- end 	redeem     on period.journal_id = redeem.journal_id and period.pawn_shop_id = redeem.pawn_shop_id and period.history_period_id = redeem.period_id left outer join -- EXPIRE 	-- start 	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order 	from 	(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order 	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select min(id) from pawn_status_history group by order_id, state) 	where pw.state not in ('draft', 'cancel') 	order by order_id, psh.period_id) a 	where a.state = 'expire' 	group by journal_id, pawn_shop_id, period_id) amount 	join 	(select journal_id, pawn_shop_id, period_id, count(partner_id) people 	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id 	from pawn_order pw 	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in 	(select min(id) from pawn_status_history group by order_id, state) 	where pw.state not in ('draft', 'cancel')) a 	where a.state = 'expire' 	group by journal_id, pawn_shop_id, period_id) people 	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id) 	-- end 	expire     on period.journal_id = expire.journal_id and period.pawn_shop_id = expire.pawn_shop_id and period.history_period_id = expire.period_id ) a join pawn_shop ps on ps.id = pawn_shop_id join account_period ap on ap.id = history_period_id where journal_id = $P{journal_id} and pawn_shop_id = $P{pawn_shop_id} and history_period_id = $P{period_id}"
 
 #. module: pawnshop
+#: model:ir.actions.act_window,name:pawnshop.action_pawn_expire_final
+#: model:ir.model,name:pawnshop.model_pawn_expire_final
+#: view:pawn.expire.final:0
+msgid "Finalize Expired Ticket"
+msgstr "คัดตั๋ว"
+
+#. module: pawnshop
 #: code:addons/pawnshop/account_voucher.py:489
 #, python-format
 msgid "No Account Base Code and Account Tax Code!"
 msgstr "No Account Base Code and Account Tax Code!"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:521
+#: code:addons/pawnshop/pawn.py:542
 #, python-format
 msgid "Only pawn ticket in \"Redeemed\" state can be undo"
 msgstr "Only pawn ticket in \"Redeemed\" state can be undo"
@@ -1993,7 +2002,7 @@ msgid "Operation Cash Report"
 msgstr "รายงานเงินสดหน้าร้าน"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:607
+#: code:addons/pawnshop/pawn.py:628
 #, python-format
 msgid "Exceed Max Lines!"
 msgstr "Exceed Max Lines!"
@@ -2063,7 +2072,7 @@ msgid "Is a Follower"
 msgstr "เป็นผู้ติดตาม"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:940
+#: code:addons/pawnshop/pawn.py:961
 #, python-format
 msgid "No pawn ticket associated with pawn ticket %s"
 msgstr "No pawn ticket associated with pawn ticket %s"
@@ -2277,6 +2286,7 @@ msgstr "$P{stk2_journal_id}"
 #: view:pawn.asset.to.for.sale:0
 #: view:pawn.config.settings:0
 #: view:pawn.daily.wizard:0
+#: view:pawn.expire.final:0
 #: view:pawn.item.create.receipt:0
 #: view:pawn.item.to.borrowed:0
 #: view:pawn.item.to.for.sale:0
@@ -2326,6 +2336,7 @@ msgstr "รายการบันทึกบัญชี"
 #. module: pawnshop
 #: model:ir.actions.act_window,help:pawnshop.pawn_form_action
 #: model:ir.actions.act_window,help:pawnshop.pawn_jor6_submission_action
+#: model:ir.actions.act_window,help:pawnshop.pawn_ready_to_expire_action
 msgid "<p class=\"oe_view_nocontent_create\">\n"
 "                Click to create a quotation that will be converted into a pawn ticket. \n"
 "              </p><p>\n"
@@ -2356,9 +2367,10 @@ msgid "Pawn Order Line"
 msgstr "รายการในตั๋วจำนำ"
 
 #. module: pawnshop
+#: view:pawn.expire.final:0
 #: view:pawn.jor6.submission:0
 msgid "Submit"
-msgstr "Submit"
+msgstr "คัดตั๋ว"
 
 #. module: pawnshop
 #: field:pawn.line.property.line,other_property:0
@@ -2378,7 +2390,7 @@ msgid "Please select Card Type"
 msgstr "โปรดเลือกชนิดของบัตร"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:497
+#: code:addons/pawnshop/pawn.py:518
 #, python-format
 msgid "There are no paid interest of today to undo"
 msgstr "There are no paid interest of today to undo"
@@ -2386,7 +2398,7 @@ msgstr "There are no paid interest of today to undo"
 #. module: pawnshop
 #: model:ir.ui.menu,name:pawnshop.journal_cash_move_lines
 msgid "Cash Registers"
-msgstr "สมุดทะเบียนเงินสด"
+msgstr "เครืี่องบันทึกเงินสด"
 
 #. module: pawnshop
 #: code:addons/pawnshop/account_voucher.py:242
@@ -2782,12 +2794,9 @@ msgid "Pawn Line Property Lines"
 msgstr "Pawn Line Property Lines"
 
 #. module: pawnshop
-#: view:pawn.config.settings:0
-#: field:pawn.config.settings,property_account_revenue_reposessed_asset:0
-#: field:product.product,property_account_refund_reposessed_asset:0
-#: field:product.product,property_account_revenue_reposessed_asset:0
-msgid "Revenue Reposessed Ticket Account"
-msgstr "บัญชีรายได้จากการขายตั๋วหลุด"
+#: selection:pawn.jor7.wizard,report_type:0
+msgid "Page 2"
+msgstr "หน้าสอง"
 
 #. module: pawnshop
 #: model:ir.model,name:pawnshop.model_account_account
@@ -2893,16 +2902,16 @@ msgid "ถึง"
 msgstr "ถึง"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:466
-#: code:addons/pawnshop/pawn.py:468
-#: code:addons/pawnshop/pawn.py:470
-#: code:addons/pawnshop/pawn.py:493
-#: code:addons/pawnshop/pawn.py:495
-#: code:addons/pawnshop/pawn.py:497
-#: code:addons/pawnshop/pawn.py:519
-#: code:addons/pawnshop/pawn.py:521
-#: code:addons/pawnshop/pawn.py:523
-#: code:addons/pawnshop/pawn.py:806
+#: code:addons/pawnshop/pawn.py:487
+#: code:addons/pawnshop/pawn.py:489
+#: code:addons/pawnshop/pawn.py:491
+#: code:addons/pawnshop/pawn.py:514
+#: code:addons/pawnshop/pawn.py:516
+#: code:addons/pawnshop/pawn.py:518
+#: code:addons/pawnshop/pawn.py:540
+#: code:addons/pawnshop/pawn.py:542
+#: code:addons/pawnshop/pawn.py:544
+#: code:addons/pawnshop/pawn.py:827
 #, python-format
 msgid "Invalid Action!"
 msgstr "ไม่ถูกต้อง!"
@@ -2943,7 +2952,7 @@ msgid "Daily Interest"
 msgstr "ดอกเบี้ยรายวัน"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:1007
+#: code:addons/pawnshop/pawn.py:1028
 #, python-format
 msgid "Accounting is not set for %s"
 msgstr "ยังไม่ได้ตั้งค่าบัญชีสำหรับ %s"
@@ -3019,12 +3028,6 @@ msgid "new Date()"
 msgstr "new Date()"
 
 #. module: pawnshop
-#: code:addons/pawnshop/account_voucher.py:397
-#, python-format
-msgid "Please verify that the total amount of this Sales Receipt is not zero!"
-msgstr "Please verify that the total amount of this Sales Receipt is not zero!"
-
-#. module: pawnshop
 #: model:ir.actions.act_window,name:pawnshop.action_asset_move_out_kanban
 #: model:ir.ui.menu,name:pawnshop.menu_action_asset_move_out_kanban
 msgid "Outgoing Ticket"
@@ -3084,7 +3087,7 @@ msgid "My Banks"
 msgstr "ธนาคารของฉัน"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:1394
+#: code:addons/pawnshop/pawn.py:1415
 #, python-format
 msgid "Line price equal to 0.0 is not allowed!"
 msgstr "Line price equal to 0.0 is not allowed!"
@@ -3105,7 +3108,7 @@ msgid "$F{is_jewelry} == true ? $F{name} + (     $F{carat} != null && $F{gram} !
 msgstr "$F{is_jewelry} == true ? $F{name} + (     $F{carat} != null && $F{gram} != null ? \" [\" + $F{carat}.toString() + \" กะรัต, \" + $F{gram}.toString() + \" กรัม]\" :     $F{carat} != null && $F{gram} == null ? \" [\" + $F{carat}.toString() + \" กะรัต]\" :     $F{carat} == null && $F{gram} != null ? \" [\" + $F{gram}.toString() + \" กรัม]\" : \"\" ) : $F{name}"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:523
+#: code:addons/pawnshop/pawn.py:544
 #, python-format
 msgid "Only pawn ticket without child can be undo"
 msgstr "Only pawn ticket without child can be undo"
@@ -3343,7 +3346,7 @@ msgid "Card number must be unique!"
 msgstr "Card number must be unique!"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:1315
+#: code:addons/pawnshop/pawn.py:1336
 #, python-format
 msgid "Quantity can not be zero!"
 msgstr "จำนวนไม่สามารถเป็นศูนย์"
@@ -3461,7 +3464,7 @@ msgid "Split to Items"
 msgstr "แยกเป็นหลายชิ้น"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:519
+#: code:addons/pawnshop/pawn.py:540
 #, python-format
 msgid "Only pawn ticket redeemed today can be can be undo"
 msgstr "Only pawn ticket redeemed today can be can be undo"
@@ -3524,6 +3527,11 @@ msgid "จำนวนผู้จำนำ"
 msgstr "จำนวนผู้จำนำ"
 
 #. module: pawnshop
+#: report:pawn.order.form:0
+msgid "pawn_shop_id/reg_number"
+msgstr "pawn_shop_id/reg_number"
+
+#. module: pawnshop
 #: field:item.split.line,product_qty:0
 #: field:product.product,product_qty:0
 msgid "Item Quantity"
@@ -3566,7 +3574,7 @@ msgid "กรณีชำระเงินด้วยเช็คใบเส�
 msgstr "กรณีชำระเงินด้วยเช็คใบเสร็จจะสมบูรณ์เมื่อเช็คได้เรียกเก็บเงินจากธนาคารได้ครบถ้วนแล้ว"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:470
+#: code:addons/pawnshop/pawn.py:491
 #, python-format
 msgid "Only pawn ticket without interest paid, can be cancelled"
 msgstr "Only pawn ticket without interest paid, can be cancelled"
@@ -3590,7 +3598,7 @@ msgid "Total Estimated Price"
 msgstr "ราคาประเมิน"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:607
+#: code:addons/pawnshop/pawn.py:628
 #, python-format
 msgid "Only %s lines are allowed"
 msgstr "Only %s lines are allowed"
@@ -3623,6 +3631,11 @@ msgstr "$F{item_desc}.toString() + \" \" + $F{qty} + \" \" + $F{uom_name} + ($F{
 #: selection:pawn.order,interest_interval:0
 msgid "15th of month"
 msgstr "15 ของเดือน"
+
+#. module: pawnshop
+#: field:pawn.order,ready_to_expire:0
+msgid "Ready to Expire"
+msgstr "Ready to Expire"
 
 #. module: pawnshop
 #: view:pawn.daily.wizard:0
@@ -3788,7 +3801,7 @@ msgid "- Discount"
 msgstr "- ส่วนลด"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:1007
+#: code:addons/pawnshop/pawn.py:1028
 #, python-format
 msgid "Accounting Error!"
 msgstr "ข้อผิดพลาดทางบัญชี!"
@@ -4002,10 +4015,10 @@ msgstr "$P{sale_account_id}"
 #: code:addons/pawnshop/account_voucher.py:71
 #: code:addons/pawnshop/account_voucher.py:352
 #: code:addons/pawnshop/item.py:395
-#: code:addons/pawnshop/pawn.py:917
-#: code:addons/pawnshop/pawn.py:940
-#: code:addons/pawnshop/pawn.py:945
-#: code:addons/pawnshop/pawn.py:1315
+#: code:addons/pawnshop/pawn.py:938
+#: code:addons/pawnshop/pawn.py:961
+#: code:addons/pawnshop/pawn.py:966
+#: code:addons/pawnshop/pawn.py:1336
 #: code:addons/pawnshop/wizard/pawn_item_create_receipt.py:61
 #: code:addons/pawnshop/wizard/pawn_item_create_receipt.py:68
 #: code:addons/pawnshop/wizard/pawn_item_create_receipt.py:83
@@ -4210,6 +4223,12 @@ msgstr "เลขที่ 9/423-9/424 ถนนรามอินทรา แ�
 #: field:pawn.order,message_follower_ids:0
 msgid "Followers"
 msgstr "ผู้ติดตาม"
+
+#. module: pawnshop
+#: code:addons/pawnshop/wizard/pawn_expire_final.py:40
+#, python-format
+msgid "Some selection are not eligible to finalize expired ticket"
+msgstr "Some selection are not eligible to finalize expired ticket"
 
 #. module: pawnshop
 #: report:pawn.order.form:0
@@ -4533,6 +4552,7 @@ msgstr "Sales Receipts\n"
 #: view:pawn.asset.to.for.sale:0
 #: view:pawn.config.settings:0
 #: view:pawn.daily.wizard:0
+#: view:pawn.expire.final:0
 #: view:pawn.item.create.receipt:0
 #: view:pawn.item.to.borrowed:0
 #: view:pawn.item.to.for.sale:0
@@ -4808,11 +4828,6 @@ msgid "Expired Pawned Orders which has been extended"
 msgstr "Expired Pawned Orders which has been extended"
 
 #. module: pawnshop
-#: field:res.partner,parent_name:0
-msgid "Parent name"
-msgstr "Parent name"
-
-#. module: pawnshop
 #: selection:pawn.config.settings,default_interest_interval:0
 #: selection:pawn.order,interest_interval:0
 msgid "End of month"
@@ -4842,9 +4857,9 @@ msgid "Street"
 msgstr "ถนน"
 
 #. module: pawnshop
-#: report:pawn.order.form:0
-msgid "pawn_shop_id/reg_number"
-msgstr "pawn_shop_id/reg_number"
+#: view:pawn.expire.final:0
+msgid "Select ticket that is ready to expire, and finalize it."
+msgstr "เลือกตั๋วสิ้นสุดระยะผ่อนผัน (ไม่คัด) และคัดเป็นหมดอายุ"
 
 #. module: pawnshop
 #: report:pawn.order.form:0
@@ -4925,7 +4940,7 @@ msgid "Helps you manage your pawn-related processes"
 msgstr "ช่วยให้คุณจัดการกระบวนการที่เกี่ยวข้องกับการจำนำ"
 
 #. module: pawnshop
-#: code:addons/pawnshop/pawn.py:416
+#: code:addons/pawnshop/pawn.py:437
 #, python-format
 msgid "Pawn Ticket do not have any line items. It can not be pawned."
 msgstr "Pawn Ticket do not have any line items. It can not be pawned."
@@ -5059,3 +5074,4 @@ msgstr "ร้อยละคงที่"
 #: report:pawn.order.form:0
 msgid "$F{prev_number}"
 msgstr "$F{prev_number}"
+
