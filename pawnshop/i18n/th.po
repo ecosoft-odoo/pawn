@@ -489,7 +489,7 @@ msgstr "ค้นหาคู่ค้า"
 #: model:ir.actions.act_window,name:pawnshop.pawn_ready_to_expire_action
 #: model:ir.ui.menu,name:pawnshop.menu_pawn_ready_to_expire_action
 msgid "Ends Ticket (prelim)"
-msgstr "ตั๋วสิ้นสุดระยะผ่อนผัน (ไม่คัด)"
+msgstr "ตั๋วสิ้นสุดผ่อนผัน (ไม่คัด)"
 
 #. module: pawnshop
 #: selection:pawn.jor7.wizard,report_type:0
@@ -4649,7 +4649,7 @@ msgstr "ใช้งาน"
 #: model:ir.actions.act_window,name:pawnshop.action_pawn_asset_expired
 #: model:ir.ui.menu,name:pawnshop.menu_pawn_asset_expired
 msgid "Grace Ended Tickets"
-msgstr "ตั๋วสิ้นสุดระยะผ่อนผัน"
+msgstr "ตั๋วสิ้นสุดผ่อนผัน (คัดแล้ว)"
 
 #. module: pawnshop
 #: view:product.product:0
