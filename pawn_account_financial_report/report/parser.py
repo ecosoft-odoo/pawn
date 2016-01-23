@@ -407,7 +407,6 @@ class account_balance(report_sxw.rml_parse):
                     'period': det['periodo'],
                     'obj': am_obj.browse(self.cr, self.uid, det['am_id'])
                 })
-                print 'ACCOUNT NAME', am_obj.browse(self.cr, self.uid, det['am_id']).name
         return res
 
     def lines(self, form, level=0):
