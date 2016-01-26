@@ -373,6 +373,7 @@ class pawn_order(osv.osv):
         'company_id': lambda self, cr, uid, c: self.pool.get('res.company')._company_default_get(cr, uid, 'pawn.order', context=c),
         'journal_id': _get_journal,
         'jor6_submitted': False,
+        'ready_to_expire': False,
     }
     _sql_constraints = [
         ('name_uniq', 'unique(name, pawn_shop_id)', 'Pawn Ticket Reference must be unique per Pawn Shop!'),
@@ -821,6 +822,7 @@ class pawn_order(osv.osv):
             'is_lost': False,
             'notes': False,
             'status_history_ids': [],
+            'ready_to_expire': False,
         })
         pawn_id = super(pawn_order, self).copy(cr, uid, id, default, context)
         return pawn_id
