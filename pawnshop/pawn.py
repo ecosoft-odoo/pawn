@@ -68,42 +68,6 @@ class pawn_order(osv.osv):
         },
     }
 
-    def process_expired_order(self, cr, uid, context=None):
-        """
-        This process will check for pawn_order with state = 'pawn', then check whether it expired.
-        If expired, set ready_to_expire = True (then it will be processed again by process_expired_order_2
-        """
-        if context is None:
-            context = {}
-        now = fields.date.context_today(self, cr, uid, context=context)
-        filters = [('state', '=', 'pawn'), ('date_due', '<', now)]
-        ids = self.search(cr, uid, filters, context=context)
-        try:
-            if ids:
-                # Now, when expired by system, just mark it "ready to expire"
-                # and show them in a new menu "Ended Tickets (Prelim)"
-                #self.order_expire(cr, uid, ids, context=context)
-                self.write(cr, uid, ids, {'ready_to_expire': True})
-        except Exception:
-            _logger.exception("Failed processing expired pawn ticket")
-
-#     def process_expired_order_2(self, cr, uid, ids, context=None):
-#         """ 
-#         """
-#         if context is None:
-#             context = {}
-#         now = fields.date.context_today(self, cr, uid, context=context)
-#         filters = [('state', '=', 'pawn'), ('date_due', '<', now)]
-#         ids = self.search(cr, uid, filters, context=context)
-#         try:
-#             if ids:
-#                 # Now, when expired by system, just mark it "ready to expire"
-#                 # and show them in a new menu "Ended Tickets (Prelim)"
-#                 #self.order_expire(cr, uid, ids, context=context)
-#                 self.write(cr, uid, ids, {'ready_to_expire': True})
-#         except Exception:
-#             _logger.exception("Failed processing expired pawn ticket")
-
     def _amount_all(self, cr, uid, ids, field_name, arg, context=None):
         res = {}
         cur_obj = self.pool.get('res.currency')
