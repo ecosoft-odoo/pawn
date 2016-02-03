@@ -96,13 +96,14 @@ class pawn_order_renew(osv.osv_memory):
         pawn_obj = self.pool.get('pawn.order')
         cr = pooler.get_db(cr.dbname).cursor()
         pawn_id = context.get('active_id')
+        pawn_obj = self.pool.get('pawn.order')
+        pawn = pawn_obj.browse(cr, uid, pawn_id, context=context)
+        state_bf_redeem = pawn.state
         # Trigger workflow
         # Redeem the current one
         wf_service = netsvc.LocalService("workflow")
         wf_service.trg_validate(uid, 'pawn.order', pawn_id, 'order_redeem', cr)
         # Interest
-        pawn_obj = self.pool.get('pawn.order')
-        pawn = pawn_obj.browse(cr, uid, pawn_id, context=context)
         wizard = self.browse(cr, uid, ids[0], context)
         date = wizard.date_renew
         # Warning if today > date_due
@@ -112,7 +113,7 @@ class pawn_order_renew(osv.osv_memory):
 #                 _('Today is over grace period end date.\n'
 #                   'Please use normal sales process for expired items.'))
         # Normal case, redeem after pawned
-        if pawn.state != 'expire':
+        if state_bf_redeem != 'expire':
             interest_amount = wizard.pay_interest_amount
             discount = wizard.discount
             addition = wizard.addition

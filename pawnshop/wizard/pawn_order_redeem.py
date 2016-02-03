@@ -88,15 +88,16 @@ class pawn_order_redeem(osv.osv_memory):
             context = {}
         cr = pooler.get_db(cr.dbname).cursor()
         pawn_id = context.get('active_id')
+        pawn_obj = self.pool.get('pawn.order')
+        pawn = pawn_obj.browse(cr, uid, pawn_id, context=context)
+        state_bf_redeem = pawn.state
         # Trigger workflow, reverse of pawn
         wf_service = netsvc.LocalService("workflow")
         wf_service.trg_validate(uid, 'pawn.order', pawn_id, 'order_redeem', cr)
-        pawn_obj = self.pool.get('pawn.order')
-        pawn = pawn_obj.browse(cr, uid, pawn_id, context=context)
         wizard = self.browse(cr, uid, ids[0], context)
         date = wizard.date_redeem
         # Normal case, redeem after pawned
-        if pawn.state != 'expire':
+        if state_bf_redeem != 'expire':
             discount = wizard.discount
             addition = wizard.addition
             interest_amount = wizard.interest_amount - discount + addition
