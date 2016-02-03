@@ -408,12 +408,12 @@ class pawn_order(osv.osv):
         return True
 
     def order_redeem(self, cr, uid, ids, context=None):
+        # Create Move (except expired case)
+        for pawn in self.browse(cr, uid, ids, context=context):
+            if pawn.state != 'expire':
+                self.action_move_create(cr, uid, [pawn.id], context={'direction': 'redeem'})
         self.write(cr, uid, ids, {'state': 'redeem'}, context=context)
         self._update_order_pawn_asset(cr, uid, ids, {'state': 'redeem'}, context=context)
-        # Create Move (except extended case)
-        for pawn in self.browse(cr, uid, ids, context=context):
-            if not pawn.extended:
-                self.action_move_create(cr, uid, [pawn.id], context={'direction': 'redeem'})
         return True
 
     def order_expire(self, cr, uid, ids, context=None):
