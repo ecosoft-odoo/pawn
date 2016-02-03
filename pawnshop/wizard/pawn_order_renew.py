@@ -112,7 +112,7 @@ class pawn_order_renew(osv.osv_memory):
 #                 _('Today is over grace period end date.\n'
 #                   'Please use normal sales process for expired items.'))
         # Normal case, redeem after pawned
-        if not pawn.extended:
+        if pawn.state != 'expire':
             interest_amount = wizard.pay_interest_amount
             discount = wizard.discount
             addition = wizard.addition
@@ -122,7 +122,7 @@ class pawn_order_renew(osv.osv_memory):
             pawn_obj.action_move_reversed_accrued_interest_create(cr, uid, [pawn_id], context=context)
             # Inactive Accrued Interest that has not been posted yet.
             pawn_obj.update_active_accrued_interest(cr, uid, [pawn_id], False, context=context)
-        else: # Case redeem after extended. No register interest, just full amount as sales receipt.
+        else: # Case redeem after expired. No register interest, just full amount as sales receipt.
             redeem_amount = wizard.pawn_amount + wizard.pay_interest_amount
             pawn_obj.action_move_expired_redeem_create(cr, uid, pawn.id, redeem_amount, context=context)
         # Update Redeem Date too.

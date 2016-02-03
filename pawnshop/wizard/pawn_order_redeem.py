@@ -96,7 +96,7 @@ class pawn_order_redeem(osv.osv_memory):
         wizard = self.browse(cr, uid, ids[0], context)
         date = wizard.date_redeem
         # Normal case, redeem after pawned
-        if not pawn.extended:
+        if pawn.state != 'expire':
             discount = wizard.discount
             addition = wizard.addition
             interest_amount = wizard.interest_amount - discount + addition
@@ -106,7 +106,7 @@ class pawn_order_redeem(osv.osv_memory):
             pawn_obj.action_move_reversed_accrued_interest_create(cr, uid, [pawn_id], context=context)
             # Inactive Accrued Interest that has not been posted yet.
             pawn_obj.update_active_accrued_interest(cr, uid, [pawn_id], False, context=context)
-        else: # Case redeem after extended. No register interest, just full amount as sales receipt.
+        else: # Case redeem after expired. No register interest, just full amount as sales receipt.
             pawn_obj.action_move_expired_redeem_create(cr, uid, pawn.id, wizard.redeem_amount, context=context)
         # Update Redeem Date too.
         pawn_obj.write(cr, uid, [pawn_id], {'date_redeem': date})
