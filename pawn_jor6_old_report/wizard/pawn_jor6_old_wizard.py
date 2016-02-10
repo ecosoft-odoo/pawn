@@ -21,7 +21,7 @@ class pawn_jor6_old_wizard(osv.osv_memory):
 
     _columns = {
         'pawn_shop_id': fields.many2one('pawn.shop', 'Pawnshop', required=True),
-        'journal_id': fields.many2one('account.journal', 'Journal', domain=[('type', '=', 'cash'), ('pawn_journal', '=', True)], required=True),
+        'journal_id': fields.many2one('account.journal', 'Journal', domain=[('type', '=', 'cash'), ('pawn_journal', '=', True)], required=False),
         'pawn_rule_id': fields.many2one('pawn.rule', 'Pawn Rule', required=True),
         'report_from_date': fields.date('Date From', required=True),
         'report_to_date': fields.date('Date To', required=True),
@@ -42,7 +42,7 @@ class pawn_jor6_old_wizard(osv.osv_memory):
             if 'form' not in data:
                 data['form'] = {}
             data['form']['pawn_shop_id'] = wiz_obj['pawn_shop_id'][0]
-            data['form']['journal_id'] = wiz_obj['journal_id'][0]
+            data['form']['journal_id'] = wiz_obj['journal_id'] and wiz_obj['journal_id'][0] or 0
             data['form']['pawn_rule_id'] = wiz_obj['pawn_rule_id'][0]
             data['form']['report_from_date'] = wiz_obj['report_from_date']
             data['form']['report_to_date'] = wiz_obj['report_to_date']
