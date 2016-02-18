@@ -126,7 +126,7 @@
                     <field name="date_due"/>
                     <field name="product_qty" invisible="context.get('tree_view_type', False) in ['pawn_asset']"/>
                     <field name="uom_id" string="Unit of Measure" invisible="context.get('tree_view_type', False) in ['pawn_asset']"/>
-                    <field name="price_pawned" string="Pawned Price" invisible="context.get('tree_view_type', False) not in ['pawn_asset']"/>
+                    <!--field name="price_pawned" string="Pawned Price" invisible="context.get('tree_view_type', False) not in ['pawn_asset']"/-->
                     <field name="price_estimated" string="Estimated Price"/>
                     <field name="price_pawned" string="Pawned Price"/>
                     <field name="state"/>
