@@ -221,7 +221,11 @@ class account_journal(osv.osv):
 
     _columns = {
         'profit_center': fields.selection([(1, '1'), (2, '2')], 'Profit Center', help="Profit Center will be posted in account move line"),
-        'pawn_journal': fields.boolean('Pawn Journal')
+        'pawn_journal': fields.boolean('Pawn Journal'),
+        'active': fields.boolean('Active'),
+    }
+    _defaults = {
+        'active': True,
     }
 
 account_journal()

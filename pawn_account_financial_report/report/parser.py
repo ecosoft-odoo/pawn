@@ -367,7 +367,6 @@ class account_balance(report_sxw.rml_parse):
     def _get_journal_ledger(self, account, ctx={}):
         res = []
         am_obj = self.pool.get('account.move')
-        print 'AM OBJ ', am_obj
         if account['type'] in ('other', 'liquidity', 'receivable', 'payable'):
             #~ TODO: CUANDO EL PERIODO ESTE VACIO LLENARLO CON LOS PERIODOS DEL EJERCICIO
             #~ FISCAL, SIN LOS PERIODOS ESPECIALES

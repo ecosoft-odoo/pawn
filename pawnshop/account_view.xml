@@ -31,7 +31,8 @@
             <field name="arch" type="xml">
                 <xpath expr="/form/group/group/field[@name='type']" position="after">
                 	<field name="profit_center" attrs="{'invisible': [('type', '!=', 'cash'), ('type', '!=', 'bank')]}"/>
-					<field name="pawn_journal" />                	
+					<field name="pawn_journal" />
+					<field name="active" />             	
                 </xpath>
             </field>
         </record>
