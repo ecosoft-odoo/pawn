@@ -140,6 +140,7 @@
             <field name="arch" type="xml">
 	           	<field name="bank_name" position="after">
 					<field name="is_cash" attrs="{'invisible': [('is_cash','=',False)]}"/>
+					<field name="active" />
 	           	</field>
 	           	<field name="state" position="attributes">
 	           		<attribute name="attrs">{'required': [('is_cash','=',False)]}</attribute>
