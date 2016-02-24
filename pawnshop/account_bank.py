@@ -50,9 +50,11 @@ class bank(osv.osv):
 
     _columns = {
         'balance': fields.function(_get_journal_currency, type="float", readonly=True, string="Balance in Company's Currency"),
+        'active': fields.boolean('Active'),
     }
     _defaults = {
-        'company_id': _default_company
+        'company_id': _default_company,
+        'active': True,
     }
 
 bank()

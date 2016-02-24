@@ -10,6 +10,7 @@
                     <group col="4">
                         <field name="bank_name" string="Cash Name" required="1"/>
                         <field name="is_cash" readonly="1"/>
+                        <field name="active" />
                         <field name="company_id" groups="base.group_multi_company" on_change="onchange_company_id(company_id)"
                             invisible="context.get('company_hide', True)" widget="selection"/>
                     </group>
