@@ -93,7 +93,6 @@ class pawn_order_renew(osv.osv_memory):
     def action_renew(self, cr, uid, ids, context=None):
         if context == None:
             context = {}
-        pawn_obj = self.pool.get('pawn.order')
         cr = pooler.get_db(cr.dbname).cursor()
         pawn_id = context.get('active_id')
         pawn_obj = self.pool.get('pawn.order')
@@ -123,9 +122,30 @@ class pawn_order_renew(osv.osv_memory):
             pawn_obj.action_move_reversed_accrued_interest_create(cr, uid, [pawn_id], context=context)
             # Inactive Accrued Interest that has not been posted yet.
             pawn_obj.update_active_accrued_interest(cr, uid, [pawn_id], False, context=context)
-        else: # Case redeem after expired. No register interest, just full amount as sales receipt.
+        else:
+            # Special Case redeem after expired.
+            # No register interest, just full amount as sales receipt.
             redeem_amount = wizard.pawn_amount + wizard.pay_interest_amount
             pawn_obj.action_move_expired_redeem_create(cr, uid, pawn.id, redeem_amount, context=context)
+            # Overwrite state to 'expire' (Very special case0
+            pawn_obj.write(cr, uid, [pawn.id], {'state': 'expire'}, context=context)
+            pawn_obj._update_order_pawn_asset(cr, uid, [pawn.id], {'state': 'expire'}, context=context)
+            # Immediately set to for sales
+            item_obj = self.pool.get('product.product')
+            asset_ids = item_obj.search(cr, uid, [('order_id', 'in', [pawn.id]), ('parent_id', '=', False)], context=context)
+            context.update({'allow_for_sale': True})
+            item_obj.action_asset_sale(cr, uid, asset_ids, context=context)
+            # Create Sales receipt
+            item_ids = item_obj.search(cr, uid, [('parent_id', '=', asset_ids[0])], context=context)
+            wizard_obj = self.pool.get('pawn.item.create.receipt')
+            wizard_id = wizard_obj.create(cr, uid, {'partner_id': pawn.partner_id.id, 'item_ids': [(6, 0, item_ids)]}, context=context)
+            res = wizard_obj.pawn_item_create_receipt(cr, uid, [wizard_id], context=context)
+            # Update amount
+            voucher_id = res['res_id']
+            self.pool.get('account.voucher').write(cr, uid, [voucher_id], {'amount': redeem_amount})
+            # Validate Receipt
+            wf_service.trg_validate(uid, 'account.voucher', voucher_id, 'proforma_voucher', cr)
+            
         # Update Redeem Date too.
         pawn_obj.write(cr, uid, [pawn_id], {'date_redeem': date})
         # Create the new Pawn by copying the existing one.

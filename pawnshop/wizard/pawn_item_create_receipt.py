@@ -21,7 +21,6 @@
 
 from openerp.osv import fields, osv
 from openerp.tools.translate import _
-import time
 
 
 class pawn_item_create_receipt(osv.osv_memory):
@@ -43,7 +42,7 @@ class pawn_item_create_receipt(osv.osv_memory):
 
     def pawn_item_create_receipt(self, cr, uid, ids, context):
         wizard = self.browse(cr, uid, ids[0], context)
-        item_ids = context.get('active_ids', [])
+        item_ids = [item.id for item in wizard.item_ids]
         item_obj = self.pool.get('product.product')
         voucher_obj = self.pool.get('account.voucher')
         loc_status_obj = self.pool.get('product.location.status')
@@ -56,7 +55,7 @@ class pawn_item_create_receipt(osv.osv_memory):
 
         items = item_obj.browse(cr, uid, item_ids, context=context)
         # Validate
-        l = len(list(set([p.journal_id for p in items])))
+        l = len(list(set([p.journal_id.id for p in items])))
         if l > 1:
             raise osv.except_osv(_('Error!'), _("Item from different journal is not allowed"))
         
