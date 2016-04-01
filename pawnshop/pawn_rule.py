@@ -64,7 +64,7 @@ class pawn_rule(osv.osv):
         start_date = datetime.strptime(date[:10], '%Y-%m-%d')
         # date expired
         date_expired = start_date + relativedelta(months=rule.length_month or 0.0)
-        date_expired = date_expired + relativedelta(days=(start_date.day - date_expired.day) or 0.0)  # If not getting the same date i.e., from 31/10 -> 28/02
+        #date_expired = date_expired + relativedelta(days=(start_date.day - date_expired.day) or 0.0)  # If not getting the same date i.e., from 31/10 -> 28/02
         return date_expired
 
     def calculate_monthly_interest(self, cr, uid, id, amount, context=None):
