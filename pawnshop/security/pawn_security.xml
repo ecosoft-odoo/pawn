@@ -60,6 +60,13 @@
 	        <field name="groups" eval="[(4, ref('group_pawn_manager')), (4, ref('group_pawn_stock')), (4, ref('group_pawn_officer'))]"/>
 	    </record>
 	    
+	    <record id="pawn_shop_rule_for_accountant" model="ir.rule">
+	        <field name="name">Pawn Shop (Accountant)</field>
+	        <field name="model_id" ref="model_pawn_shop"/>
+	        <field name="domain_force">[(1, '=', 1)]</field>
+	        <field name="groups" eval="[(4, ref('group_pawn_accountant'))]"/>
+	    </record>
+	    
 	    <record id="pawn_res_partner_bank_rule" model="ir.rule">
 	        <field name="name">Bank/Cash Account by Shop</field>
 	        <field name="model_id" ref="model_res_partner_bank"/>
