@@ -67,6 +67,28 @@ class pawn_order(osv.osv):
             'pawn.mt_ticket_redeem': lambda self, cr, uid, obj, ctx=None: obj['state'] in ['redeem']
         },
     }
+    
+    def _get_item_description(self, cr, uid, ids, field_name, arg, context=None):
+        res = dict.fromkeys(ids, False)
+        for pawn in self.browse(cr, uid, ids, context=context):
+            item_description = ''
+            if pawn.order_line:
+                for order_line in pawn.order_line:
+                    jewelry_desc = ''
+                    if order_line and order_line.is_jewelry:
+                        if order_line.carat and order_line.carat:
+                            jewelry_desc = ' [' + str(order_line.carat) + ' ' + _('Carat') + ', ' + str(order_line.gram) + ' ' + _('Gram') + ']'
+                        elif order_line.carat and not order_line.carat:
+                            jewelry_desc = ' [' + str(order_line.carat) + ' ' + _('Carat') + ']'
+                        elif not order_line.carat and order_line.carat:
+                            jewelry_desc = ' [' + str(order_line.gram) + ' ' + _('Gram') + ']'
+                    print jewelry_desc
+                    item_description += order_line.name + jewelry_desc + u' (' + str(order_line.product_qty or 0.0) + '), '
+                item_description = item_description[:-2]
+#             elif item.description:
+#                 item_description = item.description
+            res[pawn.id] = item_description
+        return res
 
     def _amount_all(self, cr, uid, ids, field_name, arg, context=None):
         res = {}
@@ -361,7 +383,8 @@ class pawn_order(osv.osv):
          'item_categ_id': fields.related('order_line', 'categ_id', type='many2one', relation='product.category', string='Item Category'),
          'property_desc': fields.related('order_line', 'property_ids', 'other_property', type='char', string='Property Description'),
          'status_history_ids': fields.one2many('pawn.status.history', 'order_id', 'Status History', readonly=True),
-         'create_date': fields.datetime('Create Date', readonly=True)
+         'create_date': fields.datetime('Create Date', readonly=True),
+         'item_description': fields.function(_get_item_description, type='text', string='Description'),
     }
     _defaults = {
         'company_id': lambda self, cr, uid, c: self.pool.get('res.users').browse(cr, uid, uid).company_id.id,

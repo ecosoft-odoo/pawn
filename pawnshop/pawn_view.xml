@@ -250,6 +250,7 @@
                     <field name="create_uid"/>
 					<separator/>
 					<filter name="today" string="Today's" domain="[('date_order','=',time.strftime('%%Y-%%m-%%d'))]" help="Pawn Tickets created today"/>
+					<filter name="today_ticket" string="Today's Ticket" domain="[('date_order','=',time.strftime('%%Y-%%m-%%d'))]" context="{'group_by': 'journal_id'}" help="Pawn Tickets created today"/>		
 					<filter name="jor6_submit" string="Jor6 Submission" domain="[('state','=','pawn'), ('date_expired','&lt;',time.strftime('%%Y-%%m-%%d')), ('date_due','=',False)]" help="pawn Ticket eligible for Jor6 Submission"/>
 					<separator/>
                     <filter name="draft" string="Draft" domain="[('state','=','draft')]" help="Pawn Tickets which are in draft state"/>
@@ -283,6 +284,7 @@
                     <field name="book" invisible="1"/>
                     <field name="number" invisible="1" />
                     <field name="name" string="Reference"/>
+                    <field name="item_description" />
                     <field name="date_order" />
                     <field name="date_jor6" />
                     <field name="date_due" />
