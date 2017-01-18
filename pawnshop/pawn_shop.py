@@ -26,7 +26,7 @@ from openerp.osv import fields, osv
 class pawn_shop(osv.osv):
     _name = "pawn.shop"
     _description = "Pawn Shop"
-    
+
     def _get_ratio(self, cr, uid, ids, field, arg, context=None):
         res = dict.fromkeys(ids, False)
         for shop in self.browse(cr, uid, ids, context=context):
@@ -64,6 +64,8 @@ class pawn_shop(osv.osv):
         'reg_book': fields.char('Book', size=64),
         'reg_number': fields.char('Number', size=64),
         'full_address': fields.text('Address'),
+        # Implementing new sequences
+        'sequence_ids': fields.one2many('pawn.shop.sequence', 'pawn_shop_id', 'Sequences')
     }
 
     _defaults = {
@@ -78,11 +80,41 @@ class pawn_shop(osv.osv):
 pawn_shop()
 
 
+# Implementing new sequence
+
+class pawn_shop_sequence(osv.osv):
+    _name = "pawn.shop.sequence"
+
+    _columns = {
+        'type': fields.selection(
+            [('pawn_order', 'Pawn Order')],
+            'Type',
+            required=True,
+        ),
+        'pawn_shop_id': fields.many2one(
+            'pawn.shop', 'Shop',
+            required=True,
+        ),
+        'book': fields.integer(
+            'Book',
+        ),
+        'sequence_id': fields.many2one(
+            'ir.sequence',
+            'Sequence',
+        )
+    }
+
+
+pawn_shop_sequence()
+
+# End implementing new sequence
+
+
 class pawn_amount_by_period(osv.osv):
     _name = "pawn.amount.by.period"
     _description = "Pawn Amount by Period"
     _auto = False
-    
+
     _columns = {
         'pawn_shop_id': fields.many2one('pawn.shop', 'Shop', readonly=True),
         'year': fields.char('Year', size=4, readonly=True),
