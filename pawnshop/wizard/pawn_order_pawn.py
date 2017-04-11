@@ -22,6 +22,7 @@
 from openerp.osv import fields, osv
 from openerp import netsvc
 from openerp import pooler
+from openerp.tools.translate import _
 
 
 class pawn_order_pawn(osv.osv_memory):
@@ -43,7 +44,7 @@ class pawn_order_pawn(osv.osv_memory):
             pawn = self.pool.get('pawn.order').browse(cr, uid, active_id, context=context)
             return pawn.parent_id and pawn.parent_id.id or False
         return False
-    
+
     def _get_amount(self, cr, uid, context=None):
         if context is None:
             context = {}
@@ -70,10 +71,15 @@ class pawn_order_pawn(osv.osv_memory):
     }
 
     def action_pawn(self, cr, uid, ids, context=None):
-        if context == None:
+        if context is None:
             context = {}
         cr = pooler.get_db(cr.dbname).cursor()
         active_id = context.get('active_id')
+        # Check status
+        pawn = self.pool.get('pawn.order').browse(cr, uid, active_id)
+        if pawn.state != 'draft':
+            raise osv.except_osv(_('Error!'),
+                                 _('Ticket need refresh before proceeding!'))
         # Write journal_id back to order
         wizard = self.browse(cr, uid, ids[0], context)
         self.pool.get('pawn.order').write(cr, uid, [active_id], {'journal_id': wizard.journal_id.id}, context=context)
