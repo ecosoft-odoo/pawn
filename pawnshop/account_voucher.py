@@ -336,9 +336,9 @@ class account_voucher(osv.osv):
             # rec_ids.append(move_line_obj.create(cr, uid, move_line_cost))
             # Reverse it!
             move_line_cost_reverse = move_line_cost.copy()
-            move_line_cost['debit'] = move_line_cost['credit']
-            move_line_cost['credit'] = move_line_cost['debit']
-            move_line_cost['account_id'] = product.property_account_expire_asset.id
+            move_line_cost_reverse['debit'] = move_line_cost['credit']
+            move_line_cost_reverse['credit'] = move_line_cost['debit']
+            move_line_cost_reverse['account_id'] = product.property_account_expire_asset.id
             # rec_ids.append(move_line_obj.create(cr, uid, move_line_cost))
 
             move_lines = [
