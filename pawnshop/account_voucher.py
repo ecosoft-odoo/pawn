@@ -171,9 +171,9 @@ class account_voucher(osv.osv):
 #             move_line_id = move_line_pool.create(cr, uid, self.first_move_line_get(cr,uid,voucher.id, move_id, company_currency, current_currency, local_context), local_context)
 #             move_line_brw = move_line_pool.browse(cr, uid, move_line_id, context=context)
 #             line_total = move_line_brw.debit - move_line_brw.credit
-            rec_list_ids = []
+            # rec_list_ids = []
             # Create one move line per voucher line where amount is not 0.0
-            rec_list_ids = self.voucher_pawn_move_line_create(cr, uid, voucher.id, move_id, company_currency, current_currency, context)
+            self.voucher_pawn_move_line_create(cr, uid, voucher.id, move_id, company_currency, current_currency, context)
 
             # Create the writeoff line if needed
 #             ml_writeoff = self.writeoff_move_line_get(cr, uid, voucher.id, line_total, move_id, name, company_currency, current_currency, local_context)
@@ -188,10 +188,10 @@ class account_voucher(osv.osv):
             if voucher.journal_id.entry_posted:
                 move_pool.post(cr, uid, [move_id], context={})
             # We automatically reconcile the account move lines.
-            reconcile = False
-            for rec_ids in rec_list_ids:
-                if len(rec_ids) >= 2:
-                    reconcile = move_line_pool.reconcile_partial(cr, uid, rec_ids, writeoff_acc_id=voucher.writeoff_acc_id.id, writeoff_period_id=voucher.period_id.id, writeoff_journal_id=voucher.journal_id.id)
+            # reconcile = False
+            # for rec_ids in rec_list_ids:
+            #     if len(rec_ids) >= 2:
+            #         reconcile = move_line_pool.reconcile_partial(cr, uid, rec_ids, writeoff_acc_id=voucher.writeoff_acc_id.id, writeoff_period_id=voucher.period_id.id, writeoff_journal_id=voucher.journal_id.id)
         return True
 
 
@@ -227,6 +227,7 @@ class account_voucher(osv.osv):
             'voucher_special_currency_rate': voucher_currency.rate * voucher.payment_rate ,
             'voucher_special_currency': voucher.payment_rate_currency_id and voucher.payment_rate_currency_id.id or False,})
         prec = self.pool.get('decimal.precision').precision_get(cr, uid, 'Account')
+        all_move_lines = []
         for line in voucher.line_ids:
             #create one move line per voucher line where amount is not 0.0
             # AND (second part of the clause) only if the original move line was not having debit = credit = 0 (which is a legal value)
@@ -305,8 +306,8 @@ class account_voucher(osv.osv):
                     foreign_currency_diff = sign * line.move_line_id.amount_residual_currency + amount_currency
 
             move_line['amount_currency'] = amount_currency
-            voucher_line = move_line_obj.create(cr, uid, move_line)
-            rec_ids = [voucher_line, line.move_line_id.id]
+            # voucher_line = move_line_obj.create(cr, uid, move_line)
+            # rec_ids = [voucher_line, line.move_line_id.id]
 
             # PAWN: Create reverse line, for the same amount but different account
             move_line_cash = move_line.copy()
@@ -317,7 +318,7 @@ class account_voucher(osv.osv):
             move_line_cash['account_id'] = debit_account.id
             move_line_cash['name'] = '/'
             move_line_cash['product_id'] = False
-            rec_ids.append(move_line_obj.create(cr, uid, move_line_cash))
+            # rec_ids.append(move_line_obj.create(cr, uid, move_line_cash))
 
             # PAWN: Create Cost Move Lines
             prec = self.pool.get('decimal.precision').precision_get(cr, uid, 'Account')
@@ -332,18 +333,26 @@ class account_voucher(osv.osv):
             elif move_line_cost['credit']:
                 move_line_cost['debit'] = amount
                 move_line_cost['credit'] = False
-            rec_ids.append(move_line_obj.create(cr, uid, move_line_cost))
+            # rec_ids.append(move_line_obj.create(cr, uid, move_line_cost))
             # Reverse it!
-            debit = move_line_cost['debit']
-            credit = move_line_cost['credit']
-            move_line_cost['debit'] = credit
-            move_line_cost['credit'] = debit
+            move_line_cost_reverse = move_line_cost.copy()
+            move_line_cost['debit'] = move_line_cost['credit']
+            move_line_cost['credit'] = move_line_cost['debit']
             move_line_cost['account_id'] = product.property_account_expire_asset.id
-            rec_ids.append(move_line_obj.create(cr, uid, move_line_cost))
+            # rec_ids.append(move_line_obj.create(cr, uid, move_line_cost))
 
-            if line.move_line_id.id:
-                rec_lst_ids.append(rec_ids)
-        return rec_lst_ids
+            move_lines = [
+                (0, 0, move_line),
+                (0, 0, move_line_cash),
+                (0, 0, move_line_cost),
+                (0, 0, move_line_cost_reverse),
+            ]
+            all_move_lines += move_lines
+
+        # Write all records at once after looping
+        self.pool.get('account.move').write(cr, uid, [move_id], {'line_id': all_move_lines})
+
+        return True
 
     def refund_voucher(self, cr, uid, ids, context):
         if context == None:
