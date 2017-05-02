@@ -87,7 +87,9 @@ class pawn_order_redeem(osv.osv_memory):
     def action_redeem(self, cr, uid, ids, context=None):
         if context is None:
             context = {}
-        cr = pooler.get_db(cr.dbname).cursor()
+        # TEST REMOVE CURSOR
+        # cr = pooler.get_db(cr.dbname).cursor()
+        # --
         pawn_id = context.get('active_id')
         pawn_obj = self.pool.get('pawn.order')
         # Check status
@@ -117,8 +119,10 @@ class pawn_order_redeem(osv.osv_memory):
             pawn_obj.action_move_expired_redeem_create(cr, uid, pawn.id, wizard.redeem_amount, context=context)
         # Update Redeem Date too.
         pawn_obj.write(cr, uid, [pawn_id], {'date_redeem': date})
-        cr.commit()
-        cr.close()
+        # TEST REMOVE CURSOR
+        # cr.commit()
+        # cr.close()
+        # --
         return True
 
 pawn_order_redeem()
