@@ -26,7 +26,7 @@ class product_template(osv.osv):
 
     _inherit = 'product.template'
     _columns = {
-        'write_date': fields.datetime(),
+        'date_sold': fields.date('Date Sold'),
         'type': fields.selection([('product', 'Stockable Product'),
                                   ('consu', 'Pawn Item'),
                                   ('service', 'Service'),

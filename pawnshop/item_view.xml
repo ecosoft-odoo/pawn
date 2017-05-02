@@ -105,7 +105,7 @@
                        <filter string='Pawn Date' domain="[]" context="{'group_by' : 'date_order'}"/>
                        <filter string='Grace Period End Date' domain="[]" context="{'group_by' : 'date_due'}"/>
                        <filter string='Number of Items' domain="[]" context="{'group_by' : 'product_qty_total'}"/>
-                       <filter string='Date Sold' domain="[]" context="{'group_by' : 'write_date'}"/>
+                       <filter string='Date Sold' domain="[]" context="{'group_by' : 'date_sold'}"/>
                    </group>
                 </search>
             </field>
@@ -156,7 +156,7 @@
                     <field name="total_price_pawned" sum="Total Pawned Price" />
                     <field name="total_price_sold" sum="Total Sold Price"/>
                     <field name="total_profit" sum="Total Profit"/>
-                    <field name="write_date" string="Date Sold" />
+                    <field name="date_sold" string="Date Sold" />
                     <field name="state" invisible="1"/>
                     <field name="extended" invisible="1"/>
                     <field name="location_status" string="Location" invisible="1"/>
@@ -210,7 +210,7 @@
 	                        <group>
 	            				<field name="pawn_shop_id" />
 	            				<field name="location_status" />
-	            				<field name="write_date" string="Date Sold" />
+	            				<field name="date_sold" string="Date Sold" />
 	                        </group>
                         </group>
                         <notebook>
