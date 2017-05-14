@@ -88,12 +88,12 @@ class pawn_order_renew(osv.osv_memory):
         elif field == 'new_pawn_amount':
             increase_pawn_amount = (new_pawn_amount or 0.0) - (pawn_amount or 0.0)
             res['value']['increase_pawn_amount'] = round(increase_pawn_amount, 2)
-        return res    
+        return res
 
     def action_renew(self, cr, uid, ids, context=None):
         if context == None:
             context = {}
-        cr = pooler.get_db(cr.dbname).cursor()
+        # cr = pooler.get_db(cr.dbname).cursor()
         pawn_id = context.get('active_id')
         pawn_obj = self.pool.get('pawn.order')
         pawn = pawn_obj.browse(cr, uid, pawn_id, context=context)
@@ -145,7 +145,7 @@ class pawn_order_renew(osv.osv_memory):
             self.pool.get('account.voucher').write(cr, uid, [voucher_id], {'amount': redeem_amount})
             # Validate Receipt
             wf_service.trg_validate(uid, 'account.voucher', voucher_id, 'proforma_voucher', cr)
-            
+
         # Update Redeem Date too.
         pawn_obj.write(cr, uid, [pawn_id], {'date_redeem': date})
         # Create the new Pawn by copying the existing one.
@@ -162,13 +162,13 @@ class pawn_order_renew(osv.osv_memory):
         # Write new pawn back to the original
         pawn_obj.write(cr, uid, [pawn_id], {'child_id': new_pawn_id}, context=context)
         # Commit
-        cr.commit()
-        cr.close()
+        # cr.commit()
+        # cr.close()
         # Redirection
         return self.open_pawn_order(cr, uid, new_pawn_id, context=context)
 
     def open_pawn_order(self, cr, uid, pawn_id, context=None):
-        cr = pooler.get_db(cr.dbname).cursor()
+        # cr = pooler.get_db(cr.dbname).cursor()
         ir_model_data = self.pool.get('ir.model.data')
         form_res = ir_model_data.get_object_reference(cr, uid, 'pawnshop', 'pawn_order_form')
         form_id = form_res and form_res[1] or False

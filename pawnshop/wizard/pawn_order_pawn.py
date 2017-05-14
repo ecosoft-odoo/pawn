@@ -73,7 +73,7 @@ class pawn_order_pawn(osv.osv_memory):
     def action_pawn(self, cr, uid, ids, context=None):
         if context is None:
             context = {}
-        cr = pooler.get_db(cr.dbname).cursor()
+        # cr = pooler.get_db(cr.dbname).cursor()
         active_id = context.get('active_id')
         # Check status
         pawn = self.pool.get('pawn.order').browse(cr, uid, active_id)
@@ -91,8 +91,8 @@ class pawn_order_pawn(osv.osv_memory):
         # Clear accrued interest
 
         # Close
-        cr.commit()
-        cr.close()
+        # cr.commit()
+        # cr.close()
         return True
 
 pawn_order_pawn()

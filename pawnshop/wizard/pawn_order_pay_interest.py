@@ -83,7 +83,7 @@ class pawn_order_pay_interest(osv.osv_memory):
     def action_pay_interest(self, cr, uid, ids, context=None):
         if context == None:
             context = {}
-        cr = pooler.get_db(cr.dbname).cursor()
+        # cr = pooler.get_db(cr.dbname).cursor()
         pawn_obj = self.pool.get('pawn.order')
         wizard = self.browse(cr, uid, ids[0], context)
         active_id = context.get('active_id', False)
@@ -94,9 +94,9 @@ class pawn_order_pay_interest(osv.osv_memory):
         # Register Actual Interest
         pawn_obj.register_interest_paid(cr, uid, active_id, date, discount, addition, interest_amount, context=context)
         # Reverse Accrued Interest
-        pawn_obj.action_move_reversed_accrued_interest_create(cr, uid, [active_id], context=context)       
-        cr.commit()
-        cr.close()
+        pawn_obj.action_move_reversed_accrued_interest_create(cr, uid, [active_id], context=context)
+        # cr.commit()
+        # cr.close()
         return True
 
 pawn_order_pay_interest()
