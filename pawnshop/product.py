@@ -26,6 +26,7 @@ class product_template(osv.osv):
 
     _inherit = 'product.template'
     _columns = {
+        'date_sold': fields.date('Date Sold'),
         'type': fields.selection([('product', 'Stockable Product'),
                                   ('consu', 'Pawn Item'),
                                   ('service', 'Service'),
@@ -34,25 +35,25 @@ class product_template(osv.osv):
 
 product_template()
 
- 
+
 class product_category(osv.osv):
- 
+
     _inherit = 'product.category'
     _columns = {
         'uom_ids': fields.many2many('product.uom', 'category_uom_rel', 'categ_id', 'uom_id', 'Unit of Measures'),
         'is_jewelry': fields.boolean('Carat/Gram', help='If checked, pawn ticket line will allow entry of jewelry measurement, i.e., carat, gram')
     }
- 
+
 product_category()
 
 
 class product_uom(osv.osv):
- 
+
     _inherit = 'product.uom'
     _columns = {
         'categ_ids': fields.many2many('product.category', 'category_uom_rel', 'uom_id', 'categ_id', 'Categories'),
     }
- 
+
 product_uom()
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

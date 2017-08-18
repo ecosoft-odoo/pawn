@@ -6,79 +6,76 @@
             <field name="model">account.voucher</field>
             <field name="inherit_id" ref="account_voucher.view_sale_receipt_form"/>
             <field name="arch" type="xml">
-            	<h1 position="after">
-                    <div class="oe_right oe_button_box" name="buttons" >
-                    	<field name="is_refund" /><label string="Refund"/>
-                    	<field name="pawnshop" /><label string="Pawnshop"/>
+                <h1 position="after">
+                    <div class="oe_right oe_button_box" name="buttons">
+                        <field name="is_refund"/><label string="Refund"/>
+                        <field name="pawnshop"/><label string="Pawnshop"/>
                     </div>
-            	</h1>
-            	<button name="action_cancel_draft" position="after">
-          			<button name="refund_voucher" string="Refund" type="object"
-          				attrs="{'invisible': ['|', ('state', '!=', 'posted'), ('ref_voucher_id', '!=', False)]}" 
-          				confirm="Are you sure you want to refund this receipt?"/>
-            	</button>
-            	<button name="action_cancel_draft" position="attributes">
-            		<attribute name="invisible">True</attribute>
-            	</button>
-            	<button name="cancel_voucher" type="object" position="replace">
-            		<button name="cancel_voucher" string="Cancel Receipt" type="object"
-          				attrs="{'invisible': ['|', ('state', '!=', 'posted'), '&amp;', ('is_refund', '=', False), ('ref_voucher_id', '!=', False)]}" 
-            			confirm="Are you sure you want to cancel this receipt?"/>
-            	</button>
+                </h1>
+                <button name="action_cancel_draft" position="after">
+                    <button name="refund_voucher" string="Refund" type="object" attrs="{'invisible': ['|', ('state', '!=', 'posted'), ('ref_voucher_id', '!=', False)]}" confirm="Are you sure you want to refund this receipt?"/>
+                </button>
+                <button name="action_cancel_draft" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </button>
+                <button name="cancel_voucher" type="object" position="replace">
+                    <button name="cancel_voucher" string="Cancel Receipt" type="object" attrs="{'invisible': ['|', ('state', '!=', 'posted'), '&amp;', ('is_refund', '=', False), ('ref_voucher_id', '!=', False)]}" confirm="Are you sure you want to cancel this receipt?"/>
+                </button>
                 <xpath expr="/form/sheet/group/group/field[@name='pay_now']" position="attributes">
-                	<attribute name="attrs">{'invisible': True}</attribute>
+                    <attribute name="attrs">{'invisible': True}</attribute>
                 </xpath>
                 <xpath expr="/form/sheet/group/group/field[@name='account_id']" position="attributes">
-                	<attribute name="attrs">{'invisible': [('pawnshop', '=', True)]}</attribute>
+                    <attribute name="attrs">{'invisible': [('pawnshop', '=', True)]}</attribute>
                 </xpath>
                 <xpath expr="/form/sheet/group/group//field[@name='date']" position="after">
-                	<field name="pawn_shop_id" attrs="{'invisible': [('pawnshop', '=', False)], 'required': [('pawnshop', '=', True)]}" />
+                    <field name="pawn_shop_id" attrs="{'invisible': [('pawnshop', '=', False)], 'required': [('pawnshop', '=', True)]}"/>
                 </xpath>
                 <xpath expr="/form/sheet/group/group/field[@name='reference']" position="after">
-					<field name="ref_voucher_id" />
+                    <field name="ref_voucher_id"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/group/group/field[@name='tax_id']" position="attributes">
-                	<attribute name="attrs">{'invisible': True}</attribute>
+                    <attribute name="attrs">{'invisible': True}</attribute>
+                </xpath>
+                <xpath expr="/form/sheet//field[@name='date']" position="attributes">
+                    <attribute name="string">Date Sold</attribute>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/group/group/field[@name='tax_amount']" position="attributes">
-                	<attribute name="attrs">{'invisible': True}</attribute>
+                    <attribute name="attrs">{'invisible': True}</attribute>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree" position="attributes">
-                	<attribute name="create">0</attribute>
-                	<attribute name="delete">0</attribute>
+                    <attribute name="create">0</attribute>
+                    <attribute name="delete">0</attribute>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='name']" position="replace">
-                	<field name="quantity" on_change="onchange_price('quantity', quantity, price_unit, amount)" readonly="1"/>
-                	<field name="uos_id" invisible="1" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
-                	<field name="price_unit" on_change="onchange_price('price_unit', quantity, price_unit, amount)"/>
+                    <field name="quantity" on_change="onchange_price('quantity', quantity, price_unit, amount)" readonly="1"/>
+                    <field name="uos_id" invisible="1" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
+                    <field name="price_unit" on_change="onchange_price('price_unit', quantity, price_unit, amount)"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='account_id']" position="before">
-                	<field name="product_id" domain="[('type','=','consu'), ('location_status.code', '=', 'item_for_sale')]" 
-                		 options="{'limit': 10, 'create': false, 'create_edit': false}" readonly="1"/>
-                	<field name="name"/>
+                    <field name="product_id" domain="[('type','=','consu'), ('location_status.code', '=', 'item_for_sale')]" options="{'limit': 10, 'create': false, 'create_edit': false}" readonly="1"/>
+                    <field name="name"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='account_id']" position="attributes">
-                	<attribute name="domain">[('user_type.report_type','=','income')]</attribute>
+                    <attribute name="domain">[('user_type.report_type','=','income')]</attribute>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='amount']" position="attributes">
-                	<attribute name="on_change">onchange_price('amount', quantity, price_unit, amount)</attribute>
+                    <attribute name="on_change">onchange_price('amount', quantity, price_unit, amount)</attribute>
                 </xpath>
             </field>
         </record>
-        
-        
+
         <record id="view_voucher_tree_sales_receipt" model="ir.ui.view">
             <field name="name">view.voucher.tree.sales.receipt</field>
             <field name="model">account.voucher</field>
             <field name="inherit_id" ref="account_voucher.view_voucher_tree"/>
             <field name="arch" type="xml">
                 <data>
-                	<field name="date" position="before" >
-                		<field name="product_journal_id" />
-                	</field>
-	            </data>
-	         </field>
-	    </record>
-        
-	</data>
+                    <field name="date" position="before">
+                        <field name="product_journal_id"/>
+                    </field>
+                </data>
+            </field>
+        </record>
+
+    </data>
 </openerp>

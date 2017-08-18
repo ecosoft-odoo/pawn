@@ -22,6 +22,7 @@ from openerp.osv import fields, osv
 from openerp import netsvc
 import time
 from openerp import pooler
+from openerp.tools.translate import _
 
 
 class pawn_order_redeem(osv.osv_memory):
@@ -68,11 +69,11 @@ class pawn_order_redeem(osv.osv_memory):
     def onchange_amount(self, cr, uid, ids, field, pawn_amount, interest_amount, discount, addition, redeem_amount, context=None):
         res = {'value': {}}
         if field == 'discount':
-            redeem_amount = (pawn_amount or 0.0) + (interest_amount or 0.0)  - (discount or 0.0) 
+            redeem_amount = (pawn_amount or 0.0) + (interest_amount or 0.0)  - (discount or 0.0)
             res['value']['addition'] = 0.0
             res['value']['redeem_amount'] = round(redeem_amount, 2)
         if field == 'addition':
-            redeem_amount = (pawn_amount or 0.0) + (interest_amount or 0.0)  + (addition or 0.0) 
+            redeem_amount = (pawn_amount or 0.0) + (interest_amount or 0.0)  + (addition or 0.0)
             res['value']['discount'] = 0.0
             res['value']['redeem_amount'] = round(redeem_amount, 2)
         elif field == 'redeem_amount':
@@ -81,14 +82,21 @@ class pawn_order_redeem(osv.osv_memory):
                 res['value']['discount'] = round(diff, 2)
             else:
                 res['value']['addition'] = - round(diff, 2)
-        return res    
+        return res
 
     def action_redeem(self, cr, uid, ids, context=None):
-        if context == None:
+        if context is None:
             context = {}
-        cr = pooler.get_db(cr.dbname).cursor()
+        # TEST REMOVE CURSOR
+        # cr = pooler.get_db(cr.dbname).cursor()
+        # --
         pawn_id = context.get('active_id')
         pawn_obj = self.pool.get('pawn.order')
+        # Check status
+        pawn = pawn_obj.browse(cr, uid, pawn_id)
+        if pawn.state not in ('pawn', 'expire'):
+            raise osv.except_osv(_('Error!'),
+                                 _('Ticket need refresh before proceeding!'))
         pawn = pawn_obj.browse(cr, uid, pawn_id, context=context)
         state_bf_redeem = pawn.state
         # Trigger workflow, reverse of pawn
@@ -111,8 +119,10 @@ class pawn_order_redeem(osv.osv_memory):
             pawn_obj.action_move_expired_redeem_create(cr, uid, pawn.id, wizard.redeem_amount, context=context)
         # Update Redeem Date too.
         pawn_obj.write(cr, uid, [pawn_id], {'date_redeem': date})
-        cr.commit()
-        cr.close()
+        # TEST REMOVE CURSOR
+        # cr.commit()
+        # cr.close()
+        # --
         return True
 
 pawn_order_redeem()

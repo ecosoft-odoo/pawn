@@ -3,22 +3,22 @@
     <data>
 
 		<menuitem id="menu_pawn_for_sale" name="Sales and Interest"
-			groups="group_pawn_manager,group_pawn_stock,group_pawn_accountant,group_pawn_officer"		
-		    parent="menu_pawn_root" sequence="2" />
-		
-		<menuitem id="menu_pawn_stock" name="Stock" 
 			groups="group_pawn_manager,group_pawn_stock,group_pawn_accountant,group_pawn_officer"
-		    parent="menu_pawn_root" sequence="3" />	
-		
-		<menuitem id="menu_pawn_cash" name="Cash" 
-			groups="group_pawn_manager,group_pawn_stock,group_pawn_accountant,group_pawn_officer"		
-		    parent="menu_pawn_root" sequence="4" />	
-        
+		    parent="menu_pawn_root" sequence="2" />
+
+		<menuitem id="menu_pawn_stock" name="Stock"
+			groups="group_pawn_manager,group_pawn_stock,group_pawn_accountant,group_pawn_officer"
+		    parent="menu_pawn_root" sequence="3" />
+
+		<menuitem id="menu_pawn_cash" name="Cash"
+			groups="group_pawn_manager,group_pawn_stock,group_pawn_accountant,group_pawn_officer"
+		    parent="menu_pawn_root" sequence="4" />
+
 		<!-- Master Data -->
         <menuitem id="menu_pawn_master" name="Master Data"
-            groups="group_pawn_accountant,group_pawn_officer" 
-            parent="menu_pawn_root" sequence="100"/>            	
-            	
+            groups="group_pawn_accountant,group_pawn_officer"
+            parent="menu_pawn_root" sequence="100"/>
+
         <!-- Link to Pawn Customer -->
         <record id="action_pawn_customer_form" model="ir.actions.act_window">
             <field name="name">Customers</field>
@@ -29,7 +29,7 @@
             <field name="domain">[('supplier','=',1), ('pawnshop','=',1)]</field>
             <field name="context">{'default_supplier':1, 'default_customer':0, 'default_pawnshop':1}</field>
             <field name="filter" eval="True"/>
-        </record>        
+        </record>
         <record id="action_pawn_customer_form_view1" model="ir.actions.act_window.view">
             <field eval="0" name="sequence"/>
             <field name="view_mode">kanban</field>
@@ -49,10 +49,10 @@
             <field name="act_window_id" ref="action_pawn_customer_form"/>
         </record>
         <menuitem id="menu_pawn_customer" name="Customers"
-			groups="group_pawn_accountant,group_pawn_manager,group_pawn_officer"        
+			groups="group_pawn_accountant,group_pawn_manager,group_pawn_officer"
 	        parent="menu_pawn_master"
-	        action="action_pawn_customer_form" sequence="60"/>  
-	        	 
+	        action="action_pawn_customer_form" sequence="60"/>
+
         <!-- Link to Buyer -->
         <record id="action_pawn_buyer_form" model="ir.actions.act_window">
             <field name="name">Buyer</field>
@@ -63,7 +63,7 @@
             <field name="domain">[('customer','=',1), ('pawnshop','=',1)]</field>
             <field name="context">{'default_customer':1, 'default_supplier':0, 'default_pawnshop':1,}</field>
             <field name="filter" eval="True"/>
-        </record>        
+        </record>
         <record id="action_pawn_buyer_form_view1" model="ir.actions.act_window.view">
             <field eval="0" name="sequence"/>
             <field name="view_mode">kanban</field>
@@ -83,10 +83,10 @@
             <field name="act_window_id" ref="action_pawn_buyer_form"/>
         </record>
 	    <menuitem id="menu_normal_customer" name="Buyer"
-			groups="group_pawn_accountant,group_pawn_manager,group_pawn_officer"	    
+			groups="group_pawn_accountant,group_pawn_manager,group_pawn_officer"
 	        parent="menu_pawn_master"
-	        action="action_pawn_buyer_form" sequence="65"/>       
-	    
+	        action="action_pawn_buyer_form" sequence="65"/>
+
 	    <!-- Pawn Item -->
         <record id="pawn_item_search_form_view" model="ir.ui.view">
             <field name="name">pawn.item.search.form</field>
@@ -105,6 +105,7 @@
                        <filter string='Pawn Date' domain="[]" context="{'group_by' : 'date_order'}"/>
                        <filter string='Grace Period End Date' domain="[]" context="{'group_by' : 'date_due'}"/>
                        <filter string='Number of Items' domain="[]" context="{'group_by' : 'product_qty_total'}"/>
+                       <filter string='Date Sold' domain="[]" context="{'group_by' : 'date_sold'}"/>
                    </group>
                 </search>
             </field>
@@ -119,7 +120,7 @@
                     <field name="pawn_shop_id" />
                     <field name="journal_id" />
                     <field name="name"/>
-					<field name="partner_customer_id"/>                    
+					<field name="partner_customer_id"/>
                     <field name="item_description"/>
                     <field name="categ_id"/>
                     <field name="date_order"/>
@@ -144,7 +145,7 @@
                 <tree string="Pawn Items Sold" create="0">
                     <field name="pawn_shop_id" invisible="1"/>
                     <field name="name"/>
-					<field name="partner_customer_id"/> 
+					<field name="partner_customer_id"/>
                     <field name="item_description" invisible="1"/>
                     <field name="categ_id"/>
                     <field name="date_order"/>
@@ -155,6 +156,7 @@
                     <field name="total_price_pawned" sum="Total Pawned Price" />
                     <field name="total_price_sold" sum="Total Sold Price"/>
                     <field name="total_profit" sum="Total Profit"/>
+                    <field name="date_sold" string="Date Sold" />
                     <field name="state" invisible="1"/>
                     <field name="extended" invisible="1"/>
                     <field name="location_status" string="Location" invisible="1"/>
@@ -169,17 +171,17 @@
             <field name="arch" type="xml">
                 <form string="Pawn Item" create="0" edit="0" version="7.0">
 	                <header>
-                    	<button name="action_asset_sale" string="For Sales" type="object" class="oe_highlight" 
-                    			attrs="{'invisible': ['|', '|', ('extended', '=', True), ('state', 'not in', ('expire')), ('type', '!=', 'pawn_asset')]}" />	                    
-                    	<button name="%(action_asset_for_sale)d" string="For Sales" type="action" class="oe_highlight" 
-                    			attrs="{'invisible': ['|', '|', ('extended', '=', False), ('state', '!=', ('expire')), ('type', '!=', 'pawn_asset')]}" />	                    
-                    	<button name="action_asset_sale_backto_expire" string="Back to Expire" type="object" class="oe_highlight" 
-                    			attrs="{'invisible': ['|', '|', ('extended', '=', True), ('state', 'not in', ('for_sale')), ('type', '!=', 'pawn_asset')]}" />	                    
+                    	<button name="action_asset_sale" string="For Sales" type="object" class="oe_highlight"
+                    			attrs="{'invisible': ['|', '|', ('extended', '=', True), ('state', 'not in', ('expire')), ('type', '!=', 'pawn_asset')]}" />
+                    	<button name="%(action_asset_for_sale)d" string="For Sales" type="action" class="oe_highlight"
+                    			attrs="{'invisible': ['|', '|', ('extended', '=', False), ('state', '!=', ('expire')), ('type', '!=', 'pawn_asset')]}" />
+                    	<button name="action_asset_sale_backto_expire" string="Back to Expire" type="object" class="oe_highlight"
+                    			attrs="{'invisible': ['|', '|', ('extended', '=', True), ('state', 'not in', ('for_sale')), ('type', '!=', 'pawn_asset')]}" />
                     	<button name="%(action_item_split)d" string="Split Item" type="action" class="oe_highlight"
-                    			attrs="{'invisible': ['|', '|', ('type', '=', 'pawn_asset'), ('product_qty','&lt;',2), ('state','!=','for_sale')]}" />                
-                    	<field name="state" widget="statusbar" statusbar_visible="draft,pawn,expire,for_sale" readonly="1" /> 
-	                </header>        
-                    <sheet>            	
+                    			attrs="{'invisible': ['|', '|', ('type', '=', 'pawn_asset'), ('product_qty','&lt;',2), ('state','!=','for_sale')]}" />
+                    	<field name="state" widget="statusbar" statusbar_visible="draft,pawn,expire,for_sale" readonly="1" />
+	                </header>
+                    <sheet>
                         <field name="image_medium" widget="image" class="oe_avatar oe_left"/>
                         <div class="oe_title">
                             <div class="oe_edit_only">
@@ -194,21 +196,22 @@
                         <div class="oe_right oe_button_box" name="buttons">
                         	<h1>
 								<field name="extended" invisible="1"/>
-	 							<div style="color:red">							
-	 								<label string="Extended" attrs="{'invisible': [('extended', '!=', True)]}"/>		
-								</div>			
-							</h1>                        
+	 							<div style="color:red">
+	 								<label string="Extended" attrs="{'invisible': [('extended', '!=', True)]}"/>
+								</div>
+							</h1>
 						</div>
 						<group>
 	                        <group>
-								<field name="partner_customer_id"/> 
+								<field name="partner_customer_id"/>
 	                            <field name="item_description" nolable="1"/>
 	                            <field name="active"/>
 	                        </group>
 	                        <group>
 	            				<field name="pawn_shop_id" />
 	            				<field name="location_status" />
-	                        </group>							
+	            				<field name="date_sold" string="Date Sold" />
+	                        </group>
                         </group>
                         <notebook>
                             <page string="Information">
@@ -240,7 +243,7 @@
 	                                    <field name="uom_id" />
 	                                    <field name="price_pawned"/>
 	                                </tree>
-	                            </field>                                	
+	                            </field>
 	                        	<field name="product_qty_total" invisible="1"/>
 	                        	<field name="description" placeholder="describe the item characteristics..."/>
                             </page>
@@ -266,7 +269,7 @@
                 </form>
             </field>
         </record>
-        
+
         <record model="ir.ui.view" id="pawn_items_kanban_view">
             <field name="name">Pawn Items Kanban</field>
             <field name="model">product.product</field>
@@ -288,7 +291,7 @@
                                     </h4>
 	                                <div>
 	                                    <field name="item_description"/><br/>
-	                                </div>                                       
+	                                </div>
                                 	<div name="tags"/>
                                     <ul>
                                         <li>Price: <field name="price_estimated"></field></li>
@@ -299,8 +302,8 @@
                     </templates>
                 </kanban>
             </field>
-        </record>        
-        
+        </record>
+
         <record id="action_pawn_assets" model="ir.actions.act_window">
             <field name="name">Pawn Tickets</field>
             <field name="type">ir.actions.act_window</field>
@@ -316,8 +319,8 @@
                 Click to define a new Pawn Item.
               </p>
             </field>
-        </record>    
-        
+        </record>
+
         <record id="action_pawn_assets_view1" model="ir.actions.act_window.view">
             <field eval="1" name="sequence"/>
             <field name="view_mode">tree</field>
@@ -329,11 +332,11 @@
             <field name="view_mode">form</field>
             <field name="view_id" ref="pawn_item_normal_form_view"/>
             <field name="act_window_id" ref="action_pawn_assets"/>
-        </record> 	            
+        </record>
 		<menuitem name="Pawn Ticket View" id="menu_pawn_assets_action_form" action="action_pawn_assets" sequence="20"
-			groups="group_pawn_accountant,group_pawn_manager,group_pawn_stock"		
-		    parent="menu_pawn_stock"/>       
-		    	
+			groups="group_pawn_accountant,group_pawn_manager,group_pawn_stock"
+		    parent="menu_pawn_stock"/>
+
         <record id="action_pawn_items" model="ir.actions.act_window">
             <field name="name">Pawn Items</field>
             <field name="type">ir.actions.act_window</field>
@@ -349,7 +352,7 @@
                 Click to define a new Pawn Item.
               </p>
             </field>
-        </record>    
+        </record>
         <record id="action_pawn_items_view1" model="ir.actions.act_window.view">
             <field eval="1" name="sequence"/>
             <field name="view_mode">tree</field>
@@ -361,11 +364,11 @@
             <field name="view_mode">form</field>
             <field name="view_id" ref="pawn_item_normal_form_view"/>
             <field name="act_window_id" ref="action_pawn_items"/>
-        </record> 	                 
+        </record>
 		<menuitem name="Pawn Item View" id="menu_pawn_items_action_form" action="action_pawn_items" sequence="30"
 			groups="group_pawn_accountant,group_pawn_manager,group_pawn_stock"
 		    parent="menu_pawn_stock"/>
-		
+
 		<!-- Expenses -->
         <record id="action_product_expense" model="ir.actions.act_window">
             <field name="name">Expenses</field>
@@ -383,10 +386,10 @@
               </p>
             </field>
         </record>
-        <menuitem action="action_product_expense" id="menu_product_expense" 
+        <menuitem action="action_product_expense" id="menu_product_expense"
         	groups="group_pawn_accountant"
         	parent="menu_pawn_master" sequence="70"/>
-				
+
 		<!-- Item Categories -->
         <record id="action_item_category" model="ir.actions.act_window">
             <field name="name">Item Categories</field>
@@ -397,8 +400,8 @@
             <field name="view_id" ref="product.product_category_list_view"/>
         </record>
 		<menuitem name="Items Categories" id="menu_item_category_action_form" action="action_item_category" sequence="100"
-		    parent="menu_pawn_master" groups="group_pawn_accountant" />  
-		    	
+		    parent="menu_pawn_master" groups="group_pawn_accountant" />
+
         <record id="view_category_property_form_ext" model="ir.ui.view">
             <field name="name">view.category.property.form.ext</field>
             <field name="model">product.category</field>
@@ -412,22 +415,22 @@
                     <xpath expr="/form/sheet" position="inside">
 	 					<notebook>
 	 						<page string="Property Selection">
-	 							<group colspan="4">              
+	 							<group colspan="4">
 									<field name="property_line_ids" widget="one2many_list" colspan="4" nolabel="1" >
 										<tree string="Property Selection" editable="bottom">
 			                                <field name="property_id"/>
 			                                <field name="active"/>
 			                            </tree>
 			                        </field>
-		                        </group>   
-			            	</page>				
+		                        </group>
+			            	</page>
 			            </notebook>
                     </xpath>
                 </data>
             </field>
         </record>
-        
-        	
+
+
         <!-- Item for Sales -->
         <record id="action_pawn_items_for_sale" model="ir.actions.act_window">
             <field name="name">Items For Sales</field>
@@ -439,7 +442,7 @@
             <field name="domain">[('type','=','consu'), ('state','=','for_sale'), ('location_status.code','=','item_for_sale')]</field>
             <field name="view_id" ref="pawn_item_tree_view"/>
             <field name="search_view_id" ref="pawn_item_search_form_view"/>
-        </record>    
+        </record>
         <record id="action_pawn_items_for_sale_view1" model="ir.actions.act_window.view">
             <field eval="1" name="sequence"/>
             <field name="view_mode">tree</field>
@@ -451,11 +454,11 @@
             <field name="view_mode">form</field>
             <field name="view_id" ref="pawn_item_normal_form_view"/>
             <field name="act_window_id" ref="action_pawn_items_for_sale"/>
-        </record> 	               
+        </record>
 		<menuitem name="Items For Sales" id="menu_pawn_items_for_sale" action="action_pawn_items_for_sale" sequence="10"
 		    parent="menu_pawn_for_sale"
 			groups="group_pawn_manager,group_pawn_stock,group_pawn_accountant,group_pawn_officer"/>
-		
+
         <!-- Item for Sales (borrowed) -->
         <record id="action_pawn_items_borrowed" model="ir.actions.act_window">
             <field name="name">Items Borrowed</field>
@@ -467,7 +470,7 @@
             <field name="domain">[('type','=','consu'), ('state','=','for_sale'), ('location_status.code','=','item_borrowed')]</field>
             <field name="view_id" ref="pawn_item_tree_view"/>
             <field name="search_view_id" ref="pawn_item_search_form_view"/>
-        </record> 
+        </record>
 		<record id="action_pawn_items_borrowed_view1" model="ir.actions.act_window.view">
             <field eval="1" name="sequence"/>
             <field name="view_mode">tree</field>
@@ -479,7 +482,7 @@
             <field name="view_mode">form</field>
             <field name="view_id" ref="pawn_item_normal_form_view"/>
             <field name="act_window_id" ref="action_pawn_items_borrowed"/>
-        </record> 	             
+        </record>
 		<menuitem name="Items Borrowed" id="menu_pawn_items_borrowed" action="action_pawn_items_borrowed" sequence="20"
 		    parent="menu_pawn_for_sale"
 			groups="group_pawn_accountant,group_pawn_manager,group_pawn_officer,group_pawn_stock"/>
@@ -515,7 +518,7 @@
 	            </data>
 	         </field>
 	    </record>
-        
+
         <record id="action_sale_receipt" model="ir.actions.act_window">
             <field name="name">Sales Receipts</field>
             <field name="res_model">account.voucher</field>
@@ -544,11 +547,11 @@
             <field name="view_mode">form</field>
             <field name="view_id" ref="account_voucher.view_sale_receipt_form"/>
             <field name="act_window_id" ref="action_sale_receipt"/>
-        </record>	
-			
+        </record>
+
 		<menuitem action="action_sale_receipt" id="menu_action_sale_receipt" parent="menu_pawn_for_sale"  sequence="30"
 			groups="group_pawn_accountant,group_pawn_manager,group_pawn_officer"/>
-			
+
         <!-- Item for Sales (borrowed) -->
         <record id="action_pawn_items_sold" model="ir.actions.act_window">
             <field name="name">Items Sold</field>
@@ -560,7 +563,7 @@
             <field name="domain">[('type','=','consu'), ('state','=','for_sale'), ('location_status.code','=','item_sold')]</field>
             <field name="view_id" ref="pawn_item_sold_tree_view"/>
             <field name="search_view_id" ref="pawn_item_search_form_view"/>
-        </record> 
+        </record>
 		<record id="action_pawn_items_sold_view1" model="ir.actions.act_window.view">
             <field eval="1" name="sequence"/>
             <field name="view_mode">tree</field>
@@ -574,8 +577,8 @@
             <field name="act_window_id" ref="action_pawn_items_sold"/>
         </record>
 		<menuitem name="Items Sold" id="menu_pawn_items_sold" action="action_pawn_items_sold" sequence="40"
-		    parent="menu_pawn_for_sale" 
-			groups="group_pawn_manager,group_pawn_stock,group_pawn_accountant,group_pawn_officer"/>		
+		    parent="menu_pawn_for_sale"
+			groups="group_pawn_manager,group_pawn_stock,group_pawn_accountant,group_pawn_officer"/>
 
 		<!-- Ticket Move -->
         <record id="action_asset_move_kanban" model="ir.actions.act_window">
@@ -592,7 +595,7 @@
                 Click to define a new Pawn Ticket.
               </p>
             </field>
-        </record>        
+        </record>
         <record id="action_asset_move_kanban_view" model="ir.actions.act_window.view" >
             <field name="sequence" eval="1"/>
             <field name="view_mode">kanban</field>
@@ -601,8 +604,8 @@
         </record>
         <menuitem action="action_asset_move_kanban" id="menu_action_asset_move_kanban" parent="menu_pawn_management" sequence="2"
         	groups="group_pawn_accountant,group_pawn_manager,group_pawn_stock"/>
-        
-        
+
+
         <record id="action_asset_move_out_kanban" model="ir.actions.act_window">
             <field name="name">Outgoing Ticket</field>
             <field name="res_model">product.product</field>
@@ -623,10 +626,10 @@
             <field name="view_mode">kanban</field>
             <field name="view_id" ref="pawn_asset_move_kanban_view"/>
             <field name="act_window_id" ref="action_asset_move_out_kanban"/>
-        </record>       
+        </record>
         <menuitem action="action_asset_move_out_kanban" id="menu_action_asset_move_out_kanban" parent="menu_pawn_management" sequence="3"
         	groups="group_pawn_accountant,group_pawn_manager,group_pawn_stock"/>
-  	
+
         <!-- Expired Tickets -->
         <record id="action_pawn_asset_expired" model="ir.actions.act_window">
             <field name="name">Grace Ended Tickets</field>
@@ -638,7 +641,7 @@
             <field name="domain">[('type','=','pawn_asset'), ('state','=','expire')]</field>
             <field name="view_id" ref="pawn_item_tree_view"/>
             <field name="search_view_id" ref="pawn_item_search_form_view"/>
-        </record>    
+        </record>
         <record id="action_pawn_asset_expired_view1" model="ir.actions.act_window.view">
             <field eval="1" name="sequence"/>
             <field name="view_mode">tree</field>
@@ -650,15 +653,15 @@
             <field name="view_mode">form</field>
             <field name="view_id" ref="pawn_item_normal_form_view"/>
             <field name="act_window_id" ref="action_pawn_asset_expired"/>
-        </record> 	               
+        </record>
 		<menuitem name="Grace Ended Tickets" id="menu_pawn_asset_expired" action="action_pawn_asset_expired" sequence="2"
 		    parent="menu_pawn_for_sale"
-			groups="group_pawn_manager,group_pawn_stock,group_pawn_accountant,group_pawn_officer"/>	
-		    	
+			groups="group_pawn_manager,group_pawn_stock,group_pawn_accountant,group_pawn_officer"/>
+
 		 <!-- Unit of Measure -->
         <menuitem action="product.product_uom_form_action" id="pawnshop.menu_product_uom_form_action" parent="pawnshop.menu_pawn_master" sequence="110"
         	groups="group_pawn_accountant"/>
-        
+
 		<!-- Update Product Form View -->
         <record id="view_product_hr_expense_form_ext" model="ir.ui.view">
             <field name="name">product.product.expense.form.ext</field>

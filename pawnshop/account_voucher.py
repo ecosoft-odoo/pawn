@@ -53,15 +53,15 @@ class account_voucher(osv.osv):
                 to_loc_status = loc_status_obj.search(cr, uid, [('code', '=', LOCATION_STATUS_MAP[voucher_state])])[0]
                 self.pool.get('product.product').write(cr, uid, item_ids, {'location_status': to_loc_status})
             return True
-     
+
     def _estimated_total(self, cr, uid, voucher_id):
         cr.execute("""
             select sum(pp.price_estimated * avl.quantity) estimated_total from account_voucher_line avl
             join product_product pp on pp.id = avl.product_id
-            where avl.voucher_id = %s           
+            where avl.voucher_id = %s
         """, (voucher_id,))
-        return cr.fetchone()[0] or 0.0   
-     
+        return cr.fetchone()[0] or 0.0
+
     def _update_voucher_line_price_unit(self, cr, uid, ids, price_total, context=None):
         voucher_line_obj = self.pool.get('account.voucher.line')
         # Get estimated_total
@@ -84,8 +84,8 @@ class account_voucher(osv.osv):
                     line_price_unit = line.quantity and line_amount / line.quantity or 0.0
                     total_amount += line_amount
                 voucher_line_obj.write(cr, uid, [line.id], {'price_unit': line_price_unit,
-                                                                'amount': line_amount})                    
-        return True    
+                                                                'amount': line_amount})
+        return True
 
     _columns = {
         'docnumber': fields.integer('DocNumber', select=True, readonly=True),
@@ -100,7 +100,7 @@ class account_voucher(osv.osv):
         year = date and date[:4] or time.strftime('%Y-%m-%d')[:4]
         # Get year from date
         cr.execute("""select coalesce(max(docnumber), 0) from account_voucher
-            where to_char(date, 'YYYY') = %s and pawn_shop_id = %s and is_refund = %s""", 
+            where to_char(date, 'YYYY') = %s and pawn_shop_id = %s and is_refund = %s""",
             (year, pawn_shop_id, is_refund))
         number = cr.fetchone()[0] or 0
         number += 1
@@ -109,7 +109,7 @@ class account_voucher(osv.osv):
             shop_code = self.pool.get('pawn.shop').browse(cr, uid, pawn_shop_id).sref_code
         else:
             shop_code = self.pool.get('pawn.shop').browse(cr, uid, pawn_shop_id).srec_code
-        next_name = shop_code + '/' + year + '/' + str(number).zfill(3)     
+        next_name = shop_code + '/' + year + '/' + str(number).zfill(3)
         return next_name, number
 
     def write(self, cr, uid, ids, vals, context=None):
@@ -121,7 +121,7 @@ class account_voucher(osv.osv):
         voucher_state = vals.get('state', False)
         self._update_items_location_status(cr, uid, ids, voucher_state, context=context)
         return res
- 
+
     def create(self, cr, uid, data, context=None):
         # Only for Sales Receipt have its own number
         if (data.get('number', '/') == '/' or data.get('number') == False) and data.get('pawnshop', False) and data.get('type', False) == 'sale':
@@ -132,7 +132,7 @@ class account_voucher(osv.osv):
         voucher_state = 'draft'  # Assume voucher draft, so we update the location_status
         self._update_items_location_status(cr, uid, [voucher_id], voucher_state, context=context)
         return voucher_id
-    
+
     def action_move_line_create(self, cr, uid, ids, context=None):
         for voucher in self.browse(cr, uid, ids, context=context):
             if voucher.pawnshop:
@@ -140,10 +140,10 @@ class account_voucher(osv.osv):
             else:
                 super(account_voucher, self).action_move_line_create(cr, uid, [voucher.id], context=context)
         return True
-    
+
     def copy(self, cr, uid, id, default=None, context=None):
         raise osv.except_osv(_('Forbbiden to duplicate'), _('Is not possible to duplicate the record, please create a new one.'))
-  
+
     def action_pawn_move_line_create(self, cr, uid, ids, context=None):
         '''
         Confirm the vouchers given in ids and create the journal entries for each of them
@@ -171,9 +171,9 @@ class account_voucher(osv.osv):
 #             move_line_id = move_line_pool.create(cr, uid, self.first_move_line_get(cr,uid,voucher.id, move_id, company_currency, current_currency, local_context), local_context)
 #             move_line_brw = move_line_pool.browse(cr, uid, move_line_id, context=context)
 #             line_total = move_line_brw.debit - move_line_brw.credit
-            rec_list_ids = []
+            # rec_list_ids = []
             # Create one move line per voucher line where amount is not 0.0
-            rec_list_ids = self.voucher_pawn_move_line_create(cr, uid, voucher.id, move_id, company_currency, current_currency, context)
+            self.voucher_pawn_move_line_create(cr, uid, voucher.id, move_id, company_currency, current_currency, context)
 
             # Create the writeoff line if needed
 #             ml_writeoff = self.writeoff_move_line_get(cr, uid, voucher.id, line_total, move_id, name, company_currency, current_currency, local_context)
@@ -188,29 +188,29 @@ class account_voucher(osv.osv):
             if voucher.journal_id.entry_posted:
                 move_pool.post(cr, uid, [move_id], context={})
             # We automatically reconcile the account move lines.
-            reconcile = False
-            for rec_ids in rec_list_ids:
-                if len(rec_ids) >= 2:
-                    reconcile = move_line_pool.reconcile_partial(cr, uid, rec_ids, writeoff_acc_id=voucher.writeoff_acc_id.id, writeoff_period_id=voucher.period_id.id, writeoff_journal_id=voucher.journal_id.id)
+            # reconcile = False
+            # for rec_ids in rec_list_ids:
+            #     if len(rec_ids) >= 2:
+            #         reconcile = move_line_pool.reconcile_partial(cr, uid, rec_ids, writeoff_acc_id=voucher.writeoff_acc_id.id, writeoff_period_id=voucher.period_id.id, writeoff_journal_id=voucher.journal_id.id)
         return True
 
 
     def voucher_pawn_move_line_create(self, cr, uid, voucher_id, move_id, company_currency, current_currency, context=None):
         '''
-            ขายทรัพย์หลุด (เล้า)            
-            ราคาประเมิน 900,000 บาท            
-            ราคารับจำนำ 850,000 บาท            
-            ราคาขายทรัพย์หลุด 910,000 บาท    
-            
-            Income from Sale of Reposessed Goods            
+            ขายทรัพย์หลุด (เล้า)
+            ราคาประเมิน 900,000 บาท
+            ราคารับจำนำ 850,000 บาท
+            ราคาขายทรัพย์หลุด 910,000 บาท
+
+            Income from Sale of Reposessed Goods
             CODE    DESCRIPTION    DR.    CR.
-            1111-00    เงินสด     910,000.00     
-            4100-02    รายได้จากการขายทรัพย์หลุด         910,000.00 
-                        
-            Cost of goods sold            
+            1111-00    เงินสด     910,000.00
+            4100-02    รายได้จากการขายทรัพย์หลุด         910,000.00
+
+            Cost of goods sold
             CODE    DESCRIPTION    DR.    CR.
-            5110-00    ต้นทุนขายทรัพย์หลุด     850,000.00     
-            1150-00    ทรัพย์หลุดเป็นสิทธิ         850,000.00 
+            5110-00    ต้นทุนขายทรัพย์หลุด     850,000.00
+            1150-00    ทรัพย์หลุดเป็นสิทธิ         850,000.00
         '''
         if context is None:
             context = {}
@@ -227,6 +227,7 @@ class account_voucher(osv.osv):
             'voucher_special_currency_rate': voucher_currency.rate * voucher.payment_rate ,
             'voucher_special_currency': voucher.payment_rate_currency_id and voucher.payment_rate_currency_id.id or False,})
         prec = self.pool.get('decimal.precision').precision_get(cr, uid, 'Account')
+        all_move_lines = []
         for line in voucher.line_ids:
             #create one move line per voucher line where amount is not 0.0
             # AND (second part of the clause) only if the original move line was not having debit = credit = 0 (which is a legal value)
@@ -244,7 +245,7 @@ class account_voucher(osv.osv):
                 currency_rate_difference = sign * (line.move_line_id.amount_residual - amount)
             else:
                 currency_rate_difference = 0.0
-                
+
             # Get pawn info
             pawn_order = pawn_shop = profit_center = product = debit_account = False
             product = line.product_id
@@ -254,7 +255,7 @@ class account_voucher(osv.osv):
                     pawn_shop = pawn_order.pawn_shop_id
                     profit_center = pawn_order.journal_id.profit_center
                     debit_account = pawn_order.journal_id.default_debit_account_id
-                        
+
             move_line = {
                 # For Pawn
                 'product_id': product and product.id or False,
@@ -305,20 +306,20 @@ class account_voucher(osv.osv):
                     foreign_currency_diff = sign * line.move_line_id.amount_residual_currency + amount_currency
 
             move_line['amount_currency'] = amount_currency
-            voucher_line = move_line_obj.create(cr, uid, move_line)
-            rec_ids = [voucher_line, line.move_line_id.id]
-            
+            # voucher_line = move_line_obj.create(cr, uid, move_line)
+            # rec_ids = [voucher_line, line.move_line_id.id]
+
             # PAWN: Create reverse line, for the same amount but different account
             move_line_cash = move_line.copy()
             debit = move_line_cash['debit']
             credit = move_line_cash['credit']
             move_line_cash['debit'] = credit
             move_line_cash['credit'] = debit
-            move_line_cash['account_id'] = debit_account.id 
+            move_line_cash['account_id'] = debit_account.id
             move_line_cash['name'] = '/'
             move_line_cash['product_id'] = False
-            rec_ids.append(move_line_obj.create(cr, uid, move_line_cash))
-            
+            # rec_ids.append(move_line_obj.create(cr, uid, move_line_cash))
+
             # PAWN: Create Cost Move Lines
             prec = self.pool.get('decimal.precision').precision_get(cr, uid, 'Account')
             move_line_cost = move_line.copy()
@@ -332,18 +333,26 @@ class account_voucher(osv.osv):
             elif move_line_cost['credit']:
                 move_line_cost['debit'] = amount
                 move_line_cost['credit'] = False
-            rec_ids.append(move_line_obj.create(cr, uid, move_line_cost))
+            # rec_ids.append(move_line_obj.create(cr, uid, move_line_cost))
             # Reverse it!
-            debit = move_line_cost['debit']
-            credit = move_line_cost['credit']
-            move_line_cost['debit'] = credit
-            move_line_cost['credit'] = debit
-            move_line_cost['account_id'] = product.property_account_expire_asset.id 
-            rec_ids.append(move_line_obj.create(cr, uid, move_line_cost))
+            move_line_cost_reverse = move_line_cost.copy()
+            move_line_cost_reverse['debit'] = move_line_cost['credit']
+            move_line_cost_reverse['credit'] = move_line_cost['debit']
+            move_line_cost_reverse['account_id'] = product.property_account_expire_asset.id
+            # rec_ids.append(move_line_obj.create(cr, uid, move_line_cost))
 
-            if line.move_line_id.id:
-                rec_lst_ids.append(rec_ids)
-        return rec_lst_ids
+            move_lines = [
+                (0, 0, move_line),
+                (0, 0, move_line_cash),
+                (0, 0, move_line_cost),
+                (0, 0, move_line_cost_reverse),
+            ]
+            all_move_lines += move_lines
+
+        # Write all records at once after looping
+        self.pool.get('account.move').write(cr, uid, [move_id], {'line_id': all_move_lines})
+
+        return True
 
     def refund_voucher(self, cr, uid, ids, context):
         if context == None:
@@ -373,7 +382,7 @@ class account_voucher(osv.osv):
         form_id = form_res and form_res[1] or False
         tree_res = ir_model_data.get_object_reference(cr, uid, 'account_voucher', 'view_voucher_tree')
         tree_id = tree_res and tree_res[1] or False
- 
+
         return {
             'name': _('Sales Refund Receipt'),
             'view_type': 'form',
@@ -398,6 +407,10 @@ class account_voucher(osv.osv):
         if 0 in [v.amount or 0.0 for v in voucher.line_ids]:
             raise osv.except_osv(_('Warning'),
                                  _("Please verify that every line amount of this Sales Receipt is not zero!"))
+
+        product_ids = [x.product_id.id for x in voucher.line_ids if x.product_id]
+        if len(product_ids) > 0:
+            self.pool.get('product.product').write(cr, uid, product_ids, {'date_sold': voucher.date}, context=context)
         return super(account_voucher, self).proforma_voucher(cr, uid, ids, context=context)
 
     # THIS IS A COMPLETE OVERWRITE METHOD
@@ -547,9 +560,9 @@ account_voucher()
 
 
 class account_voucher_line(osv.osv):
-    
+
     _inherit = 'account.voucher.line'
-    
+
     _columns = {
         'product_id': fields.many2one('product.product', 'Product', ondelete='set null', select=True),
         'quantity': fields.float('Quantity', digits_compute= dp.get_precision('Product Unit of Measure')),
