@@ -48,6 +48,8 @@
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='name']" position="replace">
                     <field name="quantity" on_change="onchange_price('quantity', quantity, price_unit, amount)" readonly="1"/>
+                    <field name="carat"/>
+                    <field name="gram"/>
                     <field name="uos_id" invisible="1" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
                     <field name="price_unit" on_change="onchange_price('price_unit', quantity, price_unit, amount)"/>
                 </xpath>

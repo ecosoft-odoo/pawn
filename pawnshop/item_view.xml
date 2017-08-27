@@ -240,6 +240,8 @@
 	                                    <field name="description"/>
 	                                    <field name="categ_id"/>
 	                                    <field name="product_qty" sum="Total Quantity"/>
+                                        <field name="carat"/>
+                                        <field name="gram"/>
 	                                    <field name="uom_id" />
 	                                    <field name="price_pawned"/>
 	                                </tree>

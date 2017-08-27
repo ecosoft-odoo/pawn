@@ -568,6 +568,9 @@ class account_voucher_line(osv.osv):
         'quantity': fields.float('Quantity', digits_compute= dp.get_precision('Product Unit of Measure')),
         'uos_id': fields.many2one('product.uom', 'Unit of Measure', ondelete='set null', select=True),
         'price_unit': fields.float('Unit Price', digits_compute= dp.get_precision('Product Price')),
+        'is_jewelry': fields.related('product_id', 'is_jewelry', type='boolean', string='Carat/Gram'),
+        'carat': fields.related('product_id', 'carat', type='float', string='Carat'),
+        'gram': fields.related('product_id', 'gram', type='float', string='Gram'),
     }
 
     def onchange_price(self, cr, uid, ids, field, quantity, price_unit, amount, context=None):

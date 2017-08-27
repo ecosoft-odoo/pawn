@@ -171,7 +171,7 @@ class product_product(osv.osv):
         res = {}
         total_price_pawned = {}
         for item in self.browse(cr, uid, ids, context=context):
-            
+
             total_price_pawned[item.id] = item.total_price_pawned
             res[item.id] = {
                 'total_price_sold': 0.0,
@@ -181,10 +181,10 @@ class product_product(osv.osv):
         for r in data:
             res[r[0]].update({
                 'total_price_sold': r[1],
-                'total_profit': r[1] - total_price_pawned[r[0]],                         
+                'total_profit': r[1] - total_price_pawned[r[0]],
             })
-        return res    
-    
+        return res
+
     def _get_product(self, cr, uid, ids, context=None):
         item_ids = []
         for pawn in self.browse(cr, uid, ids, context=context):
@@ -197,7 +197,7 @@ class product_product(osv.osv):
         item_ids = [x['product_id'] and x['product_id'][0] or False for x in reads]
         item_ids = [x for x in item_ids if x != False]
         return item_ids
-    
+
     def _product_qty_total(self, cr, uid, ids, field_name, arg, context=None):
         res = {}
         for product in self.browse(cr, uid, ids, context=context):
@@ -271,7 +271,7 @@ class product_product(osv.osv):
             required=True,
             readonly=False),
         'item_description': fields.function(_get_item_description, type='text', string='Description', store=True),
-        'product_qty': fields.float('Item Quantity', digits_compute=dp.get_precision('Product Unit of Measure'), readonly=True),        
+        'product_qty': fields.float('Item Quantity', digits_compute=dp.get_precision('Product Unit of Measure'), readonly=True),
         'location_status': fields.many2one('product.location.status', 'Location Status', domain=[('fold', '=', False)], readonly=True),
         'color': fields.integer('Color Index'),
         'price_estimated': fields.function(_price_all, digits_compute=dp.get_precision('Account'), string='Estimated Price',
@@ -279,13 +279,13 @@ class product_product(osv.osv):
                 'product.product': (lambda self, cr, uid, ids, ctx: ids, [], 10),
                 'pawn.order': (_get_product, ['amount_total', 'amount_pawned'], 10),
             },
-            multi='pawn_price', help="Price estimated"),    
+            multi='pawn_price', help="Price estimated"),
         'total_price_estimated': fields.function(_price_all, digits_compute=dp.get_precision('Account'), string='Total Estimated Price',
             store={
                 'product.product': (lambda self, cr, uid, ids, ctx: ids, [], 10),
                 'pawn.order': (_get_product, ['amount_total', 'amount_pawned'], 10),
             },
-            multi='pawn_price', help="Total Price estimated"),   
+            multi='pawn_price', help="Total Price estimated"),
         'price_pawned': fields.function(_price_all, digits_compute=dp.get_precision('Account'), string='Pawned Price',
             store={
                 'product.product': (lambda self, cr, uid, ids, ctx: ids, [], 10),
@@ -301,12 +301,12 @@ class product_product(osv.osv):
         'date_order': fields.related('order_id', 'date_order', string='Pawn Date', readonly=True, type="date", store=True),
         'date_due': fields.related('order_id', 'date_due', string='Grace Period End Date', readonly=True, type="date", store=True),
         # Price sold is coming from its latest account_voucher_line's unit price
-        'total_price_sold': fields.function(_price_selling, string='Total Sold Price', 
+        'total_price_sold': fields.function(_price_selling, string='Total Sold Price',
             store={
                 'account.voucher': (_get_product_sold, ['state'], 10),
             },
             multi="sold"),
-        'total_profit': fields.function(_price_selling, string='Total Profit', 
+        'total_profit': fields.function(_price_selling, string='Total Profit',
             store={
                 'account.voucher': (_get_product_sold, ['state'], 10),
             },
@@ -316,6 +316,9 @@ class product_product(osv.osv):
                 'product.product': (lambda self, cr, uid, ids, c={}: ids, ['line_ids'], 10),
                 'product.product.line': (_get_product_from_line, ['product_qty'], 10),
             }, help="The total quantity."),
+        'is_jewelry': fields.related('order_line_id', 'is_jewelry', type='boolean', string='Carat/Gram'),
+        'carat': fields.related('order_line_id', 'carat', type='float', string='Carat'),
+        'gram': fields.related('order_line_id', 'gram', type='float', string='Gram'),
     }
     _defaults = {
         'color': lambda self, cr, uid, context: randrange(10),
@@ -328,7 +331,7 @@ class product_product(osv.osv):
     _sql_constraints = [
         ('code_uniq', 'unique(default_code)', 'Item code must be unique per pawn shop!'),
     ]
-    
+
     # More menu to show based on context
     def fields_view_get(self, cr, user, view_id=None, view_type='form', context=None, toolbar=False, submenu=False):
         if context is None:
@@ -346,22 +349,22 @@ class product_product(osv.osv):
                 while False in actions:
                     actions.remove(False)
         return res
-    
+
 #     # Change status from UI
 #     def set_location_status(self, cr, uid, ids, location_status, context=None):
 #         for task in self.browse(cr, uid, ids, context=context):
 #             self.write(cr, uid, [task.id], {'location_status': location_status}, context=context)
 #         return True
-# 
+#
 #     def set_location_status_incoming(self, cr, uid, ids, context=None):
 #         return self.set_location_status(cr, uid, ids, 'asset_incoming', context)
-#     
+#
 #     def set_location_status_stock(self, cr, uid, ids, context=None):
 #         return self.set_location_status(cr, uid, ids, 'asset_stock', context)
-#     
+#
 #     def set_location_status_outgoing(self, cr, uid, ids, context=None):
 #         return self.set_location_status(cr, uid, ids, 'asset_outgoing', context)
-#     
+#
 #     def set_location_status_returned(self, cr, uid, ids, context=None):
 #         return self.set_location_status(cr, uid, ids, 'asset_returned', context)
 
@@ -386,7 +389,7 @@ class product_product(osv.osv):
             location_status = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'pawnshop', ITEM_STATUS_MAPPING[val.get('state')])[1]
             self.write(cr, uid, child_ids, {'location_status': location_status}, context=context)
         return True
-    
+
     def update_asset_state(self, cr, uid, ids, state, context=None):
         # Validate original location_status of the asset before change
         if state in ASSET_STATUS_VS_INIT_LOC:
@@ -395,7 +398,7 @@ class product_product(osv.osv):
                     raise osv.except_osv(_('Error!'), _('Ticket original location not valid.\nTicket is still @ %s') % (asset.location_status.name))
         # Do the update
         if state in ASSET_STATUS_MAPPING:
-            location_status = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'pawnshop', ASSET_STATUS_MAPPING[state])[1]            
+            location_status = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'pawnshop', ASSET_STATUS_MAPPING[state])[1]
             self.write(cr, uid, ids, {'location_status': location_status}, context=context)
 
     def update_asset_status_by_order(self, cr, uid, order_ids, val, context=None):
@@ -422,7 +425,7 @@ class product_product(osv.osv):
         # Update asset's location_status
         state = val.get('state', False)
         self.update_asset_state(cr, uid, ids, state, context=context)
-    
+
     def action_asset_sale_backto_expire(self, cr, uid, ids, context=None):
         # TEST
         is_warning = False
@@ -436,7 +439,7 @@ class product_product(osv.osv):
             if not asset_loc_status or asset_loc_status.code != ASSET_STATUS_MAPPING['for_sale']:
                 is_warning = True
             # Items Check, it must come from for_sale
-            for item in asset.item_ids:   
+            for item in asset.item_ids:
                 if asset.state != 'for_sale':
                     is_warning = True
                 item_loc_status = self.pool.get('product.location.status').browse(cr, uid, item.location_status.id)
@@ -450,7 +453,7 @@ class product_product(osv.osv):
         # Update asset's location_status
         state = val.get('state', False)
         self.update_asset_state(cr, uid, ids, state, context=context)
-        
+
     # Update status of ticket and items to Extended
     def action_asset_extend(self, cr, uid, ids, context=None):
         val = {'extended': True}
@@ -486,6 +489,10 @@ class product_product_line(osv.osv):
         'product_qty': fields.float('Quantity', digits_compute=dp.get_precision('Product Unit of Measure'), required=True),
         'uom_id': fields.related('item_id', 'uom_id', type='many2one', relation='product.uom', string='Unit of Measure'),
         'price_pawned': fields.related('item_id', 'price_pawned', type='float', string='Pawn Price', digits_compute=dp.get_precision('Product Price')),
+        'pawn_line_id': fields.many2one('pawn.order.line', 'Pawn Order Line Ref.', select=True),
+        'is_jewelry': fields.related('pawn_line_id', 'is_jewelry', type='boolean', string='Carat/Gram'),
+        'carat': fields.related('pawn_line_id', 'carat', type='float', string='Carat'),
+        'gram': fields.related('pawn_line_id', 'gram', type='float', string='Gram'),
     }
 
 product_product_line()
