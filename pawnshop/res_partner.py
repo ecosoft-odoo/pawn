@@ -27,11 +27,16 @@ from openerp.tools.translate import _
 CARD_TYPE_SELECTION = [('citizen', 'Citizen ID'),
                        ('officer', 'Government Officer ID'),
                        ('driving', 'Driving License ID'),
-                       ('passport', 'Passport Number')]
+                       ('passport', 'Passport Number'),
+                       ('certificate', 'Certificate')]
 
 PARTNER_TITLE = [('mr', 'Mr.'),
-         ('mrs', 'Mrs.'),
-         ('miss', 'Miss.')]
+                 ('mrs', 'Mrs.'),
+                 ('miss', 'Miss.'),
+                 ('company', 'Company Limited'),
+                 ('partnership', 'Partnership'),
+                 ]
+
 
 class res_partner(osv.osv):
 
@@ -47,7 +52,7 @@ class res_partner(osv.osv):
             born = datetime.strptime(partner.birth_date, '%Y-%m-%d')
             res[partner.id] = today.year - born.year - ((today.month, today.day) < (born.month, born.day))
         return res
-    
+
     def _get_pawn_shop(self, cr, uid, ids, field_names, arg=None, context=None):
         result = {}
         if not ids: return result
@@ -55,7 +60,7 @@ class res_partner(osv.osv):
             result.setdefault(id, [])
         cr.execute("""
                 SELECT distinct partner_id, pawn_shop_id FROM pawn_order
-                WHERE partner_id in %s      
+                WHERE partner_id in %s
             """,(tuple(ids),))
         res = cr.fetchall()
         for r in res:
@@ -72,7 +77,7 @@ class res_partner(osv.osv):
                 join account_voucher_line avl on av.id = avl.voucher_id
                 join product_product pp on pp.id = avl.product_id
                 join product_template pt on pt.id = pp.product_tmpl_id
-                WHERE partner_id in %s       
+                WHERE partner_id in %s
             """,(tuple(ids),))
         res = cr.fetchall()
         for r in res:
@@ -100,7 +105,7 @@ class res_partner(osv.osv):
     _sql_constraints = [
         ('card_number_uniq', 'unique(card_type, card_number)', 'Card number must be unique!'),
     ]
-    
+
     def name_get(self, cr, uid, ids, context=None):
         if context is None:
             context = {}
@@ -136,7 +141,7 @@ class res_partner(osv.osv):
                     'title': _('Warning!'),
                     'message': _('Citizen ID must be 13 digits')
                 }
-                return {'value': {'card_number': re.sub("\D", "", card_number)}, 'warning': warning}            
+                return {'value': {'card_number': re.sub("\D", "", card_number)}, 'warning': warning}
             if not card_number.isdigit():
                 warning = {
                     'title': _('Warning!'),
