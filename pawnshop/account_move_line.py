@@ -36,7 +36,7 @@ class account_move_line(osv.osv):
         return False
 
     _columns = {
-        'pawn_order_id': fields.many2one('pawn.order', 'Pawn Ticket', required=False),
+        'pawn_order_id': fields.many2one('pawn.order', 'Pawn Ticket', required=False, select=True),
         'pawn_shop_id': fields.many2one('pawn.shop', 'Pawn Shop', required=True),
         'profit_center': fields.selection([(1, '1'), (2, '2')], 'Profit Center', required=False, help="Profit Center will be posted in account move line"),
     }
