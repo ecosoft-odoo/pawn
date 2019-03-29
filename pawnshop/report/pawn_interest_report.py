@@ -55,24 +55,21 @@ class pawn_interest_report(osv.osv):
         tools.drop_view_if_exists(cr, 'pawn_interest_report')
         cr.execute("""
             create or replace view pawn_interest_report as (
-                select *,
+                select pawn.*,
                     to_char(pawn.date_order, 'YYYY') as year,
                     to_char(pawn.date_order, 'MM') as month,
                     to_char(pawn.date_order, 'YYYY-MM-DD') as day,
-                    (select pp.item_description from product_template pt 
-                        join product_product pp on pp.product_tmpl_id = pt.id
-                        where pt.type = 'pawn_asset' and pt.order_id = pawn.id) as description,
-                    (select sum(product_qty) from pawn_order_line
-                        where order_id = pawn.id) as quantity,
-                    round((case when pawn.amount_pawned is null then 100.0 else (pawn.amount_interest / pawn.amount_pawned) * 100.0 end)::numeric, 2)::varchar as percent_interest       
+                    product_template.description,
+                    pawn_line.quantity,
+                    round((case when pawn.amount_pawned is null then 100.0 else (pawn.amount_interest / pawn.amount_pawned) * 100.0 end)::numeric, 2)::varchar as percent_interest
                 from
-                (select po.id, 
-                    po.name, 
+                (select po.id,
+                    po.name,
                     po.journal_id,
-                    po.pawn_shop_id, 
-                    po.user_id, 
-                    po.partner_id, 
-                    po.date_order, 
+                    po.pawn_shop_id,
+                    po.user_id,
+                    po.partner_id,
+                    po.date_order,
                     po.date_redeem,
                     po.date_expired,
                     po.date_due,
@@ -83,17 +80,27 @@ class pawn_interest_report(osv.osv):
                 from pawn_order po
                 left outer join pawn_actual_interest pai on pai.pawn_id = po.id
                 where po.state = 'redeem'
-                group by po.id, 
-                    po.name, 
-                    po.journal_id, 
-                    po.pawn_shop_id, 
-                    po.user_id, 
-                    po.partner_id, 
-                    po.date_order, 
+                group by po.id,
+                    po.name,
+                    po.journal_id,
+                    po.pawn_shop_id,
+                    po.user_id,
+                    po.partner_id,
+                    po.date_order,
                     po.date_redeem,
                     po.date_expired,
                     po.date_due,
                     po.amount_pawned) pawn
+                left outer join
+                (select pt.order_id, pp.item_description as description
+                from product_template pt
+                join product_product pp on pp.product_tmpl_id = pt.id
+                where pt.type = 'pawn_asset') product_template
+                    on product_template.order_id = pawn.id
+                left outer join
+                (select order_id, sum(product_qty) as quantity
+                from pawn_order_line
+                group by order_id) pawn_line on pawn.id = pawn_line.order_id
             )
         """)
 pawn_interest_report()
