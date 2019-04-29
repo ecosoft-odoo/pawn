@@ -4,14 +4,14 @@
 
 		<!-- Top menu item -->
 		<menuitem name="Pawnshop"
-		    id="menu_pawn_root" 
+		    id="menu_pawn_root"
 		    groups="group_pawn_manager,group_pawn_stock,group_pawn_accountant,group_pawn_officer"
 		    sequence="12"/>
-		
+
 		<menuitem id="menu_pawn_management" name="Pawn"
-			groups="group_pawn_manager,group_pawn_stock,group_pawn_accountant,group_pawn_officer"		
+			groups="group_pawn_manager,group_pawn_stock,group_pawn_accountant,group_pawn_officer"
 		    parent="menu_pawn_root" sequence="1" />
-		
+
 		<menuitem id="menu_pawn_report" name="Report"
 		    parent="menu_pawn_root" sequence="100"
 			groups="group_pawn_manager,group_pawn_stock,group_pawn_accountant,group_pawn_officer"/>
@@ -26,22 +26,22 @@
 		        </graph>
 		    </field>
 		</record>
-		
+
         <record id="pawn_order_form" model="ir.ui.view">
             <field name="name">pawn.order.form</field>
             <field name="model">pawn.order</field>
             <field name="arch" type="xml">
                 <form string="Pawn Ticket" version="7.0">
-                <header>                    
+                <header>
                 	<button name="%(action_pawn_order_pawn)d" states="draft" string="Pawn" type="action" class="oe_highlight"/>
                     <button name="%(action_pawn_order_pay_interest)d" invisible="1"
                     			states="pawn" string="Pay Interest" type="action" class="oe_highlight"/>
                     <button name="%(action_pawn_order_redeem)d" string="Redeem" type="action" class="oe_highlight"
                     	attrs="{'invisible': ['|', ('state', '=', 'redeem'), ('state', '!=', 'pawn')]}"/>
                     <button name="order_expire" states="pawn" string="Expire" invisible="1"/>
-                    <button name="%(action_pawn_order_renew)d" string="Renew" type="action" 
-                    	attrs="{'invisible': ['|', ('state', '=', 'redeem'), '&amp;', ('state', '!=', 'pawn'), ('extended', '=', False)]}"/> 
-                    <button name="action_extend" string="Extend" type="object" 
+                    <button name="%(action_pawn_order_renew)d" string="Renew" type="action"
+                    	attrs="{'invisible': ['|', ('state', '=', 'redeem'), '&amp;', ('state', '!=', 'pawn'), ('extended', '=', False)]}"/>
+                    <button name="action_extend" string="Extend" type="object"
                     	attrs="{'invisible': ['|', ('state', 'not in', ('pawn','expire')), '&amp;', ('state', 'in', ('pawn','expire')), ('extended', '=', True), ]}"/>
                     <button name="action_unextend" string="Not Extend" type="object"
                     	attrs="{'invisible': ['|', ('state', 'not in', ('pawn','expire')), '&amp;', ('state', 'in', ('pawn','expire')), ('extended', '=', False)]}"/>
@@ -60,19 +60,19 @@
                         <field name="name" class="oe_inline" readonly="1"/>
 	                    <div class="oe_right oe_button_box">
 							<field name="extended" invisible="1"/>
- 							<div style="color:red">							
- 								<label string="Extended" attrs="{'invisible': [('extended', '!=', True)]}"/>		
-							</div>					
- 							<div style="color:red">							
- 								<label string="Lost" attrs="{'invisible': [('is_lost', '!=', True)]}"/>		
-							</div>					
-	                    </div>           
+ 							<div style="color:red">
+ 								<label string="Extended" attrs="{'invisible': [('extended', '!=', True)]}"/>
+							</div>
+ 							<div style="color:red">
+ 								<label string="Lost" attrs="{'invisible': [('is_lost', '!=', True)]}"/>
+							</div>
+	                    </div>
                     </h1>
 					<h2>
                         <div>
-                            <label string="Book:"/> <field name="book" readonly="1" class="oe_inline"/> 
-                            <label string="Number:"/> <field name="number" readonly="1" class="oe_inline"/> 
-                        </div>	         
+                            <label string="Book:"/> <field name="book" readonly="1" class="oe_inline"/>
+                            <label string="Number:"/> <field name="number" readonly="1" class="oe_inline"/>
+                        </div>
                     </h2>
 					<group>
                         <group>
@@ -94,10 +94,10 @@
                         <group>
                         	<field name="period_id" invisible="1"/>
                         	<label for="date_order"/>
-							<div class="address_format"> 
+							<div class="address_format">
                             	<field name="date_order" style="width: 40%%" on_change="onchange_date(date_order, currency_id, company_id)"/>
                         		<label for="buddha_year" style="width: 40%%" />
-                        		<field name="buddha_year" style="width: 20%%" />                           
+                        		<field name="buddha_year" style="width: 20%%" />
                             </div>
 							<field name="date_expired" />
                             <field name="date_due" />
@@ -114,31 +114,31 @@
                         <page string="Pawn Ticket">
                             <field name="order_line">
                                 <tree string="Pawn Ticket Lines" editable="bottom">
-                                    <field name="name"/>                                   
+                                    <field name="name"/>
                                     <field name="categ_id" on_change="onchange_categ_id(categ_id)" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
                                     <field name="product_qty" sum="Total Quantity"/>
                                     <field name="product_uom" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
-									<field name="is_jewelry" invisible="1"/>                                    
+									<field name="is_jewelry" invisible="1"/>
                                     <field name="carat" attrs="{'readonly': [('is_jewelry', '!=', True)]}"/>
-									<field name="gram" attrs="{'readonly': [('is_jewelry', '!=', True)]}"/>                                
+									<field name="gram" attrs="{'readonly': [('is_jewelry', '!=', True)]}"/>
                                     <field name="price_unit"/>
                                     <field name="price_subtotal" sum="Total Amount"/>
-				                    <button name="%(action_pawn_line_property)d" string="Property" type="action" icon="gtk-justify-fill"/>	                                
+				                    <button name="%(action_pawn_line_property)d" string="Property" type="action" icon="gtk-justify-fill"/>
                                 </tree>
                             </field>
                             <group>
                             	<group>
-                            		<field name="is_lost" />		
+                            		<field name="is_lost" />
                             		<field name="amount_net" invisible="1" /> <!-- for renew case, amount_net represent amount left over from previous order, pawnshop need to pay (or receive) to customer -->
                             	</group>
 	                            <group>
 		                            <h2><label for="amount_pawned"/></h2>
-		                        	<h2><field name="amount_pawned" nolabel="1" class="oe_left" widget="monetary" options="{'currency_field': 'currency_id'}"/></h2>  
+		                        	<h2><field name="amount_pawned" nolabel="1" class="oe_left" widget="monetary" options="{'currency_field': 'currency_id'}"/></h2>
 		                            <h2><label for="monthly_interest"/></h2>
-		                        	<h2><field name="monthly_interest"  widget='monetary' nolabel="1" options="{'currency_field': 'currency_id'}" class="oe_left"/></h2>  
+		                        	<h2><field name="monthly_interest"  widget='monetary' nolabel="1" options="{'currency_field': 'currency_id'}" class="oe_left"/></h2>
 	                            </group>
-							</group>               
-							<div class="oe_clear"/>				
+							</group>
+							<div class="oe_clear"/>
                             <field name="notes" class="oe_inline" placeholder="Terms and conditions..."/>
                         </page>
                         <page string="Accrued Interest" groups="pawnshop.group_pawn_accountant">
@@ -156,16 +156,16 @@
                                 </tree>
                             </field>
 				        	<group>
-								<group string="Interest Update Status">           
-                                	<field name="interest_interval"/>	           
-                                	<field name="daily_interest"/>	          
-                                	<field name="amount_interest_todate"/>	   
-                                	<field name="last_interest_date"/>	              
-                                	<!--field name="is_interest_updated" invisible="1"/-->   
+								<group string="Interest Update Status">
+                                	<field name="interest_interval"/>
+                                	<field name="daily_interest"/>
+                                	<field name="amount_interest_todate"/>
+                                	<field name="last_interest_date"/>
+                                	<!--field name="is_interest_updated" invisible="1"/-->
 								</group>
                                 <group>
                                 </group>
-                    		</group>               
+                    		</group>
                         </page>
                         <page string="Paid Interest" groups="pawnshop.group_pawn_accountant">
                             <field name="actual_interest_ids">
@@ -185,7 +185,7 @@
                         <page string="Previous Orders">
 				        	<group>
 								<group>
-									<field name="parent_id" />           
+									<field name="parent_id" />
 								</group>
                                 <group>
                                 </group>
@@ -216,7 +216,7 @@
 				                    <field name="analytic_account_id" groups="analytic.group_analytic_accounting" domain="[('type','not in',['view','template'])]" invisible="not context.get('analytic_journal_id',False)"/>
 				                    <field name="debit" sum="Total Debit"/>
 				                    <field name="credit" sum="Total Credit"/>
-				                    <field name="company_id"/>                            	
+				                    <field name="company_id"/>
                         		</tree>
 				        	</field>
 				        </page>
@@ -226,7 +226,7 @@
                     				<field name="write_date"/>
                     				<field name="period_id"/>
 									<field name="state"/>
-									<field name="write_uid"/>                   				
+									<field name="write_uid"/>
                         		</tree>
                     		</field>
                     	</page>
@@ -238,7 +238,7 @@
                 </div>
                 </form>
             </field>
-        </record>		
+        </record>
 
         <record id="view_pawn_order_filter" model="ir.ui.view">
             <field name="name">pawn.order.list.select</field>
@@ -250,8 +250,8 @@
                     <field name="create_uid"/>
 					<separator/>
 					<filter name="today" string="Today's" domain="[('date_order','=',time.strftime('%%Y-%%m-%%d'))]" help="Pawn Tickets created today"/>
-					<filter name="today_ticket" string="Today's Ticket" domain="[('date_order','=',time.strftime('%%Y-%%m-%%d'))]" context="{'group_by': 'journal_id'}" help="Pawn Tickets created today"/>		
-					<filter name="jor6_submit" string="Jor6 Submission" domain="[('state','=','pawn'), ('date_expired','&lt;',time.strftime('%%Y-%%m-%%d')), ('date_due','=',False)]" help="pawn Ticket eligible for Jor6 Submission"/>
+					<filter name="today_ticket" string="Today's Ticket" domain="[('date_order','=',time.strftime('%%Y-%%m-%%d'))]" context="{'group_by': 'journal_id'}" help="Pawn Tickets created today"/>
+					<filter name="jor6_submit" string="Jor6 Submission" domain="[('state','=','pawn'), ('date_expired','&lt;=',time.strftime('%%Y-%%m-%%d')), ('date_due','=',False)]" help="pawn Ticket eligible for Jor6 Submission"/>
 					<separator/>
                     <filter name="draft" string="Draft" domain="[('state','=','draft')]" help="Pawn Tickets which are in draft state"/>
                     <filter name="pawn" string="Pawned" domain="[('state','=','pawn')]" help="Pawn Tickets which are in pawned state"/>
@@ -311,7 +311,7 @@
             <field name="search_view_id" ref="view_pawn_order_filter"/>
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">
-                Click to create a quotation that will be converted into a pawn ticket. 
+                Click to create a quotation that will be converted into a pawn ticket.
               </p><p>
                 Use this menu to search within your pawn tickets by
                 references, supplier, products, etc. For each pawn ticket,
@@ -333,7 +333,7 @@
             <field name="search_view_id" ref="view_pawn_order_filter"/>
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">
-                Click to create a quotation that will be converted into a pawn ticket. 
+                Click to create a quotation that will be converted into a pawn ticket.
               </p><p>
                 Use this menu to search within your pawn tickets by
                 references, supplier, products, etc. For each pawn ticket,
@@ -344,7 +344,7 @@
         </record>
         <menuitem action="pawn_jor6_submission_action" id="menu_pawn_jor6_submission_action" parent="menu_pawn_management" sequence="100"
         	groups="group_pawn_accountant,group_pawn_manager,group_pawn_officer,group_pawn_stock"/>
-        		
+
 		<!-- Ends Ticket (prelim) -->
         <record id="pawn_ready_to_expire_action" model="ir.actions.act_window">
             <field name="name">Ends Ticket (prelim)</field>
@@ -357,7 +357,7 @@
             <field name="search_view_id" ref="view_pawn_order_filter"/>
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">
-                Click to create a quotation that will be converted into a pawn ticket. 
+                Click to create a quotation that will be converted into a pawn ticket.
               </p><p>
                 Use this menu to search within your pawn tickets by
                 references, supplier, products, etc. For each pawn ticket,
@@ -368,9 +368,9 @@
         </record>
         <menuitem action="pawn_ready_to_expire_action" id="menu_pawn_ready_to_expire_action" parent="menu_pawn_management" sequence="110"
         	groups="group_pawn_accountant,group_pawn_manager,group_pawn_officer,group_pawn_stock"/>
-        		
-        		
-        			
+
+
+
         <!-- Pawn Ticket Kanban Move -->
         <record model="ir.ui.view" id="pawn_asset_move_kanban_view">
             <field name="name">Pawn Ticket Move Kanban</field>
@@ -407,7 +407,7 @@
                     </templates>
                 </kanban>
             </field>
-         </record>       
-        	
+         </record>
+
     </data>
 </openerp>
