@@ -84,6 +84,21 @@ class res_partner(osv.osv):
             result[r[0]].append(r[1])
         return result
 
+    def _search_age(self, cr, uid, obj, name, args, domain=None, context=None):
+        ids = []
+        for arg in args:
+            arg_1, arg_2 = arg[1], arg[2]
+            if arg_2 is False and arg_1 in ['=', '!=']:
+                # For search age by is set or is not set
+                arg_1, arg_2 = arg_1 == '=' and 'is' or 'is not', 'null'
+            # compare partner's age with input value and get partner_id
+            cr.execute("""
+                select id from res_partner
+                where extract(year from age(cast(birth_date as date))) %s %s
+            """ % (arg_1, arg_2))
+            ids = map(lambda x: x[0], cr.fetchall())
+        return [('id', 'in', ids)]
+
     _columns = {
         'pawnshop': fields.boolean('Pawnshop', required=False),
         'partner_title': fields.selection(PARTNER_TITLE, 'Title', required=False),
@@ -93,7 +108,7 @@ class res_partner(osv.osv):
         'issue_date': fields.date('Date of Issue', required=False),
         'expiry_date': fields.date('Date of Expiry', required=False),
         'birth_date': fields.date('Birth Date', required=False),
-        'age': fields.function(_get_age, string='Age', type='integer'),
+        'age': fields.function(_get_age, string='Age', type='integer', fnct_search=_search_age),
         'pawn_shop_ids': fields.function(_get_pawn_shop, method=True, type='one2many', relation='pawn.shop', string='Customer of shops', readonly=True),
         'pawn_order_ids': fields.one2many('pawn.order', 'partner_id', 'Pawn Order', readonly=True),
         'receipt_shop_ids': fields.function(_get_receipt_shop, method=True, type='one2many', relation='pawn.shop', string='Buyer of shops', readonly=True),
