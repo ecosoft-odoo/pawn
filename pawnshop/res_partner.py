@@ -84,6 +84,14 @@ class res_partner(osv.osv):
             result[r[0]].append(r[1])
         return result
 
+    def _get_create_year(self, cr, uid, ids, name, args, context=None):
+        res = {}
+        for partner in self.browse(cr, uid, ids, context=context):
+            if not partner.create_date:
+                continue
+            res[partner.id] = datetime.strptime(partner.create_date, '%Y-%m-%d %H:%M:%S').year
+        return res
+
     def _search_age(self, cr, uid, obj, name, args, domain=None, context=None):
         ids = []
         for arg in args:
@@ -113,6 +121,8 @@ class res_partner(osv.osv):
         'pawn_order_ids': fields.one2many('pawn.order', 'partner_id', 'Pawn Order', readonly=True),
         'receipt_shop_ids': fields.function(_get_receipt_shop, method=True, type='one2many', relation='pawn.shop', string='Buyer of shops', readonly=True),
         'receipt_ids': fields.one2many('account.voucher', 'partner_id', 'Sales Receipt', readonly=True),
+        'create_date': fields.datetime('Create Date', readonly=True),
+        'create_year': fields.function(_get_create_year, type='char', string='Create Year', store=True),
     }
     _defaults = {
         'pawnshop': True

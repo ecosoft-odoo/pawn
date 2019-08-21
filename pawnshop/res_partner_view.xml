@@ -10,9 +10,13 @@
                 <search string="Search Partner" position="inside">
 	        		<field name="card_number" />
                 </search>
+                <group position="inside">
+                    <filter string="Create Year" context="{'group_by': 'create_year'}"/>
+                    <filter string="Create Month" context="{'group_by': 'create_date'}"/>
+                </group>
             </field>
-        </record>      
-        
+        </record>
+
 
         <!-- Partner Kanban View -->
         <record model="ir.ui.view" id="res_partner_kanban_view">
@@ -74,8 +78,8 @@
                     </templates>
                 </kanban>
             </field>
-        </record>    
-    
+        </record>
+
         <!-- Partner -->
         <record id="view_partner_tree" model="ir.ui.view">
             <field name="name">res.partner.tree</field>
@@ -96,7 +100,7 @@
                 </tree>
             </field>
         </record>
-            
+
     	<record id="view_partner_form" model="ir.ui.view">
             <field name="name">res.partner.form</field>
             <field name="model">res.partner</field>
@@ -161,23 +165,23 @@
 						            <field name="property_account_payable" groups="account.group_account_invoice"/>
 						        </group>
 						    </group>
-						</page>                        
+						</page>
                     </notebook>
                 </sheet>
                 </form>
             </field>
         </record>
-        
+
         <record id="base.action_partner_customer_form" model="ir.actions.act_window">
             <field name="domain">[('customer','=',1), ('pawnshop','=',0)]</field>
             <field name="context">{'default_customer':1, 'default_supplier':0, 'default_pawnshop': 0}</field>
-        </record>        
+        </record>
 
         <record id="base.action_partner_supplier_form" model="ir.actions.act_window">
             <field name="domain">[('supplier','=',1), ('pawnshop','=',0)]</field>
             <field name="context">{'default_supplier':1, 'default_customer':0, 'default_pawnshop': 0}</field>
-        </record>       
-        
+        </record>
+
         <record id="view_partner_form_ext" model="ir.ui.view">
             <field name="name">view.partner.form.ext</field>
             <field name="model">res.partner</field>
@@ -188,6 +192,6 @@
 	                <label string="Pawnshop"/>
                 </div>
             </field>
-        </record>        
+        </record>
     </data>
 </openerp>
