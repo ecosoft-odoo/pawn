@@ -551,12 +551,15 @@ class pawn_order(osv.osv):
                         move_obj.unlink(cr, uid, [accrued_interest.reverse_move_id.id], context=context)
             # --
             wf_service = netsvc.LocalService("workflow")  # Trigger back to Pawn stated
-            if order.extended: # case from expired
-                self._update_order_pawn_asset(cr, uid, [order.id], {'state': 'expire'}, context=context)
-                wf_service.trg_validate(uid, 'pawn.order', order.id, 'order_redeem_expire', cr)
-            else: # normal case
-                self._update_order_pawn_asset(cr, uid, [order.id], {'state': 'pawn'}, context=context)
-                wf_service.trg_validate(uid, 'pawn.order', order.id, 'order_redeem_pawn', cr)
+            # if order.extended: # case from expired
+            #     self._update_order_pawn_asset(cr, uid, [order.id], {'state': 'expire'}, context=context)
+            #     wf_service.trg_validate(uid, 'pawn.order', order.id, 'order_redeem_expire', cr)
+            # else: # normal case
+            #     self._update_order_pawn_asset(cr, uid, [order.id], {'state': 'pawn'}, context=context)
+            #     wf_service.trg_validate(uid, 'pawn.order', order.id, 'order_redeem_pawn', cr)
+            # Pod: all case change state to pawn
+            self._update_order_pawn_asset(cr, uid, [order.id], {'state': 'pawn'}, context=context)
+            wf_service.trg_validate(uid, 'pawn.order', order.id, 'order_redeem_pawn', cr)
             self.write(cr, uid, [order.id], {'date_redeem': False}, context=context)
         return True
 
