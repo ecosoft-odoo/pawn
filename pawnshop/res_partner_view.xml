@@ -135,6 +135,7 @@
                         	<field name="issue_date"/>
                         	<field name="expiry_date"/>
                             <field name="address_full" />
+                            <field name="active"/>
                         </group>
                         <group>
                             <field name="country_id" string="Nationality" required="1" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
