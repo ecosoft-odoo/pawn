@@ -12,17 +12,14 @@ class pawn_order(osv.osv):
         "number": fields.integer(readonly=False),
     }
 
-    def _get_next_pawn_name(self, cr, uid, period_id, pawn_shop_id, context=None):
-        """next name, number and book in data migration no need auto"""
-        return "", 0, 0
-
     def create(self, cr, uid, vals, context=None):
         book, number = vals.get("book", 0), vals.get("number", 0)
         pawn_id = super(pawn_order, self).create(cr, uid, vals, context=context)
-        self.write(cr, uid, [pawn_id], {
-            "book": book,
-            "number": number,
-        })
+        if book and number:
+            self.write(cr, uid, [pawn_id], {
+                "book": book,
+                "number": number,
+            })
         return pawn_id
 
     def write(self, cr, uid, ids, vals, context=None):
