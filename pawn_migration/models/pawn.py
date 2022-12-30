@@ -15,7 +15,7 @@ class pawn_order(osv.osv):
     def create(self, cr, uid, vals, context=None):
         book, number = vals.get("book", 0), vals.get("number", 0)
         pawn_id = super(pawn_order, self).create(cr, uid, vals, context=context)
-        if book and number:
+        if not context.get("is_extend"):
             self.write(cr, uid, [pawn_id], {
                 "book": book,
                 "number": number,

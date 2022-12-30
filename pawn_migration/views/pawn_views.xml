@@ -12,6 +12,9 @@
                 <field name="number" position="attributes">
                     <attribute name="readonly">0</attribute>
                 </field>
+                <button name="action_extend" position="attributes">
+                    <attribute name="context">{"is_extend": True}</attribute>
+                </button>
             </field>
         </record>
     </data>
