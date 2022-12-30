@@ -12,7 +12,7 @@
                 <field name="number" position="attributes">
                     <attribute name="readonly">0</attribute>
                 </field>
-                <button name="%(action_pawn_order_renew)d" position="attributes">
+                <button name="%(pawnshop.action_pawn_order_renew)d" position="attributes">
                     <attribute name="context">{"is_renew": True}</attribute>
                 </button>
             </field>
