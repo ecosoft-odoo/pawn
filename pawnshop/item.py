@@ -94,21 +94,24 @@ class product_product(osv.osv):
         res = dict.fromkeys(ids, False)
         for item in self.browse(cr, uid, ids, context=context):
             item_description = ''
-            if item.line_ids:
-                for item_line in item.line_ids:
-                    jewelry_desc = ''
-                    order_line = item_line.item_id.order_line_id
-                    if order_line and order_line.is_jewelry:
-                        if order_line.carat and order_line.carat:
-                            jewelry_desc = ' [' + str(order_line.carat) + ' ' + _('Carat') + ', ' + str(order_line.gram) + ' ' + _('Gram') + ']'
-                        elif order_line.carat and not order_line.carat:
-                            jewelry_desc = ' [' + str(order_line.carat) + ' ' + _('Carat') + ']'
-                        elif not order_line.carat and order_line.carat:
-                            jewelry_desc = ' [' + str(order_line.gram) + ' ' + _('Gram') + ']'
-                    item_description += item_line.description + jewelry_desc + u' (' + str(item_line.product_qty or 0.0) + '), '
-                item_description = item_description[:-2]
-            elif item.description:
-                item_description = item.description
+            try:
+                if item.line_ids:
+                    for item_line in item.line_ids:
+                        jewelry_desc = ''
+                        order_line = item_line.item_id.order_line_id
+                        if order_line and order_line.is_jewelry:
+                            if order_line.carat and order_line.carat:
+                                jewelry_desc = ' [' + str(order_line.carat) + ' ' + _('Carat') + ', ' + str(order_line.gram) + ' ' + _('Gram') + ']'
+                            elif order_line.carat and not order_line.carat:
+                                jewelry_desc = ' [' + str(order_line.carat) + ' ' + _('Carat') + ']'
+                            elif not order_line.carat and order_line.carat:
+                                jewelry_desc = ' [' + str(order_line.gram) + ' ' + _('Gram') + ']'
+                        item_description += item_line.description + jewelry_desc + u' (' + str(item_line.product_qty or 0.0) + '), '
+                    item_description = item_description[:-2]
+                elif item.description:
+                    item_description = item.description
+            except Exception:
+                pass
             res[item.id] = item_description
         return res
 
