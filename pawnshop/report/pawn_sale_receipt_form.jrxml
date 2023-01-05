@@ -246,7 +246,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="none" lineSpacing="Single">
 					<font fontName="Monospaced" size="14" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["ห้างหุ้นส่วนจำกัด " + $F{company_name}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{company_name}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement mode="Transparent" x="0" y="38" width="555" height="17" forecolor="#000000" backcolor="#B5E7D3"/>
