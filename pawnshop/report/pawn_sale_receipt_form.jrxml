@@ -260,7 +260,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="none" lineSpacing="Single">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["Brand: Head Office   Tel : " + $F{company_phone} + "FAX: " + $F{company_fax} + "TAX ID : " + $F{company_tax}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["Brand: Head Office   Tel : " + $F{company_phone} + " FAX: " + $F{company_fax} + " TAX ID : " + $F{company_tax}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
