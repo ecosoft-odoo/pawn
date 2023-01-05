@@ -200,7 +200,7 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<textField>
-				<reportElement mode="Transparent" x="139" y="0" width="280" height="17" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="0" y="0" width="555" height="17" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="none" lineSpacing="Single">
 					<font fontName="Monospaced" size="14" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
