@@ -101,6 +101,21 @@
 	<field name="gram" class="java.lang.Number">
 		<fieldDescription><![CDATA[line_cr_ids/gram]]></fieldDescription>
 	</field>
+	<field name="company_name" class="java.lang.String">
+		<fieldDescription><![CDATA[company_id/name]]></fieldDescription>
+	</field>
+	<field name="company_street" class="java.lang.String">
+		<fieldDescription><![CDATA[company_id/street]]></fieldDescription>
+	</field>
+	<field name="company_phone" class="java.lang.String">
+		<fieldDescription><![CDATA[company_id/phone]]></fieldDescription>
+	</field>
+	<field name="company_fax" class="java.lang.String">
+		<fieldDescription><![CDATA[company_id/fax]]></fieldDescription>
+	</field>
+	<field name="company_tax" class="java.lang.String">
+		<fieldDescription><![CDATA[company_id/vat]]></fieldDescription>
+	</field>
 	<variable name="sum_carat" class="java.lang.Number" calculation="Sum">
 		<variableExpression><![CDATA[$F{carat}]]></variableExpression>
 	</variable>
@@ -149,27 +164,6 @@
 			<rectangle radius="10">
 				<reportElement mode="Transparent" x="16" y="119" width="524" height="74"/>
 			</rectangle>
-			<staticText>
-				<reportElement x="0" y="16" width="555" height="17"/>
-				<textElement textAlignment="Center" lineSpacing="Single">
-					<font fontName="Monospaced" size="14" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-				</textElement>
-				<text><![CDATA[ห้างหุ้นส่วนจำกัด โรงรับจำนำชนานุเคราะห์]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Transparent" x="0" y="38" width="555" height="17" backcolor="#B5E7D3"/>
-				<textElement textAlignment="Center" verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="Monospaced" size="9" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-				</textElement>
-				<text><![CDATA[9/423-424 ถนนรามอินทรา  แขวงอนุสาวรีย์  เขตบางเขน  กรุงเทพมหานคร 10220]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Transparent" x="0" y="55" width="555" height="17" backcolor="#B5E7D3"/>
-				<textElement textAlignment="Center" verticalAlignment="Top" lineSpacing="Single">
-					<font fontName="Monospaced" size="9" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-				</textElement>
-				<text><![CDATA[Brand: Head Office   Tel : 02-5521530   FAX: 02-5526052  TAX ID : 0103501005074]]></text>
-			</staticText>
 			<staticText>
 				<reportElement mode="Transparent" x="24" y="139" width="76" height="15" backcolor="#B5E7D3"/>
 				<textElement verticalAlignment="Top" lineSpacing="Single">
@@ -246,6 +240,27 @@
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{card_number}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Transparent" x="0" y="16" width="555" height="17" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="none" lineSpacing="Single">
+					<font fontName="Monospaced" size="14" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["ห้างหุ้นส่วนจำกัด " + $F{company_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Transparent" x="0" y="38" width="555" height="17" forecolor="#000000" backcolor="#B5E7D3"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="none" lineSpacing="Single">
+					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{company_street}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Transparent" x="0" y="55" width="555" height="17" forecolor="#000000" backcolor="#B5E7D3"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="none" lineSpacing="Single">
+					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Brand: Head Office   Tel : " + $F{company_phone} + "FAX: " + $F{company_fax} + "TAX ID : " + $F{company_tax}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
