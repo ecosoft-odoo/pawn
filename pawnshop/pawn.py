@@ -306,7 +306,7 @@ class pawn_order(osv.osv):
             }, multi='interest_calc1'),
         'date_due_ticket': fields.function(_calculate_pawn_interest, type='date', string='Ticket Due Date',
             store={
-                'pawn.order': (lambda self, cr, uid, ids, c={}: ids, ['date_expired'], 10),
+                'pawn.order': (lambda self, cr, uid, ids, c={}: ids, ['date_order', 'rule_id', 'date_expired'], 10),
             }, multi='interest_calc1'),
         'date_jor6': fields.date(string='Jor6 Submit Date', readonly=True),
         'date_due': fields.date(string='Grace Period End Date', readonly=True),
