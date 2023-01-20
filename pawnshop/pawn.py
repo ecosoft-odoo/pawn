@@ -125,6 +125,7 @@ class pawn_order(osv.osv):
             # Date Due (i.e., 30 days after expired date)
             #date_due = res[pawn.id]['date_expired'] + relativedelta(days=rule.length_day or 0.0)
             #res[pawn.id]['date_due'] = date_due
+            res[pawn.id]['date_due_ticket'] = res[pawn.id]['date_expired'] + relativedelta(days=rule.length_day or 0.0)
             # Monthly Interest
             res[pawn.id]['monthly_interest'] = rule_obj.calculate_monthly_interest(cr, uid, pawn.rule_id.id, pawn.amount_pawned, context=context)
             # Daily Interest (calculate from month only, i.e., 4 months + 1
@@ -302,6 +303,10 @@ class pawn_order(osv.osv):
         'daily_interest': fields.function(_calculate_pawn_interest, type='float', string='Daily Interest', digits=(16,12),
             store={
                 'pawn.order': (lambda self, cr, uid, ids, c={}: ids, ['date_order', 'rule_id', 'amount_pawned'], 20),
+            }, multi='interest_calc1'),
+        'date_due_ticket': fields.function(_calculate_pawn_interest, type='date', string='Ticket Due Date',
+            store={
+                'pawn.order': (lambda self, cr, uid, ids, c={}: ids, ['date_expired'], 10),
             }, multi='interest_calc1'),
         'date_jor6': fields.date(string='Jor6 Submit Date', readonly=True),
         'date_due': fields.date(string='Grace Period End Date', readonly=True),
