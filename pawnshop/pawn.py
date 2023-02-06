@@ -76,11 +76,11 @@ class pawn_order(osv.osv):
                 for order_line in pawn.order_line:
                     jewelry_desc = ''
                     if order_line and order_line.is_jewelry:
-                        if order_line.carat and order_line.carat:
+                        if order_line.carat and order_line.gram:
                             jewelry_desc = ' [' + str(order_line.carat) + ' ' + _('Carat') + ', ' + str(order_line.gram) + ' ' + _('Gram') + ']'
-                        elif order_line.carat and not order_line.carat:
+                        elif order_line.carat and not order_line.gram:
                             jewelry_desc = ' [' + str(order_line.carat) + ' ' + _('Carat') + ']'
-                        elif not order_line.carat and order_line.carat:
+                        elif not order_line.carat and order_line.gram:
                             jewelry_desc = ' [' + str(order_line.gram) + ' ' + _('Gram') + ']'
                     print jewelry_desc
                     item_description += order_line.name + jewelry_desc + u' (' + str(order_line.product_qty or 0.0) + '), '
