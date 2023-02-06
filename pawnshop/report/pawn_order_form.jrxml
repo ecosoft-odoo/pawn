@@ -128,7 +128,7 @@
 		<fieldDescription><![CDATA[pawn_shop_id/reg_number]]></fieldDescription>
 	</field>
 	<field name="item_description" class="java.lang.String">
-		<fieldDescription><![CDATA[item_id/item_description]]></fieldDescription>
+		<fieldDescription><![CDATA[item_description]]></fieldDescription>
 	</field>
 	<field name="carat" class="java.lang.Number">
 		<fieldDescription><![CDATA[order_line/carat]]></fieldDescription>
