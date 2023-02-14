@@ -54,8 +54,8 @@ class report_xml(osv.osv):
             if report.report_name == 'pawn.order.form':
                 if context.get('active_ids', False):
                     for obj in self.pool.get('pawn.order').browse(cr, uid, context.get('active_ids')):
-                        if (obj.state == 'draft'):
-                            raise openerp.exceptions.Warning("Can't print form in draft state")
+                        if (obj.state in ['draft', 'cancel']):
+                            raise openerp.exceptions.Warning("Can't print form in %s state" % (obj.state, ))
         return True
     
     def _check_report_condition(self, cr, uid, ids, context=None):
