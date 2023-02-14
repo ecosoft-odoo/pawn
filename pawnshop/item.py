@@ -101,11 +101,11 @@ class product_product(osv.osv):
                         order_line = item_line.item_id.order_line_id
                         if order_line and order_line.is_jewelry:
                             if order_line.carat and order_line.gram:
-                                jewelry_desc = ' [' + str(order_line.carat) + ' กะรัต, ' + str(order_line.gram) + ' กรัม]'
+                                jewelry_desc = ' [' + str(order_line.carat) + ' ' + _('กะรัต') + ', ' + str(order_line.gram) + ' ' + _('กรัม') + ']'
                             elif order_line.carat and not order_line.gram:
-                                jewelry_desc = ' [' + str(order_line.carat) + ' กะรัต]'
+                                jewelry_desc = ' [' + str(order_line.carat) + ' ' + _('กะรัต') + ']'
                             elif not order_line.carat and order_line.gram:
-                                jewelry_desc = ' [' + str(order_line.gram) + ' กรัม]'
+                                jewelry_desc = ' [' + str(order_line.gram) + ' ' + _('กรัม') + ']'
                         item_description += item_line.description + jewelry_desc + u' (' + str(item_line.product_qty or 0.0) + '), '
                     item_description = item_description[:-2]
                 elif item.description:
