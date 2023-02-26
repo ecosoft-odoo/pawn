@@ -256,7 +256,7 @@ order by sequence, desc2]]>
 	<detail>
 		<band height="17" splitType="Stretch">
 			<textField>
-				<reportElement isPrintRepeatedValues="false" x="4" y="2" width="197" height="15"/>
+				<reportElement isPrintRepeatedValues="false" x="4" y="2" width="250" height="15"/>
 				<textElement>
 					<font fontName="Monospaced" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
