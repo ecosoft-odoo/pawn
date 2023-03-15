@@ -19,7 +19,7 @@
 	                    	<field name="stk2_journal_id" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
                     	</group>
                     </group>
-                    <group string="Related Accounts">
+                    <group string="Related Accounts" invisible="1">
                         <group>
                     		<field name="accrued_interest_account_id"/>
                     		<field name="interest_account_id"/>
