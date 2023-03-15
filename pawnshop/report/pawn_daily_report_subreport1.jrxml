@@ -48,7 +48,7 @@ where pw.pawn_shop_id = $P{pawn_shop_id}
 and pw.date_redeem = $P{date}
 and pw.journal_id in ($P{stk1_journal_id}, $P{stk2_journal_id})
 UNION
-select 3 as sequence, 'ของหลุด' as desc1, coalesce(count(*),0) qty, coalesce(sum(amount_pawned),0) balance
+select 3 as sequence, 'รายได้จากตั๋วครบ 4 เดือน' as desc1, coalesce(count(*),0) qty, coalesce(sum(amount_pawned),0) balance
 from pawn_order pw
 where pw.pawn_shop_id = $P{pawn_shop_id}
 and pw.date_expired = $P{date}

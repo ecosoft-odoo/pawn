@@ -193,28 +193,35 @@ order by date]]>
 				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "pawn_daily_report_subreport1.jasper"]]></subreportExpression>
 			</subreport>
 			<staticText>
-				<reportElement style="table_1" stretchType="RelativeToTallestObject" x="0" y="0" width="92" height="36" isPrintWhenDetailOverflows="true"/>
+				<reportElement style="table_2" stretchType="RelativeToTallestObject" x="0" y="0" width="92" height="36" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Monospaced" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="table_1" stretchType="RelativeToTallestObject" x="344" y="0" width="60" height="36" isPrintWhenDetailOverflows="true"/>
+				<reportElement style="table_2" stretchType="RelativeToTallestObject" x="344" y="0" width="60" height="36" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Monospaced" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="table_1" stretchType="RelativeToTallestObject" x="404" y="0" width="151" height="36" isPrintWhenDetailOverflows="true"/>
+				<reportElement style="table_2" stretchType="RelativeToTallestObject" x="404" y="0" width="151" height="36" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Monospaced" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_2" stretchType="RelativeToTallestObject" x="92" y="0" width="252" height="36" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Monospaced" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[]]></text>
 			</staticText>
 		</band>
-		<band height="36" splitType="Prevent">
+		<!-- <band height="36" splitType="Prevent">
 			<staticText>
 				<reportElement x="95" y="4" width="220" height="15" isPrintInFirstWholeBand="true"/>
 				<textElement verticalAlignment="Middle">
@@ -408,6 +415,6 @@ order by date]]>
 				</textElement>
 				<text><![CDATA[]]></text>
 			</staticText>
-		</band>
+		</band> -->
 	</detail>
 </jasperReport>
