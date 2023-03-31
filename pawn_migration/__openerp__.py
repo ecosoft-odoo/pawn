@@ -11,6 +11,7 @@
         "pawnshop",
     ],
     "data": [
+        "data/ir_cron_data.xml",
         "views/pawn_views.xml",
     ],
 }
