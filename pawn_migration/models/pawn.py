@@ -8,8 +8,8 @@ class pawn_order(osv.osv):
     _inherit = "pawn.order"
 
     _columns = {
-        "book": fields.integer(readonly=False),
-        "number": fields.integer(readonly=False),
+        "book": fields.integer(readonly=False, string="Book"),
+        "number": fields.integer(readonly=False, string="Number"),
     }
 
     def create(self, cr, uid, vals, context=None):
