@@ -50,7 +50,7 @@ class pawn_order(osv.osv):
             qty = ProductProduct._product_qty_total(cr, uid, [product.id], ["product_qty_total"], None)[product.id]
             cr.execute("""
                 update product_product set item_description = '%s', price_estimated = %s, price_pawned = %s, total_price_estimated = %s, total_price_pawned = %s, product_qty_total = %s where id = %s
-            """ % (item_description, price["price_estimated"], price["price_pawned"], price["total_price_estimated"], price["total_price_pawned"], qty, product.id))
+            """ % (item_description, price["price_estimated"] or 0.0, price["price_pawned"] or 0.0, price["total_price_estimated"] or 0.0, price["total_price_pawned"] or 0.0, qty or 0.0, product.id))
         # Update data in pawn.order.line
         PawnOrderLine = self.pool.get("pawn.order.line")
         line_ids = PawnOrderLine.search(cr, uid, [], context=context)
@@ -59,4 +59,4 @@ class pawn_order(osv.osv):
             price = PawnOrderLine._amount_line(cr, uid, [line.id], ["price_unit", "pawn_price_unit"], None)[line.id]
             cr.execute("""
                 update pawn_order_line set price_unit = %s, pawn_price_unit = %s where id = %s
-            """ % (price["price_unit"], price["pawn_price_unit"], line.id))
+            """ % (price["price_unit"] or 0.0, price["pawn_price_unit"] or 0.0, line.id))
