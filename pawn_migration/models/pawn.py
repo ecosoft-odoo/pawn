@@ -89,7 +89,7 @@ class pawn_order(osv.osv):
         # Pawn Ticket : Incoming -> In-Stock
         product_ids = Product.search(cr, uid, [("type", "=", "pawn_asset"), ("state", "!=", "draft"), ("location_status.code", "=", "asset_incoming")])
         for product_id in product_ids:
-            location_status_id = LocationStatus.search(cr, uid, [("code", "=", "asset_stock")], limit=1)
+            location_status_id = LocationStatus.search(cr, uid, [("code", "=", "asset_stock")], limit=1)[0]
             Product.write(cr, uid, [product_id], {
                 "location_status": location_status_id,
-            })
+            }, context=context)
