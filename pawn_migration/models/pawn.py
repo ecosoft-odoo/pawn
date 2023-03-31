@@ -74,6 +74,8 @@ class pawn_order(osv.osv):
     def action_pawn(self, cr, uid, context=None):
         PawnOrder = self.pool.get("pawn.order")
         PawnOrderPawn = self.pool.get("pawn.order.pawn")
+        Product = self.pool.get("product.product")
+        LocationStatus = self.pool.get("product.location.status")
         pawn_order_ids = PawnOrder.search(cr, uid, [("state", "=", "draft")], context=context)
         for pawn_order_id in pawn_order_ids:
             context = {"active_id": pawn_order_id}
@@ -84,3 +86,10 @@ class pawn_order(osv.osv):
                 "journal_id": journal_id, "parent_id": parent_id, "amount": amount,
             })
             PawnOrderPawn.action_pawn(cr, uid, [wizard_id], context=context)
+        # Pawn Ticket : Incoming -> In-Stock
+        product_ids = Product.search(cr, uid, [("type", "=", "pawn_asset"), ("state", "!=", "draft"), ("location_status.code", "=", "asset_incoming")])
+        for product_id in product_ids:
+            location_status_id = LocationStatus.search(cr, uid, [("code", "=", "asset_stock")], limit=1)
+            Product.write(cr, uid, [product_id], {
+                "location_status": location_status_id,
+            })
