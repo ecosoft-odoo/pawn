@@ -31,6 +31,12 @@ class pawn_order(osv.osv):
         return res
 
     def update_data(self, cr, uid, context=None):
+        # Re assign name (For update pawn asset)
+        PawnOrder = self.pool.get("pawn.order")
+        pawn_order_ids = PawnOrder.search(cr, uid, [], context=context)
+        pawn_orders = PawnOrder.browse(cr, uid, pawn_order_ids, context=context)
+        for pawn_order in pawn_orders:
+            PawnOrder.write(cr, uid, pawn_order.id, {"name": pawn_order.name}, context=context)
         # Update data in product.template
         ProductTemplate = self.pool.get("product.template")
         product_template_ids = ProductTemplate.search(cr, uid, [], context=context)
