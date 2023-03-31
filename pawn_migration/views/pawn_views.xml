@@ -17,5 +17,15 @@
                 </button>
             </field>
         </record>
+
+        <!-- Add menu pawn order line -->
+        <record id="pawn_order_line_form_action" model="ir.actions.act_window">
+            <field name="name">Pawn Order Line</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">pawn.order.line</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem action="pawn_order_line_form_action" id="menu_pawn_order_line_form_action" parent="pawnshop.menu_pawn_management" sequence="999"
+        	groups="pawnshop.group_pawn_accountant,pawnshop.group_pawn_manager,pawnshop.group_pawn_officer,pawnshop.group_pawn_stock"/>
     </data>
 </openerp>
