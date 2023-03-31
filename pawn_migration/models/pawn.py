@@ -70,3 +70,17 @@ class pawn_order(osv.osv):
             cr.execute("""
                 update product_product set item_description = '%s', price_estimated = %s, price_pawned = %s, total_price_estimated = %s, total_price_pawned = %s, product_qty_total = %s where id = %s
             """ % (item_description, price["price_estimated"] or 0.0, price["price_pawned"] or 0.0, price["total_price_estimated"] or 0.0, price["total_price_pawned"] or 0.0, qty or 0.0, product.id))
+
+    def action_pawn(self, cr, uid, context=None):
+        PawnOrder = self.pool.get("pawn.order")
+        PawnOrderPawn = self.pool.get("pawn.order.pawn")
+        pawn_order_ids = PawnOrder.search(cr, uid, [("state", "=", "draft")], context=context)
+        for pawn_order_id in pawn_order_ids:
+            context = {"active_id": pawn_order_id}
+            journal_id = PawnOrderPawn._get_journal(cr, uid, context=context)
+            parent_id = PawnOrderPawn._get_parent_id(cr, uid, context=context)
+            amount = PawnOrderPawn._get_amount(cr, uid, context=context)
+            wizard_id = PawnOrderPawn.create(cr, uid, {
+                "journal_id": journal_id, "parent_id": parent_id, "amount": amount,
+            })
+            PawnOrderPawn.action_pawn(cr, uid, [wizard_id], context=context)
