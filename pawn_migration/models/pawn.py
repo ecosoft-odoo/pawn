@@ -2,6 +2,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from openerp.osv import fields, osv
+from openerp.tools.translate import _
 
 
 class pawn_order(osv.osv):
@@ -16,6 +17,9 @@ class pawn_order(osv.osv):
         book, number = vals.get("book", 0), vals.get("number", 0)
         pawn_id = super(pawn_order, self).create(cr, uid, vals, context=context)
         if not context.get("is_renew"):
+            if not book or not number:
+                raise osv.except_osv(_("Warning!"),
+                    _("Book or number don't assign to zero."))
             self.write(cr, uid, [pawn_id], {
                 "book": book,
                 "number": number,
@@ -36,7 +40,7 @@ class pawn_order(osv.osv):
         pawn_order_ids = PawnOrder.search(cr, uid, [], context=context)
         pawn_orders = PawnOrder.browse(cr, uid, pawn_order_ids, context=context)
         for pawn_order in pawn_orders:
-            PawnOrder.write(cr, uid, pawn_order.id, {"name": pawn_order.name}, context=context)
+            PawnOrder.write(cr, uid, [pawn_order.id], {"name": pawn_order.name}, context=context)
         # Update data in product.template
         ProductTemplate = self.pool.get("product.template")
         product_template_ids = ProductTemplate.search(cr, uid, [], context=context)
