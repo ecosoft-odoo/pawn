@@ -308,7 +308,7 @@
             <field name="res_model">pawn.order</field>
             <field name="view_mode">tree,form,graph</field>
     		<field name="limit">20</field>
-            <!-- <field name="context">{"search_default_draft":1, "search_default_pawn":1, "search_default_redeem":1, "search_default_expire":1}</field> -->
+            <field name="context">{}</field>
             <field name="search_view_id" ref="view_pawn_order_filter"/>
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">
