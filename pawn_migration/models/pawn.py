@@ -37,13 +37,13 @@ class pawn_order(osv.osv):
     def update_data(self, cr, uid, context=None):
         # Re assign name (For update pawn asset)
         PawnOrder = self.pool.get("pawn.order")
-        pawn_order_ids = PawnOrder.search(cr, uid, [], context=context)
+        pawn_order_ids = PawnOrder.search(cr, uid, [("state", "=", "draft")], context=context)
         pawn_orders = PawnOrder.browse(cr, uid, pawn_order_ids, context=context)
         for pawn_order in pawn_orders:
             PawnOrder.write(cr, uid, [pawn_order.id], {"name": pawn_order.name}, context=context)
         # Update data in pawn.order.line
         PawnOrderLine = self.pool.get("pawn.order.line")
-        line_ids = PawnOrderLine.search(cr, uid, [], context=context)
+        line_ids = PawnOrderLine.search(cr, uid, [("order_id.state", "=", "draft")], context=context)
         lines = PawnOrderLine.browse(cr, uid, line_ids, context=context)
         for line in lines:
             price = PawnOrderLine._amount_line(cr, uid, [line.id], ["price_unit", "pawn_price_unit"], None)[line.id]
@@ -52,7 +52,7 @@ class pawn_order(osv.osv):
             """ % (price["price_unit"] or 0.0, price["pawn_price_unit"] or 0.0, line.id))
         # Update data in product.template
         ProductTemplate = self.pool.get("product.template")
-        product_template_ids = ProductTemplate.search(cr, uid, [], context=context)
+        product_template_ids = ProductTemplate.search(cr, uid, [("state", "=", "draft")], context=context)
         product_templates = ProductTemplate.browse(cr, uid, product_template_ids, context=context)
         for product_template in product_templates:
             if product_template.order_id:
@@ -61,7 +61,7 @@ class pawn_order(osv.osv):
                 """ % (product_template.order_id.journal_id.id, product_template.id))
         # Update data in product.product
         ProductProduct = self.pool.get("product.product")
-        product_ids = ProductProduct.search(cr, uid, [], context=context)
+        product_ids = ProductProduct.search(cr, uid, [("state", "=", "draft")], context=context)
         products = ProductProduct.browse(cr, uid, product_ids, context=context)
         for product in products:
             item_description = ProductProduct._get_item_description(cr, uid, [product.id], ["item_description"], None)[product.id]
