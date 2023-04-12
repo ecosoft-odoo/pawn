@@ -50,6 +50,15 @@ class pawn_order(osv.osv):
             cr.execute("""
                 update pawn_order_line set price_unit = %s, pawn_price_unit = %s where id = %s
             """ % (price["price_unit"] or 0.0, price["pawn_price_unit"] or 0.0, line.id))
+        # Update data in product.template
+        ProductTemplate = self.pool.get("product.template")
+        product_template_ids = ProductTemplate.search(cr, uid, [("journal_id", "=", False)], context=context)
+        product_templates = ProductTemplate.browse(cr, uid, product_template_ids, context=context)
+        for product_template in product_templates:
+            if product_template.order_id:
+                cr.execute("""
+                    update product_template set journal_id = %s where id = %s
+                """ % (product_template.order_id.journal_id.id, product_template.id))
         # Update data in product.product
         ProductProduct = self.pool.get("product.product")
         product_ids = ProductProduct.search(cr, uid, [("state", "=", "draft")], context=context)
@@ -61,15 +70,6 @@ class pawn_order(osv.osv):
             cr.execute("""
                 update product_product set item_description = '%s', price_estimated = %s, price_pawned = %s, total_price_estimated = %s, total_price_pawned = %s, product_qty_total = %s where id = %s
             """ % (item_description, price["price_estimated"] or 0.0, price["price_pawned"] or 0.0, price["total_price_estimated"] or 0.0, price["total_price_pawned"] or 0.0, qty or 0.0, product.id))
-        # Update data in product.template
-        ProductTemplate = self.pool.get("product.template")
-        product_template_ids = ProductTemplate.search(cr, uid, [("id", "in", [p.product_tmpl_id.id for p in products])], context=context)
-        product_templates = ProductTemplate.browse(cr, uid, product_template_ids, context=context)
-        for product_template in product_templates:
-            if product_template.order_id:
-                cr.execute("""
-                    update product_template set journal_id = %s where id = %s
-                """ % (product_template.order_id.journal_id.id, product_template.id))
 
     def action_pawn(self, cr, uid, context=None):
         PawnOrder = self.pool.get("pawn.order")
