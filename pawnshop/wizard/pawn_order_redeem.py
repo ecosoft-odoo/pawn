@@ -91,6 +91,8 @@ class pawn_order_redeem(osv.osv_memory):
         context['date_redeem'] = date_redeem
         res['value']['interest_amount'] = self._get_interest_amount(cr, uid, context=context)
         res['value']['redeem_amount'] = self._get_redeem_amount(cr, uid, context=context)
+        res['value']['discount'] = 0.0
+        res['value']['addition'] = 0.0
         return res
 
     def action_redeem(self, cr, uid, ids, context=None):
