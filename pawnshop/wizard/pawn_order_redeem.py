@@ -38,8 +38,8 @@ class pawn_order_redeem(osv.osv_memory):
     def _get_interest_amount(self, cr, uid, context=None):
         active_id = context.get('active_id', False)
         pawn_obj = self.pool.get('pawn.order')
-        date_redeem = fields.date.context_today(self, cr, uid, context=context)
-        if active_id:
+        date_redeem = context.get('date_redeem', fields.date.context_today(self, cr, uid, context=context))
+        if active_id and date_redeem:
             amount_interest = pawn_obj.calculate_interest_remain(cr, uid, active_id, date_redeem, context=context)
             return round(amount_interest, 2)
         return False
@@ -82,6 +82,16 @@ class pawn_order_redeem(osv.osv_memory):
                 res['value']['discount'] = round(diff, 2)
             else:
                 res['value']['addition'] = - round(diff, 2)
+        return res
+
+    def onchange_date_redeem(self, cr, uid, ids, date_redeem, context=context):
+        res = {'value': {}}
+        if date_redeem != fields.date.context_today(self, cr, uid, context=context):
+            if context is None:
+                context = {}
+            context['date_redeem'] = date_redeem
+            res['value']['interest_amount'] = self._get_interest_amount(cr, uid, context=context)
+            res['value']['redeem_amount'] = self._get_redeem_amount(cr, uid, context=context)
         return res
 
     def action_redeem(self, cr, uid, ids, context=None):
