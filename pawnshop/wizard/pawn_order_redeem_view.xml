@@ -11,7 +11,7 @@
                         	<label string="Please confirm redeem amount as following,"/>
                         </group>
                         <group name="amount">
-                            <field name="date_redeem" />
+                            <field name="date_redeem" on_change="onchange_date_redeem(date_redeem, context)" />
                             <field name="pawn_amount" string="Initial" />
                             <field name="interest_amount" string="+ Interest Amount"/>
                             <field name="discount" string="- Discount" on_change="onchange_amount('discount', pawn_amount, interest_amount, discount, addition, redeem_amount)"/>
