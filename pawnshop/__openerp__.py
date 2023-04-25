@@ -86,6 +86,9 @@
         'report/wizard/pawn_wh_cash_wizard.xml',
         'report/wizard/pawn_daily_wizard.xml',
     ],
+    'qweb': [
+        'static/src/xml/base.xml',
+    ],
     'test': [
     ],
     'auto_install': False,
