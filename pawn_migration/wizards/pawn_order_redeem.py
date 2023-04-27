@@ -9,4 +9,5 @@ class pawn_order_redeem(osv.osv_memory):
 
     _columns = {
         "date_redeem": fields.date(readonly=False),
+        "interest_amount": fields.float(readonly=False),
     }
