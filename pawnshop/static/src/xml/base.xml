@@ -2,7 +2,7 @@
 <templates id="template" xml:space="preserve">
     <t t-extend="Login">
         <t t-jquery="div[class=oe_login_dbpane]" t-operation="after">
-            <div class="oe_branch_logo" style="top: -170px;"><img src="/web/binary/company_logo" style="width: 328px;"/></div>
+            <div style="top: 41px;right: 62px;position: fixed;"><img src="/web/binary/company_logo" style="width: 220px;"/></div>
         </t>
     </t>
 </templates>
