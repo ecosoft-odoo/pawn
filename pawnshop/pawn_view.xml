@@ -98,6 +98,7 @@
                             	<field name="date_order" style="width: 40%%" on_change="onchange_date(date_order, currency_id, company_id)"/>
                         		<label for="buddha_year" style="width: 40%%" />
                         		<field name="buddha_year" style="width: 20%%" />
+                                <field name="buddha_year_temp" invisible="1"/>
                             </div>
 							<field name="date_expired" />
                             <field name="date_due_ticket" invisible="1" />

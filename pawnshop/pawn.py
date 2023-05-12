@@ -266,9 +266,10 @@ class pawn_order(osv.osv):
         'book': fields.integer('Book', select=True, readonly=True),
         'number': fields.integer('Number', select=True, readonly=True),
         'name': fields.char('Internal Number', size=64, required=True, select=True, help="Cross shop reference number"),
-        'date_order': fields.date('Pawn Date', required=True, readonly=True, states={'draft': [('readonly', False)]}, select=True, help="Date on which this document has been pawned."),
+        'date_order': fields.date('Pawn Date', required=True, readonly=True, select=True, help="Date on which this document has been pawned."),
         'day_order': fields.related('date_order', type="char", string="Pawn Day", required=False, readonly=True, store=True),
-        'buddha_year': fields.char('Buddha Year', size=4, readonly=True, states={'draft': [('readonly', False)]}),
+        'buddha_year': fields.char('Buddha Year', size=4, readonly=True),
+        'buddha_year_temp': fields.char('Buddha Year Temp', size=4),
         'date_redeem': fields.date('Redeem Date', required=False, readonly=True, help="Date on which this document has been redeemed."),
         'date_extend': fields.date('Extend Date', required=False, readonly=True, help="Date on which this document has been extended."),
         'partner_id': fields.many2one('res.partner', 'Customer', required=True, readonly=True, domain=[('supplier', '=', True), ('pawnshop', '=', True)], states={'draft': [('readonly', False)]}, change_default=True),
@@ -702,6 +703,10 @@ class pawn_order(osv.osv):
         return next_name, book, number
 
     def create(self, cr, uid, vals, context=None):
+        # Update buddha year
+        if "buddha_year_temp" in vals:
+            vals["buddha_year"] = vals["buddha_year_temp"]
+        # --
         if vals.get('internal_number', '/') == '/':
             vals['internal_number'] = self.pool.get('ir.sequence').get(cr, uid, 'pawn.order') or '/'
         name, book, number = self._get_next_pawn_name(cr, uid, vals.get('period_id', False), vals.get('pawn_shop_id', False), context=context)
@@ -779,6 +784,9 @@ class pawn_order(osv.osv):
     def write(self, cr, uid, ids, vals, context=None):
         if context == None:
             context = {}
+        # Update buddha year
+        if "buddha_year_temp" in vals:
+            vals["buddha_year"] = vals["buddha_year_temp"]
         # Update Number
         for pawn in self.browse(cr, uid, ids, context=context):
             period_id = vals.get('period_id', False)
@@ -916,7 +924,8 @@ class pawn_order(osv.osv):
             buddha_year = str(date_order.year + 543)
         if pids:
             res['value'].update({'period_id': pids[0],
-                                 'buddha_year': buddha_year})
+                                 'buddha_year': buddha_year,
+                                 'buddha_year_temp': buddha_year})
         return res
 
     def _get_company_currency(self, cr, uid, pawn_id, context=None):
