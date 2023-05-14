@@ -11,6 +11,8 @@ class pawn_order(osv.osv):
     _columns = {
         "book": fields.integer(readonly=False, string="Book"),
         "number": fields.integer(readonly=False, string="Number"),
+        "date_order": fields.date(readonly=False, string="Pawn Date"),
+        "buddha_year": fields.char(readonly=False, string="Buddha Year")
     }
 
     def create(self, cr, uid, vals, context=None):
