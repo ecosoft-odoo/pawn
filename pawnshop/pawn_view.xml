@@ -262,7 +262,7 @@
                     <filter name="cancel" string="Cancelled" domain="[('state','=','cancel')]" help="Pawn Tickets which are in cancelled state"/>
                     <separator/>
                     <filter name="extend" string="Extended" domain="[('extended','=',True)]" help="Expired Pawned Orders which has been extended"/>
-                    <filter name="unextend" string="Unextended" domain="[('extended','=',False)]"/>
+                    <filter name="not_extend" string="Not Extend" domain="[('extended','=',False)]"/>
                     <group expand="0" string="Group By...">
                         <filter string="Shop" domain="[]" context="{'group_by':'pawn_shop_id'}"/>
                         <filter string="Journal" domain="[]" context="{'group_by':'journal_id'}"/>
