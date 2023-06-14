@@ -192,6 +192,11 @@
 	        		<field name="pawnshop" invisible="0"/>
 	                <label string="Pawnshop"/>
                 </div>
+                <xpath expr="//page[@string='Internal Notes']" position="after">
+                    <page string="Pawn Order" attrs="{'invisible': ['|',('supplier','=',False),('pawnshop','=',False)]}">
+                        <field name="pawn_order_ids"/>
+                    </page>
+                </xpath>
             </field>
         </record>
     </data>
