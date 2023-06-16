@@ -390,6 +390,7 @@ class pawn_order(osv.osv):
          'status_history_ids': fields.one2many('pawn.status.history', 'order_id', 'Status History', readonly=True),
          'create_date': fields.datetime('Create Date', readonly=True),
          'item_description': fields.function(_get_item_description, type='text', string='Description'),
+         'date_final_expired': fields.date('Final Expire Date', readonly=True),
     }
     _defaults = {
         'company_id': lambda self, cr, uid, c: self.pool.get('res.users').browse(cr, uid, uid).company_id.id,
@@ -402,6 +403,7 @@ class pawn_order(osv.osv):
         'journal_id': _get_journal,
         'jor6_submitted': False,
         'ready_to_expire': False,
+        'date_final_expired': False,
     }
     _sql_constraints = [
         ('name_uniq', 'unique(name, pawn_shop_id)', 'Pawn Ticket Reference must be unique per Pawn Shop!'),
@@ -454,7 +456,8 @@ class pawn_order(osv.osv):
         for pawn in self.browse(cr, uid, ids, context=context):
             if not pawn.extended:
                 self.action_move_create(cr, uid, [pawn.id], context={'direction': 'expire'})
-        self.write(cr, uid, ids, {'state': 'expire'}, context=context)
+        date_expired = fields.date.context_today(self, cr, uid, context=context)
+        self.write(cr, uid, ids, {'state': 'expire', 'date_final_expired': date_expired}, context=context)
         self._update_order_pawn_asset(cr, uid, ids, {'state': 'expire'}, context=context)
         return True
 
@@ -882,6 +885,7 @@ class pawn_order(osv.osv):
             'notes': False,
             'status_history_ids': [],
             'ready_to_expire': False,
+            'date_final_expired': False,
         })
         pawn_id = super(pawn_order, self).copy(cr, uid, id, default, context)
         return pawn_id
