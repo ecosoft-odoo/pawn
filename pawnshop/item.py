@@ -303,6 +303,7 @@ class product_product(osv.osv):
             multi='pawn_price', help="Total Price pawned"),
         'date_order': fields.related('order_id', 'date_order', string='Pawn Date', readonly=True, type="date", store=True),
         'date_due': fields.related('order_id', 'date_due', string='Grace Period End Date', readonly=True, type="date", store=True),
+        'date_final_expired': fields.related('order_id', 'date_final_expired', string='Final Expire Date', readonly=True, type="date", store=True),
         # Price sold is coming from its latest account_voucher_line's unit price
         'total_price_sold': fields.function(_price_selling, string='Total Sold Price',
             store={
