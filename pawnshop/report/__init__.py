@@ -30,5 +30,6 @@ import pawn_wh_cash_parser
 import pawn_daily_parser
 import wizard
 import condition_jasper
+import sale_performance_analysis_report
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
