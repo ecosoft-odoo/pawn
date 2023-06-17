@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- Report View -->
+        <record id="sale_performance_analysis_report_tree_view" model="ir.ui.view">
+            <field name="name">sale.performance.analysis.report.tree.view</field>
+            <field name="model">sale.performance.analysis.report</field>
+            <field name="arch" type="xml">
+                <tree string="Sale Performance Analysis Report" version="7.0" colors="red:profit_loss&lt;0">
+                   <field name="item"/>
+                   <field name="customer" invisible="1"/>
+                   <field name="item_description" invisible="1"/>
+                   <field name="category" invisible="1"/>
+                   <field name="date_order"/>
+                   <field name="date_final_expired"/>
+                   <field name="date_voucher"/>
+                   <field name="price_estimated"/>
+                   <field name="price_pawned"/>
+                   <field name="price_sale"/>
+                   <field name="profit_loss"/>
+                   <field name="sale_per_pawn_percent"/>
+                   <field name="sale_per_estimate_percent"/>
+                   <field name="sale_quality"/>
+                   <field name="appraisal_quality"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="sale_performance_analysis_report_search_view" model="ir.ui.view">
+            <field name="name">sale.performance.analysis.report.search.view</field>
+            <field name="model">sale.performance.analysis.report</field>
+            <field name="arch" type="xml">
+                <search string="Sale Performance Analysis Report" version="7.0">
+                    <field name="item"/>
+                    <field name="customer"/>
+                    <field name="item_description"/>
+                    <field name="category"/>
+                    <field name="sale_quality"/>
+                    <field name="appraisal_quality"/>
+                    <group expand="0" string="Sale Quality">
+                        <filter string="ดีมาก" domain="[('sale_quality','=','ดีมาก')]"/>
+                        <filter string="ดี" domain="[('sale_quality','=','ดี')]"/>
+                        <filter string="เสมอตัว" domain="[('sale_quality','=','เสมอตัว')]"/>
+                        <filter string="ไม่ดี" domain="[('sale_quality','=','ไม่ดี')]"/>
+                        <filter string="ต้องปรับปรุง" domain="[('sale_quality','=','ต้องปรับปรุง')]"/>
+                    </group>
+                    <group expand="0" string="Appraisal Quality">
+                        <filter string="ดีมาก" domain="[('appraisal_quality','=','ดีมาก')]"/>
+                        <filter string="ดี" domain="[('appraisal_quality','=','ดี')]"/>
+                        <filter string="เสมอตัว" domain="[('appraisal_quality','=','เสมอตัว')]"/>
+                        <filter string="ไม่ดี" domain="[('appraisal_quality','=','ไม่ดี')]"/>
+                        <filter string="ต้องปรับปรุง" domain="[('appraisal_quality','=','ต้องปรับปรุง')]"/>
+                    </group>
+                    <group expand="0" string="Group By">
+                        <filter string="Customer" domain="[]" context="{'group_by':'customer'}"/>
+                        <filter string="Category" domain="[]" context="{'group_by':'category'}"/>
+                        <filter string="Pawn Date" domain="[]" context="{'group_by':'date_order'}"/>
+                        <filter string="Final Expire Date" domain="[]" context="{'group_by':'date_final_expired'}"/>
+                        <filter string="Voucher Date" domain="[]" context="{'group_by':'date_voucher'}"/>
+                        <filter string="Sale Quality" domain="[]" context="{'group_by':'sale_quality'}"/>
+                        <filter string="Appraisal Quality" domain="[]" context="{'group_by':'appraisal_quality'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        
+        <record id="action_sale_performance_analysis_report" model="ir.actions.act_window">
+            <field name="name">Sale Performance Analysis Report</field>
+            <field name="res_model">sale.performance.analysis.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="sale_performance_analysis_report_tree_view"/>
+            <field name="search_view_id" ref="sale_performance_analysis_report_search_view"/>
+        </record>
+
+        <!-- Wizard View -->
+        <record id="sale_performanace_analysis_report_wizard" model="ir.ui.view">
+            <field name="name">Sale Performance Analysis Report</field>
+            <field name="model">sale.performance.analysis.report.wizard</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Selection Criteria" version="7.0">
+                    <group>
+	                    <group string="Sale">
+                    		<field name="date_from"/>
+                    		<field name="date_to"/>
+	                    </group>
+                        <group/>
+                    </group>
+                	<footer>
+                        <button string="Execute Report" name="start_report" type="object" default_focus="1" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_sale_performance_analysis_report_wizard" model="ir.actions.act_window">
+            <field name="name">Sale Performance Analysis Report</field>
+            <field name="res_model">sale.performance.analysis.report.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="sale_performanace_analysis_report_wizard"/>
+            <field name="target">new</field>
+            <field name="help">Print Sale Performance Analysis Report</field>
+        </record>
+
+        <menuitem
+            action="action_sale_performance_analysis_report_wizard"
+            id="menu_sale_performance_analysis_report"
+        	groups="group_pawn_accountant,group_pawn_manager,group_pawn_officer"
+            parent="menu_pawn_report"
+            sequence="60"/> 
+    </data>
+</openerp>

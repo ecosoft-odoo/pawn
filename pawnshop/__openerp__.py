@@ -80,6 +80,7 @@
         'report/pawn_report_view.xml',
         'report/pawn_status_report_view.xml',
         'report/pawn_interest_report_view.xml',
+        'report/sale_performance_analysis_report.xml',
         'report/wizard/pawn_jor6_wizard.xml',
         'report/wizard/pawn_jor7_wizard.xml',
         'report/wizard/pawn_op_cash_wizard.xml',
