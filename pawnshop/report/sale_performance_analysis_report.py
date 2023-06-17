@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 from openerp.osv import fields, osv
 from openerp import tools
+from openerp.tools.translate import _
 
 
 class sale_performance_analysis_report(osv.osv):
@@ -126,4 +127,5 @@ class sale_performance_analysis_report_wizard(osv.osv_memory):
         if wizard.date_to:
             domain += [('date_voucher', '<=', wizard.date_to)]
         result['domain'] = domain
+        result['name'] = _(result['name'])
         return result
