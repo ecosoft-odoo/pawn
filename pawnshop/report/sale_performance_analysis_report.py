@@ -62,7 +62,17 @@ class sale_performance_analysis_report(osv.osv):
         sale_per_estimate_percent = "100 * (avl.price_unit - pp.price_estimated) / pp.price_estimated"
         sql = """
             SELECT
-                pp.id, pt.name AS item, rp.name AS customer, pp.item_description,
+                pp.id, pt.name AS item,
+                (
+                    CASE
+                        WHEN rp.partner_title = 'mr' THEN 'นาย '
+                        WHEN rp.partner_title = 'mrs' THEN 'นาง '
+                        WHEN rp.partner_title = 'miss' THEN 'นางสาว '
+                        WHEN rp.partner_title = 'company' THEN 'บริษัท '
+                        WHEN rp.partner_title = 'partnership' THEN 'ห้างหุ้นส่วน '
+                        ELSE ''
+                    END
+                ) || rp.name AS customer, pp.item_description,
                 pc.name AS category, pp.date_order, pp.date_final_expired,
                 av.date AS date_voucher, pp.price_estimated, pp.price_pawned,
                 avl.price_unit AS price_sale, avl.price_unit - pp.price_pawned AS profit_loss,
