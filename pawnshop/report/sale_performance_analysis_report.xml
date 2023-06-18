@@ -6,7 +6,7 @@
             <field name="name">sale.performance.analysis.report.tree.view</field>
             <field name="model">sale.performance.analysis.report</field>
             <field name="arch" type="xml">
-                <tree string="Sale Performance Analysis Report" version="7.0" colors="red:profit_loss&lt;0">
+                <tree create="0" edit="0" delete="0" string="Sale Performance Analysis Report" version="7.0" colors="red:profit_loss&lt;0">
                    <field name="item"/>
                    <field name="customer" invisible="1"/>
                    <field name="item_description" invisible="1"/>
