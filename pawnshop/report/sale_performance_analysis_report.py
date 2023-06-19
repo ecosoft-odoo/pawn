@@ -55,7 +55,42 @@ class sale_performance_analysis_report(osv.osv):
         'appraisal_quality': fields.char(
             string='Appraisal Quality',
         ),
+        'pawn_shop': fields.char(
+            string='Shop',
+        ),
     }
+
+    def _get_quality(self, percent):
+        if percent > 20:
+            quality = 'ดีมาก'
+        elif percent > 0:
+            quality = 'ดี'
+        elif percent == 0:
+            quality = 'เสมอตัว'
+        elif percent >= -20:
+            quality = 'ไม่ดี'
+        else:
+            quality = 'ต้องปรับปรุง'
+        return quality
+
+    def read_group(self, cr, uid, domain, fields, groupby, offset=0, limit=None, context=None, orderby=False):
+        res = super(sale_performance_analysis_report, self).read_group(
+            cr, uid, domain, fields, groupby, offset=offset, limit=limit, context=context, orderby=orderby)
+        for line in res:
+            price_estimated = line['price_estimated']
+            price_pawned = line['price_pawned']
+            price_sale = line['price_sale']
+            sale_per_pawn_percent = 100 * (price_sale - price_pawned) / price_pawned
+            sale_per_estimate_percent = 100 * (price_sale - price_estimated) / price_estimated
+            sale_quality = self._get_quality(sale_per_pawn_percent)
+            appraisal_quality = self._get_quality(sale_per_estimate_percent)
+            line.update({
+                'sale_per_pawn_percent': sale_per_pawn_percent,
+                'sale_per_estimate_percent': sale_per_estimate_percent,
+                'sale_quality': sale_quality,
+                'appraisal_quality': appraisal_quality,
+            })
+        return res
 
     def _get_sql(self):
         sale_per_pawn_percent = "100 * (avl.price_unit - pp.price_pawned) / pp.price_pawned"
@@ -88,13 +123,14 @@ class sale_performance_analysis_report(osv.osv):
                     WHEN %s = 0 THEN 'เสมอตัว'
                     WHEN %s >= -20 THEN 'ไม่ดี'
                     ELSE 'ต้องปรับปรุง'
-                END AS appraisal_quality
+                END AS appraisal_quality, ps.name AS pawn_shop
             FROM product_product pp
             LEFT JOIN product_template pt ON pp.product_tmpl_id = pt.id
             LEFT JOIN res_partner rp ON pt.partner_customer_id = rp.id
             LEFT JOIN product_category pc ON pt.categ_id = pc.id
             LEFT JOIN account_voucher_line avl ON pp.id = avl.product_id
             LEFT JOIN account_voucher av ON avl.voucher_id = av.id
+            LEFT JOIN pawn_shop ps ON av.pawn_shop_id = ps.id
             WHERE pt.type = 'consu' and pt.sale_ok = True AND av.state = 'posted'
         """ % (
             sale_per_pawn_percent, sale_per_estimate_percent,
