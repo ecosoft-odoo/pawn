@@ -53,7 +53,7 @@
                         <filter string="ต้องปรับปรุง" domain="[('appraisal_quality','=','ต้องปรับปรุง')]"/>
                     </group>
                     <group expand="0" string="Group By">
-                        <filter string="Pawnshop" domain="[]" context="{'group_by':'pawn_shop'}"/>
+                        <filter string="Shop" domain="[]" context="{'group_by':'pawn_shop'}"/>
                         <filter string="Customer" domain="[]" context="{'group_by':'customer'}"/>
                         <filter string="Category" domain="[]" context="{'group_by':'category'}"/>
                         <filter string="Pawn Date" domain="[]" context="{'group_by':'date_order'}"/>
