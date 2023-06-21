@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 from openerp.osv import fields, osv
+from openerp.tools.translate import _
 
 
 class customer_report(osv.osv_memory):
@@ -200,4 +201,5 @@ class customer_report_wizard(osv.osv_memory):
         id = mod_obj.read(cr, uid, [result], ['res_id'], context=context)[0]['res_id']
         result = act_obj.read(cr, uid, [id], context=context)[0]
         result['domain'] = [('wizard_id', '=', ids[0])]
+        result['name'] = _(result['name'])
         return result

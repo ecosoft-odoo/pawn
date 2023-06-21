@@ -70,7 +70,7 @@
                         <filter invisible="1" string="Subdistrict" domain="[]" context="{'group_by':'subdistrict'}"/>
                         <filter invisible="1" string="District" domain="[]" context="{'group_by':'district'}"/>
                         <filter invisible="1" string="Province" domain="[]" context="{'group_by':'province'}"/>
-                        <filter string="Country" domain="[]" context="{'group_by':'country'}"/>
+                        <filter string="Nationality" domain="[]" context="{'group_by':'country'}"/>
                         <filter string="Sex" domain="[]" context="{'group_by':'sex'}"/>
                         <filter string="Age" domain="[]" context="{'group_by':'age'}"/>
                         <filter string="Customer Status" domain="[]" context="{'group_by':'customer_status'}"/>
