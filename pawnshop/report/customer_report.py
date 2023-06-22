@@ -59,6 +59,11 @@ class customer_report(osv.osv_memory):
         'pawn_ticket_aging_5': fields.float(
             string='Pawn Ticket Aging 12+ M',
         ),
+        'number_of_ticket_aging_1': fields.float(),
+        'number_of_ticket_aging_2': fields.float(),
+        'number_of_ticket_aging_3': fields.float(),
+        'number_of_ticket_aging_4': fields.float(),
+        'number_of_ticket_aging_5': fields.float(),
         'wizard_id': fields.many2one(
             'customer.report.wizard',
             string='Wizard',
