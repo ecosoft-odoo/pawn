@@ -59,20 +59,29 @@ class customer_report(osv.osv_memory):
         'pawn_ticket_aging_5': fields.float(
             string='Pawn Ticket Aging 12+ M',
         ),
-        'number_of_ticket_aging_1': fields.float(
-            string='Number Of Ticket Aging 0-3 M',
+        'wizard_id': fields.many2one(
+            'customer.report.wizard',
+            string='Wizard',
         ),
-        'number_of_ticket_aging_2': fields.float(
-            string='Number Of Ticket Aging 3-6 M',
+    }
+
+
+class customer_report_groupby_ticket_aging(osv.osv_memory):
+    _name = 'customer.report.groupby.ticket.aging'
+    _description = 'Customer Report Group By Pawn Ticket Aging'
+
+    _columns = {
+        'pawn_ticket_aging': fields.char(
+            string='Pawn Ticket Aging',
         ),
-        'number_of_ticket_aging_3': fields.float(
-            string='Number Of Ticket Aging 6-9 M',
+        'number_of_customer': fields.integer(
+            string='Number Of Customer',
         ),
-        'number_of_ticket_aging_4': fields.float(
-            string='Number Of Ticket Aging 9-12 M',
+        'number_of_ticket': fields.integer(
+            string='Number Of Ticket',
         ),
-        'number_of_ticket_aging_5': fields.float(
-            string='Number Of Ticket Aging 12+ M',
+        'amount_pawned': fields.float(
+            string='Pawned Amount',
         ),
         'wizard_id': fields.many2one(
             'customer.report.wizard',
@@ -95,14 +104,18 @@ class customer_report_wizard(osv.osv_memory):
             string='At Date',
             required=True,
         ),
+        'groupby_pawn_ticket_aging': fields.boolean(
+            string='Group By Pawn Ticket Aging',
+        ),
     }
 
     _defaults = {
         'pawn_ticket_status': 'all',
         'report_at_date': fields.date.context_today,
+        'groupby_pawn_ticket_aging': False,
     }
 
-    def _get_column_insert(self):
+    def _get_column_insert_customer_report(self):
         columns = """
             (
                 id, create_uid, create_date, write_date, write_uid, wizard_id,
@@ -116,9 +129,8 @@ class customer_report_wizard(osv.osv_memory):
         """
         return columns
 
-    def _get_sql(self, cr, uid, id, context=None):
+    def _get_sql_customer_report(self, uid, wizard):
         # Get value from wizard
-        wizard = self.browse(cr, uid, id, context=context)
         report_at_date = wizard.report_at_date
         pawn_ticket_status = wizard.pawn_ticket_status
         # SQL query for pawn ticket aging
@@ -200,23 +212,23 @@ class customer_report_wizard(osv.osv_memory):
             )
         """.format(
             uid=uid,
-            wizard_id=id,
+            wizard_id=wizard.id,
             report_at_date=report_at_date,
             pawn_ticket_aging=pawn_ticket_aging,
             extra_where=extra_where,
         )
         return sql
 
-    def _execute_report(self, cr, uid, id, context=None):
+    def _execute_customer_report(self, cr, uid, wizard):
         cr.execute("""INSERT INTO customer_report {} {}""".format(
-            self._get_column_insert(),
-            self._get_sql(cr, uid, id, context=context)
+            self._get_column_insert_customer_report(),
+            self._get_sql_customer_report(uid, wizard)
         ))
         return True
 
-    def start_report(self, cr, uid, ids, data, context=None):
+    def _get_customer_report(self, cr, uid, wizard, context=None):
         # Execute the report
-        self._execute_report(cr, uid, ids[0], context=context)
+        self._execute_customer_report(cr, uid, wizard)
         # View the report
         mod_obj = self.pool.get('ir.model.data')
         act_obj = self.pool.get('ir.actions.act_window')
@@ -225,6 +237,106 @@ class customer_report_wizard(osv.osv_memory):
         result = act_obj.read(cr, uid, [id], context=context)[0]
         result.update({
             'name': _(result['name']),
-            'domain': [('wizard_id', '=', ids[0])],
+            'domain': [('wizard_id', '=', wizard.id)],
         })
+        return result
+
+    def _get_column_insert_customer_report_groupby_ticket_aging(self):
+        columns = """
+            (
+                id, create_uid, create_date, write_date, write_uid, wizard_id,
+                pawn_ticket_aging, number_of_customer, number_of_ticket, amount_pawned
+            )
+        """
+        return columns
+
+    def _get_sql_customer_report_groupby_ticket_aging(self, uid, wizard):
+        _from = self._get_sql_customer_report(uid, wizard)
+        sql = """
+            (
+                (
+                    SELECT
+                        NEXTVAL('customer_report_groupby_ticket_aging_id_seq') AS id,
+                        {uid} AS create_uid, NOW() AS create_date, NOW() AS write_date, {uid} AS write_uid,
+                        {wizard_id} AS wizard_id, '0-3 เดือน' AS pawn_ticket_aging, COUNT(*) AS number_of_customer,
+                        SUM(number_of_ticket_aging_1) AS number_of_ticket, SUM(pawn_ticket_aging_1) AS amount_pawned
+                    FROM {_from} AS customer_report
+                    WHERE pawn_ticket_aging_1 > 0
+                )
+                UNION
+                (
+                    SELECT
+                        NEXTVAL('customer_report_groupby_ticket_aging_id_seq') AS id,
+                        {uid} AS create_uid, NOW() AS create_date, NOW() AS write_date, {uid} AS write_uid,
+                        {wizard_id} AS wizard_id, '3-6 เดือน' AS pawn_ticket_aging, COUNT(*) AS number_of_customer,
+                        SUM(number_of_ticket_aging_2) AS number_of_ticket, SUM(pawn_ticket_aging_2) AS amount_pawned
+                    FROM {_from} AS customer_report
+                    WHERE pawn_ticket_aging_2 > 0
+                )
+                UNION
+                (
+                    SELECT
+                        NEXTVAL('customer_report_groupby_ticket_aging_id_seq') AS id,
+                        {uid} AS create_uid, NOW() AS create_date, NOW() AS write_date, {uid} AS write_uid,
+                        {wizard_id} AS wizard_id, '6-9 เดือน' AS pawn_ticket_aging, COUNT(*) AS number_of_customer,
+                        SUM(number_of_ticket_aging_3) AS number_of_ticket, SUM(pawn_ticket_aging_3) AS amount_pawned
+                    FROM {_from} AS customer_report
+                    WHERE pawn_ticket_aging_3 > 0
+                )
+                UNION
+                (
+                    SELECT
+                        NEXTVAL('customer_report_groupby_ticket_aging_id_seq') AS id,
+                        {uid} AS create_uid, NOW() AS create_date, NOW() AS write_date, {uid} AS write_uid,
+                        {wizard_id} AS wizard_id, '9-12 เดือน' AS pawn_ticket_aging, COUNT(*) AS number_of_customer,
+                        SUM(number_of_ticket_aging_4) AS number_of_ticket, SUM(pawn_ticket_aging_4) AS amount_pawned
+                    FROM {_from} AS customer_report
+                    WHERE pawn_ticket_aging_4 > 0
+                )
+                UNION
+                (
+                    SELECT
+                        NEXTVAL('customer_report_groupby_ticket_aging_id_seq') AS id,
+                        {uid} AS create_uid, NOW() AS create_date, NOW() AS write_date, {uid} AS write_uid,
+                        {wizard_id} AS wizard_id, '12+ เดือน' AS pawn_ticket_aging, COUNT(*) AS number_of_customer,
+                        SUM(number_of_ticket_aging_5) AS number_of_ticket, SUM(pawn_ticket_aging_5) AS amount_pawned
+                    FROM {_from} AS customer_report
+                    WHERE pawn_ticket_aging_5 > 0
+                )
+            )
+        """.format(
+            uid=uid,
+            wizard_id=wizard.id,
+            _from=_from,
+        )
+        return sql
+
+    def _execute_customer_report_groupby_ticket_aging(self, cr, uid, wizard):
+        cr.execute("""INSERT INTO customer_report_groupby_ticket_aging {} {}""".format(
+            self._get_column_insert_customer_report_groupby_ticket_aging(),
+            self._get_sql_customer_report_groupby_ticket_aging(uid, wizard)
+        ))
+        return True
+
+    def _get_customer_report_groupby_ticket_aging(self, cr, uid, wizard, context=None):
+        # Execute the report
+        self._execute_customer_report_groupby_ticket_aging(cr, uid, wizard)
+        # View the report
+        mod_obj = self.pool.get('ir.model.data')
+        act_obj = self.pool.get('ir.actions.act_window')
+        result = mod_obj._get_id(cr, uid, 'pawnshop', 'action_customer_report_groupby_ticket_aging')
+        id = mod_obj.read(cr, uid, [result], ['res_id'], context=context)[0]['res_id']
+        result = act_obj.read(cr, uid, [id], context=context)[0]
+        result.update({
+            'name': _(result['name']),
+            'domain': [('wizard_id', '=', wizard.id)],
+        })
+        return result
+
+    def start_report(self, cr, uid, ids, data, context=None):
+        wizard = self.browse(cr, uid, ids[0], context=context)
+        if not wizard.groupby_pawn_ticket_aging:
+            result = self._get_customer_report(cr, uid, wizard, context=context)
+        else:
+            result = self._get_customer_report_groupby_ticket_aging(cr, uid, wizard, context=context)
         return result
