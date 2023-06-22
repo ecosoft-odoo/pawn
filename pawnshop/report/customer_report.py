@@ -59,6 +59,21 @@ class customer_report(osv.osv_memory):
         'pawn_ticket_aging_5': fields.float(
             string='Pawn Ticket Aging 12+ M',
         ),
+        'number_of_ticket_aging_1': fields.float(
+            string='Number Of Ticket Aging 0-3 M',
+        ),
+        'number_of_ticket_aging_2': fields.float(
+            string='Number Of Ticket Aging 3-6 M',
+        ),
+        'number_of_ticket_aging_3': fields.float(
+            string='Number Of Ticket Aging 6-9 M',
+        ),
+        'number_of_ticket_aging_4': fields.float(
+            string='Number Of Ticket Aging 9-12 M',
+        ),
+        'number_of_ticket_aging_5': fields.float(
+            string='Number Of Ticket Aging 12+ M',
+        ),
         'wizard_id': fields.many2one(
             'customer.report.wizard',
             string='Wizard',
@@ -94,7 +109,9 @@ class customer_report_wizard(osv.osv_memory):
                 pawn_shop, customer, subdistrict, district, province, country, sex, age,
                 number_of_ticket, amount_pawned, customer_status, customer_aging,
                 pawn_ticket_aging_1, pawn_ticket_aging_2, pawn_ticket_aging_3,
-                pawn_ticket_aging_4, pawn_ticket_aging_5
+                pawn_ticket_aging_4, pawn_ticket_aging_5, number_of_ticket_aging_1,
+                number_of_ticket_aging_2, number_of_ticket_aging_3, number_of_ticket_aging_4,
+                number_of_ticket_aging_5
             )
         """
         return columns
@@ -150,7 +167,8 @@ class customer_report_wizard(osv.osv_memory):
                         WHEN po.customer_aging > 12 THEN '12+ เดือน'
                         ELSE ''
                     END AS customer_aging, po.pawn_ticket_aging_1, po.pawn_ticket_aging_2, po.pawn_ticket_aging_3,
-                    po.pawn_ticket_aging_4, po.pawn_ticket_aging_5
+                    po.pawn_ticket_aging_4, po.pawn_ticket_aging_5, po.number_of_ticket_aging_1, po.number_of_ticket_aging_2,
+                    po.number_of_ticket_aging_3, po.number_of_ticket_aging_4, po.number_of_ticket_aging_5
                 FROM res_partner rp
                 LEFT JOIN res_country rc ON rp.country_id = rc.id
                 LEFT JOIN (
@@ -167,7 +185,12 @@ class customer_report_wizard(osv.osv_memory):
                         SUM(CASE WHEN {pawn_ticket_aging} > 3 AND {pawn_ticket_aging} <= 6 THEN amount_pawned ELSE 0 END) AS pawn_ticket_aging_2,
                         SUM(CASE WHEN {pawn_ticket_aging} > 6 AND {pawn_ticket_aging} <= 9 THEN amount_pawned ELSE 0 END) AS pawn_ticket_aging_3,
                         SUM(CASE WHEN {pawn_ticket_aging} > 9 AND {pawn_ticket_aging} <= 12 THEN amount_pawned ELSE 0 END) AS pawn_ticket_aging_4,
-                        SUM(CASE WHEN {pawn_ticket_aging} > 12 THEN amount_pawned ELSE 0 END) AS pawn_ticket_aging_5
+                        SUM(CASE WHEN {pawn_ticket_aging} > 12 THEN amount_pawned ELSE 0 END) AS pawn_ticket_aging_5,
+                        SUM(CASE WHEN {pawn_ticket_aging} > 0 AND {pawn_ticket_aging} <= 3 THEN 1 ELSE 0 END) AS number_of_ticket_aging_1,
+                        SUM(CASE WHEN {pawn_ticket_aging} > 3 AND {pawn_ticket_aging} <= 6 THEN 1 ELSE 0 END) AS number_of_ticket_aging_2,
+                        SUM(CASE WHEN {pawn_ticket_aging} > 6 AND {pawn_ticket_aging} <= 9 THEN 1 ELSE 0 END) AS number_of_ticket_aging_3,
+                        SUM(CASE WHEN {pawn_ticket_aging} > 9 AND {pawn_ticket_aging} <= 12 THEN 1 ELSE 0 END) AS number_of_ticket_aging_4,
+                        SUM(CASE WHEN {pawn_ticket_aging} > 12 THEN 1 ELSE 0 END) AS number_of_ticket_aging_5
                     FROM pawn_order po_sub
                     LEFT JOIN pawn_shop ps_sub ON po_sub.pawn_shop_id = ps_sub.id
                     WHERE po_sub.state not in ('draft', 'cancel') AND po_sub.date_order <= '{report_at_date}' {extra_where}

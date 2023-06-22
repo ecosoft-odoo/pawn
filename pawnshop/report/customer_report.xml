@@ -24,6 +24,11 @@
                     <field name="pawn_ticket_aging_3"/>
                     <field name="pawn_ticket_aging_4"/>
                     <field name="pawn_ticket_aging_5"/>
+                    <field name="number_of_ticket_aging_1" invisible="1"/>
+                    <field name="number_of_ticket_aging_2" invisible="1"/>
+                    <field name="number_of_ticket_aging_3" invisible="1"/>
+                    <field name="number_of_ticket_aging_4" invisible="1"/>
+                    <field name="number_of_ticket_aging_5" invisible="1"/>
                 </tree>
             </field>
         </record>
