@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <!-- Report View -->
+        <!-- Customer Report -->
         <record id="customer_report_tree_view" model="ir.ui.view">
             <field name="name">customer.report.tree.view</field>
             <field name="model">customer.report</field>
@@ -24,11 +24,6 @@
                     <field name="pawn_ticket_aging_3"/>
                     <field name="pawn_ticket_aging_4"/>
                     <field name="pawn_ticket_aging_5"/>
-                    <field name="number_of_ticket_aging_1" invisible="1"/>
-                    <field name="number_of_ticket_aging_2" invisible="1"/>
-                    <field name="number_of_ticket_aging_3" invisible="1"/>
-                    <field name="number_of_ticket_aging_4" invisible="1"/>
-                    <field name="number_of_ticket_aging_5" invisible="1"/>
                 </tree>
             </field>
         </record>
@@ -94,6 +89,28 @@
             <field name="search_view_id" ref="customer_report_search_view"/>
         </record>
 
+        <!-- Customer Report Group By Pawn Ticket Aging -->
+        <record id="customer_report_groupby_ticket_aging_tree_view" model="ir.ui.view">
+            <field name="name">customer.report.groupby.ticket.aging.tree.view</field>
+            <field name="model">customer.report.groupby.ticket.aging</field>
+            <field name="arch" type="xml">
+                <tree create="0" edit="0" delete="0" string="Customer Report Group By Pawn Ticket Aging" version="7.0">
+                    <field name="pawn_ticket_aging"/>
+                    <field name="number_of_customer"/>
+                    <field name="number_of_ticket"/>
+                    <field name="amount_pawned"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_customer_report_groupby_ticket_aging" model="ir.actions.act_window">
+            <field name="name">Customer Report Group By Pawn Ticket Aging</field>
+            <field name="res_model">customer.report.groupby.ticket.aging</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="customer_report_groupby_ticket_aging_tree_view"/>
+        </record>
+
         <!-- Wizard View -->
         <record id="customer_report_wizard" model="ir.ui.view">
             <field name="name">Customer Report</field>
@@ -106,7 +123,9 @@
                             <field name="pawn_ticket_status"/>
                     		<field name="report_at_date"/>
 	                    </group>
-                        <group/>
+                        <group>
+                            <field name="groupby_pawn_ticket_aging"/>
+                        </group>
                     </group>
                 	<footer>
                         <button string="Execute Report" name="start_report" type="object" default_focus="1" class="oe_highlight"/>
