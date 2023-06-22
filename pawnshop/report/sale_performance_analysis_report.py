@@ -109,19 +109,19 @@ class sale_performance_analysis_report(osv.osv):
                 pc.name AS category, pp.date_order, pp.date_final_expired,
                 av.date AS date_voucher, pp.price_estimated, pp.price_pawned,
                 avl.price_unit AS price_sale, avl.price_unit - pp.price_pawned AS profit_loss,
-                %s AS sale_per_pawn_percent, %s AS sale_per_estimate_percent,
+                {sale_per_pawn_percent} AS sale_per_pawn_percent, {sale_per_estimate_percent} AS sale_per_estimate_percent,
                 CASE
-                    WHEN %s > 20 THEN 'ดีมาก'
-                    WHEN %s > 0 THEN 'ดี'
-                    WHEN %s = 0 THEN 'เสมอตัว'
-                    WHEN %s >= -20 THEN 'ไม่ดี'
+                    WHEN {sale_per_pawn_percent} > 20 THEN 'ดีมาก'
+                    WHEN {sale_per_pawn_percent} > 0 THEN 'ดี'
+                    WHEN {sale_per_pawn_percent} = 0 THEN 'เสมอตัว'
+                    WHEN {sale_per_pawn_percent} >= -20 THEN 'ไม่ดี'
                     ELSE 'ต้องปรับปรุง'
                 END AS sale_quality,
                 CASE
-                    WHEN %s > 20 THEN 'ดีมาก'
-                    WHEN %s > 0 THEN 'ดี'
-                    WHEN %s = 0 THEN 'เสมอตัว'
-                    WHEN %s >= -20 THEN 'ไม่ดี'
+                    WHEN {sale_per_estimate_percent} > 20 THEN 'ดีมาก'
+                    WHEN {sale_per_estimate_percent} > 0 THEN 'ดี'
+                    WHEN {sale_per_estimate_percent} = 0 THEN 'เสมอตัว'
+                    WHEN {sale_per_estimate_percent} >= -20 THEN 'ไม่ดี'
                     ELSE 'ต้องปรับปรุง'
                 END AS appraisal_quality, ps.name AS pawn_shop
             FROM product_product pp
@@ -132,16 +132,15 @@ class sale_performance_analysis_report(osv.osv):
             LEFT JOIN account_voucher av ON avl.voucher_id = av.id
             LEFT JOIN pawn_shop ps ON av.pawn_shop_id = ps.id
             WHERE pt.type = 'consu' and pt.sale_ok = True AND av.state = 'posted'
-        """ % (
-            sale_per_pawn_percent, sale_per_estimate_percent,
-            sale_per_pawn_percent, sale_per_pawn_percent, sale_per_pawn_percent, sale_per_pawn_percent,
-            sale_per_estimate_percent, sale_per_estimate_percent, sale_per_estimate_percent, sale_per_estimate_percent
+        """.format(
+            sale_per_pawn_percent=sale_per_pawn_percent,
+            sale_per_estimate_percent=sale_per_estimate_percent,
         )
         return sql
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
-        cr.execute("""CREATE OR REPLACE VIEW %s AS (%s)""" % (self._table, self._get_sql()))
+        cr.execute("""CREATE OR REPLACE VIEW {} AS ({})""".format(self._table, self._get_sql()))
 
 
 class sale_performance_analysis_report_wizard(osv.osv_memory):
@@ -170,6 +169,8 @@ class sale_performance_analysis_report_wizard(osv.osv_memory):
             domain += [('date_voucher', '>=', wizard.date_from)]
         if wizard.date_to:
             domain += [('date_voucher', '<=', wizard.date_to)]
-        result['domain'] = domain
-        result['name'] = _(result['name'])
+        result.update({
+            'name': _(result['name']),
+            'domain': domain,
+        })
         return result

@@ -173,7 +173,7 @@ class customer_report_wizard(osv.osv_memory):
                     WHERE po_sub.state not in ('draft', 'cancel') AND po_sub.date_order <= '{report_at_date}' {extra_where}
                     GROUP BY po_sub.partner_id
                 ) po ON rp.id = po.partner_id
-                WHERE rp.supplier = True and rp.pawnshop = True AND po.number_of_ticket IS NOT NULL
+                WHERE rp.supplier = True AND rp.pawnshop = True AND po.number_of_ticket IS NOT NULL
             )
         """.format(
             uid=uid,
@@ -200,6 +200,8 @@ class customer_report_wizard(osv.osv_memory):
         result = mod_obj._get_id(cr, uid, 'pawnshop', 'action_customer_report')
         id = mod_obj.read(cr, uid, [result], ['res_id'], context=context)[0]['res_id']
         result = act_obj.read(cr, uid, [id], context=context)[0]
-        result['domain'] = [('wizard_id', '=', ids[0])]
-        result['name'] = _(result['name'])
+        result.update({
+            'name': _(result['name']),
+            'domain': [('wizard_id', '=', ids[0])],
+        })
         return result
