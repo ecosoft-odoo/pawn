@@ -57,13 +57,23 @@ class customer_report(osv.osv_memory):
             string='Pawn Ticket Aging 9-12 M',
         ),
         'pawn_ticket_aging_5': fields.float(
-            string='Pawn Ticket Aging 12+ M',
+            string='Pawn Ticket Aging > 12 M',
         ),
-        'number_of_ticket_aging_1': fields.float(),
-        'number_of_ticket_aging_2': fields.float(),
-        'number_of_ticket_aging_3': fields.float(),
-        'number_of_ticket_aging_4': fields.float(),
-        'number_of_ticket_aging_5': fields.float(),
+        'number_of_ticket_aging_1': fields.float(
+            string='Number Of Ticket Aging 0-3 M',
+        ),
+        'number_of_ticket_aging_2': fields.float(
+            string='Number Of Ticket Aging 3-6 M',
+        ),
+        'number_of_ticket_aging_3': fields.float(
+            string='Number Of Ticket Aging 6-9 M',
+        ),
+        'number_of_ticket_aging_4': fields.float(
+            string='Number Of Ticket Aging 9-12 M',
+        ),
+        'number_of_ticket_aging_5': fields.float(
+            string='Number Of Ticket Aging > 12 M',
+        ),
         'wizard_id': fields.many2one(
             'customer.report.wizard',
             string='Wizard',
@@ -181,7 +191,7 @@ class customer_report_wizard(osv.osv_memory):
                         WHEN po.customer_aging <= 6 THEN '3-6 เดือน'
                         WHEN po.customer_aging <= 9 THEN '6-9 เดือน'
                         WHEN po.customer_aging <= 12 THEN '9-12 เดือน'
-                        WHEN po.customer_aging > 12 THEN '12+ เดือน'
+                        WHEN po.customer_aging > 12 THEN '> 12 เดือน'
                         ELSE ''
                     END AS customer_aging, po.pawn_ticket_aging_1, po.pawn_ticket_aging_2, po.pawn_ticket_aging_3,
                     po.pawn_ticket_aging_4, po.pawn_ticket_aging_5, po.number_of_ticket_aging_1, po.number_of_ticket_aging_2,
@@ -303,7 +313,7 @@ class customer_report_wizard(osv.osv_memory):
                     SELECT
                         NEXTVAL('customer_report_groupby_ticket_aging_id_seq') AS id,
                         {uid} AS create_uid, NOW() AS create_date, NOW() AS write_date, {uid} AS write_uid,
-                        {wizard_id} AS wizard_id, '12+ เดือน' AS pawn_ticket_aging, COUNT(*) AS number_of_customer,
+                        {wizard_id} AS wizard_id, '> 12 เดือน' AS pawn_ticket_aging, COUNT(*) AS number_of_customer,
                         SUM(number_of_ticket_aging_5) AS number_of_ticket, SUM(pawn_ticket_aging_5) AS amount_pawned
                     FROM {_from} AS customer_report
                     WHERE pawn_ticket_aging_5 > 0
