@@ -47,14 +47,14 @@
                         <filter string="3-6 เดือน" domain="[('customer_aging','=','3-6 เดือน')]"/>
                         <filter string="6-9 เดือน" domain="[('customer_aging','=','6-9 เดือน')]"/>
                         <filter string="9-12 เดือน" domain="[('customer_aging','=','9-12 เดือน')]"/>
-                        <filter string="12+ เดือน" domain="[('customer_aging','=','12+ เดือน')]"/>
+                        <filter string="> 12 เดือน" domain="[('customer_aging','=','> 12 เดือน')]"/>
                     </group>
                     <group expand="0" string="Pawn Ticket Aging">
                         <filter string="0-3 เดือน" domain="[('pawn_ticket_aging_1','&gt;',0)]"/>
                         <filter string="3-6 เดือน" domain="[('pawn_ticket_aging_2','&gt;',0)]"/>
                         <filter string="6-9 เดือน" domain="[('pawn_ticket_aging_3','&gt;',0)]"/>
                         <filter string="9-12 เดือน" domain="[('pawn_ticket_aging_4','&gt;',0)]"/>
-                        <filter string="12+ เดือน" domain="[('pawn_ticket_aging_5','&gt;',0)]"/>
+                        <filter string="> 12 เดือน" domain="[('pawn_ticket_aging_5','&gt;',0)]"/>
                     </group>
                     <group expand="0" string="Customer Status">
                         <filter string="ลูกค้าเก่า" domain="[('customer_status','=','ลูกค้าเก่า')]"/>
