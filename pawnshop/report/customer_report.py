@@ -32,6 +32,9 @@ class customer_report(osv.osv_memory):
         'age': fields.char(
             string='Age',
         ),
+        'age_range': fields.char(
+            string='Age Range',
+        ),
         'number_of_ticket': fields.integer(
             string='Number Of Ticket',
         ),
@@ -134,7 +137,7 @@ class customer_report_wizard(osv.osv_memory):
         columns = """
             (
                 id, create_uid, create_date, write_date, write_uid, wizard_id,
-                pawn_shop, customer, subdistrict, district, province, country, sex, age,
+                pawn_shop, customer, subdistrict, district, province, country, sex, age, age_range,
                 number_of_ticket, amount_pawned, customer_status, customer_aging,
                 pawn_ticket_aging_1, pawn_ticket_aging_2, pawn_ticket_aging_3,
                 pawn_ticket_aging_4, pawn_ticket_aging_5, number_of_ticket_aging_1,
@@ -154,6 +157,8 @@ class customer_report_wizard(osv.osv_memory):
             DATE_PART('MONTH', AGE(TO_DATE('{report_at_date}', 'YYYY-MM-DD') + INTERVAL '1' DAY, date_order)) + 
             (DATE_PART('DAY', AGE(TO_DATE('{report_at_date}', 'YYYY-MM-DD') + INTERVAL '1' DAY, date_order)) / 100)
         """.format(report_at_date=report_at_date)
+        # SQL query for age
+        age = "DATE_PART('YEAR', AGE('{report_at_date}', rp.birth_date))".format(report_at_date=report_at_date)
         # Extra where for filter pawn ticket status
         extra_where = ''
         if pawn_ticket_status == 'pawn':
@@ -184,7 +189,22 @@ class customer_report_wizard(osv.osv_memory):
                         WHEN rp.partner_title IN ('mr') THEN 'ชาย'
                         WHEN rp.partner_title IN ('mrs', 'miss') THEN 'หญิง'
                         ELSE 'อื่นๆ'
-                    END AS sex, DATE_PART('YEAR', AGE('{report_at_date}', rp.birth_date)) AS age,
+                    END AS sex, {age} AS age,
+                    CASE
+                        WHEN {age} <= 0 THEN '<= 0 ปี'
+                        WHEN {age} > 0 AND {age} <= 10 THEN '1-10 ปี'
+                        WHEN {age} > 10 AND {age} <= 20 THEN '11-20 ปี'
+                        WHEN {age} > 20 AND {age} <= 30 THEN '21-30 ปี'
+                        WHEN {age} > 30 AND {age} <= 40 THEN '31-40 ปี'
+                        WHEN {age} > 40 AND {age} <= 50 THEN '41-50 ปี'
+                        WHEN {age} > 50 AND {age} <= 60 THEN '51-60 ปี'
+                        WHEN {age} > 60 AND {age} <= 70 THEN '61-70 ปี'
+                        WHEN {age} > 70 AND {age} <= 80 THEN '71-80 ปี'
+                        WHEN {age} > 80 AND {age} <= 90 THEN '81-90 ปี'
+                        WHEN {age} > 90 AND {age} <= 100 THEN '91-100 ปี'
+                        WHEN {age} > 100 THEN '> 100 ปี'
+                        ELSE 'ไม่ได้กำหนด'
+                    END AS age_range,
                     po.number_of_ticket, po.amount_pawned, po.customer_status,
                     CASE
                         WHEN po.customer_aging > 0 AND po.customer_aging <= 3 THEN '0-3 เดือน'
@@ -228,6 +248,7 @@ class customer_report_wizard(osv.osv_memory):
         """.format(
             uid=uid,
             wizard_id=wizard.id,
+            age=age,
             report_at_date=report_at_date,
             pawn_ticket_aging=pawn_ticket_aging,
             extra_where=extra_where,

@@ -39,7 +39,6 @@
                     <field name="province" invisible="1"/>
                     <field name="country"/>
                     <field name="sex"/>
-                    <field name="age"/>
                     <field name="customer_status"/>
                     <field name="customer_aging"/>
                     <group expand="0" string="Sex">
@@ -65,7 +64,7 @@
                         <filter invisible="1" string="Province" domain="[]" context="{'group_by':'province'}"/>
                         <filter string="Nationality" domain="[]" context="{'group_by':'country'}"/>
                         <filter string="Sex" domain="[]" context="{'group_by':'sex'}"/>
-                        <filter string="Age" domain="[]" context="{'group_by':'age'}"/>
+                        <filter string="Age Range" domain="[]" context="{'group_by':'age_range'}"/>
                         <filter string="Customer Status" domain="[]" context="{'group_by':'customer_status'}"/>
                         <filter string="Customer Aging" domain="[]" context="{'group_by':'customer_aging'}"/>
                     </group>
