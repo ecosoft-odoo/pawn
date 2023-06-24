@@ -15,15 +15,15 @@
                     <field name="country"/>
                     <field name="sex"/>
                     <field name="age"/>
-                    <field name="number_of_ticket"/>
-                    <field name="amount_pawned"/>
+                    <field name="number_of_ticket" sum="Total Number Of Ticket"/>
+                    <field name="amount_pawned" sum="Total Pawned Amount"/>
                     <field name="customer_status"/>
                     <field name="customer_aging"/>
-                    <field name="pawn_ticket_aging_1"/>
-                    <field name="pawn_ticket_aging_2"/>
-                    <field name="pawn_ticket_aging_3"/>
-                    <field name="pawn_ticket_aging_4"/>
-                    <field name="pawn_ticket_aging_5"/>
+                    <field name="pawn_ticket_aging_1" sum="Total Pawned Amount in Aging 0-3 M"/>
+                    <field name="pawn_ticket_aging_2" sum="Total Pawned Amount in Aging 3-6 M"/>
+                    <field name="pawn_ticket_aging_3" sum="Total Pawned Amount in Aging 6-9 M"/>
+                    <field name="pawn_ticket_aging_4" sum="Total Pawned Amount in Aging 9-12 M"/>
+                    <field name="pawn_ticket_aging_5" sum="Total Pawned Amount in Aging > 12 M"/>
                 </tree>
             </field>
         </record>
