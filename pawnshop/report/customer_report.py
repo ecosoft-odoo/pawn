@@ -14,6 +14,9 @@ class customer_report(osv.osv_memory):
         'customer': fields.char(
             string='Customer',
         ),
+        'customer_create_date': fields.datetime(
+            string='Customer Create Date',
+        ),
         'subdistrict': fields.char(
             string='Subdistrict',
         ),
@@ -137,7 +140,7 @@ class customer_report_wizard(osv.osv_memory):
         columns = """
             (
                 id, create_uid, create_date, write_date, write_uid, wizard_id,
-                pawn_shop, customer, subdistrict, district, province, country, sex, age, age_range,
+                pawn_shop, customer, customer_create_date, subdistrict, district, province, country, sex, age, age_range,
                 number_of_ticket, amount_pawned, customer_status, customer_aging,
                 pawn_ticket_aging_1, pawn_ticket_aging_2, pawn_ticket_aging_3,
                 pawn_ticket_aging_4, pawn_ticket_aging_5, number_of_ticket_aging_1,
@@ -184,7 +187,7 @@ class customer_report_wizard(osv.osv_memory):
                         WHEN rp.partner_title = 'company' THEN 'บริษัท '
                         WHEN rp.partner_title = 'partnership' THEN 'ห้างหุ้นส่วน '
                         ELSE ''
-                    END || rp.name AS customer, NULL AS subdistrict, NULL AS district, NULL AS province, rc.name AS country,
+                    END || rp.name AS customer, rp.create_date AS customer_create_date, NULL AS subdistrict, NULL AS district, NULL AS province, rc.name AS country,
                     CASE
                         WHEN rp.partner_title IN ('mr') THEN 'ชาย'
                         WHEN rp.partner_title IN ('mrs', 'miss') THEN 'หญิง'
@@ -205,7 +208,11 @@ class customer_report_wizard(osv.osv_memory):
                         WHEN {age} > 100 THEN '> 100 ปี'
                         ELSE 'ไม่ได้กำหนด'
                     END AS age_range,
-                    po.number_of_ticket, po.amount_pawned, po.customer_status,
+                    po.number_of_ticket, po.amount_pawned,
+                    CASE
+                        WHEN DATE(rp.create_date + INTERVAL '7 HOUR') = '{report_at_date}' THEN 'ลูกค้าใหม่'
+                        ELSE 'ลูกค้าเก่า'
+                    END AS customer_status,
                     CASE
                         WHEN po.customer_aging > 0 AND po.customer_aging <= 3 THEN '0-3 เดือน'
                         WHEN po.customer_aging <= 6 THEN '3-6 เดือน'
@@ -221,10 +228,6 @@ class customer_report_wizard(osv.osv_memory):
                 LEFT JOIN (
                     SELECT
                         po_sub.partner_id, COUNT(po_sub.*) AS number_of_ticket, SUM(po_sub.amount_pawned) AS amount_pawned, MAX(ps_sub.name) AS pawn_shop,
-                        CASE
-                            WHEN COUNT(DISTINCT po_sub.date_order) > 1 THEN 'ลูกค้าเก่า'
-                            ELSE 'ลูกค้าใหม่'
-                        END AS customer_status, 
                         (DATE_PART('YEAR', AGE(TO_DATE('{report_at_date}', 'YYYY-MM-DD') + INTERVAL '1' DAY, MIN(po_sub.date_order))) * 12) +  
                         DATE_PART('MONTH', AGE(TO_DATE('{report_at_date}', 'YYYY-MM-DD') + INTERVAL '1' DAY, MIN(po_sub.date_order))) + 
                         (DATE_PART('DAY', AGE(TO_DATE('{report_at_date}', 'YYYY-MM-DD') + INTERVAL '1' DAY, MIN(po_sub.date_order))) / 100) AS customer_aging,
@@ -243,7 +246,7 @@ class customer_report_wizard(osv.osv_memory):
                     WHERE po_sub.state not in ('draft', 'cancel') AND po_sub.date_order <= '{report_at_date}' {extra_where}
                     GROUP BY po_sub.partner_id
                 ) po ON rp.id = po.partner_id
-                WHERE rp.supplier = True AND rp.pawnshop = True
+                WHERE rp.supplier = True AND rp.pawnshop = True AND DATE(rp.create_date + INTERVAL '7 HOUR') <= '{report_at_date}'
             )
         """.format(
             uid=uid,
