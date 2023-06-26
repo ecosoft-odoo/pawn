@@ -9,6 +9,7 @@
                 <tree create="0" edit="0" delete="0" string="Customer Report" version="7.0">
                     <field name="pawn_shop" invisible="1"/>
                     <field name="customer"/>
+                    <field name="customer_create_date" widget="date"/>
                     <field name="subdistrict" invisible="1"/>
                     <field name="district" invisible="1"/>
                     <field name="province" invisible="1"/>
@@ -67,6 +68,7 @@
                         <filter string="Age Range" domain="[]" context="{'group_by':'age_range'}"/>
                         <filter string="Customer Status" domain="[]" context="{'group_by':'customer_status'}"/>
                         <filter string="Customer Aging" domain="[]" context="{'group_by':'customer_aging'}"/>
+                        <filter string="Customer Create Date" domain="[]" context="{'group_by':'customer_create_date'}"/>
                     </group>
                     <group expand="0" string="Pawn Ticket Aging">
                         <filter string="0-3 เดือน" domain="[('pawn_ticket_aging_1','&gt;',0)]"/>
