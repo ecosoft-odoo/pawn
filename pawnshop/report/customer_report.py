@@ -243,7 +243,7 @@ class customer_report_wizard(osv.osv_memory):
                     WHERE po_sub.state not in ('draft', 'cancel') AND po_sub.date_order <= '{report_at_date}' {extra_where}
                     GROUP BY po_sub.partner_id
                 ) po ON rp.id = po.partner_id
-                WHERE rp.supplier = True AND rp.pawnshop = True AND po.number_of_ticket IS NOT NULL
+                WHERE rp.supplier = True AND rp.pawnshop = True
             )
         """.format(
             uid=uid,
