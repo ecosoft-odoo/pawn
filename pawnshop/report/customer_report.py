@@ -211,7 +211,8 @@ class customer_report_wizard(osv.osv_memory):
                     po.number_of_ticket, po.amount_pawned,
                     CASE
                         WHEN DATE(rp.create_date + INTERVAL '7 HOUR') = '{report_at_date}' THEN 'ลูกค้าใหม่'
-                        ELSE 'ลูกค้าเก่า'
+                        WHEN DATE(rp.create_date + INTERVAL '7 HOUR') < '{report_at_date}' THEN 'ลูกค้าเก่า'
+                        ELSE 'ไม่ได้กำหนด'
                     END AS customer_status,
                     CASE
                         WHEN po.customer_aging > 0 AND po.customer_aging <= 3 THEN '0-3 เดือน'
@@ -246,7 +247,7 @@ class customer_report_wizard(osv.osv_memory):
                     WHERE po_sub.state not in ('draft', 'cancel') AND po_sub.date_order <= '{report_at_date}' {extra_where}
                     GROUP BY po_sub.partner_id
                 ) po ON rp.id = po.partner_id
-                WHERE rp.supplier = True AND rp.pawnshop = True AND DATE(rp.create_date + INTERVAL '7 HOUR') <= '{report_at_date}'
+                WHERE rp.supplier = True AND rp.pawnshop = True AND po.number_of_ticket IS NOT NULL
             )
         """.format(
             uid=uid,
