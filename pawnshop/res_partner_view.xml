@@ -14,6 +14,10 @@
                     <filter string="Create Year" context="{'group_by': 'create_year'}"/>
                     <filter string="Create Month" context="{'group_by': 'create_date'}"/>
                 </group>
+                <field name="category_id" position="before">
+                    <filter string="Customers with pawn ticket items" name="customer_with_pawn_ticket_items" domain="[('pawn_order_ids','!=',False), ('pawn_order_ids.state', 'not in', ['draft', 'cancel'])]"/>
+                    <separator/>
+                </field>
             </field>
         </record>
 
