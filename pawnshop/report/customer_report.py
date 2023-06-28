@@ -321,11 +321,11 @@ class customer_report_wizard(osv.osv_memory):
         result = act_obj.read(cr, uid, [id], context=context)[0]
         result.update({
             'name': '{} ({} = {} | {} = {})'.format(
-                _(result['name']),
-                _('Pawn Ticket Status'),
-                _(dict(wizard._columns['pawn_ticket_status'].selection)[wizard.pawn_ticket_status]),
-                _('At Date'),
-                _(datetime.strptime(wizard.report_at_date, '%Y-%m-%d').strftime('%d/%m/%Y')),
+                _(result['name']).encode('utf-8'),
+                _('Pawn Ticket Status').encode('utf-8'),
+                _(dict(wizard._columns['pawn_ticket_status'].selection)[wizard.pawn_ticket_status]).encode('utf-8'),
+                _('At Date').encode('utf-8'),
+                _(datetime.strptime(wizard.report_at_date, '%Y-%m-%d').strftime('%d/%m/%Y')).encode('utf-8'),
             ),
             'domain': [('wizard_id', '=', wizard.id)],
         })
@@ -419,11 +419,11 @@ class customer_report_wizard(osv.osv_memory):
         result = act_obj.read(cr, uid, [id], context=context)[0]
         result.update({
             'name': '{} ({} = {} | {} = {})'.format(
-                _(result['name']),
-                _('Pawn Ticket Status'),
-                _(dict(wizard._columns['pawn_ticket_status'].selection)[wizard.pawn_ticket_status]),
-                _('At Date'),
-                _(datetime.strptime(wizard.report_at_date, '%Y-%m-%d').strftime('%d/%m/%Y')),
+                _(result['name']).encode('utf-8'),
+                _('Pawn Ticket Status').encode('utf-8'),
+                _(dict(wizard._columns['pawn_ticket_status'].selection)[wizard.pawn_ticket_status]).encode('utf-8'),
+                _('At Date').encode('utf-8'),
+                _(datetime.strptime(wizard.report_at_date, '%Y-%m-%d').strftime('%d/%m/%Y')).encode('utf-8'),
             ),
             'domain': [('wizard_id', '=', wizard.id)],
         })
