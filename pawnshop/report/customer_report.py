@@ -86,6 +86,49 @@ class customer_report(osv.osv_memory):
         ),
     }
 
+    def read_group(self, cr, uid, domain, fields, groupby, offset=0, limit=None, context=None, orderby=False):
+        res = super(customer_report, self).read_group(
+            cr, uid, domain, fields, groupby, offset=offset, limit=limit, context=context, orderby=orderby)
+        # Rearrange group
+        if groupby:
+            # Sex
+            if groupby[0] == 'sex':
+                res_temp = []
+                groups = [u'ชาย', u'หญิง', u'อื่นๆ']
+                for group in groups:
+                    res_temp.extend(filter(lambda l: l[groupby[0]] == group, res))
+                res_temp.extend(filter(lambda l: l[groupby[0]] not in groups, res))
+                res = res_temp
+            # Age Range
+            if groupby[0] == 'age_range':
+                res_temp = []
+                groups = [
+                    u'<= 0 ปี', u'1-10 ปี', u'11-20 ปี', u'21-30 ปี', u'31-40 ปี',
+                    u'41-50 ปี', u'51-60 ปี', u'61-70 ปี', u'71-80 ปี', u'81-90 ปี',
+                    u'91-100 ปี', u'> 100 ปี', u'ไม่ได้กำหนด',
+                ]
+                for group in groups:
+                    res_temp.extend(filter(lambda l: l[groupby[0]] == group, res))
+                res_temp.extend(filter(lambda l: l[groupby[0]] not in groups, res))
+                res = res_temp
+            # Customer Status
+            if groupby[0] == 'customer_status':
+                res_temp = []
+                groups = [u'ลูกค้าใหม่', u'ลูกค้าเก่า', u'ไม่ได้กำหนด']
+                for group in groups:
+                    res_temp.extend(filter(lambda l: l[groupby[0]] == group, res))
+                res_temp.extend(filter(lambda l: l[groupby[0]] not in groups, res))
+                res = res_temp
+            # Customer Aging
+            if groupby[0] == 'customer_aging':
+                res_temp = []
+                groups = [u'0-3 เดือน', u'3-6 เดือน', u'6-9 เดือน', u'9-12 เดือน', u'> 12 เดือน', '']
+                for group in groups:
+                    res_temp.extend(filter(lambda l: l[groupby[0]] == group, res))
+                res_temp.extend(filter(lambda l: l[groupby[0]] not in groups, res))
+                res = res_temp
+        return res
+
 
 class customer_report_groupby_ticket_aging(osv.osv_memory):
     _name = 'customer.report.groupby.ticket.aging'
