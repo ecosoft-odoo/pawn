@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+from datetime import datetime
 from openerp.osv import fields, osv
 from openerp.tools.translate import _
 
@@ -319,7 +320,13 @@ class customer_report_wizard(osv.osv_memory):
         id = mod_obj.read(cr, uid, [result], ['res_id'], context=context)[0]['res_id']
         result = act_obj.read(cr, uid, [id], context=context)[0]
         result.update({
-            'name': _(result['name']),
+            'name': '{} ({} = {} | {} = {})'.format(
+                _(result['name']),
+                _('Pawn Ticket Status'),
+                _(dict(wizard._columns['pawn_ticket_status'].selection)[wizard.pawn_ticket_status]),
+                _('At Date'),
+                _(datetime.strptime(wizard.report_at_date, '%Y-%m-%d').strftime('%d/%m/%Y')),
+            ),
             'domain': [('wizard_id', '=', wizard.id)],
         })
         return result
@@ -411,7 +418,13 @@ class customer_report_wizard(osv.osv_memory):
         id = mod_obj.read(cr, uid, [result], ['res_id'], context=context)[0]['res_id']
         result = act_obj.read(cr, uid, [id], context=context)[0]
         result.update({
-            'name': _(result['name']),
+            'name': '{} ({} = {} | {} = {})'.format(
+                _(result['name']),
+                _('Pawn Ticket Status'),
+                _(dict(wizard._columns['pawn_ticket_status'].selection)[wizard.pawn_ticket_status]),
+                _('At Date'),
+                _(datetime.strptime(wizard.report_at_date, '%Y-%m-%d').strftime('%d/%m/%Y')),
+            ),
             'domain': [('wizard_id', '=', wizard.id)],
         })
         return result
