@@ -90,6 +90,16 @@ class sale_performance_analysis_report(osv.osv):
                 'sale_quality': sale_quality,
                 'appraisal_quality': appraisal_quality,
             })
+        
+        # Rearrange group
+        if groupby:
+            if groupby[0] in ['sale_quality', 'appraisal_quality']:
+                res_temp = []
+                groups = ['ดีมาก', 'ดี', 'เสมอตัว', 'ไม่ดี', 'ต้องปรับปรุง']
+                for group in groups:
+                    res_temp.extend(filter(lambda l: l[groupby[0]] == group, res))
+                res_temp.extend(filter(lambda l: l[groupby[0]] not in groups, res))
+                res = res_temp
         return res
 
     def _get_sql(self):
