@@ -447,6 +447,11 @@ class pawn_order(osv.osv):
         return True
 
     def order_expire(self, cr, uid, ids, context=None):
+        # Extend the ticket don't change state to expire
+        for pawn in self.browse(cr, uid, ids, context=context):
+            if pawn.extended:
+                raise osv.except_osv(_('Error!'),
+                        _('Please unextend the ticket before submit the ticket to expire.'))
         # Reverse Accrued Interest
         self.action_move_reversed_accrued_interest_create(cr, uid, ids, context=context)
         # Inactive any left over accrued interest
