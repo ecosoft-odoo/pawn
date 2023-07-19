@@ -31,6 +31,9 @@ class sale_performance_analysis_report(osv.osv):
         'date_voucher': fields.date(
             string='Voucher Date',
         ),
+        'quantity': fields.float(
+            string='Quantity',
+        ),
         'price_estimated': fields.float(
             string='Estimated Price',
         ),
@@ -39,6 +42,12 @@ class sale_performance_analysis_report(osv.osv):
         ),
         'price_sale': fields.float(
             string='Sale Price',
+        ),
+        'price_sale_total': fields.float(
+            string='Total Sale Price',
+        ),
+        'price_pawned_per_price_estimated': fields.float(
+            string='Pawned Price per Estimaed Price',
         ),
         'profit_loss': fields.float(
             string='Profit / Loss',
@@ -84,13 +93,15 @@ class sale_performance_analysis_report(osv.osv):
             sale_per_estimate_percent = 100 * (price_sale - price_estimated) / price_estimated
             sale_quality = self._get_quality(sale_per_pawn_percent)
             appraisal_quality = self._get_quality(sale_per_estimate_percent)
+            price_pawned_per_price_estimated = price_pawned / price_estimated
             line.update({
                 'sale_per_pawn_percent': sale_per_pawn_percent,
                 'sale_per_estimate_percent': sale_per_estimate_percent,
                 'sale_quality': sale_quality,
                 'appraisal_quality': appraisal_quality,
+                'price_pawned_per_price_estimated': price_pawned_per_price_estimated,
             })
-        
+
         # Rearrange group
         if groupby:
             if groupby[0] in ['sale_quality', 'appraisal_quality']:
@@ -117,8 +128,10 @@ class sale_performance_analysis_report(osv.osv):
                     ELSE ''
                 END || rp.name AS customer, pp.item_description,
                 pc.name AS category, pp.date_order, pp.date_final_expired,
-                av.date AS date_voucher, pp.price_estimated, pp.price_pawned,
-                avl.price_unit AS price_sale, avl.price_unit - pp.price_pawned AS profit_loss,
+                av.date AS date_voucher, avl.quantity, pp.price_estimated, pp.price_pawned,
+                avl.price_unit AS price_sale, avl.quantity * avl.price_unit AS price_sale_total,
+                pp.price_pawned / pp.price_estimated AS price_pawned_per_price_estimated,
+                avl.price_unit - pp.price_pawned AS profit_loss,
                 {sale_per_pawn_percent} AS sale_per_pawn_percent, {sale_per_estimate_percent} AS sale_per_estimate_percent,
                 CASE
                     WHEN {sale_per_pawn_percent} > 20 THEN 'ดีมาก'

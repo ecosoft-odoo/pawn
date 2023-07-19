@@ -16,7 +16,10 @@
                    <field name="date_voucher"/>
                    <field name="price_estimated" sum="Total Estimated Price"/>
                    <field name="price_pawned" sum="Total Pawned Price"/>
+                   <field name="price_pawned_per_price_estimated"/>
+                   <field name="quantity" sum="Total Quantity"/>
                    <field name="price_sale" sum="Total Sale Price"/>
+                   <field name="price_sale_total" sum="Total Sale Price"/>
                    <field name="profit_loss" sum="Total Profit / Loss"/>
                    <field name="sale_per_pawn_percent"/>
                    <field name="sale_per_estimate_percent"/>
@@ -65,7 +68,7 @@
                 </search>
             </field>
         </record>
-        
+
         <record id="action_sale_performance_analysis_report" model="ir.actions.act_window">
             <field name="name">Sale Performance Analysis Report</field>
             <field name="res_model">sale.performance.analysis.report</field>
@@ -113,6 +116,6 @@
             id="menu_sale_performance_analysis_report"
         	groups="group_pawn_accountant,group_pawn_manager,group_pawn_officer"
             parent="menu_pawn_report"
-            sequence="60"/> 
+            sequence="60"/>
     </data>
 </openerp>
