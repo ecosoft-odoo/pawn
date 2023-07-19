@@ -129,7 +129,7 @@ class sale_performance_analysis_report(osv.osv):
                 END || rp.name AS customer, pp.item_description,
                 pc.name AS category, pp.date_order, pp.date_final_expired,
                 av.date AS date_voucher, avl.quantity, pp.price_estimated, pp.price_pawned,
-                avl.price_unit AS price_sale, avl.quantity * avl.price_unit AS price_sale_total,
+                avl.price_unit AS price_sale, avl.amount AS price_sale_total,
                 pp.price_pawned / pp.price_estimated AS price_pawned_per_price_estimated,
                 avl.price_unit - pp.price_pawned AS profit_loss,
                 {sale_per_pawn_percent} AS sale_per_pawn_percent, {sale_per_estimate_percent} AS sale_per_estimate_percent,
