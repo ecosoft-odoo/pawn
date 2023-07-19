@@ -31,23 +31,23 @@ class sale_performance_analysis_report(osv.osv):
         'date_voucher': fields.date(
             string='Voucher Date',
         ),
-        'quantity': fields.float(
-            string='Quantity',
-        ),
         'price_estimated': fields.float(
             string='Estimated Price',
         ),
         'price_pawned': fields.float(
             string='Pawned Price',
         ),
+        'price_pawned_per_price_estimated': fields.float(
+            string='Pawned Price Per Estimaed Price',
+        ),
+        'quantity': fields.float(
+            string='Quantity',
+        ),
         'price_sale': fields.float(
             string='Sale Price',
         ),
         'price_sale_total': fields.float(
             string='Total Sale Price',
-        ),
-        'price_pawned_per_price_estimated': fields.float(
-            string='Pawned Price per Estimaed Price',
         ),
         'profit_loss': fields.float(
             string='Profit / Loss',
