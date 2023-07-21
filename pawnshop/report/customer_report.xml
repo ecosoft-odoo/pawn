@@ -80,7 +80,7 @@
                 </search>
             </field>
         </record>
-        
+
         <record id="action_customer_report" model="ir.actions.act_window">
             <field name="name">Customer Report</field>
             <field name="res_model">customer.report</field>
@@ -124,12 +124,11 @@
                             <field name="pawn_ticket_status"/>
                     		<field name="report_at_date"/>
 	                    </group>
-                        <group>
-                            <field name="groupby_pawn_ticket_aging"/>
-                        </group>
                     </group>
                 	<footer>
-                        <button string="Execute Report" name="start_report" type="object" default_focus="1" class="oe_highlight"/>
+                        <button string="View Customer Report" name="start_report" type="object" default_focus="1" class="oe_highlight" context="{'groupby_pawn_ticket_aging': False}"/>
+                        or
+                        <button string="View Customer Report Group By Pawn Ticket Aging" name="start_report" type="object" context="{'groupby_pawn_ticket_aging': True}"/>
                         or
                         <button string="Cancel" class="oe_link" special="cancel"/>
                     </footer>
@@ -152,6 +151,6 @@
             id="menu_customer_report"
         	groups="group_pawn_accountant,group_pawn_manager,group_pawn_officer"
             parent="menu_pawn_report"
-            sequence="70"/> 
+            sequence="70"/>
     </data>
 </openerp>
