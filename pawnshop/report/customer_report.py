@@ -200,9 +200,9 @@ class customer_report_wizard(osv.osv_memory):
         pawn_ticket_status = wizard.pawn_ticket_status
         # SQL query for pawn ticket aging
         pawn_ticket_aging = """
-            (DATE_PART('YEAR', AGE(TO_DATE('{report_at_date}', 'YYYY-MM-DD') + INTERVAL '1' DAY, date_order)) * 12) + 
-            DATE_PART('MONTH', AGE(TO_DATE('{report_at_date}', 'YYYY-MM-DD') + INTERVAL '1' DAY, date_order)) + 
-            (DATE_PART('DAY', AGE(TO_DATE('{report_at_date}', 'YYYY-MM-DD') + INTERVAL '1' DAY, date_order)) / 100)
+            (DATE_PART('YEAR', AGE(TO_DATE('{report_at_date}', 'YYYY-MM-DD') + INTERVAL '1' DAY, po_sub.date_order)) * 12) +
+            DATE_PART('MONTH', AGE(TO_DATE('{report_at_date}', 'YYYY-MM-DD') + INTERVAL '1' DAY, po_sub.date_order)) +
+            (DATE_PART('DAY', AGE(TO_DATE('{report_at_date}', 'YYYY-MM-DD') + INTERVAL '1' DAY, po_sub.date_order)) / 100)
         """.format(report_at_date=report_at_date)
         # SQL query for age
         age = "DATE_PART('YEAR', AGE('{report_at_date}', rp.birth_date))".format(report_at_date=report_at_date)
@@ -210,8 +210,8 @@ class customer_report_wizard(osv.osv_memory):
         extra_where = ''
         if pawn_ticket_status == 'pawn':
             extra_where += """ AND (
-                (po_sub.date_redeem IS NULL AND po_sub.date_final_expired IS NULL) OR 
-                (po_sub.date_redeem IS NOT NULL AND '{report_at_date}' < po_sub.date_redeem) OR 
+                (po_sub.date_redeem IS NULL AND po_sub.date_final_expired IS NULL) OR
+                (po_sub.date_redeem IS NOT NULL AND '{report_at_date}' < po_sub.date_redeem) OR
                 (po_sub.date_final_expired IS NOT NULL AND '{report_at_date}' < po_sub.date_final_expired)
             )""".format(report_at_date=report_at_date)
         elif pawn_ticket_status == 'redeem':
@@ -273,8 +273,8 @@ class customer_report_wizard(osv.osv_memory):
                 LEFT JOIN (
                     SELECT
                         po_sub.partner_id, COUNT(po_sub.*) AS number_of_ticket, SUM(po_sub.amount_pawned) AS amount_pawned, MAX(ps_sub.name) AS pawn_shop,
-                        (DATE_PART('YEAR', AGE(TO_DATE('{report_at_date}', 'YYYY-MM-DD') + INTERVAL '1' DAY, MIN(po_sub.date_order))) * 12) +  
-                        DATE_PART('MONTH', AGE(TO_DATE('{report_at_date}', 'YYYY-MM-DD') + INTERVAL '1' DAY, MIN(po_sub.date_order))) + 
+                        (DATE_PART('YEAR', AGE(TO_DATE('{report_at_date}', 'YYYY-MM-DD') + INTERVAL '1' DAY, MIN(po_sub.date_order))) * 12) +
+                        DATE_PART('MONTH', AGE(TO_DATE('{report_at_date}', 'YYYY-MM-DD') + INTERVAL '1' DAY, MIN(po_sub.date_order))) +
                         (DATE_PART('DAY', AGE(TO_DATE('{report_at_date}', 'YYYY-MM-DD') + INTERVAL '1' DAY, MIN(po_sub.date_order))) / 100) AS customer_aging,
                         SUM(CASE WHEN {pawn_ticket_aging} > 0 AND {pawn_ticket_aging} <= 3 THEN amount_pawned ELSE 0 END) AS pawn_ticket_aging_1,
                         SUM(CASE WHEN {pawn_ticket_aging} > 3 AND {pawn_ticket_aging} <= 6 THEN amount_pawned ELSE 0 END) AS pawn_ticket_aging_2,
@@ -430,8 +430,9 @@ class customer_report_wizard(osv.osv_memory):
         return result
 
     def start_report(self, cr, uid, ids, data, context=None):
+        groupby_pawn_ticket_aging = data.get('groupby_pawn_ticket_aging', False)
         wizard = self.browse(cr, uid, ids[0], context=context)
-        if not wizard.groupby_pawn_ticket_aging:
+        if not groupby_pawn_ticket_aging:
             result = self._get_customer_report(cr, uid, wizard, context=context)
         else:
             result = self._get_customer_report_groupby_ticket_aging(cr, uid, wizard, context=context)
