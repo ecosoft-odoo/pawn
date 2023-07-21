@@ -14,10 +14,10 @@
                    <field name="date_order"/>
                    <field name="date_final_expired"/>
                    <field name="date_voucher"/>
+                   <field name="quantity" sum="Total Quantity"/>
                    <field name="price_estimated" sum="Total Estimated Price"/>
                    <field name="price_pawned" sum="Total Pawned Price"/>
                    <field name="price_pawned_per_price_estimated"/>
-                   <field name="quantity" sum="Total Quantity"/>
                    <field name="price_sale" sum="Total Sale Price"/>
                    <field name="price_sale_total" sum="Total Sale Price"/>
                    <field name="profit_loss" sum="Total Profit / Loss"/>
