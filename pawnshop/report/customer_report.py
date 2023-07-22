@@ -337,10 +337,12 @@ class customer_report_wizard(osv.osv_memory):
         id = mod_obj.read(cr, uid, [result], ['res_id'], context=context)[0]['res_id']
         result = act_obj.read(cr, uid, [id], context=context)[0]
         result.update({
-            'name': '{} ({} = {} | {} = {})'.format(
+            'name': '{} ({} = {} | {} = {} | {} = {})'.format(
                 _(result['name']).encode('utf-8'),
                 _('Pawn Ticket Status').encode('utf-8'),
                 _({'all': 'ทั้งหมด', 'pawn': 'จำนำ', 'redeem': 'ไถ่ถอน', 'expire': 'หมดอายุ'}[wizard.pawn_ticket_status]).encode('utf-8'),
+                _('Extend Status').encode('utf-8'),
+                _({'all': 'ทั้งหมด', 'extended': 'เล้า', 'unextended': 'ไม่เล้า'}[wizard.extend_status]).encode('utf-8'),
                 _('At Date').encode('utf-8'),
                 _(datetime.strptime(wizard.report_at_date, '%Y-%m-%d').strftime('%d/%m/%Y')).encode('utf-8'),
             ),
@@ -435,10 +437,12 @@ class customer_report_wizard(osv.osv_memory):
         id = mod_obj.read(cr, uid, [result], ['res_id'], context=context)[0]['res_id']
         result = act_obj.read(cr, uid, [id], context=context)[0]
         result.update({
-            'name': '{} ({} = {} | {} = {})'.format(
+            'name': '{} ({} = {} | {} = {} | {} = {})'.format(
                 _(result['name']).encode('utf-8'),
                 _('Pawn Ticket Status').encode('utf-8'),
                 _({'all': 'ทั้งหมด', 'pawn': 'จำนำ', 'redeem': 'ไถ่ถอน', 'expire': 'หมดอายุ'}[wizard.pawn_ticket_status]).encode('utf-8'),
+                _('Extend Status').encode('utf-8'),
+                _({'all': 'ทั้งหมด', 'extended': 'เล้า', 'unextended': 'ไม่เล้า'}[wizard.extend_status]).encode('utf-8'),
                 _('At Date').encode('utf-8'),
                 _(datetime.strptime(wizard.report_at_date, '%Y-%m-%d').strftime('%d/%m/%Y')).encode('utf-8'),
             ),
