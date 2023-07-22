@@ -165,19 +165,21 @@ class customer_report_wizard(osv.osv_memory):
             string='Pawn Ticket Status',
             required=True,
         ),
+        'extend_status': fields.selection(
+            [('all', 'All'), ('extended', 'Extended'), ('unextended', 'Unextended')],
+            string='Extend Status',
+            required=True,
+        ),
         'report_at_date': fields.date(
             string='At Date',
             required=True,
-        ),
-        'groupby_pawn_ticket_aging': fields.boolean(
-            string='Group By Pawn Ticket Aging',
         ),
     }
 
     _defaults = {
         'pawn_ticket_status': 'all',
+        'extend_status': 'all',
         'report_at_date': fields.date.context_today,
-        'groupby_pawn_ticket_aging': False,
     }
 
     def _get_column_insert_customer_report(self):
@@ -198,6 +200,7 @@ class customer_report_wizard(osv.osv_memory):
         # Get value from wizard
         report_at_date = wizard.report_at_date
         pawn_ticket_status = wizard.pawn_ticket_status
+        extend_status = wizard.extend_status
         # SQL query for pawn ticket aging
         pawn_ticket_aging = """
             (DATE_PART('YEAR', AGE(TO_DATE('{report_at_date}', 'YYYY-MM-DD') + INTERVAL '1' DAY, po_sub.date_order)) * 12) +
@@ -206,7 +209,8 @@ class customer_report_wizard(osv.osv_memory):
         """.format(report_at_date=report_at_date)
         # SQL query for age
         age = "DATE_PART('YEAR', AGE('{report_at_date}', rp.birth_date))".format(report_at_date=report_at_date)
-        # Extra where for filter pawn ticket status
+        # Extra where
+        # Filter pawn ticket status
         extra_where = ''
         if pawn_ticket_status == 'pawn':
             extra_where += """ AND (
@@ -218,6 +222,19 @@ class customer_report_wizard(osv.osv_memory):
             extra_where += " AND (po_sub.date_redeem IS NOT NULL AND '{report_at_date}' >= po_sub.date_redeem)".format(report_at_date=report_at_date)
         elif pawn_ticket_status == 'expire':
             extra_where += " AND (po_sub.date_final_expired IS NOT NULL AND '{report_at_date}' >= po_sub.date_final_expired)".format(report_at_date=report_at_date)
+        # Filter extend status
+        if extend_status == 'extended':
+            extra_where += """ AND (
+                (po_sub.date_extend_last IS NOT NULL AND po_sub.date_unextend_last IS NULL AND '{report_at_date}' >= po_sub.date_extend_last) OR
+                (po_sub.date_extend_last IS NOT NULL AND po_sub.date_unextend_last IS NOT NULL AND '{report_at_date}' >= po_sub.date_extend_last AND '{report_at_date}' < po_sub.date_unextend_last)
+            )
+            """.format(report_at_date=report_at_date)
+        elif extend_status == 'unextended':
+            extra_where += """ AND (
+                (po_sub.date_extend_last IS NULL AND po_sub.date_unextend_last IS NULL) OR
+                (po_sub.date_extend_last IS NOT NULL AND po_sub.date_unextend_last IS NULL AND '{report_at_date}' < po_sub.date_extend_last) OR
+                (po_sub.date_extend_last IS NOT NULL AND po_sub.date_unextend_last IS NOT NULL AND ('{report_at_date}' < po_sub.date_extend_last OR '{report_at_date}' >= po_sub.date_unextend_last))
+            )""".format(report_at_date=report_at_date)
         # Get SQL
         sql = """
             (

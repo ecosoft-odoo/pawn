@@ -272,6 +272,8 @@ class pawn_order(osv.osv):
         'buddha_year_temp': fields.char('Buddha Year Temp', size=4),
         'date_redeem': fields.date('Redeem Date', required=False, readonly=True, help="Date on which this document has been redeemed."),
         'date_extend': fields.date('Extend Date', required=False, readonly=True, help="Date on which this document has been extended."),
+        'date_extend_last': fields.date('Last Extend Date', required=False, readonly=True, help="Latest Date on which this document has been extended."),
+        'date_unextend_last': fields.date('Last Unextend Date', required=False, readonly=True, help="Latest Date on which this document has been unextended."),
         'partner_id': fields.many2one('res.partner', 'Customer', required=True, readonly=True, domain=[('supplier', '=', True), ('pawnshop', '=', True)], states={'draft': [('readonly', False)]}, change_default=True),
         'address': fields.related('partner_id', 'address_full', type='char', string='Address'),
         'card_type': fields.related('partner_id', 'card_type', type="selection", selection=res_partner.CARD_TYPE_SELECTION, string="Card Type", readonly=True),
@@ -467,15 +469,24 @@ class pawn_order(osv.osv):
         return True
 
     def action_extend(self, cr, uid, ids, context=None):
-        self.write(cr, uid, ids, {'extended': True,
-                                  'date_extend': fields.date.context_today(self, cr, uid, context=context)}, context=context)
+        date_extend = fields.date.context_today(self, cr, uid, context=context)
+        self.write(cr, uid, ids, {
+            'extended': True,
+            'date_extend': date_extend,
+            'date_extend_last': date_extend,
+            'date_unextend_last': False,
+        }, context=context)
         items = self.read(cr, uid, ids, ['item_id'], context=context)
         self.pool.get('product.product').action_asset_extend(cr, uid, [i['item_id'][0] for i in items], context=context)
         return True
 
     def action_unextend(self, cr, uid, ids, context=None):
-        self.write(cr, uid, ids, {'extended': False,
-                                  'date_extend': False}, context=context)
+        date_unextend = fields.date.context_today(self, cr, uid, context=context)
+        self.write(cr, uid, ids, {
+            'extended': False,
+            'date_extend': False,
+            'date_unextend_last': date_unextend,
+        }, context=context)
         items = self.read(cr, uid, ids, ['item_id'], context=context)
         self.pool.get('product.product').action_asset_unextend(cr, uid, [i['item_id'][0] for i in items], context=context)
         return True
@@ -871,6 +882,8 @@ class pawn_order(osv.osv):
             'date_order': fields.date.context_today(self, cr, uid, context=context),
             'date_redeem': False,
             'date_extend': False,
+            'date_extend_last': False,
+            'date_unextend_last': False,
             'date_jor6': False,
             'date_due': False,
             'jor6_submitted': False,

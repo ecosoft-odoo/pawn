@@ -122,6 +122,7 @@
                     <group string="Report">
 	                    <group>
                             <field name="pawn_ticket_status"/>
+                            <field name="extend_status"/>
                     		<field name="report_at_date"/>
 	                    </group>
                     </group>
