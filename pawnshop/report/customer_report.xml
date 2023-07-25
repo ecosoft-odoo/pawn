@@ -97,9 +97,9 @@
             <field name="arch" type="xml">
                 <tree create="0" edit="0" delete="0" string="Customer Report Group By Pawn Ticket Aging" version="7.0">
                     <field name="pawn_ticket_aging"/>
-                    <field name="number_of_customer"/>
-                    <field name="number_of_ticket"/>
-                    <field name="amount_pawned"/>
+                    <field name="number_of_customer" sum="Total Number Of Customer"/>
+                    <field name="number_of_ticket" sum="Total Number Of Ticket"/>
+                    <field name="amount_pawned" sum="Total Pawned Amount"/>
                 </tree>
             </field>
         </record>
