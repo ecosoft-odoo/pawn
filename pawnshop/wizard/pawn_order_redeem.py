@@ -115,6 +115,12 @@ class pawn_order_redeem(osv.osv_memory):
         wf_service.trg_validate(uid, 'pawn.order', pawn_id, 'order_redeem', cr)
         wizard = self.browse(cr, uid, ids[0], context)
         date = wizard.date_redeem
+        # Check final redeem
+        total_redeem_amount = wizard.pawn_amount + wizard.interest_amount - wizard.discount + wizard.addition
+        if total_redeem_amount != wizard.redeem_amount:
+            raise osv.except_osv(_('Error!'),
+                                 _('Initial + Interest Amount - Discount + Addition (%s) must be equal to Final Redeem (%s) !!') % (
+                '{:,.2f}'.format(total_redeem_amount), '{:,.2f}'.format(wizard.redeem_amount)))
         # Normal case, redeem after pawned
         if state_bf_redeem != 'expire':
             discount = wizard.discount
