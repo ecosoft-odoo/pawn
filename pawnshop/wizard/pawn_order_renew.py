@@ -105,6 +105,12 @@ class pawn_order_renew(osv.osv_memory):
         # Interest
         wizard = self.browse(cr, uid, ids[0], context)
         date = wizard.date_renew
+        # Check pay interest amount
+        total_pay_interest_amount = wizard.interest_amount - wizard.discount + wizard.addition
+        if total_pay_interest_amount != wizard.pay_interest_amount:
+            raise osv.except_osv(_('Error!'),
+                                 _('Interest Amount - Discount + Addition (%s) must be equal to Pay Interest Amount (%s) !!') % (
+                '{:,.2f}'.format(total_pay_interest_amount), '{:,.2f}'.format(wizard.pay_interest_amount)))
         # Warning if today > date_due
 #         if pawn.date_due and pawn.date_due < time.strftime('%Y-%m-%d'):
 #             raise osv.except_osv(
