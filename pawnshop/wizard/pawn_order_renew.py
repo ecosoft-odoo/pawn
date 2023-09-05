@@ -23,6 +23,7 @@ from openerp import netsvc
 import time
 from openerp import pooler
 from openerp.tools.translate import _
+from openerp.tools import float_compare
 
 
 class pawn_order_renew(osv.osv_memory):
@@ -107,7 +108,7 @@ class pawn_order_renew(osv.osv_memory):
         date = wizard.date_renew
         # Check pay interest amount
         total_pay_interest_amount = wizard.interest_amount - wizard.discount + wizard.addition
-        if total_pay_interest_amount != wizard.pay_interest_amount:
+        if float_compare(total_pay_interest_amount, wizard.pay_interest_amount, precision_digits=2) != 0:
             raise osv.except_osv(_('Error!'),
                                  _('Interest Amount - Discount + Addition (%s) must be equal to Pay Interest Amount (%s) !!') % (
                 '{:,.2f}'.format(total_pay_interest_amount), '{:,.2f}'.format(wizard.pay_interest_amount)))
