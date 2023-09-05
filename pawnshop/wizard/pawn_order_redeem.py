@@ -23,6 +23,7 @@ from openerp import netsvc
 import time
 from openerp import pooler
 from openerp.tools.translate import _
+from openerp.tools import float_compare
 
 
 class pawn_order_redeem(osv.osv_memory):
@@ -117,7 +118,7 @@ class pawn_order_redeem(osv.osv_memory):
         date = wizard.date_redeem
         # Check final redeem
         total_redeem_amount = wizard.pawn_amount + wizard.interest_amount - wizard.discount + wizard.addition
-        if total_redeem_amount != wizard.redeem_amount:
+        if float_compare(total_redeem_amount, wizard.redeem_amount, precision_digits=2) != 0:
             raise osv.except_osv(_('Error!'),
                                  _('Initial + Interest Amount - Discount + Addition (%s) must be equal to Final Redeem (%s) !!') % (
                 '{:,.2f}'.format(total_redeem_amount), '{:,.2f}'.format(wizard.redeem_amount)))
