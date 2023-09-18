@@ -13,5 +13,6 @@
     "data": [
         "data/ir_cron_data.xml",
         "views/pawn_views.xml",
+        "views/account_transfer_views.xml",
     ],
 }

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="view_account_transfer_form" model="ir.ui.view">
+            <field name="name">Account Transfer Form</field>
+            <field name="model">account.transfer</field>
+            <field name="inherit_id" ref="account_transfer.view_account_transfer_form"/>
+            <field name="arch" type="xml">
+                <field name="date" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>
