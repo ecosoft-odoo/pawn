@@ -1364,6 +1364,12 @@ class pawn_order(osv.osv):
             amount_interest_paid += interest_paid.interest_amount + interest_paid.discount - interest_paid.addition
         return amount_interest_paid
 
+    def show_customer_number(self, cr, uid, ids, context=None):
+        """This function will call from server action"""
+        pawn_orders = self.browse(cr, uid, ids, context=context)
+        customer_count = len(list(set(map(lambda l: l.partner_id, pawn_orders))))
+        raise osv.except_osv(_('Information'), _('Customer number is %s.') % customer_count)
+
 pawn_order()
 
 
