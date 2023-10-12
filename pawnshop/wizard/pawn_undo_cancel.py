@@ -22,7 +22,7 @@ from openerp.osv import fields, osv
 from openerp.tools.translate import _
 
 class pawn_undo_cancel(osv.osv_memory):
-    
+
     def _validate_secret_key(self, cr, uid, pawn_shop, secret_key, context=None):
         # If there is no key, always ok.
         if not secret_key and not pawn_shop.secret_key and not pawn_shop.secret_key2:
@@ -36,7 +36,7 @@ class pawn_undo_cancel(osv.osv_memory):
             if secret_key in keys:
                 return True
             else:
-                raise osv.except_osv(_('Invalid Key!'), _("You need to provide a valid shop's secret key for this action!"))            
+                raise osv.except_osv(_('Invalid Key!'), _("You need to provide a valid shop's secret key for this action!"))
             return False
 
     _name = "pawn.undo.cancel"
@@ -56,6 +56,8 @@ class pawn_undo_cancel(osv.osv_memory):
         # Based on action, do the undo/cancel
         if action_type == 'order_cancel':
             self.pool.get('pawn.order').order_cancel(cr, uid, [active_id], context=context)
+            # Set due date = False
+            pawn_obj.write(cr, uid, [active_id], {'date_due_ticket': False}, context=context)
         if action_type == 'action_undo_pay_interest':
             self.pool.get('pawn.order').action_undo_pay_interest(cr, uid, [active_id], context=context)
         if action_type == 'action_undo_redeem':
