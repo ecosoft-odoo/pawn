@@ -415,7 +415,7 @@ $F{card_type} == "passport" ? "หมายเลขหนังสือเด�
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement positionType="Float" mode="Transparent" x="152" y="240" width="260" height="64" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
-					<font fontName="Monospaced" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+					<font fontName="Monospaced" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{item_description}]]></textFieldExpression>
 			</textField>

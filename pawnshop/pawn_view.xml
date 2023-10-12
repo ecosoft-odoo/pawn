@@ -101,7 +101,7 @@
                                 <field name="buddha_year_temp" invisible="1"/>
                             </div>
 							<field name="date_expired" />
-                            <field name="date_due_ticket" invisible="1" />
+                            <field name="date_due_ticket" />
                             <field name="date_due" />
                             <field name="date_redeem" attrs="{'invisible': [('date_redeem','=',False)]}"/>
                             <field name="date_extend" attrs="{'invisible': [('date_extend','=',False)]}"/>

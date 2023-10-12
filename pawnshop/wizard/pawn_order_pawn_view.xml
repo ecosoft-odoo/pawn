@@ -12,6 +12,7 @@
                          </group>
                          <group name="amount">
                              <field name="journal_id" attrs="{'readonly': [('parent_id', '!=', False )]}" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
+                             <field name="date_due_ticket"/>
                              <field name="parent_id" invisible="1" />
                          </group>
                          <group >

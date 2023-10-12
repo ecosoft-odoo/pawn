@@ -63,6 +63,7 @@ class pawn_order_pawn(osv.osv_memory):
         'journal_id': fields.many2one('account.journal', 'Journal', domain="[('type','=','cash'), ('pawn_journal', '=', True)]", required=True),
         'parent_id': fields.many2one('pawn.order', 'Previous Pawn Ticket'),
         'amount': fields.float('Net Amount', readonly=True),
+        'date_due_ticket': fields.date(string='Due Date', required=True),
     }
     _defaults = {
         'journal_id': _get_journal,
@@ -82,7 +83,7 @@ class pawn_order_pawn(osv.osv_memory):
                                  _('Ticket need refresh before proceeding!'))
         # Write journal_id back to order
         wizard = self.browse(cr, uid, ids[0], context)
-        self.pool.get('pawn.order').write(cr, uid, [active_id], {'journal_id': wizard.journal_id.id}, context=context)
+        self.pool.get('pawn.order').write(cr, uid, [active_id], {'journal_id': wizard.journal_id.id, 'date_due_ticket': wizard.date_due_ticket}, context=context)
         # Trigger workflow
         wf_service = netsvc.LocalService("workflow")
         wf_service.trg_validate(uid, 'pawn.order', active_id, 'order_pawn', cr)
