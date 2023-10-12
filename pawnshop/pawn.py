@@ -882,6 +882,7 @@ class pawn_order(osv.osv):
             'date_unextend_last': False,
             'date_jor6': False,
             'date_due': False,
+            'date_due_ticket': False,
             'jor6_submitted': False,
             'parent_id': False,
             'child_id': False,
