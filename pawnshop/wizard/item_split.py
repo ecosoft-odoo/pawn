@@ -35,12 +35,12 @@ class item_split(osv.osv_memory):
 
     _columns = {
         'item_id': fields.many2one('product.product', 'Product', readonly=True),
-        'split_line': fields.one2many('item.split.line', 'item_id', 'Split Lines', readonly=False), 
+        'split_line': fields.one2many('item.split.line', 'item_id', 'Split Lines', readonly=False),
     }
     _defaults = {
         'item_id': _get_item_id,
     }
-    
+
     def open_items(self, cr, uid, item_ids, context=None):
         mod_obj = self.pool.get('ir.model.data')
         act_obj = self.pool.get('ir.actions.act_window')
@@ -67,7 +67,7 @@ class item_split(osv.osv_memory):
             new_qty += line.product_qty
         if new_qty != item.product_qty:
             raise osv.except_osv(_('Warning!'), _('Sum of quantity must equal to the original quantity'))
-        
+
         # Start coping and redirecton
         item_obj = self.pool.get('product.product')
         i = 0
@@ -76,7 +76,8 @@ class item_split(osv.osv_memory):
             if line.product_qty:
                 i += 1
                 default = {'product_qty': line.product_qty,
-                           'description': line.description}
+                           'description': line.description,
+                           'journal_id': item.journal_id.id}
                 new_item_id = item_obj.copy(cr, uid, item.id, default, context=context)
                 item_obj.write(cr, uid, [new_item_id], {'name': item.name + '.' + str(i)}, context=context)
                 new_item_ids.append(new_item_id)
@@ -104,7 +105,7 @@ class item_split_line(osv.osv_memory):
     _columns = {
         'item_id': fields.many2one('item.split', 'Item Split'),
         'description': fields.text('Description', required=True),
-        'product_qty': fields.float('Item Quantity', required=True),       
+        'product_qty': fields.float('Item Quantity', required=True),
     }
     _defaults = {
         'description': _get_description,
