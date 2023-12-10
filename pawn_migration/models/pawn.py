@@ -2,6 +2,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from openerp.osv import fields, osv
+from dateutil.relativedelta import relativedelta
 from openerp.tools.translate import _
 
 
@@ -80,12 +81,14 @@ class pawn_order(osv.osv):
         LocationStatus = self.pool.get("product.location.status")
         pawn_order_ids = PawnOrder.search(cr, uid, [("state", "=", "draft")], context=context)
         for pawn_order_id in pawn_order_ids:
+            pawn_order = PawnOrderPawn.browse(cr, uid, pawn_order_id, context=context)
             context = {"active_id": pawn_order_id}
             journal_id = PawnOrderPawn._get_journal(cr, uid, context=context)
             parent_id = PawnOrderPawn._get_parent_id(cr, uid, context=context)
             amount = PawnOrderPawn._get_amount(cr, uid, context=context)
             wizard_id = PawnOrderPawn.create(cr, uid, {
                 "journal_id": journal_id, "parent_id": parent_id, "amount": amount,
+                "date_due_ticket": pawn_order.date_expired + relativedelta(days=pawn_order.rule_id.length_day or 0.0),
             })
             PawnOrderPawn.action_pawn(cr, uid, [wizard_id], context=context)
         # Pawn Ticket : Incoming -> In-Stock
