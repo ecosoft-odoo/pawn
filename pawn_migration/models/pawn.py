@@ -2,6 +2,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from openerp.osv import fields, osv
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from openerp.tools.translate import _
 
@@ -88,7 +89,7 @@ class pawn_order(osv.osv):
             amount = PawnOrderPawn._get_amount(cr, uid, context=context)
             wizard_id = PawnOrderPawn.create(cr, uid, {
                 "journal_id": journal_id, "parent_id": parent_id, "amount": amount,
-                "date_due_ticket": pawn_order.date_expired + relativedelta(days=pawn_order.rule_id.length_day or 0.0),
+                "date_due_ticket": datetime.strptime(pawn_order.date_expired, "%Y-%m-%d").date() + relativedelta(days=pawn_order.rule_id.length_day or 0.0),
             })
             PawnOrderPawn.action_pawn(cr, uid, [wizard_id], context=context)
         # Pawn Ticket : Incoming -> In-Stock
