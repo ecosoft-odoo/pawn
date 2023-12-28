@@ -39,6 +39,7 @@
                 'account_transfer',
                 'account_bank_balance',
                 'hr_expense',
+                'report_xls',
                 ],
     'demo': [],
     'data': [
@@ -62,7 +63,7 @@
         'wizard/pawn_expire_final_view.xml',
         'res_partner_view.xml',
         'pawn_view.xml',
-        'item_view.xml',    
+        'item_view.xml',
         'pawn_rule_view.xml',
         'pawn_shop_view.xml',
         'account_view.xml',

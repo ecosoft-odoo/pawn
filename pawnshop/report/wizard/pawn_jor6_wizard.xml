@@ -17,23 +17,25 @@
 	                    <group>
                     		<field name="pawn_rule_id" on_change="onchange_parameter(journal_id, pawn_shop_id, pawn_rule_id)"
                     			options="{'limit': 10, 'create': false, 'create_edit': false, 'no_open': true}"/>
-	                    	<field name="date" invisible="1"/>   
+	                    	<field name="date" invisible="1"/>
                     	</group>
                     </group>
                     <group>
-						<group string="Report Period (Past 10 Days)">      
-							<field name="jor6_to_submit_date_id" 
+						<group string="Report Period (Past 10 Days)">
+							<field name="jor6_to_submit_date_id"
 								attrs="{'required': [('jor6_submitted_date_id','=', False)], 'readonly': [('jor6_submitted_date_id','!=', False)]}"
-								options="{'limit': 10, 'create': false, 'create_edit': false, 'no_open': true}"/>      		
-							<field name="jor6_submitted_date_id" 
-								attrs="{'required': [('jor6_to_submit_date_id','=', False)], 'readonly': [('jor6_to_submit_date_id','!=', False)]}" 
-								options="{'limit': 10, 'create': false, 'create_edit': false, 'no_open': true}"/>      		
-						</group>      
-						<group string=" ">            		
-						</group>             
+								options="{'limit': 10, 'create': false, 'create_edit': false, 'no_open': true}"/>
+							<field name="jor6_submitted_date_id"
+								attrs="{'required': [('jor6_to_submit_date_id','=', False)], 'readonly': [('jor6_to_submit_date_id','!=', False)]}"
+								options="{'limit': 10, 'create': false, 'create_edit': false, 'no_open': true}"/>
+						</group>
+						<group string=" ">
+						</group>
                     </group>
                 	<footer>
-                        <button string="Execute Report" name="start_report" type="object" default_focus="1" class="oe_highlight"/>
+                        <button string="Execute Report (PDF)" name="start_report" type="object" default_focus="1" class="oe_highlight"/>
+                        or
+                        <button string="Execute Report (XLS)" name="start_report" type="object" context="{'xls_export': 1}"/>
                         or
                         <button string="Cancel" class="oe_link" special="cancel"/>
                     </footer>
