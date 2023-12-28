@@ -26,7 +26,7 @@ class pawn_jor6_wizard(osv.osv_memory):
             self.write(cr, uid, [id], {'date': date}, context=context)
             if field == 'jor6_to_submit_date_id':
                 self.write(cr, uid, [id], {'jor6_submitted': False}, context=context)
-            else: 
+            else:
                 self.write(cr, uid, [id], {'jor6_submitted': True}, context=context)
 
     def _get_date_id(self, cr, uid, ids, field_names, arg=None, context=None):
@@ -45,8 +45,8 @@ class pawn_jor6_wizard(osv.osv_memory):
                         where journal_id = %s
                     """, (arg[2],))
                 ids = map(lambda x: x[0], cr.fetchall())
-        return [('id', 'in', [id for id in ids])] 
-    
+        return [('id', 'in', [id for id in ids])]
+
     _columns = {
         'pawn_shop_id': fields.many2one('pawn.shop', 'Pawnshop', required=True),
         'journal_id': fields.many2one('account.journal', 'Journal', domain=[('type', '=', 'cash'), ('pawn_journal', '=', True)], required=True),
@@ -62,7 +62,7 @@ class pawn_jor6_wizard(osv.osv_memory):
         'pawn_shop_id': _get_pawn_shop_id,
         'pawn_rule_id': _get_pawn_rule_id,
     }
-    
+
     def onchange_parameter(self, cr, uid, ids, journal_id, pawn_shop_id, pawn_rule_id, context=None):
         return {'domain': {
                     'jor6_to_submit_date_id': [('journal_id', '=', journal_id),('pawn_shop_id', '=', pawn_shop_id),('pawn_rule_id', '=', pawn_rule_id),('jor6_submitted','=', False)],
@@ -80,15 +80,14 @@ class pawn_jor6_wizard(osv.osv_memory):
             data['form']['report_date'] = wiz_obj['date']
             if not wiz_obj['jor6_submitted']:
                 cr.execute("""
-                    update pawn_order set jor6_submitted = true 
-                    where pawn_shop_id = %s 
+                    update pawn_order set jor6_submitted = true
+                    where pawn_shop_id = %s
                     and journal_id = %s
                     and rule_id = %s
-                    and date_jor6 = %s """, (wiz_obj['pawn_shop_id'][0], wiz_obj['journal_id'][0], wiz_obj['pawn_rule_id'][0], wiz_obj['date']))                
-            
+                    and date_jor6 = %s """, (wiz_obj['pawn_shop_id'][0], wiz_obj['journal_id'][0], wiz_obj['pawn_rule_id'][0], wiz_obj['date']))
             return {
                 'type': 'ir.actions.report.xml',
-                'report_name': 'pawn_jor6_report',
+                'report_name': 'pawn_jor6_report_xls' if data.get('xls_export') else 'pawn_jor6_report',
                 'datas': data,
             }
 
@@ -114,7 +113,7 @@ class pawn_jor6_wizard_date(osv.osv):
         cr.execute("""CREATE or REPLACE VIEW %s as (
             select row_number() over (order by date_jor6 asc) id, *
             from
-            (select distinct pawn_shop_id, journal_id, rule_id as pawn_rule_id, coalesce(jor6_submitted, false) as jor6_submitted, date_jor6 
+            (select distinct pawn_shop_id, journal_id, rule_id as pawn_rule_id, coalesce(jor6_submitted, false) as jor6_submitted, date_jor6
                 from pawn_order where date_jor6 is not null) a
         )"""% (self._table,))
 
