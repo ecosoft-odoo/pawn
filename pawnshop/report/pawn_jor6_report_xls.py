@@ -10,18 +10,18 @@ COLUMN_SIZES = [
     ('number', 10),
     ('date_order', 20),
     ('pawn_number', 20),
-    ('customer_name', 35),
-    ('customer_address', 65),
-    ('item_description', 65),
+    ('customer_name', 50),
+    ('customer_address', 80),
+    ('item_description', 90),
     ('item_qty', 10),
     ('total_baht', 15),
     ('total_satang', 10),
     ('note', 20),
 ]
 
-ROW_HEIGHT = 380
+ROW_HEIGHT = 320
 
-FONT_SIZE = 200
+FONT_SIZE = 260
 
 
 class PawnJo6ReportXLSParser(report_sxw.rml_parse):
@@ -89,7 +89,7 @@ class PawnJo6ReportXLS(report_xls):
         ws.footer_str = self.xls_footers['standard']
 
         # Header
-        header_style = xlwt.easyxf('font: name Garuda, bold true, height {};align: vert center;'.format(FONT_SIZE) + _xs['center'])
+        header_style = xlwt.easyxf('font: name Helvetica, bold true, height {};align: vert center;'.format(FONT_SIZE) + _xs['center'])
         c_specs = [
             ('header_1', 10, 0, 'text', _('บัญชีทรัพย์จำนำที่ผู้จำนำขาดส่งดอกเบี้ยเป็นเวลาเกินสี่เดือน')),
         ]
@@ -119,7 +119,7 @@ class PawnJo6ReportXLS(report_xls):
 
         # Column Header
         border_style = 'borders: left thin, right thin, top thin, bottom thin, left_colour black, right_colour black, top_colour black, bottom_colour black;'
-        col_header_style = xlwt.easyxf('font: name Garuda, height {};align: vert center;'.format(FONT_SIZE) + border_style + _xs['center'])
+        col_header_style = xlwt.easyxf('font: name Helvetica, height {};align: vert center;'.format(FONT_SIZE) + border_style + _xs['center'])
         c_specs = [
             ('number', 1, 0, 'text', _('เลขที่'), None, col_header_style),
             ('date_order', 1, 0, 'text', _('วัน เดือน ปี ที่รับจำนำ'), None, col_header_style),
@@ -136,7 +136,7 @@ class PawnJo6ReportXLS(report_xls):
         row_pos = self.xls_write_row(ws, row_pos, row_data)
 
         # Column Detail
-        col_detail_format = 'font: name Garuda, height {};alignment: wrap True;'.format(FONT_SIZE) + border_style + _xs['top']
+        col_detail_format = 'font: name Helvetica, height {};alignment: wrap True;'.format(FONT_SIZE) + border_style + _xs['top']
         col_center_detail_style = xlwt.easyxf(col_detail_format + _xs['center'])
         col_right_detail_style = xlwt.easyxf(col_detail_format + _xs['right'])
         col_left_detail_style = xlwt.easyxf(col_detail_format + _xs['left'])
@@ -156,21 +156,18 @@ class PawnJo6ReportXLS(report_xls):
                     item_desc = '{} {:.2f} กรัม'.decode('utf-8').format(item_desc, po_line.gram)
                 item_description_list.append(item_desc)
                 # Item QTY
-                if po_line.product_qty == int(po_line.product_qty):
-                    item_qty_list.append(str(int(po_line.product_qty)))
-                else:
-                    item_qty_list.append(str(po_line.product_qty))
+                item_qty_list.append(po_line.product_qty)
             item_description = '\n'.join(item_description_list)
-            item_qty = '\n'.join(item_qty_list) + '\n'
+            item_qty = sum(item_qty_list)
             c_specs = [
                 ('number', 1, 0, 'number', i + 1, None, col_center_detail_style),
                 ('date_order', 1, 0, 'text', (
                     datetime.datetime.strptime(po.date_order, '%Y-%m-%d').date() + relativedelta(years=543)).strftime('%d/%m/%Y'), None, col_center_detail_style),
                 ('pawn_number', 1, 0, 'number', po.name[2:], None, col_right_detail_style),
                 ('customer_name', 1, 0, 'text', po.partner_id.name, None, col_left_detail_style),
-                ('customer_address', 1, 0, 'text', po.partner_id.address_full, None, col_left_detail_style),
-                ('item_description', 1, 0, 'text', item_description or None, None, col_left_detail_style),
-                ('item_qty', 1, 0, 'text', item_qty, None, col_center_detail_style),
+                ('customer_address', 1, 0, 'text', po.partner_id.address_full or None, None, col_left_detail_style),
+                ('item_description', 1, 0, 'text', item_description, None, col_left_detail_style),
+                ('item_qty', 1, 0, 'number', item_qty, None, col_center_detail_style),
                 ('total_baht', 1, 0, 'number', int(po.amount_pawned), None, col_right_detail_style),
                 ('total_satang', 1, 0, 'number', int(round(po.amount_pawned - int(po.amount_pawned), 2) * 100), None, col_center_detail_style),
                 ('note', 1, 0, 'text', None, None, col_left_detail_style),
