@@ -169,7 +169,7 @@ class PawnJo6ReportXLS(report_xls):
                 ('pawn_number', 1, 0, 'number', po.name[2:], None, col_right_detail_style),
                 ('customer_name', 1, 0, 'text', po.partner_id.name, None, col_left_detail_style),
                 ('customer_address', 1, 0, 'text', po.partner_id.address_full, None, col_left_detail_style),
-                ('item_description', 1, 0, 'text', item_description, None, col_left_detail_style),
+                ('item_description', 1, 0, 'text', item_description or None, None, col_left_detail_style),
                 ('item_qty', 1, 0, 'text', item_qty, None, col_center_detail_style),
                 ('total_baht', 1, 0, 'number', int(po.amount_pawned), None, col_right_detail_style),
                 ('total_satang', 1, 0, 'number', int(round(po.amount_pawned - int(po.amount_pawned), 2) * 100), None, col_center_detail_style),
