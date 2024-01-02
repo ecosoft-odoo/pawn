@@ -3,6 +3,7 @@ from openerp.addons.report_xls.report_xls import report_xls
 from openerp.report import report_sxw
 from openerp.tools.translate import _
 from dateutil.relativedelta import relativedelta
+from xlwt.Style import default_style
 import xlwt
 import datetime
 
@@ -76,6 +77,33 @@ class PawnJo6ReportXLSParser(report_sxw.rml_parse):
 class PawnJo6ReportXLS(report_xls):
     column_sizes = [x[1] for x in COLUMN_SIZES]
 
+    def xls_write_row(self, ws, row_pos, row_data,
+                      row_style=default_style, set_column_size=False, row_merge=1):
+        r = ws.row(row_pos)
+        for col, size, spec in row_data:
+            data = spec[4]
+            formula = spec[5].get('formula') and \
+                xlwt.Formula(spec[5]['formula']) or None
+            style = spec[6] and spec[6] or row_style
+            if not data:
+                # if no data, use default values
+                data = report_xls.xls_types_default[spec[3]]
+            if size != 1 or row_merge != 1:
+                if formula:
+                    ws.write_merge(
+                        row_pos, row_pos + row_merge - 1, col, col + size - 1, data, style)
+                else:
+                    ws.write_merge(
+                        row_pos, row_pos + row_merge - 1, col, col + size - 1, data, style)
+            else:
+                if formula:
+                    ws.write(row_pos, col, formula, style)
+                else:
+                    spec[5]['write_cell_func'](r, col, data, style)
+            if set_column_size:
+                ws.col(col).width = spec[2] * 256
+        return row_pos + row_merge
+
     def generate_xls_report(self, _p, _xs, data, objects, wb):
         ws = wb.add_sheet(_p.report_name[:31])
         ws.panes_frozen = True
@@ -115,7 +143,7 @@ class PawnJo6ReportXLS(report_xls):
         for i in range(row_pos + 1):
             ws.row(i).height_mismatch = True
             ws.row(i).height = ROW_HEIGHT
-        ws.set_horz_split_pos(row_pos + 1)
+        ws.set_horz_split_pos(row_pos + 2)
 
         # Column Header
         border_style = 'borders: left thin, right thin, top thin, bottom thin, left_colour black, right_colour black, top_colour black, bottom_colour black;'
@@ -133,7 +161,7 @@ class PawnJo6ReportXLS(report_xls):
             ('note', 1, 0, 'text', _('หมายเหตุ'), None, col_header_style),
         ]
         row_data = self.xls_row_template(c_specs, [x[0] for x in c_specs])
-        row_pos = self.xls_write_row(ws, row_pos, row_data)
+        row_pos = self.xls_write_row(ws, row_pos, row_data, row_merge=2)
 
         # Column Detail
         col_detail_format = 'font: name Helvetica, height {};alignment: wrap True;'.format(FONT_SIZE) + border_style + _xs['top']
