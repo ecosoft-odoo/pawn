@@ -136,7 +136,7 @@ class PawnJo6ReportXLS(report_xls):
         row_pos = self.xls_write_row(ws, row_pos, row_data)
 
         # Column Detail
-        col_detail_format = 'font: name Garuda, height {};'.format(FONT_SIZE) + border_style + _xs['top']
+        col_detail_format = 'font: name Garuda, height {};alignment: wrap True;'.format(FONT_SIZE) + border_style + _xs['top']
         col_center_detail_style = xlwt.easyxf(col_detail_format + _xs['center'])
         col_right_detail_style = xlwt.easyxf(col_detail_format + _xs['right'])
         col_left_detail_style = xlwt.easyxf(col_detail_format + _xs['left'])
