@@ -19,7 +19,7 @@ COLUMN_SIZES = [
     ('note', 20),
 ]
 
-ROW_HEIGHT = 400
+ROW_HEIGHT = 380
 
 FONT_SIZE = 200
 
