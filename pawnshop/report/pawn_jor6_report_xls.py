@@ -190,7 +190,7 @@ class PawnJo6ReportXLS(report_xls):
             item_qty = sum(item_qty_list)
             c_specs = [
                 ('number', 1, 0, 'number', i + 1, None, col_center_detail_style),
-                ('date_order', 1, 0, 'text', (
+                ('date_order', 1, 0, 'date', (
                     datetime.datetime.strptime(po.date_order, '%Y-%m-%d').date() + relativedelta(years=543)), None, col_center_date_detail_style),
                 ('pawn_number', 1, 0, 'number', po.name[2:], None, col_right_detail_style),
                 ('customer_name', 1, 0, 'text', po.partner_id.name, None, col_left_detail_style),
