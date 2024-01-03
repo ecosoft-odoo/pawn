@@ -168,7 +168,6 @@ class PawnJo6ReportXLS(report_xls):
         col_center_detail_style = xlwt.easyxf(col_detail_format + _xs['center'])
         col_right_detail_style = xlwt.easyxf(col_detail_format + _xs['right'])
         col_left_detail_style = xlwt.easyxf(col_detail_format + _xs['left'])
-        col_center_date_detail_style = xlwt.easyxf(col_detail_format + _xs['center'], num_format_str='DD/MM/YYYY')
         pawn_orders = sorted(_p.report, key=lambda x: (x.date_expired, x.name))
         for i, po in enumerate(pawn_orders):
             po_lines = sorted(po.order_line, key=lambda x: x.id)
@@ -190,8 +189,8 @@ class PawnJo6ReportXLS(report_xls):
             item_qty = sum(item_qty_list)
             c_specs = [
                 ('number', 1, 0, 'number', i + 1, None, col_center_detail_style),
-                ('date_order', 1, 0, 'date', (
-                    datetime.datetime.strptime(po.date_order, '%Y-%m-%d').date() + relativedelta(years=543)), None, col_center_date_detail_style),
+                ('date_order', 1, 0, 'text', (
+                    datetime.datetime.strptime(po.date_order, '%Y-%m-%d').date() + relativedelta(years=543)).strftime('%d/%m/%Y'), None, col_center_detail_style),
                 ('pawn_number', 1, 0, 'number', po.name[2:], None, col_right_detail_style),
                 ('customer_name', 1, 0, 'text', po.partner_id.name, None, col_left_detail_style),
                 ('customer_address', 1, 0, 'text', po.partner_id.address_full or None, None, col_left_detail_style),
