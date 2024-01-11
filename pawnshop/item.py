@@ -76,12 +76,16 @@ class product_template(osv.osv):
                                   ('service', 'Service'),
                                   ('pawn_asset', 'Pawn Ticket')], 'Product Type', required=True, help="Consumable: Will not imply stock management for this product. \nStockable product: Will imply stock management for this product."),
         'pawn_shop_id': fields.related('order_id', 'pawn_shop_id', type='many2one', relation='pawn.shop', string='Shop', store=True, readonly=True),
+        'parent_order_id': fields.related('order_id', 'parent_id', type='many2one', relation='pawn.order', string='Previous Pawn Ticket', readonly=True,
+                                    store={
+                                        'pawn.order': (_get_product, ['parent_id'], 10),
+                                    }),
         'order_id': fields.many2one('pawn.order', 'Pawn Ticket', ondelete='cascade'),
         'partner_customer_id': fields.related('order_id','partner_id',type='many2one',relation='res.partner',string='Customer', store=True, readonly=True),
         'journal_id': fields.related('order_id', 'journal_id', type='many2one', relation='account.journal', string='Journal', readonly=True,
                                     store={
                                         'pawn.order': (_get_product, ['journal_id'], 10),
-                                    },),
+                                    }),
     }
 
 product_template()
