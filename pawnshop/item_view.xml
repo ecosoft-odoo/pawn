@@ -96,6 +96,7 @@
                    <field name="name" string="Pawn Item" filter_domain="['|',('name','ilike',self),('default_code','ilike',self)]"/>
                    <field name="item_description" string="Description" filter_domain="[('item_description','ilike',self)]"/>
                    <field name="categ_id"/>
+                   <field name="parent_order_id"/>
                    <group  expand='0' string='Group by...'>
                        <filter string='Shop' domain="[]" context="{'group_by' : 'pawn_shop_id'}"/>
                        <filter string='Journal' domain="[]" context="{'group_by' : 'journal_id'}"/>
@@ -132,7 +133,8 @@
                     <field name="price_pawned" string="Pawned Price"/>
                     <field name="state"/>
                     <field name="extended_x"/>
-                    <field name="location_status" string="Location" />
+                    <field name="parent_order_id"/>
+                    <!-- <field name="location_status" string="Location" /> -->
                 </tree>
             </field>
         </record>
@@ -211,6 +213,7 @@
 	            				<field name="pawn_shop_id" />
 	            				<field name="location_status" />
 	            				<field name="date_sold" string="Date Sold" />
+                                <field name="parent_order_id"/>
 	                        </group>
                         </group>
                         <notebook>
