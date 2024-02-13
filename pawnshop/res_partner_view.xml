@@ -149,6 +149,7 @@
                                 <field name="age" class="oe_inline"/> <label string="Years"/>
                             </div>
                             <field name="phone" />
+                            <field name="fingerprint" widget="image" class="oe_left oe_avatar"/>
                         </group>
                     </group>
                     <notebook colspan="4">

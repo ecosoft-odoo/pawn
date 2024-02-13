@@ -389,6 +389,7 @@ class pawn_order(osv.osv):
          'create_date': fields.datetime('Create Date', readonly=True),
          'item_description': fields.function(_get_item_description, type='text', string='Description'),
          'date_final_expired': fields.date('Final Expire Date', readonly=True),
+         'fingerprint': fields.binary('Fingerprint', readonly=True, states={'draft': [('readonly', False)]}, help="This field is fingerprint image of the customer."),
     }
     _defaults = {
         'company_id': lambda self, cr, uid, c: self.pool.get('res.users').browse(cr, uid, uid).company_id.id,
@@ -925,6 +926,7 @@ class pawn_order(osv.osv):
         partner = partner_obj.browse(cr, uid, partner_id)
         return {'value': {
             'pricelist_id': partner.property_product_pricelist.id,
+            'fingerprint': partner.fingerprint,
             }}
 
     def onchange_date(self, cr, uid, ids, date_order, currency_id, company_id, context=None):
