@@ -123,6 +123,7 @@ class res_partner(osv.osv):
         'receipt_ids': fields.one2many('account.voucher', 'partner_id', 'Sales Receipt', readonly=True),
         'create_date': fields.datetime('Create Date', readonly=True),
         'create_year': fields.function(_get_create_year, type='char', string='Create Year', store=True),
+        'fingerprint': fields.binary('Fingerprint', help="This field is fingerprint image of the customer."),
     }
     _defaults = {
         'pawnshop': True
