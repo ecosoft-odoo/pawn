@@ -108,14 +108,14 @@ class res_partner(osv.osv):
         return [('id', 'in', ids)]
 
     _columns = {
-        'pawnshop': fields.boolean('Pawnshop', required=False),
-        'partner_title': fields.selection(PARTNER_TITLE, 'Title', required=False),
-        'card_type': fields.selection(CARD_TYPE_SELECTION, 'Card Type', required=False),
-        'card_number': fields.char('ID Number', size=64, required=False, select=True),
-        'address_full': fields.text('Full Address', required=False),
-        'issue_date': fields.date('Date of Issue', required=False),
-        'expiry_date': fields.date('Date of Expiry', required=False),
-        'birth_date': fields.date('Birth Date', required=False),
+        'pawnshop': fields.boolean('Pawnshop', required=False, track_visibility='onchange'),
+        'partner_title': fields.selection(PARTNER_TITLE, 'Title', required=False, track_visibility='onchange'),
+        'card_type': fields.selection(CARD_TYPE_SELECTION, 'Card Type', required=False, track_visibility='onchange'),
+        'card_number': fields.char('ID Number', size=64, required=False, select=True, track_visibility='onchange'),
+        'address_full': fields.text('Full Address', required=False, track_visibility='onchange'),
+        'issue_date': fields.date('Date of Issue', required=False, track_visibility='onchange'),
+        'expiry_date': fields.date('Date of Expiry', required=False, track_visibility='onchange'),
+        'birth_date': fields.date('Birth Date', required=False, track_visibility='onchange'),
         'age': fields.function(_get_age, string='Age', type='integer', fnct_search=_search_age),
         'pawn_shop_ids': fields.function(_get_pawn_shop, method=True, type='one2many', relation='pawn.shop', string='Customer of shops', readonly=True),
         'pawn_order_ids': fields.one2many('pawn.order', 'partner_id', 'Pawn Order', readonly=True),
@@ -124,6 +124,12 @@ class res_partner(osv.osv):
         'create_date': fields.datetime('Create Date', readonly=True),
         'create_year': fields.function(_get_create_year, type='char', string='Create Year', store=True),
         'fingerprint': fields.binary('Fingerprint', help="This field is fingerprint image of the customer."),
+        'name': fields.char('Name', size=128, required=True, select=True, track_visibility='onchange'),
+        'active': fields.boolean('Active', track_visibility='onchange'),
+        'country_id': fields.many2one('res.country', 'Country', track_visibility='onchange'),
+        'phone': fields.char('Phone', size=64, track_visibility='onchange'),
+        'customer': fields.boolean('Customer', track_visibility='onchange', help="Check this box if this contact is a customer."),
+        'supplier': fields.boolean('Supplier', track_visibility='onchange', help="Check this box if this contact is a supplier. If it's not checked, purchase people will not see it when encoding a purchase order."),
     }
     _defaults = {
         'pawnshop': True
