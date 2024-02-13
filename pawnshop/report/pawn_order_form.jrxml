@@ -142,6 +142,9 @@
 	<field name="create_time" class="java.sql.Timestamp">
 		<fieldDescription><![CDATA[create_date]]></fieldDescription>
 	</field>
+    <field name="fingerprint" class="java.lang.String">
+        <fieldDescription><![CDATA[fingerprint]]></fieldDescription>
+    </field>
 	<variable name="product_qty" class="java.lang.Number" calculation="Sum">
 		<variableExpression><![CDATA[$F{product_qty}]]></variableExpression>
 	</variable>
@@ -432,6 +435,12 @@ $F{card_type} == "passport" ? "หมายเลขหนังสือเด�
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{doc_name}]]></textFieldExpression>
 			</textField>
+            <image hAlign="Center" vAlign="Top" isUsingCache="true" isLazy="true">
+                <reportElement x="240" y="105" width="100" height="100">
+                    <printWhenExpression><![CDATA[$F{fingerprint} != false && $F{fingerprint} != null && $F{fingerprint} != '']]></printWhenExpression>
+                </reportElement>
+                <imageExpression class="java.lang.String"><![CDATA[$F{fingerprint}]]></imageExpression>
+            </image>
 		</band>
 	</pageFooter>
 </jasperReport>
