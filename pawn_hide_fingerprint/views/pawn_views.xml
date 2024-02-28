@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="pawn_order_form" model="ir.ui.view">
+            <field name="name">pawn.order.form</field>
+            <field name="model">pawn.order</field>
+            <field name="inherit_id" ref="pawnshop.pawn_order_form"/>
+            <field name="arch" type="xml">
+                <field name="fingerprint" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>
