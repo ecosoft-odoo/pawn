@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<openerp>
+    <data>
+        <record id="view_partner_form" model="ir.ui.view">
+            <field name="name">res.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="pawnshop.view_partner_form"/>
+            <field name="arch" type="xml">
+                <field name="country_id" position="replace"/>
+                <field name="address_full" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="address_full" position="before">
+                    <label for="street" string="Address"/>
+                    <div>
+                        <field name="street" placeholder="Street..."/>
+                        <div class="address_format">
+                            <field name="country_id" placeholder="Country" class="oe_no_button" options="{'limit': 10, 'create': false, 'create_edit': false, 'no_open': true}" on_change="onchange_country_id(country_id)"/>
+                            <field name="province_id" placeholder="Province" class="oe_no_button" options="{'limit': 10, 'create': false, 'create_edit': false, 'no_open': true}" on_change="onchange_province_id(province_id)"/>
+                            <field name="district_id" placeholder="District" class="oe_no_button" options="{'limit': 10, 'create': false, 'create_edit': false, 'no_open': true}" on_change="onchange_district_id(district_id)"/>
+                            <field name="township_id" placeholder="Township" class="oe_no_button" options="{'limit': 10, 'create': false, 'create_edit': false, 'no_open': true}" on_change="onchange_township_id(township_id)"/>
+                            <field name="zip" placeholder="Zip Code"/>
+                        </div>
+                    </div>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>
