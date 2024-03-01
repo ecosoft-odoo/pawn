@@ -57,7 +57,7 @@
             <field name="name">res.country.district.tree</field>
             <field name="model">res.country.district</field>
             <field name="arch" type="xml">
-                <tree string="Province">
+                <tree string="District">
                     <field name="name"/>
                     <field name="province_id"/>
                 </tree>
