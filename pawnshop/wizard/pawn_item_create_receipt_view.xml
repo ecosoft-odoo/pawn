@@ -11,7 +11,8 @@
                     <group>
 	                    <group>
         	                <field name="partner_id" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
-            	        </group>
+            	            <field name="date_sold"/>
+                        </group>
 	                    <group>
         	                <field name="note" />
             	        </group>

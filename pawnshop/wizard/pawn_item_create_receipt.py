@@ -31,13 +31,18 @@ class pawn_item_create_receipt(osv.osv_memory):
     _columns={
         'partner_id': fields.many2one('res.partner', 'Customer', required=True, domain=[('customer', '=', True), ('pawnshop', '=', True)]),
         'item_ids': fields.many2many('product.product', 'pawn_item_create_receipt_rel', 'wizard_id', 'product_id', 'Items'),
-        'note': fields.text('Note')
+        'note': fields.text('Note'),
+        'date_sold': fields.date('Date Sold'),
      }
+
+    _defaults = {
+        'date_sold': fields.date.context_today,
+    }
 
     def default_get(self, cr, uid, fields, context=None):
         res = super(pawn_item_create_receipt, self).default_get(cr, uid, fields, context=context)
         if context and 'active_ids' in context and context['active_ids']:
-            res.update({'item_ids':  context['active_ids']})
+            res.update({'item_ids': context['active_ids']})
         return res
 
     def pawn_item_create_receipt(self, cr, uid, ids, context):
@@ -58,7 +63,7 @@ class pawn_item_create_receipt(osv.osv_memory):
         l = len(list(set([p.journal_id.id for p in items])))
         if l > 1:
             raise osv.except_osv(_('Error!'), _("Item from different journal is not allowed"))
-        
+
         lines = []
         prev_shop = None
         # Prepare Lines
@@ -73,7 +78,7 @@ class pawn_item_create_receipt(osv.osv_memory):
         voucher = self._prepare_voucher(cr, uid, wizard, lines, context=context)
         voucher_id = voucher_obj.create(cr, uid, voucher, context=context)
         return self.open_vouchers(cr, uid, ids, voucher_id, context=context)
-    
+
     def _prepare_voucher_line(self, cr, uid, item, account_id=False, context=None):
         if not account_id:
             if item:
@@ -94,7 +99,7 @@ class pawn_item_create_receipt(osv.osv_memory):
             'uos_id': item.uom_id.id,
             'product_id': item.id or False,
         }
-        return res    
+        return res
 
     def _prepare_voucher(self, cr, uid, wizard, lines, context=None):
         if context is None:
@@ -118,7 +123,7 @@ class pawn_item_create_receipt(osv.osv_memory):
             'line_cr_ids': lines,
             'name': wizard.note,
             'pay_now': 'pay_now',
-            'date': fields.date.context_today(self, cr, uid, context=context),
+            'date': wizard.date_sold or fields.date.context_today(self, cr, uid, context=context),
             'company_id': company.id,
             'user_id': uid or False
         }
@@ -131,7 +136,7 @@ class pawn_item_create_receipt(osv.osv_memory):
         form_id = form_res and form_res[1] or False
         tree_res = ir_model_data.get_object_reference(cr, uid, 'account_voucher', 'view_voucher_tree')
         tree_id = tree_res and tree_res[1] or False
- 
+
         return {
             'name': _('Sales Receipt'),
             'view_type': 'form',
@@ -142,7 +147,7 @@ class pawn_item_create_receipt(osv.osv_memory):
             'views': [(form_id, 'form'), (tree_id, 'tree')],
             'context': "{'default_type': 'sale', 'type': 'sale'}",
             'type': 'ir.actions.act_window',
-        }    
+        }
 
 pawn_item_create_receipt()
 
