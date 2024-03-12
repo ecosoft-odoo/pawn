@@ -77,6 +77,11 @@ class pawn_item_create_receipt(osv.osv_memory):
         # Prepare Voucher
         voucher = self._prepare_voucher(cr, uid, wizard, lines, context=context)
         voucher_id = voucher_obj.create(cr, uid, voucher, context=context)
+        # Onchange Date
+        vc = voucher_obj.browse(cr, uid, voucher_id, context=context)
+        data = voucher_obj.onchange_date(cr, uid, [voucher_id], vc.date, vc.currency_id.id, vc.currency_id.id, vc.amount, vc.company_id.id, context=context)
+        if data.get('value', False):
+            voucher_obj.write(cr, uid, [voucher_id], data['value'], context=context)
         return self.open_vouchers(cr, uid, ids, voucher_id, context=context)
 
     def _prepare_voucher_line(self, cr, uid, item, account_id=False, context=None):
