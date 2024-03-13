@@ -234,13 +234,13 @@
                     	</page>
                         <page string="Fingerprint Image" name="fingerprint_image">
                             <group>
-                                <group>
-                                    <field name="fingerprint_pawn" widget="image" class="oe_left oe_avatar"/>
-                                    <field name="fingerprint_pawn_date"/>
+                                <group string="Pawn">
+                                    <field name="fingerprint_pawn" string="Fingerprint" widget="image" class="oe_left oe_avatar"/>
+                                    <field name="fingerprint_pawn_date" string="Date of Fingerprint"/>
                                 </group>
-                                <group>
-                                    <field name="fingerprint_redeem" widget="image" class="oe_left oe_avatar"/>
-                                    <field name="fingerprint_redeem_date"/>
+                                <group string="Redeem">
+                                    <field name="fingerprint_redeem" string="Fingerprint" widget="image" class="oe_left oe_avatar"/>
+                                    <field name="fingerprint_redeem_date" string="Date of Fingerprint"/>
                                 </group>
                             </group>
                         </page>
