@@ -143,7 +143,7 @@
 		<fieldDescription><![CDATA[create_date]]></fieldDescription>
 	</field>
     <field name="fingerprint" class="java.lang.String">
-        <fieldDescription><![CDATA[fingerprint]]></fieldDescription>
+        <fieldDescription><![CDATA[fingerprint_pawn]]></fieldDescription>
     </field>
 	<variable name="product_qty" class="java.lang.Number" calculation="Sum">
 		<variableExpression><![CDATA[$F{product_qty}]]></variableExpression>

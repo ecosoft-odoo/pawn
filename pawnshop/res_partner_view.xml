@@ -149,7 +149,6 @@
                                 <field name="age" class="oe_inline"/> <label string="Years"/>
                             </div>
                             <field name="phone" />
-                            <field name="fingerprint" widget="image" class="oe_left oe_avatar"/>
                         </group>
                     </group>
                     <notebook colspan="4">
@@ -172,6 +171,15 @@
 						        </group>
 						    </group>
 						</page>
+                        <page string="Fingerprint Image" name="fingerprint_image">
+                            <group>
+                                <group>
+                                    <field name="fingerprint" widget="image" class="oe_left oe_avatar"/>
+                                    <field name="fingerprint_date"/>
+                                </group>
+                                <group/>
+                            </group>
+                        </page>
                     </notebook>
                 </sheet>
                 <div class="oe_chatter">

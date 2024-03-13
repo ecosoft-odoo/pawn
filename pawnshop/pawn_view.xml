@@ -87,7 +87,6 @@
                                 <field name="age" class="oe_inline"/> <label string="Years"/>
                             </div>
                             <field name="address" />
-                            <field name="fingerprint" widget="image" class="oe_left oe_avatar" />
                             <field name="pricelist_id" on_change="onchange_pricelist(pricelist_id, context)" invisible="1"/>
                             <field name="currency_id" invisible="1" />
                             <field name="item_id" readonly="1" invisible="1" />
@@ -233,6 +232,18 @@
                         		</tree>
                     		</field>
                     	</page>
+                        <page string="Fingerprint Image" name="fingerprint_image">
+                            <group>
+                                <group>
+                                    <field name="fingerprint_pawn" widget="image" class="oe_left oe_avatar"/>
+                                    <field name="fingerprint_pawn_date"/>
+                                </group>
+                                <group>
+                                    <field name="fingerprint_redeem" widget="image" class="oe_left oe_avatar"/>
+                                    <field name="fingerprint_redeem_date"/>
+                                </group>
+                            </group>
+                        </page>
                     </notebook>
                 </sheet>
                 <div class="oe_chatter">
