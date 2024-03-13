@@ -44,6 +44,7 @@
     'demo': [],
     'data': [
         'module_data.xml',
+        'ir_config_parameter_data.xml',
         'security/pawn_security.xml',
         #'security/ir.model.access.csv',
         'pawn_workflow.xml',

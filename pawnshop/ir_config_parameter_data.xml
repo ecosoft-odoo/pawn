@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data noupdate="1">
+        <record id="customer_fingerprint_timeout" model="ir.config_parameter">
+            <field name="key">pawnshop.customer_fingerprint_timeout</field>
+            <field name="value">300</field>
+        </record>
+    </data>
+</openerp>

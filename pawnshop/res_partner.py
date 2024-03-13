@@ -123,7 +123,8 @@ class res_partner(osv.osv):
         'receipt_ids': fields.one2many('account.voucher', 'partner_id', 'Sales Receipt', readonly=True),
         'create_date': fields.datetime('Create Date', readonly=True),
         'create_year': fields.function(_get_create_year, type='char', string='Create Year', store=True),
-        'fingerprint': fields.binary('Fingerprint', help="This field is fingerprint image of the customer."),
+        'fingerprint': fields.binary('Latest Fingerprint', readonly=True, help="Latest customer's fingerprint"),
+        'fingerprint_date': fields.datetime('Date of Lastest Fingerprint', readonly=True, help="Date of latest customer's fingerprint"),
         'name': fields.char('Name', size=128, required=True, select=True, track_visibility='onchange'),
         'active': fields.boolean('Active', track_visibility='onchange'),
         'country_id': fields.many2one('res.country', 'Country', track_visibility='onchange'),
@@ -211,7 +212,29 @@ class res_partner(osv.osv):
             ids = self.search(cr, uid, [('id', 'in', ids)] + args, limit=limit, context=context)
             if ids:
                 return self.name_get(cr, uid, ids, context)
-        return super(res_partner,self).name_search(cr, uid, name, args, operator=operator, context=context, limit=limit)
+        return super(res_partner, self).name_search(cr, uid, name, args, operator=operator, context=context, limit=limit)
+
+    def create(self, cr, uid, vals, context=None):
+        # Update fingerprint date
+        if 'fingerprint' in vals and vals['fingerprint']:
+            vals['fingerprint_date'] = fields.datetime.now()
+        return super(res_partner, self).create(cr, uid, vals, context=context)
+
+    def write(self, cr, uid, ids, vals, context=None):
+        # Update fingerprint date
+        if 'fingerprint' in vals and vals['fingerprint']:
+            vals['fingerprint_date'] = fields.datetime.now()
+        return super(res_partner, self).write(cr, uid, ids, vals, context=context)
+
+    def copy(self, cr, uid, id, default=None, context=None):
+        if default is None:
+            default = {}
+        # Reset fingerprint
+        default.update({
+            'fingerprint': False,
+            'fingerprint_date': False,
+        })
+        return super(res_partner, self).copy(cr, uid, id, default=default, context=context)
 
 
 res_partner()

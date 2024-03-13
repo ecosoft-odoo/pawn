@@ -56,8 +56,6 @@ class pawn_undo_cancel(osv.osv_memory):
         # Based on action, do the undo/cancel
         if action_type == 'order_cancel':
             self.pool.get('pawn.order').order_cancel(cr, uid, [active_id], context=context)
-            # Set due date = False
-            pawn_obj.write(cr, uid, [active_id], {'date_due_ticket': False}, context=context)
         if action_type == 'action_undo_pay_interest':
             self.pool.get('pawn.order').action_undo_pay_interest(cr, uid, [active_id], context=context)
         if action_type == 'action_undo_redeem':

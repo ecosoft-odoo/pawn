@@ -8,10 +8,10 @@
         auto="True"
         name="TEST"
         rml="pawnshop/report/test.jrxml"
-        id="test" 
+        id="test"
         menu="True"
-        header="False" 
-        />    
+        header="False"
+        />
     <record id="test" model="ir.actions.report.xml">
         <field name="jasper_report">True</field>
         <field name="jasper_output">pdf</field>
@@ -22,11 +22,25 @@
         auto="True"
         name="pawn.order.form"
         rml="pawnshop/report/pawn_order_form.jrxml"
-        id="pawn_order_form_1" 
+        id="pawn_order_form_1"
         menu="True"
-        header="False" 
-        />    
+        header="False"
+        />
     <record id="pawn_order_form_1" model="ir.actions.report.xml">
+        <field name="jasper_report">True</field>
+        <field name="jasper_output">pdf</field>
+    </record>
+
+    <report string="Redeem Ticket"
+        model="pawn.order"
+        auto="True"
+        name="redeem.order.form"
+        rml="pawnshop/report/redeem_order_form.jrxml"
+        id="redeem_order_form_1"
+        menu="True"
+        header="False"
+        />
+    <record id="redeem_order_form_1" model="ir.actions.report.xml">
         <field name="jasper_report">True</field>
         <field name="jasper_output">pdf</field>
     </record>
@@ -36,10 +50,10 @@
         auto="True"
         name="pawn.receipt.form"
         rml="pawnshop/report/pawn_receipt_form.jrxml"
-        id="pawn_receipt_form" 
+        id="pawn_receipt_form"
         menu="True"
-        header="False" 
-        />    
+        header="False"
+        />
     <record id="pawn_receipt_form" model="ir.actions.report.xml">
         <field name="jasper_report">True</field>
         <field name="jasper_output">pdf</field>
@@ -54,7 +68,7 @@
         <field name="report_type">pdf</field>
         <field name="jasper_report">True</field>
         <field name="jasper_output">pdf</field>
-    </record>    
+    </record>
 
     <record id="pawn_jor71_report" model="ir.actions.report.xml">
         <field name="name">Jor7-1 Report</field>
@@ -65,7 +79,7 @@
         <field name="report_type">pdf</field>
         <field name="jasper_report">True</field>
         <field name="jasper_output">pdf</field>
-    </record>    
+    </record>
 
     <record id="pawn_jor72_report" model="ir.actions.report.xml">
         <field name="name">Jor7-2 Report</field>
@@ -76,7 +90,7 @@
         <field name="report_type">pdf</field>
         <field name="jasper_report">True</field>
         <field name="jasper_output">pdf</field>
-    </record>    
+    </record>
 
     <record id="pawn_op_cash_report" model="ir.actions.report.xml">
         <field name="name">Operation Cash Report</field>
@@ -87,7 +101,7 @@
         <field name="report_type">pdf</field>
         <field name="jasper_report">True</field>
         <field name="jasper_output">pdf</field>
-    </record>    
+    </record>
 
     <record id="pawn_wh_cash_report" model="ir.actions.report.xml">
         <field name="name">Warehouse Cash Report</field>
@@ -98,7 +112,7 @@
         <field name="report_type">pdf</field>
         <field name="jasper_report">True</field>
         <field name="jasper_output">pdf</field>
-    </record>    
+    </record>
 
     <record id="pawn_daily_report" model="ir.actions.report.xml">
         <field name="name">Daily Report</field>
@@ -109,21 +123,21 @@
         <field name="report_type">pdf</field>
         <field name="jasper_report">True</field>
         <field name="jasper_output">pdf</field>
-    </record>    
-    
+    </record>
+
     <report string="Sales Receipt"
         model="account.voucher"
         auto="True"
         name="pawn.sale.receipt.form"
         rml="pawnshop/report/pawn_sale_receipt_form.jrxml"
-        id="pawn_sale_receipt_form" 
+        id="pawn_sale_receipt_form"
         menu="True"
-        header="False" 
-        />    
+        header="False"
+        />
     <record id="pawn_sale_receipt_form" model="ir.actions.report.xml">
         <field name="jasper_report">True</field>
         <field name="jasper_output">pdf</field>
     </record>
-    
+
 </data>
 </openerp>

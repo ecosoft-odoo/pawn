@@ -389,7 +389,10 @@ class pawn_order(osv.osv):
          'create_date': fields.datetime('Create Date', readonly=True),
          'item_description': fields.function(_get_item_description, type='text', string='Description'),
          'date_final_expired': fields.date('Final Expire Date', readonly=True),
-         'fingerprint': fields.binary('Fingerprint', readonly=True, states={'draft': [('readonly', False)]}, help="This field is fingerprint image of the customer."),
+         'fingerprint_pawn': fields.binary('Fingerprint Pawn', readonly=True, help="Customer's fingerprint when pawn the ticket"),
+         'fingerprint_pawn_date': fields.datetime('Date of Fingerprint Pawn', readonly=True, help="Date of customer's fingerprint when pawn the ticket"),
+         'fingerprint_redeem': fields.binary('Fingerprint Redeem', readonly=True, help="Customer's fingerprint when redeem the ticket"),
+         'fingerprint_redeem_date': fields.datetime('Date of Fingerprint Redeem', readonly=True, help="Date of customer's fingerprint when redeem the ticket"),
     }
     _defaults = {
         'company_id': lambda self, cr, uid, c: self.pool.get('res.users').browse(cr, uid, uid).company_id.id,
@@ -417,6 +420,31 @@ class pawn_order(osv.osv):
         pawn_item_obj.update_asset_status_by_order(cr, uid, order_ids, val, context=context)
         return True
 
+    def _update_fingerprint(self, cr, uid, order_ids, action_type=None, context=None):
+        for order in self.browse(cr, uid, order_ids, context=context):
+            if action_type and not order['fingerprint_%s' % action_type]:
+                fingerprint = order.partner_id.fingerprint
+                fingerprint_date = order.partner_id.fingerprint_date
+                # Check customer's fingerprint
+                now = fields.datetime.now()
+                fingerprint_timeout = int(self.pool.get('ir.config_parameter').get_param(cr, uid, 'pawnshop.customer_fingerprint_timeout', '300'))
+                if not fingerprint_date or (fingerprint_date and (datetime.strptime(now, "%Y-%m-%d %H:%M:%S") - datetime.strptime(fingerprint_date, "%Y-%m-%d %H:%M:%S")).total_seconds() > fingerprint_timeout):
+                    raise osv.except_osv(_('Error!'), _("The customer's fingerprint was not detected. Kindly submit a new fingerprint."))
+                self.write(cr, uid, [order.id], {
+                    'fingerprint_%s' % action_type: fingerprint,
+                    'fingerprint_%s_date' % action_type: fingerprint_date,
+                }, context=context)
+        return True
+
+    def _reset_fingerprint(self, cr, uid, order_ids, action_type=None, context=None):
+        for order in self.browse(cr, uid, order_ids, context=context):
+            if action_type and order['fingerprint_%s' % action_type]:
+                self.write(cr, uid, [order.id], {
+                    'fingerprint_%s' % action_type: False,
+                    'fingerprint_%s_date' % action_type: False,
+                }, context=context)
+        return True
+
     # Workflow
     def order_draft(self, cr, uid, ids, context=None):
         self.write(cr, uid, ids, {'state': 'draft'}, context=context)
@@ -434,6 +462,9 @@ class pawn_order(osv.osv):
             #elif order.state == 'redeem':  # case from redeem, do not update status.
             self.write(cr, uid, [order.id], {'state': 'pawn'}, context=context)
             self._update_order_pawn_asset(cr, uid, [order.id], {'state': 'pawn'}, context=context)
+            # Fingerprint
+            self._update_fingerprint(cr, uid, [order.id], action_type='pawn', context=context)
+            self._reset_fingerprint(cr, uid, [order.id], action_type='redeem', context=context)
         return True
 
     def order_redeem(self, cr, uid, ids, context=None):
@@ -441,8 +472,10 @@ class pawn_order(osv.osv):
         for pawn in self.browse(cr, uid, ids, context=context):
             if pawn.state != 'expire':
                 self.action_move_create(cr, uid, [pawn.id], context={'direction': 'redeem'})
-        self.write(cr, uid, ids, {'state': 'redeem'}, context=context)
-        self._update_order_pawn_asset(cr, uid, ids, {'state': 'redeem'}, context=context)
+            self.write(cr, uid, [pawn.id], {'state': 'redeem'}, context=context)
+            self._update_order_pawn_asset(cr, uid, [pawn.id], {'state': 'redeem'}, context=context)
+            # Fingerprint
+            self._update_fingerprint(cr, uid, [pawn.id], action_type='redeem', context=context)
         return True
 
     def order_expire(self, cr, uid, ids, context=None):
@@ -509,8 +542,14 @@ class pawn_order(osv.osv):
                     move_obj.button_cancel(cr, uid, [accrued_interest.move_id.id], context=context)
                     move_obj.unlink(cr, uid, [accrued_interest.move_id.id], context=context)
             # --
-        self.write(cr, uid, ids, {'state': 'cancel'}, context=context)
-        self._update_order_pawn_asset(cr, uid, ids, {'state': 'cancel'}, context=context)
+            self.write(cr, uid, [order.id], {
+                'state': 'cancel',
+                'date_due_ticket': False, # Set due date = False
+            }, context=context)
+            self._update_order_pawn_asset(cr, uid, [order.id], {'state': 'cancel'}, context=context)
+            # Fingerprint
+            self._reset_fingerprint(cr, uid, [order.id], action_type='pawn', context=context)
+            self._reset_fingerprint(cr, uid, [order.id], action_type='redeem', context=context)
         return True
 
     def action_undo_pay_interest(self, cr, uid, ids, context=None):
@@ -904,6 +943,9 @@ class pawn_order(osv.osv):
             'date_final_expired': False,
         })
         pawn_id = super(pawn_order, self).copy(cr, uid, id, default, context)
+        # Fingerprint
+        self._reset_fingerprint(cr, uid, [pawn_id], action_type='pawn', context=context)
+        self._reset_fingerprint(cr, uid, [pawn_id], action_type='redeem', context=context)
         return pawn_id
 
     # Onchange
@@ -926,7 +968,6 @@ class pawn_order(osv.osv):
         partner = partner_obj.browse(cr, uid, partner_id)
         return {'value': {
             'pricelist_id': partner.property_product_pricelist.id,
-            'fingerprint': partner.fingerprint,
             }}
 
     def onchange_date(self, cr, uid, ids, date_order, currency_id, company_id, context=None):
