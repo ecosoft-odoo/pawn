@@ -124,7 +124,7 @@ class res_partner(osv.osv):
         'create_date': fields.datetime('Create Date', readonly=True),
         'create_year': fields.function(_get_create_year, type='char', string='Create Year', store=True),
         'fingerprint': fields.binary('Latest Fingerprint', readonly=True, help="Latest customer's fingerprint"),
-        'fingerprint_date': fields.datetime('Date of Lastest Fingerprint', readonly=True, help="Date of latest customer's fingerprint"),
+        'fingerprint_date': fields.datetime('Date of Latest Fingerprint', readonly=True, help="Date of latest customer's fingerprint"),
         'name': fields.char('Name', size=128, required=True, select=True, track_visibility='onchange'),
         'active': fields.boolean('Active', track_visibility='onchange'),
         'country_id': fields.many2one('res.country', 'Country', track_visibility='onchange'),
