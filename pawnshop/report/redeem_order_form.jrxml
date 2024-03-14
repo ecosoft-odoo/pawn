@@ -7,7 +7,7 @@
         <![CDATA[/data/record]]>
     </queryString>
     <field name="pawnshop" class="java.lang.String">
-	    <fieldDescription><![CDATA[pawn_shop_id/name]]></fieldDescription>
+        <fieldDescription><![CDATA[pawn_shop_id/name]]></fieldDescription>
     </field>
     <field name="doc_name" class="java.lang.String">
         <fieldDescription><![CDATA[name]]></fieldDescription>
@@ -21,18 +21,21 @@
     <field name="date_redeem" class="java.util.Date">
         <fieldDescription><![CDATA[date_redeem]]></fieldDescription>
     </field>
+    <field name="fingerprint_redeem_date" class="java.util.Date">
+        <fieldDescription><![CDATA[fingerprint_redeem_date]]></fieldDescription>
+    </field>
     <field name="fingerprint" class="java.lang.String">
         <fieldDescription><![CDATA[fingerprint_redeem]]></fieldDescription>
     </field>
     <pageHeader>
         <band height="179" splitType="Stretch">
             <textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="0" y="7" width="179" height="17"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Monospaced" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["โรงรับจำนำ" + $F{pawnshop}]]></textFieldExpression>
-			</textField>
+                <reportElement positionType="Float" x="0" y="7" width="179" height="17"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="Monospaced" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+                </textElement>
+                <textFieldExpression class="java.lang.String"><![CDATA["โรงรับจำนำ" + $F{pawnshop}]]></textFieldExpression>
+            </textField>
             <textField isStretchWithOverflow="true" isBlankWhenNull="true">
                 <reportElement positionType="Float" x="0" y="24" width="179" height="17"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
@@ -47,20 +50,24 @@
                 </textElement>
                 <textFieldExpression class="java.lang.String"><![CDATA["จาก " + ($F{partner_title} == "mr" ? "นาย" : ($F{partner_title} == "mrs" ? "นาง" : ($F{partner_title} == "miss" ? "นางสาว" : "xx"))) + " " + $F{cust_name}]]></textFieldExpression>
             </textField>
-            <staticText>
-                <reportElement positionType="Float" x="45" y="58" width="134" height="17"/>
-                <textElement textAlignment="Left" verticalAlignment="Middle">
+            <textField isStretchWithOverflow="true" pattern="'วันที่' dd MMMMM yyyy" isBlankWhenNull="true">
+                <reportElement positionType="Float" mode="Transparent" x="0" y="58" width="179" height="17">
+                    <printWhenExpression><![CDATA[$F{fingerprint_redeem_date} == null]]></printWhenExpression>
+                </reportElement>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font fontName="Monospaced" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
                 </textElement>
-                <text><![CDATA[วันที่]]></text>
-            </staticText>
-			<textField isStretchWithOverflow="true" pattern="dd MMMMM yyyy" isBlankWhenNull="true">
-			    <reportElement positionType="Float" mode="Transparent" x="65" y="58" width="114" height="17"/>
-			    <textElement textAlignment="Left" verticalAlignment="Middle">
-				    <font fontName="Monospaced" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
-			    </textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_redeem}]]></textFieldExpression>
-			</textField>
+                <textFieldExpression class="java.util.Date"><![CDATA[$F{date_redeem}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" pattern="'วันที่' dd MMMMM yyyy 'เวลา' HH:mm 'น.'" isBlankWhenNull="true">
+                <reportElement positionType="Float" mode="Transparent" x="-35" y="58" width="250" height="17">
+                    <printWhenExpression><![CDATA[$F{fingerprint_redeem_date} != null]]></printWhenExpression>
+                </reportElement>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="Monospaced" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+                </textElement>
+                <textFieldExpression class="java.util.Date"><![CDATA[new Date($F{fingerprint_redeem_date}.getTime() + 7 * 3600 * 1000)]]></textFieldExpression>
+            </textField>
             <image hAlign="Center" vAlign="Top" isUsingCache="true" isLazy="true">
                 <reportElement x="33" y="80" width="113" height="65">
                     <printWhenExpression><![CDATA[$F{fingerprint} != false && $F{fingerprint} != null && $F{fingerprint} != '']]></printWhenExpression>
@@ -74,6 +81,6 @@
                 </textElement>
                 <text><![CDATA[รับเงินเรียบร้อยแล้ว]]></text>
             </staticText>
-		</band>
-	</pageHeader>
+        </band>
+    </pageHeader>
 </jasperReport>
