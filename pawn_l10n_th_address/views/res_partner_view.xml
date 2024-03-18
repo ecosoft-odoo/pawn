@@ -17,7 +17,7 @@
                         <field name="township" placeholder="Township"/>
                         <field name="district" placeholder="District"/>
                         <field name="province" placeholder="Province"/>
-                        <field name="zip" placeholder="Zip Code"/>
+                        <field name="zip" placeholder="Zip Code" invisible="1"/>
                     </div>
                 </field>
             </field>
