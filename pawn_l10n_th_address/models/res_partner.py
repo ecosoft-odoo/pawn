@@ -10,71 +10,78 @@ class ResPartner(osv.osv):
     _inherit = "res.partner"
 
     _columns = {
-        "province_id": fields.many2one(
-            "res.country.province",
-            domain="[('country_id','=',country_id)]",
-            ondelete="restrict",
+        "province": fields.char(
+            string="Province",
         ),
-        "district_id": fields.many2one(
-            "res.country.district",
-            domain="[('province_id','=',province_id)]",
-            ondelete="restrict",
+        "district": fields.char(
+            string="District",
         ),
-        "township_id": fields.many2one(
-            "res.country.township",
-            domain="[('district_id','=',district_id)]",
-            ondelete="restrict",
-        ),
+        "township": fields.char(
+            string="Township",
+        )
     }
 
-    def onchange_country_id(self, cr, uid, ids, country_id, context=None):
-        return {"value": {"province_id": False}}
-
-    def onchange_province_id(self, cr, uid, ids, province_id, context=None):
-        return {"value": {"district_id": False}}
-
-    def onchange_district_id(self, cr, uid, ids, district_id, context=None):
-        return {"value": {"township_id": False}}
-
-    def onchange_township_id(self, cr, uid, ids, township_id, context=None):
-        if township_id:
-            township = self.pool.get("res.country.township").browse(cr, uid, township_id, context=context)
-            return {"value": {"zip": township.zip}}
-        return {"value": {"zip": False}}
+    def _update_address_full(self, cr, uid, partner_id, context=None):
+        cr.execute("""
+            SELECT
+                TRIM(
+                   -- Street
+                   (
+                    CASE WHEN TRIM(COALESCE(street, '')) = '' THEN '' ELSE
+                        ' ' || TRIM(COALESCE(street, '')) END
+                   ) ||
+                   -- Township
+                   (
+                    CASE WHEN TRIM(COALESCE(township, '')) = '' THEN '' ELSE
+                        ' ' || (
+                            CASE
+                                WHEN LEFT(TRIM(COALESCE(township, '')), 2) <> 'ต.' AND
+                                     LEFT(TRIM(COALESCE(township, '')), 4) <> 'ตำบล' AND
+                                     LEFT(TRIM(COALESCE(township, '')), 4) <> 'แขวง' THEN 'ต.' || TRIM(COALESCE(township, ''))
+                                ELSE TRIM(COALESCE(township, '')) END
+                        ) END
+                   ) ||
+                   -- District
+                   (
+                    CASE WHEN TRIM(COALESCE(district, '')) = '' THEN '' ELSE
+                        ' ' || (
+                            CASE
+                                WHEN LEFT(TRIM(COALESCE(district, '')), 2) <> 'อ.' AND
+                                     LEFT(TRIM(COALESCE(district, '')), 5) <> 'อำเภอ' AND
+                                     LEFT(TRIM(COALESCE(district, '')), 3) <> 'เขต' THEN 'อ.' || TRIM(COALESCE(district, ''))
+                                ELSE TRIM(COALESCE(district, '')) END
+                        ) END
+                   ) ||
+                   -- Province
+                   (
+                    CASE WHEN TRIM(COALESCE(province, '')) = '' THEN '' ELSE
+                        ' ' || (
+                            CASE
+                                WHEN LEFT(TRIM(COALESCE(province, '')), 2) <> 'จ.' AND
+                                     LEFT(TRIM(COALESCE(province, '')), 7) <> 'จังหวัด' THEN 'จ.' || TRIM(COALESCE(province, ''))
+                                ELSE TRIM(COALESCE(province, '')) END
+                        ) END
+                   ) ||
+                   -- Zip
+                   (
+                    CASE WHEN TRIM(COALESCE(zip, '')) = '' THEN '' ELSE
+                        ' ' || TRIM(COALESCE(zip, '')) END
+                   )
+                ) AS address_full
+            FROM res_partner
+            WHERE id = %s
+        """ % partner_id)
+        self.write(cr, uid, partner_id, {"address_full": cr.fetchone()[0]}, context=context)
+        return True
 
     def create(self, cr, uid, vals, context=None):
-        address_list = []
-        if vals.get("street"):
-            address_list.append(vals["street"])
-        if vals.get("township_id"):
-            township = self.pool.get("res.country.township").browse(cr, uid, vals["township_id"], context=context)
-            address_list.append(township.name)
-        if vals.get("district_id"):
-            district = self.pool.get("res.country.district").browse(cr, uid, vals["district_id"], context=context)
-            address_list.append(district.name)
-        if vals.get("province_id"):
-            province = self.pool.get("res.country.province").browse(cr, uid, vals["province_id"], context=context)
-            address_list.append(province.name)
-        if vals.get("zip"):
-            address_list.append(vals["zip"])
-        vals["address_full"] = " ".join(address_list)
-        return super(ResPartner, self).create(cr, uid, vals, context=context)
+        partner_id = super(ResPartner, self).create(cr, uid, vals, context=context)
+        self._update_address_full(cr, uid, partner_id, context=context)
+        return partner_id
 
     def write(self, cr, uid, ids, vals, context=None):
         res = super(ResPartner, self).write(cr, uid, ids, vals, context=context)
-        if vals.get("street") or vals.get("township_id") or vals.get("district_id") or vals.get("province_id") or vals.get("zip"):
-            partners = self.browse(cr, uid, ids, context=context)
-            for partner in partners:
-                address_list = []
-                if partner.street:
-                    address_list.append(partner.street)
-                if partner.township_id:
-                    address_list.append(partner.township_id.name)
-                if partner.district_id:
-                    address_list.append(partner.district_id.name)
-                if partner.province_id:
-                    address_list.append(partner.province_id.name)
-                if partner.zip:
-                    address_list.append(partner.zip)
-                self.write(cr, uid, [partner.id], {"address_full": " ".join(address_list)}, context=context)
+        if "street" in vals or "township" in vals or "district" in vals or "province" in vals or "zip" in vals:
+            for partner_id in ids:
+                self._update_address_full(cr, uid, partner_id, context=context)
         return res

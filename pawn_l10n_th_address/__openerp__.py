@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 {
-    "name": "Pawnshop :: Partner Address in Thai",
+    "name": "Pawnshop :: Partner Address",
     "version": "7.0.1.0.0",
     "category": "Hidden",
     "author": "Ecosoft",
@@ -11,11 +11,6 @@
     "depends": ["pawnshop"],
     "license": "AGPL-3",
     "data": [
-        "security/ir.model.access.csv",
-        "data/res.country.province.csv",
-        "data/res.country.district.csv",
-        "data/res.country.township.csv",
-        "views/res_country_view.xml",
         "views/res_partner_view.xml",
     ],
     "installable": True,
