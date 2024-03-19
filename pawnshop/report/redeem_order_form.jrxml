@@ -27,6 +27,9 @@
     <field name="fingerprint" class="java.lang.String">
         <fieldDescription><![CDATA[fingerprint_redeem]]></fieldDescription>
     </field>
+    <field name="child" class="java.lang.String">
+        <fieldDescription><![CDATA[child_id/name]]></fieldDescription>
+    </field>
     <pageHeader>
         <band height="179" splitType="Stretch">
             <textField isStretchWithOverflow="true" isBlankWhenNull="true">
@@ -44,7 +47,7 @@
                 <textFieldExpression class="java.lang.String"><![CDATA["ไถ่ถอนตั๋วเลขที่ " + $F{doc_name}]]></textFieldExpression>
             </textField>
             <textField isStretchWithOverflow="true" isBlankWhenNull="true">
-                <reportElement positionType="Float" x="0" y="41" width="179" height="17"/>
+                <reportElement positionType="Float" x="-60" y="41" width="300" height="17"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font fontName="Monospaced" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
                 </textElement>
@@ -80,6 +83,20 @@
                     <font fontName="Monospaced" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
                 </textElement>
                 <text><![CDATA[รับเงินเรียบร้อยแล้ว]]></text>
+            </staticText>
+            <rectangle>
+                <reportElement x="140" y="159" width="39" height="20" backcolor="#000000">
+                    <printWhenExpression><![CDATA[$F{child}]]></printWhenExpression>
+                </reportElement>
+            </rectangle>
+            <staticText>
+                <reportElement positionType="Float" x="140" y="159" width="39" height="20" forecolor="#FFFFFF">
+                    <printWhenExpression><![CDATA[$F{child}]]></printWhenExpression>
+                </reportElement>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="Monospaced" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" size="9"/>
+                </textElement>
+                <text><![CDATA[ต่อตั๋ว]]></text>
             </staticText>
         </band>
     </pageHeader>
