@@ -81,7 +81,10 @@ class product_template(osv.osv):
                                         'pawn.order': (_get_product, ['parent_id'], 10),
                                     }),
         'order_id': fields.many2one('pawn.order', 'Pawn Ticket', ondelete='cascade'),
-        'partner_customer_id': fields.related('order_id','partner_id',type='many2one',relation='res.partner',string='Customer', store=True, readonly=True),
+        'partner_customer_id': fields.related('order_id','partner_id',type='many2one',relation='res.partner',string='Customer', readonly=True,
+                                    store={
+                                        'pawn.order': (_get_product, ['partner_id'], 10),
+                                    }),
         'journal_id': fields.related('order_id', 'journal_id', type='many2one', relation='account.journal', string='Journal', readonly=True,
                                     store={
                                         'pawn.order': (_get_product, ['journal_id'], 10),
