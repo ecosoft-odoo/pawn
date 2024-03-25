@@ -83,6 +83,7 @@ class product_template(osv.osv):
         'order_id': fields.many2one('pawn.order', 'Pawn Ticket', ondelete='cascade'),
         'partner_customer_id': fields.related('order_id','partner_id',type='many2one',relation='res.partner',string='Customer', readonly=True,
                                     store={
+                                        'product.template': (lambda self, cr, uid, ids, c={}: ids, ['order_id'], 10),
                                         'pawn.order': (_get_product, ['partner_id'], 10),
                                     }),
         'journal_id': fields.related('order_id', 'journal_id', type='many2one', relation='account.journal', string='Journal', readonly=True,
