@@ -44,18 +44,23 @@ from openerp.service import http_server
 from openerp import SUPERUSER_ID
 import openerp
 
+
 class report_xml(osv.osv):
 
     _inherit = 'ir.actions.report.xml'
 
-
     def _check_pawn_order(self, cr, uid, ids, context=None):
+        # Status of pawn order can not print form
+        pw_state = {
+            'pawn.order.form': ['draft'],
+            'redeem.order.form': ['draft', 'pawn', 'expire', 'cancel'],
+        }
+        # --
         for report in self.browse(cr, uid, ids, context=context):
-            if report.report_name == 'pawn.order.form':
-                if context.get('active_ids', False):
-                    for obj in self.pool.get('pawn.order').browse(cr, uid, context.get('active_ids')):
-                        if (obj.state in ['draft']):
-                            raise openerp.exceptions.Warning("Can't print form in %s state" % (obj.state, ))
+            if report.report_name in pw_state.keys():
+                for obj in self.pool.get('pawn.order').browse(cr, uid, context.get('active_ids', []), context=context):
+                    if (obj.state in pw_state[report.report_name]):
+                        raise openerp.exceptions.Warning("Can't print form in %s state" % (obj.state, ))
         return True
 
     def _check_report_condition(self, cr, uid, ids, context=None):

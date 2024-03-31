@@ -464,7 +464,7 @@ class pawn_order(osv.osv):
             self._update_order_pawn_asset(cr, uid, [order.id], {'state': 'pawn'}, context=context)
             # Fingerprint
             self._update_fingerprint(cr, uid, [order.id], action_type='pawn', context=context)
-            self._reset_fingerprint(cr, uid, [order.id], action_type='redeem', context=context)
+            # self._reset_fingerprint(cr, uid, [order.id], action_type='redeem', context=context)
         return True
 
     def order_redeem(self, cr, uid, ids, context=None):
@@ -548,8 +548,8 @@ class pawn_order(osv.osv):
             }, context=context)
             self._update_order_pawn_asset(cr, uid, [order.id], {'state': 'cancel'}, context=context)
             # Fingerprint
-            self._reset_fingerprint(cr, uid, [order.id], action_type='pawn', context=context)
-            self._reset_fingerprint(cr, uid, [order.id], action_type='redeem', context=context)
+            # self._reset_fingerprint(cr, uid, [order.id], action_type='pawn', context=context)
+            # self._reset_fingerprint(cr, uid, [order.id], action_type='redeem', context=context)
         return True
 
     def action_undo_pay_interest(self, cr, uid, ids, context=None):

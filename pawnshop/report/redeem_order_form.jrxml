@@ -35,21 +35,21 @@
             <textField isStretchWithOverflow="true" isBlankWhenNull="true">
                 <reportElement positionType="Float" x="0" y="7" width="179" height="17"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="Monospaced" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+                    <font fontName="Monospaced" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
                 </textElement>
                 <textFieldExpression class="java.lang.String"><![CDATA["โรงรับจำนำ" + $F{pawnshop}]]></textFieldExpression>
             </textField>
             <textField isStretchWithOverflow="true" isBlankWhenNull="true">
                 <reportElement positionType="Float" x="0" y="24" width="179" height="17"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="Monospaced" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+                    <font fontName="Monospaced" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
                 </textElement>
                 <textFieldExpression class="java.lang.String"><![CDATA["ไถ่ถอนตั๋วเลขที่ " + $F{doc_name}]]></textFieldExpression>
             </textField>
             <textField isStretchWithOverflow="true" isBlankWhenNull="true">
                 <reportElement positionType="Float" x="-60" y="41" width="300" height="17"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="Monospaced" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+                    <font fontName="Monospaced" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
                 </textElement>
                 <textFieldExpression class="java.lang.String"><![CDATA["จาก " + ($F{partner_title} == "mr" ? "นาย" : ($F{partner_title} == "mrs" ? "นาง" : ($F{partner_title} == "miss" ? "นางสาว" : "xx"))) + " " + $F{cust_name}]]></textFieldExpression>
             </textField>
@@ -58,7 +58,7 @@
                     <printWhenExpression><![CDATA[$F{fingerprint_redeem_date} == null]]></printWhenExpression>
                 </reportElement>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="Monospaced" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+                    <font fontName="Monospaced" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
                 </textElement>
                 <textFieldExpression class="java.util.Date"><![CDATA[$F{date_redeem}]]></textFieldExpression>
             </textField>
@@ -67,7 +67,7 @@
                     <printWhenExpression><![CDATA[$F{fingerprint_redeem_date} != null]]></printWhenExpression>
                 </reportElement>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="Monospaced" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+                    <font fontName="Monospaced" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
                 </textElement>
                 <textFieldExpression class="java.util.Date"><![CDATA[new Date($F{fingerprint_redeem_date}.getTime() + 7 * 3600 * 1000)]]></textFieldExpression>
             </textField>
@@ -75,12 +75,19 @@
                 <reportElement x="33" y="80" width="113" height="65">
                     <printWhenExpression><![CDATA[$F{fingerprint} != false && $F{fingerprint} != null && $F{fingerprint} != '']]></printWhenExpression>
                 </reportElement>
+				<box>
+                    <pen lineWidth="1.0"/>
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+				</box>
                 <imageExpression class="java.lang.String"><![CDATA[$F{fingerprint}]]></imageExpression>
             </image>
             <staticText>
                 <reportElement positionType="Float" x="0" y="150" width="179" height="17"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="Monospaced" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+                    <font fontName="Monospaced" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
                 </textElement>
                 <text><![CDATA[รับเงินเรียบร้อยแล้ว]]></text>
             </staticText>
@@ -94,7 +101,7 @@
                     <printWhenExpression><![CDATA[$F{child}]]></printWhenExpression>
                 </reportElement>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="Monospaced" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" size="9"/>
+                    <font fontName="Monospaced" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" size="9"/>
                 </textElement>
                 <text><![CDATA[ต่อตั๋ว]]></text>
             </staticText>
