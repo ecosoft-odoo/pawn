@@ -9,6 +9,9 @@
                 <page name="fingerprint_image" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </page>
+                <page name="pawn_item_image" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </page>
             </field>
         </record>
     </data>

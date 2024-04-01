@@ -393,6 +393,8 @@ class pawn_order(osv.osv):
          'fingerprint_pawn_date': fields.datetime('Date of Fingerprint Pawn', readonly=True, help="Date of customer's fingerprint when pawn the ticket"),
          'fingerprint_redeem': fields.binary('Fingerprint Redeem', readonly=True, help="Customer's fingerprint when redeem the ticket"),
          'fingerprint_redeem_date': fields.datetime('Date of Fingerprint Redeem', readonly=True, help="Date of customer's fingerprint when redeem the ticket"),
+         'pawn_item_image': fields.binary('Pawn Item'),
+         'pawn_item_image_date': fields.datetime('Date of Pawn Item', readonly=True),
     }
     _defaults = {
         'company_id': lambda self, cr, uid, c: self.pool.get('res.users').browse(cr, uid, uid).company_id.id,
@@ -761,6 +763,12 @@ class pawn_order(osv.osv):
         # Update buddha year
         if "buddha_year_temp" in vals:
             vals["buddha_year"] = vals["buddha_year_temp"]
+        # Update pawn item image date
+        if "pawn_item_image" in vals:
+            if vals["pawn_item_image"]:
+                vals["pawn_item_image_date"] = fields.datetime.now()
+            else:
+                vals["pawn_item_image_date"] = False
         # --
         if vals.get('internal_number', '/') == '/':
             vals['internal_number'] = self.pool.get('ir.sequence').get(cr, uid, 'pawn.order') or '/'
@@ -842,6 +850,12 @@ class pawn_order(osv.osv):
         # Update buddha year
         if "buddha_year_temp" in vals:
             vals["buddha_year"] = vals["buddha_year_temp"]
+        # Update pawn item image date
+        if "pawn_item_image" in vals:
+            if vals["pawn_item_image"]:
+                vals["pawn_item_image_date"] = fields.datetime.now()
+            else:
+                vals["pawn_item_image_date"] = False
         # Update Number
         for pawn in self.browse(cr, uid, ids, context=context):
             period_id = vals.get('period_id', False)
@@ -1409,6 +1423,9 @@ class pawn_order(osv.osv):
         pawn_orders = self.browse(cr, uid, ids, context=context)
         customer_count = len(list(set(map(lambda l: l.partner_id, pawn_orders))))
         raise osv.except_osv(_('Information'), _('Customer number is %s.') % customer_count)
+
+    def action_remove_pawn_item_image(self, cr, uid, ids, context=None):
+        return self.write(cr, uid, ids, {"pawn_item_image": False}, context=context)
 
 pawn_order()
 
