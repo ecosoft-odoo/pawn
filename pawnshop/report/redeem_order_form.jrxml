@@ -92,12 +92,12 @@
                 <text><![CDATA[รับเงินเรียบร้อยแล้ว]]></text>
             </staticText>
             <rectangle>
-                <reportElement x="140" y="159" width="39" height="20" backcolor="#000000">
+                <reportElement x="140" y="159" width="39" height="20" backcolor="#FFFFFF">
                     <printWhenExpression><![CDATA[$F{child}]]></printWhenExpression>
                 </reportElement>
             </rectangle>
             <staticText>
-                <reportElement positionType="Float" x="140" y="159" width="39" height="20" forecolor="#FFFFFF">
+                <reportElement positionType="Float" x="140" y="159" width="39" height="20" forecolor="#000000">
                     <printWhenExpression><![CDATA[$F{child}]]></printWhenExpression>
                 </reportElement>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
