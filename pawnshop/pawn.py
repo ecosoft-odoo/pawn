@@ -883,7 +883,8 @@ class pawn_order(osv.osv):
         # Update pawn amount if total is updated
         if [val for val in vals.keys() if val in ['order_line']]:
             for pawn in self.browse(cr, uid, ids, context=context):
-                if not vals.get('amount_pawned', False):
+                # Renew pawn order not update pawn amount
+                if not pawn.parent_id and not vals.get('amount_pawned', False):
                     self.write(cr, uid, [pawn.id], {'amount_pawned': pawn.amount_total})
         # Interest table, if update in the following 4 fields
         if [val for val in vals.keys() if val in ['amount_pawned', 'rule_id', 'date_order']]:
@@ -955,6 +956,8 @@ class pawn_order(osv.osv):
             'status_history_ids': [],
             'ready_to_expire': False,
             'date_final_expired': False,
+            'pawn_item_image': False,
+            'pawn_item_image_date': False,
         })
         pawn_id = super(pawn_order, self).copy(cr, uid, id, default, context)
         # Fingerprint
