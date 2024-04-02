@@ -248,9 +248,9 @@
                             <group>
                                 <label for="pawn_item_image" string="Pawn Item"/>
                                 <div>
-                                    <field name="pawn_item_image" string="Pawn Item" widget="image" class="oe_left oe_avatar"/>
+                                    <field name="pawn_item_image" string="Pawn Item" widget="image" class="oe_left oe_avatar" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                     <field name="pawn_item_image_date" string="Date of Pawn Item"/>
-                                    <button name="action_remove_pawn_item_image" type="object" string="Remove" attrs="{'invisible': ['|', ('pawn_item_image', '=', False), ('pawn_item_image_date', '=', False)]}"/>
+                                    <button name="action_remove_pawn_item_image" type="object" string="Remove" attrs="{'invisible': ['|', ('state', '!=', 'draft'), '|', ('pawn_item_image', '=', False), ('pawn_item_image_date', '=', False)]}"/>
                                 </div>
                             </group>
                             <group/>
