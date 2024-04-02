@@ -19,14 +19,4 @@
 #
 ##############################################################################
 
-from openerp.osv import osv
-
-
-class pawn_order(osv.osv):
-    _inherit = "pawn.order"
-
-    def _update_fingerprint(self, cr, uid, order_ids, action_type=None, context=None):
-        return True
-
-    def _reset_fingerprint(self, cr, uid, order_ids, action_type=None, context=None):
-        return True
+from . import pawn_order_pawn

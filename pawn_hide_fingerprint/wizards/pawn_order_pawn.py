@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    OpenERP, Open Source Management Solution
-#    Copyright (C) 2013 Ecosoft Co., Ltd. (http://ecosoft.co.th).
+#    Copyright (C) 2004-2010 Tiny SPRL (<http://tiny.be>).
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -22,11 +22,8 @@
 from openerp.osv import osv
 
 
-class pawn_order(osv.osv):
-    _inherit = "pawn.order"
+class pawn_order_pawn(osv.osv_memory):
+    _inherit = "pawn.order.pawn"
 
-    def _update_fingerprint(self, cr, uid, order_ids, action_type=None, context=None):
-        return True
-
-    def _reset_fingerprint(self, cr, uid, order_ids, action_type=None, context=None):
-        return True
+    def _check_pawn_item_image(self, cr, uid, pawn, context=None):
+        return
