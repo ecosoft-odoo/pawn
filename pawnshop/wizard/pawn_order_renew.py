@@ -56,7 +56,7 @@ class pawn_order_renew(osv.osv_memory):
         'pay_interest_amount': fields.float('Pay Interest Amount', readonly=False),
         'increase_pawn_amount': fields.float('Increase Pawn Amount', readonly=False),
         'new_pawn_amount': fields.float('New Pawn Amount', readonly=False),
-        'use_same_fingerprint': fields.boolean('Use Same Fingerprint'),
+        'renewal_transfer': fields.boolean('Renewal Transfer'),
     }
     _defaults = {
         'date_renew': fields.date.context_today,
@@ -66,7 +66,7 @@ class pawn_order_renew(osv.osv_memory):
         'addition': 0.0,
         'pay_interest_amount': _get_interest_amount,
         'increase_pawn_amount': 0.0,
-        'use_same_fingerprint': False,
+        'renewal_transfer': False,
     }
 
     def onchange_amount(self, cr, uid, ids, field, pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount, context=None):
@@ -102,8 +102,8 @@ class pawn_order_renew(osv.osv_memory):
         pawn = pawn_obj.browse(cr, uid, pawn_id, context=context)
         state_bf_redeem = pawn.state
         wizard = self.browse(cr, uid, ids[0], context)
-        # Update use same fingerprint
-        pawn_obj.write(cr, uid, [pawn_id], {'use_same_fingerprint_redeem': wizard.use_same_fingerprint}, context=context)
+        # Update renewal transfer
+        pawn_obj.write(cr, uid, [pawn_id], {'renewal_transfer_redeem': wizard.renewal_transfer}, context=context)
         # Trigger workflow
         # Redeem the current one
         wf_service = netsvc.LocalService("workflow")
@@ -170,7 +170,7 @@ class pawn_order_renew(osv.osv_memory):
         pawn_obj.write(cr, uid, [new_pawn_id], {'parent_id': pawn_id,
                                                 'amount_pawned': wizard.new_pawn_amount,
                                                 'amount_net': amount_net,
-                                                'use_same_fingerprint_pawn': wizard.use_same_fingerprint}, context=context)
+                                                'renewal_transfer_pawn': wizard.renewal_transfer}, context=context)
         # Write new pawn back to the original
         pawn_obj.write(cr, uid, [pawn_id], {'child_id': new_pawn_id}, context=context)
         # Commit

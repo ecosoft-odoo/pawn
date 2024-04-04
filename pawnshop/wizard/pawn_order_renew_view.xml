@@ -36,7 +36,7 @@
                             </div>
                          </group>
                          <group colspan="2">
-                            <field name="use_same_fingerprint"/>
+                            <field name="renewal_transfer"/>
                          </group>
                     </group>
                     <footer>

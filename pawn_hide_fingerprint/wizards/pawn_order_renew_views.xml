@@ -6,7 +6,7 @@
             <field name="model">pawn.order.renew</field>
             <field name="inherit_id" ref="pawnshop.view_pawn_order_renew"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='use_same_fingerprint']/.." position="attributes">
+                <xpath expr="//field[@name='renewal_transfer']/.." position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
             </field>

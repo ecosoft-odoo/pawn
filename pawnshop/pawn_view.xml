@@ -110,8 +110,8 @@
                             <field name="rule_id" widget="selection"/>
                             <field name="child_id" attrs="{'invisible':[('child_id','=',False)]}"/>
 							<field name="create_date" invisible="1"/>
-                            <field name="use_same_fingerprint_pawn" attrs="{'invisible': [('use_same_fingerprint_pawn', '=', False)]}"/>
-                            <field name="use_same_fingerprint_redeem" attrs="{'invisible': [('use_same_fingerprint_redeem', '=', False)]}"/>
+                            <field name="renewal_transfer_pawn" attrs="{'invisible': [('renewal_transfer_pawn', '=', False)]}"/>
+                            <field name="renewal_transfer_redeem" attrs="{'invisible': [('renewal_transfer_redeem', '=', False)]}"/>
                         </group>
                     </group>
                     <notebook>

@@ -393,8 +393,8 @@ class pawn_order(osv.osv):
          'fingerprint_pawn_date': fields.datetime('Date of Fingerprint Pawn', readonly=True, help="Date of customer's fingerprint when pawn the ticket"),
          'fingerprint_redeem': fields.binary('Fingerprint Redeem', readonly=True, help="Customer's fingerprint when redeem the ticket"),
          'fingerprint_redeem_date': fields.datetime('Date of Fingerprint Redeem', readonly=True, help="Date of customer's fingerprint when redeem the ticket"),
-         'use_same_fingerprint_pawn': fields.boolean('Use Same Fingerprint For Pawn', readonly=True),
-         'use_same_fingerprint_redeem': fields.boolean('Use Same Fingerprint For Redeem', readonly=True),
+         'renewal_transfer_pawn': fields.boolean('Renewal Transfer (Pawn)', readonly=True),
+         'renewal_transfer_redeem': fields.boolean('Renewal Transfer (Redeem)', readonly=True),
          'pawn_item_image_first': fields.binary('Pawn Item (First)'),
          'pawn_item_image_date_first': fields.datetime('Date of Pawn Item (First)', readonly=True),
          'pawn_item_image_second': fields.binary('Pawn Item (Second)'),
@@ -414,8 +414,8 @@ class pawn_order(osv.osv):
         'jor6_submitted': False,
         'ready_to_expire': False,
         'date_final_expired': False,
-        'use_same_fingerprint_pawn': False,
-        'use_same_fingerprint_redeem': False,
+        'renewal_transfer_pawn': False,
+        'renewal_transfer_redeem': False,
     }
     _sql_constraints = [
         ('name_uniq', 'unique(name, pawn_shop_id)', 'Pawn Ticket Reference must be unique per Pawn Shop!'),
@@ -433,7 +433,7 @@ class pawn_order(osv.osv):
     def _update_fingerprint(self, cr, uid, order_ids, action_type=None, context=None):
         for order in self.browse(cr, uid, order_ids, context=context):
             if action_type and not order['fingerprint_%s' % action_type]:
-                if order['use_same_fingerprint_%s' % action_type]:
+                if order['renewal_transfer_%s' % action_type]:
                     if action_type == 'redeem':
                         fingerprint = order.fingerprint_pawn
                         fingerprint_date = order.fingerprint_pawn_date
@@ -974,8 +974,8 @@ class pawn_order(osv.osv):
             'status_history_ids': [],
             'ready_to_expire': False,
             'date_final_expired': False,
-            'use_same_fingerprint_pawn': False,
-            'use_same_fingerprint_redeem': False,
+            'renewal_transfer_pawn': False,
+            'renewal_transfer_redeem': False,
         })
         # Default pawn item image
         for i in ['first', 'second', 'third']:
