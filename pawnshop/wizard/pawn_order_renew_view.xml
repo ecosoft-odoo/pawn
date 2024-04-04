@@ -35,8 +35,9 @@
 	                         	</h3>
                             </div>
                          </group>
-                         <group colspan="2">
+                         <group colspan="1">
                             <field name="renewal_transfer"/>
+                            <field name="secret_key" attrs="{'invisible': [('renewal_transfer', '=', False)], 'required': [('renewal_transfer', '=', True)]}"/>
                          </group>
                     </group>
                     <footer>

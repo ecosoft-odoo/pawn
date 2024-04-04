@@ -57,6 +57,7 @@ class pawn_order_renew(osv.osv_memory):
         'increase_pawn_amount': fields.float('Increase Pawn Amount', readonly=False),
         'new_pawn_amount': fields.float('New Pawn Amount', readonly=False),
         'renewal_transfer': fields.boolean('Renewal Transfer'),
+        'secret_key': fields.char('Secret Key'),
     }
     _defaults = {
         'date_renew': fields.date.context_today,
@@ -93,6 +94,13 @@ class pawn_order_renew(osv.osv_memory):
             res['value']['increase_pawn_amount'] = round(increase_pawn_amount, 2)
         return res
 
+    def _validate_secret_key(self, cr, uid, renewal_transfer, secret_key, context=None):
+        if renewal_transfer:
+            valid_secret_key = self.pool.get('ir.config_parameter').get_param(cr, uid, 'pawnshop.renew_secret_key', '')
+            if secret_key != valid_secret_key:
+                raise osv.except_osv(_('Error!'), _('The secret key is invalid.'))
+        return True
+
     def action_renew(self, cr, uid, ids, context=None):
         if context == None:
             context = {}
@@ -102,6 +110,8 @@ class pawn_order_renew(osv.osv_memory):
         pawn = pawn_obj.browse(cr, uid, pawn_id, context=context)
         state_bf_redeem = pawn.state
         wizard = self.browse(cr, uid, ids[0], context)
+        # Check Secret Key
+        self._validate_secret_key(cr, uid, wizard.renewal_transfer, wizard.secret_key, context=context)
         # Update renewal transfer
         pawn_obj.write(cr, uid, [pawn_id], {'renewal_transfer_redeem': wizard.renewal_transfer}, context=context)
         # Trigger workflow
@@ -171,6 +181,16 @@ class pawn_order_renew(osv.osv_memory):
                                                 'amount_pawned': wizard.new_pawn_amount,
                                                 'amount_net': amount_net,
                                                 'renewal_transfer_pawn': wizard.renewal_transfer}, context=context)
+        # Update image for renewal transfer only
+        if wizard.renewal_transfer:
+            vals = {}
+            for i in ['first', 'second', 'third']:
+                vals.update({
+                    'pawn_item_image_%s' % i: pawn['pawn_item_image_%s' % i],
+                    'pawn_item_image_date_%s' % i: pawn['pawn_item_image_date_%s' % i],
+                })
+            if vals:
+                pawn_obj.write(cr, uid, [new_pawn_id], vals, context=context)
         # Write new pawn back to the original
         pawn_obj.write(cr, uid, [pawn_id], {'child_id': new_pawn_id}, context=context)
         # Commit

@@ -783,7 +783,7 @@ class pawn_order(osv.osv):
         for i in ['first', 'second', 'third']:
             if 'pawn_item_image_%s' % i in vals:
                 if vals['pawn_item_image_%s' % i]:
-                    vals['pawn_item_image_date_%s' % i] = fields.datetime.now()
+                    vals['pawn_item_image_date_%s' % i] = vals.get('pawn_item_image_date_%s' % i, fields.datetime.now())
                 else:
                     vals['pawn_item_image_date_%s' % i] = False
         # --
@@ -871,7 +871,7 @@ class pawn_order(osv.osv):
         for i in ['first', 'second', 'third']:
             if 'pawn_item_image_%s' % i in vals:
                 if vals['pawn_item_image_%s' % i]:
-                    vals['pawn_item_image_date_%s' % i] = fields.datetime.now()
+                    vals['pawn_item_image_date_%s' % i] = vals.get('pawn_item_image_date_%s' % i, fields.datetime.now())
                 else:
                     vals['pawn_item_image_date_%s' % i] = False
         # Update Number
