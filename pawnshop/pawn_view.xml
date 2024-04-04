@@ -110,6 +110,8 @@
                             <field name="rule_id" widget="selection"/>
                             <field name="child_id" attrs="{'invisible':[('child_id','=',False)]}"/>
 							<field name="create_date" invisible="1"/>
+                            <field name="use_same_fingerprint_pawn" attrs="{'invisible': [('use_same_fingerprint_pawn', '=', False)]}"/>
+                            <field name="use_same_fingerprint_redeem" attrs="{'invisible': [('use_same_fingerprint_redeem', '=', False)]}"/>
                         </group>
                     </group>
                     <notebook>
@@ -246,14 +248,32 @@
                         </page>
                         <page string="Pawn Item Image" name="pawn_item_image">
                             <group>
-                                <label for="pawn_item_image" string="Pawn Item"/>
+                                <label for="pawn_item_image_first" string="Pawn Item (First)"/>
                                 <div>
-                                    <field name="pawn_item_image" string="Pawn Item" widget="image" class="oe_left oe_avatar" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-                                    <field name="pawn_item_image_date" string="Date of Pawn Item"/>
-                                    <button name="action_remove_pawn_item_image" type="object" string="Remove" attrs="{'invisible': ['|', ('state', '!=', 'draft'), '|', ('pawn_item_image', '=', False), ('pawn_item_image_date', '=', False)]}"/>
+                                    <field name="pawn_item_image_first" widget="image" class="oe_left oe_avatar" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                    <field name="pawn_item_image_date_first"/>
+                                    <div class="oe_clear"/>
+                                    <button name="action_remove_pawn_item_image" type="object" string="Remove" icon="gtk-delete" context="{'image_number': 'first'}" attrs="{'invisible': ['|', ('state', '!=', 'draft'), '|', ('pawn_item_image_second', '!=', False), ('pawn_item_image_first', '=', False)]}"/>
                                 </div>
                             </group>
-                            <group/>
+                            <group attrs="{'invisible': [('pawn_item_image_first', '=', False)]}">
+                                <label for="pawn_item_image_second" string="Pawn Item (Second)"/>
+                                <div>
+                                    <field name="pawn_item_image_second" widget="image" class="oe_left oe_avatar" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                    <field name="pawn_item_image_date_second"/>
+                                    <div class="oe_clear"/>
+                                    <button name="action_remove_pawn_item_image" type="object" string="Remove" icon="gtk-delete" context="{'image_number': 'second'}" attrs="{'invisible': ['|', ('state', '!=', 'draft'), '|', ('pawn_item_image_third', '!=', False), ('pawn_item_image_second', '=', False)]}"/>
+                                </div>
+                            </group>
+                            <group attrs="{'invisible': [('pawn_item_image_second', '=', False)]}">
+                                <label for="pawn_item_image_third" string="Pawn Item (Third)"/>
+                                <div>
+                                    <field name="pawn_item_image_third" widget="image" class="oe_left oe_avatar" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                    <field name="pawn_item_image_date_third"/>
+                                    <div class="oe_clear"/>
+                                    <button name="action_remove_pawn_item_image" type="object" string="Remove" icon="gtk-delete" context="{'image_number': 'third'}" attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('pawn_item_image_third', '=', False)]}"/>
+                                </div>
+                            </group>
                         </page>
                     </notebook>
                 </sheet>
@@ -409,7 +429,7 @@
                     <field name="categ_id"/>
                     <field name="item_description"/>
                     <field name="image_small"/>
-                    <field name="pawn_item_image"/>
+                    <field name="pawn_item_image_first"/>
                     <field name="state" groups="base.group_no_one"/>
                     <templates>
                     <t t-name="kanban-box">
@@ -422,8 +442,8 @@
                                         <b>ราคารับจำนำ:</b> <field name="price_pawned"/> ฿
                                     </div>
                                     <div style="display: inline-block;vertical-align: top;">
-                                        <t t-if="record.pawn_item_image and record.pawn_item_image.raw_value">
-                                            <img t-att-src="kanban_image('product.product', 'pawn_item_image', record.id.raw_value)" t-att-title="record.id.value" style="width: 65px;"/>
+                                        <t t-if="record.pawn_item_image_first and record.pawn_item_image_first.raw_value">
+                                            <img t-att-src="kanban_image('product.product', 'pawn_item_image_first', record.id.raw_value)" t-att-title="record.id.value" style="width: 65px;"/>
                                         </t>
                                     </div>
                                 </div>

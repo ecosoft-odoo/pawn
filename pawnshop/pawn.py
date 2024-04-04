@@ -393,8 +393,14 @@ class pawn_order(osv.osv):
          'fingerprint_pawn_date': fields.datetime('Date of Fingerprint Pawn', readonly=True, help="Date of customer's fingerprint when pawn the ticket"),
          'fingerprint_redeem': fields.binary('Fingerprint Redeem', readonly=True, help="Customer's fingerprint when redeem the ticket"),
          'fingerprint_redeem_date': fields.datetime('Date of Fingerprint Redeem', readonly=True, help="Date of customer's fingerprint when redeem the ticket"),
-         'pawn_item_image': fields.binary('Pawn Item'),
-         'pawn_item_image_date': fields.datetime('Date of Pawn Item', readonly=True),
+         'use_same_fingerprint_pawn': fields.boolean('Use Same Fingerprint For Pawn', readonly=True),
+         'use_same_fingerprint_redeem': fields.boolean('Use Same Fingerprint For Redeem', readonly=True),
+         'pawn_item_image_first': fields.binary('Pawn Item (First)'),
+         'pawn_item_image_date_first': fields.datetime('Date of Pawn Item (First)', readonly=True),
+         'pawn_item_image_second': fields.binary('Pawn Item (Second)'),
+         'pawn_item_image_date_second': fields.datetime('Date of Pawn Item (Second)', readonly=True),
+         'pawn_item_image_third': fields.binary('Pawn Item (Third)'),
+         'pawn_item_image_date_third': fields.datetime('Date of Pawn Item (Third)', readonly=True),
     }
     _defaults = {
         'company_id': lambda self, cr, uid, c: self.pool.get('res.users').browse(cr, uid, uid).company_id.id,
@@ -408,6 +414,8 @@ class pawn_order(osv.osv):
         'jor6_submitted': False,
         'ready_to_expire': False,
         'date_final_expired': False,
+        'use_same_fingerprint_pawn': False,
+        'use_same_fingerprint_redeem': False,
     }
     _sql_constraints = [
         ('name_uniq', 'unique(name, pawn_shop_id)', 'Pawn Ticket Reference must be unique per Pawn Shop!'),
@@ -425,13 +433,21 @@ class pawn_order(osv.osv):
     def _update_fingerprint(self, cr, uid, order_ids, action_type=None, context=None):
         for order in self.browse(cr, uid, order_ids, context=context):
             if action_type and not order['fingerprint_%s' % action_type]:
-                fingerprint = order.partner_id.fingerprint
-                fingerprint_date = order.partner_id.fingerprint_date
-                # Check customer's fingerprint
-                now = fields.datetime.now()
-                fingerprint_timeout = int(self.pool.get('ir.config_parameter').get_param(cr, uid, 'pawnshop.customer_fingerprint_timeout', '300'))
-                if not fingerprint_date or (fingerprint_date and (datetime.strptime(now, "%Y-%m-%d %H:%M:%S") - datetime.strptime(fingerprint_date, "%Y-%m-%d %H:%M:%S")).total_seconds() > fingerprint_timeout):
-                    raise osv.except_osv(_('Error!'), _("The customer's fingerprint was not detected. Kindly submit a new fingerprint."))
+                if order['use_same_fingerprint_%s' % action_type]:
+                    if action_type == 'redeem':
+                        fingerprint = order.fingerprint_pawn
+                        fingerprint_date = order.fingerprint_pawn_date
+                    if action_type == 'pawn':
+                        fingerprint = order.parent_id.fingerprint_redeem
+                        fingerprint_date = order.parent_id.fingerprint_redeem_date
+                else:
+                    fingerprint = order.partner_id.fingerprint
+                    fingerprint_date = order.partner_id.fingerprint_date
+                    # Check customer's fingerprint
+                    now = fields.datetime.now()
+                    fingerprint_timeout = int(self.pool.get('ir.config_parameter').get_param(cr, uid, 'pawnshop.customer_fingerprint_timeout', '300'))
+                    if not fingerprint_date or (fingerprint_date and (datetime.strptime(now, "%Y-%m-%d %H:%M:%S") - datetime.strptime(fingerprint_date, "%Y-%m-%d %H:%M:%S")).total_seconds() > fingerprint_timeout):
+                        raise osv.except_osv(_('Error!'), _("The customer's fingerprint was not detected. Kindly submit a new fingerprint."))
                 self.write(cr, uid, [order.id], {
                     'fingerprint_%s' % action_type: fingerprint,
                     'fingerprint_%s_date' % action_type: fingerprint_date,
@@ -761,14 +777,15 @@ class pawn_order(osv.osv):
 
     def create(self, cr, uid, vals, context=None):
         # Update buddha year
-        if "buddha_year_temp" in vals:
-            vals["buddha_year"] = vals["buddha_year_temp"]
+        if 'buddha_year_temp' in vals:
+            vals['buddha_year'] = vals['buddha_year_temp']
         # Update pawn item image date
-        if "pawn_item_image" in vals:
-            if vals["pawn_item_image"]:
-                vals["pawn_item_image_date"] = fields.datetime.now()
-            else:
-                vals["pawn_item_image_date"] = False
+        for i in ['first', 'second', 'third']:
+            if 'pawn_item_image_%s' % i in vals:
+                if vals['pawn_item_image_%s' % i]:
+                    vals['pawn_item_image_date_%s' % i] = fields.datetime.now()
+                else:
+                    vals['pawn_item_image_date_%s' % i] = False
         # --
         if vals.get('internal_number', '/') == '/':
             vals['internal_number'] = self.pool.get('ir.sequence').get(cr, uid, 'pawn.order') or '/'
@@ -848,14 +865,15 @@ class pawn_order(osv.osv):
         if context == None:
             context = {}
         # Update buddha year
-        if "buddha_year_temp" in vals:
-            vals["buddha_year"] = vals["buddha_year_temp"]
+        if 'buddha_year_temp' in vals:
+            vals['buddha_year'] = vals['buddha_year_temp']
         # Update pawn item image date
-        if "pawn_item_image" in vals:
-            if vals["pawn_item_image"]:
-                vals["pawn_item_image_date"] = fields.datetime.now()
-            else:
-                vals["pawn_item_image_date"] = False
+        for i in ['first', 'second', 'third']:
+            if 'pawn_item_image_%s' % i in vals:
+                if vals['pawn_item_image_%s' % i]:
+                    vals['pawn_item_image_date_%s' % i] = fields.datetime.now()
+                else:
+                    vals['pawn_item_image_date_%s' % i] = False
         # Update Number
         for pawn in self.browse(cr, uid, ids, context=context):
             period_id = vals.get('period_id', False)
@@ -956,9 +974,15 @@ class pawn_order(osv.osv):
             'status_history_ids': [],
             'ready_to_expire': False,
             'date_final_expired': False,
-            'pawn_item_image': False,
-            'pawn_item_image_date': False,
+            'use_same_fingerprint_pawn': False,
+            'use_same_fingerprint_redeem': False,
         })
+        # Default pawn item image
+        for i in ['first', 'second', 'third']:
+            default.update({
+                'pawn_item_image_%s' % i: False,
+                'pawn_item_image_date_%s' % i: False,
+            })
         pawn_id = super(pawn_order, self).copy(cr, uid, id, default, context)
         # Fingerprint
         self._reset_fingerprint(cr, uid, [pawn_id], action_type='pawn', context=context)
@@ -1428,7 +1452,9 @@ class pawn_order(osv.osv):
         raise osv.except_osv(_('Information'), _('Customer number is %s.') % customer_count)
 
     def action_remove_pawn_item_image(self, cr, uid, ids, context=None):
-        return self.write(cr, uid, ids, {"pawn_item_image": False}, context=context)
+        if not context.get('image_number', False):
+            return
+        return self.write(cr, uid, ids, {'pawn_item_image_%s' % context['image_number']: False}, context=context)
 
 pawn_order()
 

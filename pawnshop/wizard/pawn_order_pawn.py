@@ -71,8 +71,8 @@ class pawn_order_pawn(osv.osv_memory):
         'amount': _get_amount
     }
 
-    def _check_pawn_item_image(self, cr, uid, pawn, context=None):
-        if not pawn.pawn_item_image:
+    def _check_pawn_item_image_first(self, cr, uid, pawn, context=None):
+        if not pawn.pawn_item_image_first:
             raise osv.except_osv(_('Error!'), _('Please provide an image of the item before pawning it.'))
 
     def action_pawn(self, cr, uid, ids, context=None):
@@ -86,7 +86,7 @@ class pawn_order_pawn(osv.osv_memory):
             raise osv.except_osv(_('Error!'),
                                  _('Ticket need refresh before proceeding!'))
         # Check pawn item image
-        self._check_pawn_item_image(cr, uid, pawn, context=context)
+        self._check_pawn_item_image_first(cr, uid, pawn, context=context)
         # Write journal_id back to order
         wizard = self.browse(cr, uid, ids[0], context)
         self.pool.get('pawn.order').write(cr, uid, [active_id], {'journal_id': wizard.journal_id.id, 'date_due_ticket': wizard.date_due_ticket}, context=context)

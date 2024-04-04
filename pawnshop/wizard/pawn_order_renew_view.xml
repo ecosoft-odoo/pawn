@@ -35,6 +35,9 @@
 	                         	</h3>
                             </div>
                          </group>
+                         <group colspan="2">
+                            <field name="use_same_fingerprint"/>
+                         </group>
                     </group>
                     <footer>
                         <button string="Renew" name="action_renew" type="object" class="oe_highlight"/>

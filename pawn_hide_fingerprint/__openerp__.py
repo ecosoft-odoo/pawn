@@ -27,6 +27,7 @@
     'website': 'http://www.ecosoft.co.th',
     'depends': ['pawnshop'],
     'data': [
+        'wizards/pawn_order_renew_views.xml',
         'views/pawn_views.xml',
         'views/res_partner_views.xml',
     ],

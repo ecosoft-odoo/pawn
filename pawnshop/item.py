@@ -331,7 +331,7 @@ class product_product(osv.osv):
         'is_jewelry': fields.related('order_line_id', 'is_jewelry', type='boolean', string='Carat/Gram'),
         'carat': fields.related('order_line_id', 'carat', type='float', string='Carat'),
         'gram': fields.related('order_line_id', 'gram', type='float', string='Gram'),
-        'pawn_item_image': fields.related('order_id', 'pawn_item_image', type='binary', string='Pawn Item'),
+        'pawn_item_image_first': fields.related('order_id', 'pawn_item_image_first', type='binary', string='Pawn Item'),
     }
     _defaults = {
         'color': lambda self, cr, uid, context: randrange(10),
