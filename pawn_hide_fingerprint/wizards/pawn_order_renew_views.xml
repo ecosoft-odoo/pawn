@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_pawn_order_renew" model="ir.ui.view">
+            <field name="name">view.pawn.order.renew</field>
+            <field name="model">pawn.order.renew</field>
+            <field name="inherit_id" ref="pawnshop.view_pawn_order_renew"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='renewal_transfer']/.." position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

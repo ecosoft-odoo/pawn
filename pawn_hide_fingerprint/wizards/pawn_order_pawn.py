@@ -25,5 +25,5 @@ from openerp.osv import osv
 class pawn_order_pawn(osv.osv_memory):
     _inherit = "pawn.order.pawn"
 
-    def _check_pawn_item_image(self, cr, uid, pawn, context=None):
+    def _check_pawn_item_image_first(self, cr, uid, pawn, context=None):
         return
