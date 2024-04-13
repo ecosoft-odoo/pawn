@@ -18,6 +18,9 @@ class ResPartner(osv.osv):
         ),
         "township": fields.char(
             string="Township",
+        ),
+        "is_done_address": fields.boolean(
+            string="Is Done Address",
         )
     }
 
@@ -37,7 +40,7 @@ class ResPartner(osv.osv):
                             CASE
                                 WHEN LEFT(TRIM(COALESCE(township, '')), 2) <> 'ต.' AND
                                      LEFT(TRIM(COALESCE(township, '')), 4) <> 'ตำบล' AND
-                                     LEFT(TRIM(COALESCE(township, '')), 4) <> 'แขวง' THEN 'ต.' || TRIM(COALESCE(township, ''))
+                                     LEFT(TRIM(COALESCE(township, '')), 4) <> 'แขวง' THEN 'ตำบล' || TRIM(COALESCE(township, ''))
                                 ELSE TRIM(COALESCE(township, '')) END
                         ) END
                    ) ||
@@ -48,7 +51,7 @@ class ResPartner(osv.osv):
                             CASE
                                 WHEN LEFT(TRIM(COALESCE(district, '')), 2) <> 'อ.' AND
                                      LEFT(TRIM(COALESCE(district, '')), 5) <> 'อำเภอ' AND
-                                     LEFT(TRIM(COALESCE(district, '')), 3) <> 'เขต' THEN 'อ.' || TRIM(COALESCE(district, ''))
+                                     LEFT(TRIM(COALESCE(district, '')), 3) <> 'เขต' THEN 'อำเภอ' || TRIM(COALESCE(district, ''))
                                 ELSE TRIM(COALESCE(district, '')) END
                         ) END
                    ) ||
@@ -58,7 +61,7 @@ class ResPartner(osv.osv):
                         ' ' || (
                             CASE
                                 WHEN LEFT(TRIM(COALESCE(province, '')), 2) <> 'จ.' AND
-                                     LEFT(TRIM(COALESCE(province, '')), 7) <> 'จังหวัด' THEN 'จ.' || TRIM(COALESCE(province, ''))
+                                     LEFT(TRIM(COALESCE(province, '')), 7) <> 'จังหวัด' THEN 'จังหวัด' || TRIM(COALESCE(province, ''))
                                 ELSE TRIM(COALESCE(province, '')) END
                         ) END
                    ) ||
