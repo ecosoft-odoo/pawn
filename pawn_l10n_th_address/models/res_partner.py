@@ -62,8 +62,8 @@ class ResPartner(osv.osv):
                             CASE
                                 WHEN LEFT(TRIM(COALESCE(province, '')), 2) <> 'จ.' AND
                                      LEFT(TRIM(COALESCE(province, '')), 7) <> 'จังหวัด' AND
-                                     TRIM(COALESCE(province, '') NOT LIKE '%กรุงเทพ%' AND
-                                     TRIM(COALESCE(province, '') NOT LIKE '%กทม%' THEN 'จังหวัด' || TRIM(COALESCE(province, ''))
+                                     POSITION('กรุงเทพ' IN province) <= 0 AND
+                                     POSITION('กทม' IN province) <= 0 THEN 'จังหวัด' || TRIM(COALESCE(province, ''))
                                 ELSE TRIM(COALESCE(province, '')) END
                         ) END
                    ) ||
