@@ -19,64 +19,79 @@ class ResPartner(osv.osv):
         "township": fields.char(
             string="Township",
         ),
-        "is_done_address": fields.boolean(
-            string="Is Done Address",
-        )
     }
 
+    # def _update_address_full(self, cr, uid, partner_id, context=None):
+    #     cr.execute("""
+    #         SELECT
+    #             TRIM(
+    #                -- Street
+    #                (
+    #                 CASE WHEN TRIM(COALESCE(street, '')) = '' THEN '' ELSE
+    #                     ' ' || TRIM(COALESCE(street, '')) END
+    #                ) ||
+    #                -- Township
+    #                (
+    #                 CASE WHEN TRIM(COALESCE(township, '')) = '' THEN '' ELSE
+    #                     ' ' || (
+    #                         CASE
+    #                             WHEN LEFT(TRIM(COALESCE(township, '')), 2) <> 'ต.' AND
+    #                                  LEFT(TRIM(COALESCE(township, '')), 4) <> 'ตำบล' AND
+    #                                  LEFT(TRIM(COALESCE(township, '')), 4) <> 'แขวง' THEN 'ตำบล' || TRIM(COALESCE(township, ''))
+    #                             ELSE TRIM(COALESCE(township, '')) END
+    #                     ) END
+    #                ) ||
+    #                -- District
+    #                (
+    #                 CASE WHEN TRIM(COALESCE(district, '')) = '' THEN '' ELSE
+    #                     ' ' || (
+    #                         CASE
+    #                             WHEN LEFT(TRIM(COALESCE(district, '')), 2) <> 'อ.' AND
+    #                                  LEFT(TRIM(COALESCE(district, '')), 5) <> 'อำเภอ' AND
+    #                                  LEFT(TRIM(COALESCE(district, '')), 3) <> 'เขต' THEN 'อำเภอ' || TRIM(COALESCE(district, ''))
+    #                             ELSE TRIM(COALESCE(district, '')) END
+    #                     ) END
+    #                ) ||
+    #                -- Province
+    #                (
+    #                 CASE WHEN TRIM(COALESCE(province, '')) = '' THEN '' ELSE
+    #                     ' ' || (
+    #                         CASE
+    #                             WHEN LEFT(TRIM(COALESCE(province, '')), 2) <> 'จ.' AND
+    #                                  LEFT(TRIM(COALESCE(province, '')), 7) <> 'จังหวัด' AND
+    #                                  POSITION('กรุงเทพ' IN province) <= 0 AND
+    #                                  POSITION('กทม' IN province) <= 0 THEN 'จังหวัด' || TRIM(COALESCE(province, ''))
+    #                             ELSE TRIM(COALESCE(province, '')) END
+    #                     ) END
+    #                ) ||
+    #                -- Zip
+    #                (
+    #                 CASE WHEN TRIM(COALESCE(zip, '')) = '' THEN '' ELSE
+    #                     ' ' || TRIM(COALESCE(zip, '')) END
+    #                )
+    #             ) AS address_full
+    #         FROM res_partner
+    #         WHERE id = %s
+    #     """ % partner_id)
+    #     self.write(cr, uid, partner_id, {"address_full": cr.fetchone()[0]}, context=context)
+    #     return True
+
     def _update_address_full(self, cr, uid, partner_id, context=None):
-        cr.execute("""
-            SELECT
-                TRIM(
-                   -- Street
-                   (
-                    CASE WHEN TRIM(COALESCE(street, '')) = '' THEN '' ELSE
-                        ' ' || TRIM(COALESCE(street, '')) END
-                   ) ||
-                   -- Township
-                   (
-                    CASE WHEN TRIM(COALESCE(township, '')) = '' THEN '' ELSE
-                        ' ' || (
-                            CASE
-                                WHEN LEFT(TRIM(COALESCE(township, '')), 2) <> 'ต.' AND
-                                     LEFT(TRIM(COALESCE(township, '')), 4) <> 'ตำบล' AND
-                                     LEFT(TRIM(COALESCE(township, '')), 4) <> 'แขวง' THEN 'ตำบล' || TRIM(COALESCE(township, ''))
-                                ELSE TRIM(COALESCE(township, '')) END
-                        ) END
-                   ) ||
-                   -- District
-                   (
-                    CASE WHEN TRIM(COALESCE(district, '')) = '' THEN '' ELSE
-                        ' ' || (
-                            CASE
-                                WHEN LEFT(TRIM(COALESCE(district, '')), 2) <> 'อ.' AND
-                                     LEFT(TRIM(COALESCE(district, '')), 5) <> 'อำเภอ' AND
-                                     LEFT(TRIM(COALESCE(district, '')), 3) <> 'เขต' THEN 'อำเภอ' || TRIM(COALESCE(district, ''))
-                                ELSE TRIM(COALESCE(district, '')) END
-                        ) END
-                   ) ||
-                   -- Province
-                   (
-                    CASE WHEN TRIM(COALESCE(province, '')) = '' THEN '' ELSE
-                        ' ' || (
-                            CASE
-                                WHEN LEFT(TRIM(COALESCE(province, '')), 2) <> 'จ.' AND
-                                     LEFT(TRIM(COALESCE(province, '')), 7) <> 'จังหวัด' AND
-                                     POSITION('กรุงเทพ' IN province) <= 0 AND
-                                     POSITION('กทม' IN province) <= 0 THEN 'จังหวัด' || TRIM(COALESCE(province, ''))
-                                ELSE TRIM(COALESCE(province, '')) END
-                        ) END
-                   ) ||
-                   -- Zip
-                   (
-                    CASE WHEN TRIM(COALESCE(zip, '')) = '' THEN '' ELSE
-                        ' ' || TRIM(COALESCE(zip, '')) END
-                   )
-                ) AS address_full
-            FROM res_partner
-            WHERE id = %s
-        """ % partner_id)
-        self.write(cr, uid, partner_id, {"address_full": cr.fetchone()[0]}, context=context)
+        partner = self.browse(cr, uid, partner_id, context=context)
+        address_list = []
+        if partner.street:
+            address_list.append(partner.street)
+        if partner.township:
+            address_list.append(partner.township)
+        if partner.district:
+            address_list.append(partner.district)
+        if partner.province:
+            address_list.append(partner.province)
+        if partner.zip:
+            address_list.append(partner.zip)
+        address_full = " ".join(address_list)
+        if (address_full or partner.address_full) and address_full != partner.address_full:
+            self.write(cr, uid, [partner_id], {"address_full": address_full}, context=context)
         return True
 
     def create(self, cr, uid, vals, context=None):
