@@ -18,8 +18,22 @@
                         <field name="district" placeholder="District"/>
                         <field name="province" placeholder="Province"/>
                         <field name="zip" placeholder="Zip Code" invisible="1"/>
+                        <button string="View Full Address" name="view_full_address" type="object" class="oe_link" attrs="{'invisible': [('address_full', '=', False)]}"/>
                     </div>
                 </field>
+            </field>
+        </record>
+
+        <record id="view_res_partner_filter" model="ir.ui.view">
+            <field name="name">view.res.partner.filter</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter" />
+            <field name="arch" type="xml">
+                <filter string="Country" position="after">
+                    <filter string="Province" context="{'group_by': 'province'}"/>
+                    <filter string="District" context="{'group_by': 'district'}"/>
+                    <filter string="Township" context="{'group_by': 'township'}"/>
+                </filter>
             </field>
         </record>
     </data>

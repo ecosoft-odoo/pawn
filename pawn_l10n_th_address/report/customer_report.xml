@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="customer_report_tree_view" model="ir.ui.view">
+            <field name="name">customer.report.tree.view</field>
+            <field name="model">customer.report</field>
+            <field name="inherit_id" ref="pawnshop.customer_report_tree_view"/>
+            <field name="arch" type="xml">
+                <field name="country" position="before">
+                    <field name="township"/>
+                    <field name="district"/>
+                    <field name="province"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="customer_report_search_view" model="ir.ui.view">
+            <field name="name">customer.report.search.view</field>
+            <field name="model">customer.report</field>
+            <field name="inherit_id" ref="pawnshop.customer_report_search_view"/>
+            <field name="arch" type="xml">
+                <field name="country" position="before">
+                    <field name="township"/>
+                    <field name="district"/>
+                    <field name="province"/>
+                </field>
+                <filter string="Nationality" position="before">
+                    <filter string="Township" domain="[]" context="{'group_by':'township'}"/>
+                    <filter string="District" domain="[]" context="{'group_by':'district'}"/>
+                    <filter string="Province" domain="[]" context="{'group_by':'province'}"/>
+                </filter>
+            </field>
+        </record>
+    </data>
+</openerp>

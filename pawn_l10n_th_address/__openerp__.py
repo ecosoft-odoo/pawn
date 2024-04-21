@@ -11,7 +11,9 @@
     "depends": ["pawnshop"],
     "license": "AGPL-3",
     "data": [
+        "wizards/partner_full_address_wizard.xml",
         "views/res_partner_view.xml",
+        "report/customer_report.xml",
     ],
     "installable": True,
     "auto_install": False,

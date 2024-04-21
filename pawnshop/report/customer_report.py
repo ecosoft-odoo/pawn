@@ -18,15 +18,6 @@ class customer_report(osv.osv_memory):
         'customer_create_date': fields.datetime(
             string='Customer Create Date',
         ),
-        'subdistrict': fields.char(
-            string='Subdistrict',
-        ),
-        'district': fields.char(
-            string='District',
-        ),
-        'province': fields.char(
-            string='Province',
-        ),
         'country': fields.char(
             string='Nationality',
         ),
@@ -182,18 +173,24 @@ class customer_report_wizard(osv.osv_memory):
         'report_at_date': fields.date.context_today,
     }
 
+    def hook_sql_select(self):
+        return ""
+
+    def hook_column_insert_customer_report(self):
+        return ""
+
     def _get_column_insert_customer_report(self):
         columns = """
             (
                 id, create_uid, create_date, write_date, write_uid, wizard_id,
-                pawn_shop, customer, customer_create_date, subdistrict, district, province, country, sex, age, age_range,
+                pawn_shop, customer, customer_create_date, country, sex, age, age_range,
                 number_of_ticket, amount_pawned, customer_status, customer_aging,
                 pawn_ticket_aging_1, pawn_ticket_aging_2, pawn_ticket_aging_3,
                 pawn_ticket_aging_4, pawn_ticket_aging_5, number_of_ticket_aging_1,
                 number_of_ticket_aging_2, number_of_ticket_aging_3, number_of_ticket_aging_4,
-                number_of_ticket_aging_5
+                number_of_ticket_aging_5 {}
             )
-        """
+        """.format(self.hook_column_insert_customer_report())
         return columns
 
     def _get_sql_customer_report(self, uid, wizard):
@@ -248,7 +245,7 @@ class customer_report_wizard(osv.osv_memory):
                         WHEN rp.partner_title = 'company' THEN 'บริษัท '
                         WHEN rp.partner_title = 'partnership' THEN 'ห้างหุ้นส่วน '
                         ELSE ''
-                    END || rp.name AS customer, rp.create_date AS customer_create_date, NULL AS subdistrict, NULL AS district, NULL AS province, rc.name AS country,
+                    END || rp.name AS customer, rp.create_date AS customer_create_date, rc.name AS country,
                     CASE
                         WHEN rp.partner_title IN ('mr') THEN 'ชาย'
                         WHEN rp.partner_title IN ('mrs', 'miss') THEN 'หญิง'
@@ -285,6 +282,7 @@ class customer_report_wizard(osv.osv_memory):
                     END AS customer_aging, po.pawn_ticket_aging_1, po.pawn_ticket_aging_2, po.pawn_ticket_aging_3,
                     po.pawn_ticket_aging_4, po.pawn_ticket_aging_5, po.number_of_ticket_aging_1, po.number_of_ticket_aging_2,
                     po.number_of_ticket_aging_3, po.number_of_ticket_aging_4, po.number_of_ticket_aging_5
+                    {hook_sql_select}
                 FROM res_partner rp
                 LEFT JOIN res_country rc ON rp.country_id = rc.id
                 LEFT JOIN (
@@ -317,6 +315,7 @@ class customer_report_wizard(osv.osv_memory):
             report_at_date=report_at_date,
             pawn_ticket_aging=pawn_ticket_aging,
             extra_where=extra_where,
+            hook_sql_select=self.hook_sql_select(),
         )
         return sql
 
