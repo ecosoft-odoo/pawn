@@ -10,9 +10,6 @@
                     <field name="pawn_shop" invisible="1"/>
                     <field name="customer"/>
                     <field name="customer_create_date" widget="date"/>
-                    <field name="subdistrict" invisible="1"/>
-                    <field name="district" invisible="1"/>
-                    <field name="province" invisible="1"/>
                     <field name="country"/>
                     <field name="sex"/>
                     <field name="age"/>
@@ -35,9 +32,6 @@
             <field name="arch" type="xml">
                 <search string="Customer Report" version="7.0">
                     <field name="customer"/>
-                    <field name="subdistrict" invisible="1"/>
-                    <field name="district" invisible="1"/>
-                    <field name="province" invisible="1"/>
                     <field name="country"/>
                     <field name="sex"/>
                     <field name="customer_status"/>
@@ -60,9 +54,6 @@
                     </group>
                     <group expand="0" string="Group By">
                         <filter string="Shop" domain="[]" context="{'group_by':'pawn_shop'}"/>
-                        <filter invisible="1" string="Subdistrict" domain="[]" context="{'group_by':'subdistrict'}"/>
-                        <filter invisible="1" string="District" domain="[]" context="{'group_by':'district'}"/>
-                        <filter invisible="1" string="Province" domain="[]" context="{'group_by':'province'}"/>
                         <filter string="Nationality" domain="[]" context="{'group_by':'country'}"/>
                         <filter string="Sex" domain="[]" context="{'group_by':'sex'}"/>
                         <filter string="Age Range" domain="[]" context="{'group_by':'age_range'}"/>

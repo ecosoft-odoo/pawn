@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="partner_full_address_wizard_form_view" model="ir.ui.view">
+            <field name="name">partner.full.address.wizard.form.view</field>
+            <field name="model">partner.full.address.wizard</field>
+            <field name="arch" type="xml">
+                <form string="View Full Address" version="7.0">
+                    <group>
+                        <field name="address_full"/>
+                    </group>
+                    <footer>
+                        <button string="Close" class="oe_link" special="cancel"/>
+                    </footer>
+               </form>
+            </field>
+        </record>
+
+        <record id="action_partner_full_address_wizard" model="ir.actions.act_window">
+            <field name="name">View Full Address</field>
+            <field name="res_model">partner.full.address.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="partner_full_address_wizard_form_view"/>
+            <field name="target">new</field>
+        </record>
+    </data>
+</openerp>

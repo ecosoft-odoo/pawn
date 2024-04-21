@@ -2,6 +2,4 @@
 # © 2024 Ecosoft (ecosoft.co.th).
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from . import wizards
-from . import models
-from . import report
+from . import partner_full_address_wizard
