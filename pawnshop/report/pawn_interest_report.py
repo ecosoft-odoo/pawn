@@ -51,6 +51,17 @@ class pawn_interest_report(osv.osv):
     }
     _order = 'name'
 
+    def _get_select_ir_property(self, property):
+        select = """
+            (
+                select split_part(ip.value_reference, ',', 2) :: integer
+                from ir_property ip
+                where ip.res_id is null and ip.fields_id = (select imf.id from ir_model_fields imf where imf.name = '{property}' and imf.model = 'pawn.order' limit 1)
+                limit 1
+            )
+        """.format(property=property)
+        return select
+
     def init(self, cr):
         tools.drop_view_if_exists(cr, 'pawn_interest_report')
         cr.execute("""
@@ -75,10 +86,21 @@ class pawn_interest_report(osv.osv):
                     po.date_due,
                     po.amount_total as amount_estimated,
                     po.amount_pawned,
-                    sum(coalesce(pai.interest_amount, 0.0) + coalesce(pai.discount, 0.0) - coalesce(pai.addition, 0.0)) as original_interest,
-                    sum(coalesce(pai.interest_amount, 0.0)) as amount_interest
+                    sum(coalesce(am_line.amount_interest, 0.0) + coalesce(am_line.discount, 0.0) - coalesce(am_line.addition, 0.0)) as original_interest,
+                    sum(coalesce(am_line.amount_interest, 0.0)) as amount_interest
                 from pawn_order po
-                left outer join pawn_actual_interest pai on pai.pawn_id = po.id
+                left outer join (
+                    select
+                        aml.pawn_order_id,
+                        sum(case when aml.account_id = aj.default_debit_account_id then aml.debit - aml.credit else 0 end) as amount_interest,
+                        sum(case when aml.account_id = {account_interest_discount} then aml.debit - aml.credit else 0 end) as discount,
+                        sum(case when aml.account_id = {account_interest_addition} then aml.credit - aml.debit else 0 end) as addition
+                    from account_move_line aml
+                    left outer join account_move am on aml.move_id = am.id
+                    left outer join account_journal aj on aml.journal_id = aj.id
+                    where aml.pawn_order_id is not null and aml.journal_id = {journal_actual_interest} and am.state = 'posted'
+                    group by aml.pawn_order_id
+                ) am_line on po.id = am_line.pawn_order_id
                 where po.state = 'redeem'
                 group by po.id,
                     po.name,
@@ -102,7 +124,13 @@ class pawn_interest_report(osv.osv):
                 from pawn_order_line
                 group by order_id) pawn_line on pawn.id = pawn_line.order_id
             )
-        """)
+        """.format(
+            account_interest_discount=self._get_select_ir_property('property_account_interest_discount'),
+            account_interest_addition=self._get_select_ir_property('property_account_interest_addition'),
+            journal_actual_interest=self._get_select_ir_property('property_journal_actual_interest')
+        ))
+
+
 pawn_interest_report()
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
