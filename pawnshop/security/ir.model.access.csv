@@ -1,5 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 base.access_res_partner_bank_group_partner_manager,res_partner_bank group_partner_manager,base.model_res_partner_bank,base.group_partner_manager,1,0,0,0
+base.access_ir_config_parameter_system,ir_config_parameter_system,base.model_ir_config_parameter,base.group_system,1,1,1,1
 base.group_user_model_pawn_order,group_user_model_pawn_order,model_pawn_order,base.group_user,1,0,0,0
 base.group_user_model_pawn_order_line,group_user_model_pawn_order_line,model_pawn_order_line,base.group_user,1,0,0,0
 base.group_user_model_pawn_accrued_interest,group_user_model_pawn_accrued_interest,model_pawn_accrued_interest,base.group_user,1,0,0,0
