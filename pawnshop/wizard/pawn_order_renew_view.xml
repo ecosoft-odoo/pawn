@@ -16,8 +16,8 @@
                             <field name="interest_amount" string="+ Interest Amount" />
                             <field name="discount" string="- Discount" on_change="onchange_amount('discount', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
                             <field name="addition" string="+ Addition" on_change="onchange_amount('addition', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
-                         </group>
-                         <group class="oe_subtotal_footer oe_left" >
+                        </group>
+                        <group class="oe_subtotal_footer oe_left" >
                          	<div colspan="2">
 	                         	<h3>
 		                     	 	<label string="Pay Interest Amount"/>
@@ -34,11 +34,16 @@
 	                             	<field name="new_pawn_amount" on_change="onchange_amount('new_pawn_amount', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)" class="oe_inline" />
 	                         	</h3>
                             </div>
-                         </group>
-                         <group colspan="1">
-                            <field name="renewal_transfer"/>
-                            <field name="secret_key" attrs="{'invisible': [('renewal_transfer', '=', False)], 'required': [('renewal_transfer', '=', True)]}"/>
-                         </group>
+                        </group>
+                        <group>
+                            <field name="delegation_of_authority" on_change="onchange_delegation_of_authority()"/>
+                            <field name="delegate_id" domain="[('supplier', '=', 1), ('pawnshop', '=', 1)]" options="{'limit': 10, 'create': false, 'create_edit': false}" attrs="{'invisible': [('delegation_of_authority', '=', False)], 'required': [('delegation_of_authority', '=', True)]}"/>
+                        </group>
+                        <group/>
+                        <group>
+                            <field name="renewal_transfer" on_change="onchange_renewal_transfer()"/>
+                            <field name="secret_key" password="1" attrs="{'invisible': [('renewal_transfer', '=', False)], 'required': [('renewal_transfer', '=', True)]}"/>
+                        </group>
                     </group>
                     <footer>
                         <button string="Renew" name="action_renew" type="object" class="oe_highlight"/>

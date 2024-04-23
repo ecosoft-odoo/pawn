@@ -58,6 +58,8 @@ class pawn_order_renew(osv.osv_memory):
         'new_pawn_amount': fields.float('New Pawn Amount', readonly=False),
         'renewal_transfer': fields.boolean('Renewal Transfer'),
         'secret_key': fields.char('Secret Key'),
+        'delegation_of_authority': fields.boolean('Delegation of Authority'),
+        'delegate_id': fields.many2one('res.partner', 'Delegate'),
     }
     _defaults = {
         'date_renew': fields.date.context_today,
@@ -68,6 +70,8 @@ class pawn_order_renew(osv.osv_memory):
         'pay_interest_amount': _get_interest_amount,
         'increase_pawn_amount': 0.0,
         'renewal_transfer': False,
+        'delegation_of_authority': False,
+        'delegate_id': False,
     }
 
     def onchange_amount(self, cr, uid, ids, field, pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount, context=None):
@@ -94,6 +98,12 @@ class pawn_order_renew(osv.osv_memory):
             res['value']['increase_pawn_amount'] = round(increase_pawn_amount, 2)
         return res
 
+    def onchange_delegation_of_authority(self, cr, uid, ids, context=None):
+        return {'value': {'delegate_id': False}}
+
+    def onchange_renewal_transfer(self, cr, uid, ids, context=None):
+        return {'value': {'secret_key': False}}
+
     def _validate_secret_key(self, cr, uid, renewal_transfer, secret_key, context=None):
         if renewal_transfer:
             valid_secret_key = self.pool.get('ir.config_parameter').get_param(cr, uid, 'pawnshop.renew_secret_key', '')
@@ -112,8 +122,15 @@ class pawn_order_renew(osv.osv_memory):
         wizard = self.browse(cr, uid, ids[0], context)
         # Check Secret Key
         self._validate_secret_key(cr, uid, wizard.renewal_transfer, wizard.secret_key, context=context)
-        # Update renewal transfer
-        pawn_obj.write(cr, uid, [pawn_id], {'renewal_transfer_redeem': wizard.renewal_transfer}, context=context)
+        # Check Delegation of Authority and Renewal Transfer
+        if wizard.delegation_of_authority and wizard.renewal_transfer:
+            raise osv.except_osv(_('Error!'), _('Selecting both delegation of authority and renewal transfer is not permitted.'))
+        # Update some data on pawn ticket before redeem it
+        pawn_obj.write(cr, uid, [pawn_id], {
+            'renewal_transfer_redeem': wizard.renewal_transfer,
+            'delegation_of_authority': wizard.delegation_of_authority,
+            'delegate_id': wizard.delegate_id.id,
+        }, context=context)
         # Trigger workflow
         # Redeem the current one
         wf_service = netsvc.LocalService("workflow")
@@ -191,6 +208,9 @@ class pawn_order_renew(osv.osv_memory):
                 })
             if vals:
                 pawn_obj.write(cr, uid, [new_pawn_id], vals, context=context)
+        # Change partner to delegate for the new ticket
+        if wizard.delegation_of_authority:
+            pawn_obj.write(cr, uid, [new_pawn_id], {'partner_id': wizard.delegate_id.id}, context=context)
         # Write new pawn back to the original
         pawn_obj.write(cr, uid, [pawn_id], {'child_id': new_pawn_id}, context=context)
         # Commit

@@ -57,6 +57,8 @@ class pawn_order_redeem(osv.osv_memory):
         'discount': fields.float('Discount', readonly=False),
         'addition': fields.float('Addition'),
         'redeem_amount': fields.float('Final Redeem', readonly=False),
+        'delegation_of_authority': fields.boolean('Delegation of Authority'),
+        'delegate_id': fields.many2one('res.partner', 'Delegate'),
     }
     _defaults = {
         'date_redeem': fields.date.context_today,
@@ -65,6 +67,8 @@ class pawn_order_redeem(osv.osv_memory):
         'discount': 0.0,
         'addition': 0.0,
         'redeem_amount': _get_redeem_amount,
+        'delegation_of_authority': False,
+        'delegate_id': False,
     }
 
     def onchange_amount(self, cr, uid, ids, field, pawn_amount, interest_amount, discount, addition, redeem_amount, context=None):
@@ -96,6 +100,9 @@ class pawn_order_redeem(osv.osv_memory):
         res['value']['addition'] = 0.0
         return res
 
+    def onchange_delegation_of_authority(self, cr, uid, ids, context=None):
+        return {'value': {'delegate_id': False}}
+
     def action_redeem(self, cr, uid, ids, context=None):
         if context is None:
             context = {}
@@ -111,10 +118,15 @@ class pawn_order_redeem(osv.osv_memory):
                                  _('Ticket need refresh before proceeding!'))
         pawn = pawn_obj.browse(cr, uid, pawn_id, context=context)
         state_bf_redeem = pawn.state
+        # Update some data on pawn ticket before redeem it
+        wizard = self.browse(cr, uid, ids[0], context)
+        pawn_obj.write(cr, uid, [pawn_id], {
+            'delegation_of_authority': wizard.delegation_of_authority,
+            'delegate_id': wizard.delegate_id.id
+        }, context=context)
         # Trigger workflow, reverse of pawn
         wf_service = netsvc.LocalService("workflow")
         wf_service.trg_validate(uid, 'pawn.order', pawn_id, 'order_redeem', cr)
-        wizard = self.browse(cr, uid, ids[0], context)
         date = wizard.date_redeem
         # Check final redeem
         total_redeem_amount = wizard.pawn_amount + wizard.interest_amount - wizard.discount + wizard.addition

@@ -243,6 +243,8 @@
                                 <group string="Redeem">
                                     <field name="fingerprint_redeem" string="Fingerprint" widget="image" class="oe_left oe_avatar"/>
                                     <field name="fingerprint_redeem_date" string="Date of Fingerprint"/>
+                                    <field name="delegation_of_authority" attrs="{'invisible': [('delegation_of_authority', '=', False)]}"/>
+                                    <field name="delegate_id" attrs="{'invisible': [('delegate_id', '=', False)]}"/>
                                 </group>
                             </group>
                         </page>

@@ -18,6 +18,12 @@
     <field name="cust_name" class="java.lang.String">
         <fieldDescription><![CDATA[partner_id/name]]></fieldDescription>
     </field>
+    <field name="delegate_title" class="java.lang.String">
+        <fieldDescription><![CDATA[delegate_id/partner_title]]></fieldDescription>
+    </field>
+    <field name="delegate_name" class="java.lang.String">
+        <fieldDescription><![CDATA[delegate_id/name]]></fieldDescription>
+    </field>
     <field name="date_redeem" class="java.util.Date">
         <fieldDescription><![CDATA[date_redeem]]></fieldDescription>
     </field>
@@ -47,11 +53,22 @@
                 <textFieldExpression class="java.lang.String"><![CDATA["ไถ่ถอนตั๋วเลขที่ " + $F{doc_name}]]></textFieldExpression>
             </textField>
             <textField isStretchWithOverflow="true" isBlankWhenNull="true">
-                <reportElement positionType="Float" x="-60" y="41" width="300" height="17"/>
+                <reportElement positionType="Float" x="-60" y="41" width="300" height="17">
+                    <printWhenExpression><![CDATA[$F{delegate_name} == null]]></printWhenExpression>
+                </reportElement>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font fontName="Monospaced" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
                 </textElement>
                 <textFieldExpression class="java.lang.String"><![CDATA["จาก " + ($F{partner_title} == "mr" ? "นาย" : ($F{partner_title} == "mrs" ? "นาง" : ($F{partner_title} == "miss" ? "นางสาว" : "xx"))) + " " + $F{cust_name}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+                <reportElement positionType="Float" x="-60" y="41" width="300" height="17">
+                    <printWhenExpression><![CDATA[$F{delegate_name} != null]]></printWhenExpression>
+                </reportElement>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="Monospaced" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+                </textElement>
+                <textFieldExpression class="java.lang.String"><![CDATA["จาก " + ($F{delegate_title} == "mr" ? "นาย" : ($F{delegate_title} == "mrs" ? "นาง" : ($F{delegate_title} == "miss" ? "นางสาว" : "xx"))) + " " + $F{delegate_name}]]></textFieldExpression>
             </textField>
             <textField isStretchWithOverflow="true" pattern="'วันที่' dd MMMMM yyyy" isBlankWhenNull="true">
                 <reportElement positionType="Float" mode="Transparent" x="0" y="58" width="179" height="17">
