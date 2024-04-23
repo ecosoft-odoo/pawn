@@ -401,6 +401,8 @@ class pawn_order(osv.osv):
          'pawn_item_image_date_second': fields.datetime('Date of Pawn Item (Second)', readonly=True),
          'pawn_item_image_third': fields.binary('Pawn Item (Third)'),
          'pawn_item_image_date_third': fields.datetime('Date of Pawn Item (Third)', readonly=True),
+         'delegation_of_authority': fields.boolean('Delegation of Authority', readonly=True),
+         'delegate_id': fields.many2one('res.partner', 'Delegate', readonly=True),
     }
     _defaults = {
         'company_id': lambda self, cr, uid, c: self.pool.get('res.users').browse(cr, uid, uid).company_id.id,
@@ -416,6 +418,8 @@ class pawn_order(osv.osv):
         'date_final_expired': False,
         'renewal_transfer_pawn': False,
         'renewal_transfer_redeem': False,
+        'delegation_of_authority': False,
+        'delegate_id': False,
     }
     _sql_constraints = [
         ('name_uniq', 'unique(name, pawn_shop_id)', 'Pawn Ticket Reference must be unique per Pawn Shop!'),
@@ -441,8 +445,11 @@ class pawn_order(osv.osv):
                         fingerprint = order.parent_id.fingerprint_redeem
                         fingerprint_date = order.parent_id.fingerprint_redeem_date
                 else:
-                    fingerprint = order.partner_id.fingerprint
-                    fingerprint_date = order.partner_id.fingerprint_date
+                    partner = order.partner_id
+                    if order.delegate_id:
+                        partner = order.delegate_id
+                    fingerprint = partner.fingerprint
+                    fingerprint_date = partner.fingerprint_date
                     # Check customer's fingerprint
                     now = fields.datetime.now()
                     fingerprint_timeout = int(self.pool.get('ir.config_parameter').get_param(cr, uid, 'pawnshop.customer_fingerprint_timeout', '300'))
@@ -976,6 +983,8 @@ class pawn_order(osv.osv):
             'date_final_expired': False,
             'renewal_transfer_pawn': False,
             'renewal_transfer_redeem': False,
+            'delegation_of_authority': False,
+            'delegate_id': False,
         })
         # Default pawn item image
         for i in ['first', 'second', 'third']:

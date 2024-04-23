@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_pawn_order_redeem" model="ir.ui.view">
+            <field name="name">view.pawn.order.redeem</field>
+            <field name="model">pawn.order.redeem</field>
+            <field name="inherit_id" ref="pawnshop.view_pawn_order_redeem"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='delegation_of_authority']/.." position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

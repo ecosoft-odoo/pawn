@@ -16,13 +16,17 @@
                             <field name="interest_amount" string="+ Interest Amount"/>
                             <field name="discount" string="- Discount" on_change="onchange_amount('discount', pawn_amount, interest_amount, discount, addition, redeem_amount)"/>
                             <field name="addition" string="+ Addition" on_change="onchange_amount('addition', pawn_amount, interest_amount, discount, addition, redeem_amount)"/>
-                         </group>
-                         <group>
-                         	 <h2>
-                         	 	<label for="redeem_amount" />
-                             	<field name="redeem_amount" on_change="onchange_amount('redeem_amount', pawn_amount, interest_amount, discount, addition, redeem_amount)" class="oe_inline" />
-                         	 </h2>
-                         </group>
+                        </group>
+                        <group>
+                            <h2>
+                                <label for="redeem_amount" />
+                                <field name="redeem_amount" on_change="onchange_amount('redeem_amount', pawn_amount, interest_amount, discount, addition, redeem_amount)" class="oe_inline" />
+                            </h2>
+                        </group>
+                        <group>
+                            <field name="delegation_of_authority" on_change="onchange_delegation_of_authority()"/>
+                            <field name="delegate_id" domain="[('supplier', '=', 1), ('pawnshop', '=', 1)]" options="{'limit': 10, 'create': false, 'create_edit': false}" attrs="{'invisible': [('delegation_of_authority', '=', False)], 'required': [('delegation_of_authority', '=', True)]}"/>
+                        </group>
                     </group>
                     <footer>
                         <button string="Redeem" name="action_redeem" type="object" class="oe_highlight"/>
