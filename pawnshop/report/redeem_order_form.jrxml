@@ -54,7 +54,7 @@
             </textField>
             <textField isStretchWithOverflow="true" isBlankWhenNull="true">
                 <reportElement positionType="Float" x="-60" y="41" width="300" height="17">
-                    <printWhenExpression><![CDATA[$F{delegate_name} == null]]></printWhenExpression>
+                    <printWhenExpression><![CDATA[$F{delegate_name} == false || $F{delegate_name} == null || $F{delegate_name} == '']]></printWhenExpression>
                 </reportElement>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font fontName="Monospaced" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
@@ -63,7 +63,7 @@
             </textField>
             <textField isStretchWithOverflow="true" isBlankWhenNull="true">
                 <reportElement positionType="Float" x="-60" y="41" width="300" height="17">
-                    <printWhenExpression><![CDATA[$F{delegate_name} != null]]></printWhenExpression>
+                    <printWhenExpression><![CDATA[$F{delegate_name} != false && $F{delegate_name} != null && $F{delegate_name} != '']]></printWhenExpression>
                 </reportElement>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font fontName="Monospaced" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
