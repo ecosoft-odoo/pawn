@@ -122,6 +122,15 @@
                 </textElement>
                 <text><![CDATA[ต่อตั๋ว]]></text>
             </staticText>
+            <staticText>
+                <reportElement positionType="Float" x="0" y="159" width="60" height="20" forecolor="#000000">
+                    <printWhenExpression><![CDATA[$F{delegate_name}]]></printWhenExpression>
+                </reportElement>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="Monospaced" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" size="9"/>
+                </textElement>
+                <text><![CDATA[รับมอบอำนาจ]]></text>
+            </staticText>
         </band>
     </pageHeader>
 </jasperReport>
