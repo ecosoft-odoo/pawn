@@ -201,7 +201,7 @@ class pawn_order_renew(osv.osv_memory):
         # Update image for renewal transfer only
         if wizard.renewal_transfer:
             vals = {}
-            for i in ['first', 'second', 'third']:
+            for i in ['first', 'second', 'third', 'fourth', 'fifth']:
                 vals.update({
                     'pawn_item_image_%s' % i: pawn['pawn_item_image_%s' % i],
                     'pawn_item_image_date_%s' % i: pawn['pawn_item_image_date_%s' % i],

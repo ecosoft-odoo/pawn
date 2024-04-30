@@ -273,7 +273,25 @@
                                     <field name="pawn_item_image_third" widget="image" class="oe_left oe_avatar" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                     <field name="pawn_item_image_date_third"/>
                                     <div class="oe_clear"/>
-                                    <button name="action_remove_pawn_item_image" type="object" string="Remove" icon="gtk-delete" context="{'image_number': 'third'}" attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('pawn_item_image_third', '=', False)]}"/>
+                                    <button name="action_remove_pawn_item_image" type="object" string="Remove" icon="gtk-delete" context="{'image_number': 'third'}" attrs="{'invisible': ['|', ('state', '!=', 'draft'), '|', ('pawn_item_image_fourth', '!=', False), ('pawn_item_image_third', '=', False)]}"/>
+                                </div>
+                            </group>
+                            <group attrs="{'invisible': [('pawn_item_image_third', '=', False)]}">
+                                <label for="pawn_item_image_fourth" string="Pawn Item (Fourth)"/>
+                                <div>
+                                    <field name="pawn_item_image_fourth" widget="image" class="oe_left oe_avatar" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                    <field name="pawn_item_image_date_fourth"/>
+                                    <div class="oe_clear"/>
+                                    <button name="action_remove_pawn_item_image" type="object" string="Remove" icon="gtk-delete" context="{'image_number': 'fourth'}" attrs="{'invisible': ['|', ('state', '!=', 'draft'), '|', ('pawn_item_image_fifth', '!=', False), ('pawn_item_image_fourth', '=', False)]}"/>
+                                </div>
+                            </group>
+                            <group attrs="{'invisible': [('pawn_item_image_fourth', '=', False)]}">
+                                <label for="pawn_item_image_fifth" string="Pawn Item (Fifth)"/>
+                                <div>
+                                    <field name="pawn_item_image_fifth" widget="image" class="oe_left oe_avatar" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                    <field name="pawn_item_image_date_fifth"/>
+                                    <div class="oe_clear"/>
+                                    <button name="action_remove_pawn_item_image" type="object" string="Remove" icon="gtk-delete" context="{'image_number': 'fifth'}" attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('pawn_item_image_fifth', '=', False)]}"/>
                                 </div>
                             </group>
                         </page>
