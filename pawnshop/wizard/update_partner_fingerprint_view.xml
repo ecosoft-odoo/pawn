@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="update_partner_fingerprint_form_view" model="ir.ui.view">
+            <field name="name">update.partner.fingerprint.form.view</field>
+            <field name="model">update.partner.fingerprint</field>
+            <field name="arch" type="xml">
+                <form string="Update Fingerprint" version="7.0">
+                    <group>
+                        <group>
+                            <field name="fingerprint" widget="image" class="oe_left oe_avatar"/>
+                            <field name="secret_key" password="1"/>
+                        </group>
+                        <group/>
+                    </group>
+                    <footer>
+                        <button string="Update" name="action_update" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+               </form>
+            </field>
+        </record>
+        <act_window name="Update Fingerprint"
+            res_model="update.partner.fingerprint"
+            src_model="res.partner"
+            view_mode="form"
+            target="new"
+            key2="client_action_multi"
+            view_id="update_partner_fingerprint_form_view"
+            id="update_partner_fingerprint_action"/>
+    </data>
+</openerp>

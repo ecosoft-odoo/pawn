@@ -401,6 +401,10 @@ class pawn_order(osv.osv):
          'pawn_item_image_date_second': fields.datetime('Date of Pawn Item (Second)', readonly=True),
          'pawn_item_image_third': fields.binary('Pawn Item (Third)'),
          'pawn_item_image_date_third': fields.datetime('Date of Pawn Item (Third)', readonly=True),
+         'pawn_item_image_fourth': fields.binary('Pawn Item (Fourth)'),
+         'pawn_item_image_date_fourth': fields.datetime('Date of Pawn Item (Fourth)', readonly=True),
+         'pawn_item_image_fifth': fields.binary('Pawn Item (Fifth)'),
+         'pawn_item_image_date_fifth': fields.datetime('Date of Pawn Item (Fifth)', readonly=True),
          'delegation_of_authority': fields.boolean('Delegation of Authority', readonly=True),
          'delegate_id': fields.many2one('res.partner', 'Delegate', readonly=True),
     }
@@ -787,7 +791,7 @@ class pawn_order(osv.osv):
         if 'buddha_year_temp' in vals:
             vals['buddha_year'] = vals['buddha_year_temp']
         # Update pawn item image date
-        for i in ['first', 'second', 'third']:
+        for i in ['first', 'second', 'third', 'fourth', 'fifth']:
             if 'pawn_item_image_%s' % i in vals:
                 if vals['pawn_item_image_%s' % i]:
                     vals['pawn_item_image_date_%s' % i] = vals.get('pawn_item_image_date_%s' % i, fields.datetime.now())
@@ -875,7 +879,7 @@ class pawn_order(osv.osv):
         if 'buddha_year_temp' in vals:
             vals['buddha_year'] = vals['buddha_year_temp']
         # Update pawn item image date
-        for i in ['first', 'second', 'third']:
+        for i in ['first', 'second', 'third', 'fourth', 'fifth']:
             if 'pawn_item_image_%s' % i in vals:
                 if vals['pawn_item_image_%s' % i]:
                     vals['pawn_item_image_date_%s' % i] = vals.get('pawn_item_image_date_%s' % i, fields.datetime.now())
@@ -987,7 +991,7 @@ class pawn_order(osv.osv):
             'delegate_id': False,
         })
         # Default pawn item image
-        for i in ['first', 'second', 'third']:
+        for i in ['first', 'second', 'third', 'fourth', 'fifth']:
             default.update({
                 'pawn_item_image_%s' % i: False,
                 'pawn_item_image_date_%s' % i: False,

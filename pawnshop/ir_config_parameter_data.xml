@@ -9,5 +9,9 @@
             <field name="key">pawnshop.renew_secret_key</field>
             <field name="value">99</field>
         </record>
+        <record id="update_fingerprint_secret_key" model="ir.config_parameter">
+            <field name="key">pawnshop.update_fingerprint_secret_key</field>
+            <field name="value">88</field>
+        </record>
     </data>
 </openerp>
