@@ -439,6 +439,11 @@ class pawn_order(osv.osv):
         return True
 
     def _update_fingerprint(self, cr, uid, order_ids, action_type=None, context=None):
+        # Temporary disable update fingerprint
+        disable_update_fingerprint = eval(self.pool.get('ir.config_parameter').get_param(cr, uid, 'pawnshop.disable_update_fingerprint', 'False'))
+        if disable_update_fingerprint is True:
+            return True
+        # --
         for order in self.browse(cr, uid, order_ids, context=context):
             if action_type and not order['fingerprint_%s' % action_type]:
                 if order['renewal_transfer_%s' % action_type]:
