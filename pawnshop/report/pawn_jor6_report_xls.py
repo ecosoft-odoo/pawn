@@ -124,7 +124,7 @@ class PawnJo6ReportXLS(report_xls):
         row_data = self.xls_row_template(c_specs, [x[0] for x in c_specs])
         row_pos = self.xls_write_row(ws, row_pos, row_data, row_style=header_style)
         c_specs = [
-            ('header_2', 10, 0, 'text', _('โรงรับจำนำ {} {}'.decode('utf-8')).format(_p.pawn_shop.name, _p.pawn_shop.company_id.name)),
+            ('header_2', 10, 0, 'text', _('{}'.decode('utf-8')).format(_p.pawn_shop.company_id.name)),
         ]
         row_data = self.xls_row_template(c_specs, [x[0] for x in c_specs])
         row_pos = self.xls_write_row(ws, row_pos, row_data, row_style=header_style)
