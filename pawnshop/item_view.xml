@@ -126,11 +126,15 @@
                     <field name="categ_id"/>
                     <field name="date_order"/>
                     <field name="date_due"/>
-                    <field name="product_qty" invisible="context.get('tree_view_type', False) in ['pawn_asset']"/>
+                    <field name="product_qty" sum="Total Quantity" invisible="context.get('tree_view_type', False) in ['pawn_asset']"/>
                     <field name="uom_id" string="Unit of Measure" invisible="context.get('tree_view_type', False) in ['pawn_asset']"/>
+                    <field name="carat" invisible="context.get('tree_view_type', False) in ['pawn_asset']"/>
+                    <field name="gram" invisible="context.get('tree_view_type', False) in ['pawn_asset']"/>
                     <!--field name="price_pawned" string="Pawned Price" invisible="context.get('tree_view_type', False) not in ['pawn_asset']"/-->
-                    <field name="price_estimated" string="Estimated Price"/>
-                    <field name="price_pawned" string="Pawned Price"/>
+                    <field name="price_estimated" string="Estimated Price" invisible="1"/>
+                    <field name="total_price_estimated" string="Total Estimated Price" sum="Total Estimated Price" invisible="1"/>
+                    <field name="price_pawned" string="Pawned Price" invisible="1"/>
+                    <field name="total_price_pawned" string="Total Pawned Price" sum="Total Pawned Price"/>
                     <field name="state"/>
                     <field name="extended_x"/>
                     <field name="parent_order_id"/>
@@ -152,9 +156,11 @@
                     <field name="categ_id"/>
                     <field name="date_order"/>
                     <field name="date_due"/>
-                    <field name="product_qty" />
+                    <field name="product_qty" sum="Total Quantity" />
                     <field name="uom_id" string="Unit of Measure" />
-                    <field name="total_price_estimated" sum="Total Estimated Price" />
+                    <field name="carat" invisible="context.get('tree_view_type', False) in ['pawn_asset']"/>
+                    <field name="gram" invisible="context.get('tree_view_type', False) in ['pawn_asset']"/>
+                    <field name="total_price_estimated" sum="Total Estimated Price" invisible="1" />
                     <field name="total_price_pawned" sum="Total Pawned Price" />
                     <field name="total_price_sold" sum="Total Sold Price"/>
                     <field name="total_profit" sum="Total Profit"/>
@@ -223,7 +229,10 @@
                                         <field name="type"/>
                     					<field name="product_qty"/>
                                         <field name="uom_id"/>
-                                        <field name="price_pawned" string="Pawned Price"/>
+                                        <field name="carat" invisible="context.get('tree_view_type', False) in ['pawn_asset']"/>
+                                        <field name="gram" invisible="context.get('tree_view_type', False) in ['pawn_asset']"/>
+                                        <field name="price_pawned" string="Pawned Price" invisible="1"/>
+                                        <field name="total_price_pawned" string="Total Pawned Price"/>
                                     </group>
                                     <group>
                         				<field name="parent_id" attrs="{'invisible': [('parent_id','=',False)]}"/>
@@ -234,7 +243,8 @@
                                         <div name="ean">
                                             <field name="ean13" placeholder="e.g. 5901234123457"/>
                                         </div-->
-                                        <field name="price_estimated" string="Estimated Price"/>
+                                        <field name="price_estimated" string="Estimated Price" invisible="1"/>
+                                        <field name="total_price_estimated" string="Total Estimated Price" invisible="1"/>
                                     </group>
                                 </group>
 	                            <field name="line_ids" attrs="{'invisible': [('parent_id', '!=', False)]}">
@@ -246,7 +256,8 @@
                                         <field name="carat"/>
                                         <field name="gram"/>
 	                                    <field name="uom_id" />
-	                                    <field name="price_pawned"/>
+	                                    <field name="price_pawned" invisible="1"/>
+                                        <field name="total_price_pawned" sum="Total Pawned Price"/>
 	                                </tree>
 	                            </field>
 	                        	<field name="product_qty_total" invisible="1"/>

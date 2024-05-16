@@ -23,6 +23,7 @@ from openerp.osv import fields, osv
 from openerp.tools.translate import _
 import ast
 
+
 class item_split(osv.osv_memory):
 
     _name = "item.split"
@@ -41,6 +42,61 @@ class item_split(osv.osv_memory):
         'item_id': _get_item_id,
     }
 
+    def _validate_line_before_split_item(self, cr, uid, ids, context=None):
+        wizard = self.browse(cr, uid, ids[0], context=context)
+        item = wizard.item_id
+        new_qty = 0.0
+        new_total_price_estimated = 0.0
+        new_total_price_pawned = 0.0
+        new_carat = 0.0
+        new_gram = 0.0
+        for line in wizard.split_line:
+            # Check item quantity > 0
+            if line.product_qty <= 0:
+                raise osv.except_osv(_('Warning!'), _('Item quantity must greater than zero'))
+            # Check total pawned price > 0
+            if line.total_price_pawned <= 0:
+                raise osv.except_osv(_('Warning!'), _('Total pawned price must greater than zero'))
+            # Check total estimated price > 0
+            if line.total_price_estimated <= 0:
+                raise osv.except_osv(_('Warning!'), _('Total estimated price must greater than zero'))
+            # Sum qty, total price
+            new_qty += line.product_qty
+            new_total_price_estimated += line.total_price_estimated
+            new_total_price_pawned += line.total_price_pawned
+            # Sum carat, gram
+            new_carat += line.carat
+            new_gram += line.gram
+        # Check lines >= 2 lines when split
+        if len(wizard.split_line) < 2:
+            raise osv.except_osv(_('Warning!'), _('At least 2 split line must be created!'))
+        # Check total quantity must equal to original
+        if new_qty != item.product_qty:
+            raise osv.except_osv(_('Warning!'), _('Sum of quantity must equal to the original quantity'))
+        # Check total pawned price must equal to original
+        if new_total_price_pawned != item.total_price_pawned:
+            raise osv.except_osv(_('Warning!'), _('Sum of total pawned price must equal to the original total pawned price'))
+        # Check total estimated price must equal to original
+        if new_total_price_estimated != item.total_price_estimated:
+            raise osv.except_osv(_('Warning!'), _('Sum of total estimated price must equal to the original total estimated price'))
+        # Check total carat must equal to original
+        if new_carat != item.carat:
+            raise osv.except_osv(_('Warning!'), _('Sum of total carat must equal to the original total carat'))
+        # Check total gram must equal to original
+        if new_gram != item.gram:
+            raise osv.except_osv(_('Warning!'), _('Sum of total gram must equal to the original total gram'))
+        return True
+
+    def create(self, cr, uid, vals, context=None):
+        item_split_id = super(item_split, self).create(cr, uid, vals, context=context)
+        self._validate_line_before_split_item(cr, uid, [item_split_id], context=context)
+        return item_split_id
+
+    def write(self, cr, uid, ids, vals, context=None):
+        res = super(item_split_line, self).write(cr, uid, ids, vals, context=context)
+        self._validate_line_before_split_item(cr, uid, ids, context=context)
+        return res
+
     def open_items(self, cr, uid, item_ids, context=None):
         mod_obj = self.pool.get('ir.model.data')
         act_obj = self.pool.get('ir.actions.act_window')
@@ -56,34 +112,35 @@ class item_split(osv.osv_memory):
     def action_split(self, cr, uid, ids, context=None):
         if context is None:
             context = {}
-        wizard = self.browse(cr, uid, ids[0], context)
-        # Check lines >= 2 lines when split
-        if len(wizard.split_line) < 2:
-            raise osv.except_osv(_('Warning!'), _('At least 2 split line must be created!'))
-        # Check total quantity must equal to original
-        new_qty = 0.0
+        wizard = self.browse(cr, uid, ids[0], context=context)
         item = wizard.item_id
-        for line in wizard.split_line:
-            new_qty += line.product_qty
-        if new_qty != item.product_qty:
-            raise osv.except_osv(_('Warning!'), _('Sum of quantity must equal to the original quantity'))
 
         # Start coping and redirecton
         item_obj = self.pool.get('product.product')
+        cur_obj = self.pool.get('res.currency')
+        cur = item.order_id.pricelist_id.currency_id
         i = 0
         new_item_ids = []
         for line in wizard.split_line:
-            if line.product_qty:
-                i += 1
-                default = {'product_qty': line.product_qty,
-                           'description': line.description,
-                           'journal_id': item.journal_id.id}
-                new_item_id = item_obj.copy(cr, uid, item.id, default, context=context)
-                item_obj.write(cr, uid, [new_item_id], {'name': item.name + '.' + str(i)}, context=context)
-                new_item_ids.append(new_item_id)
+            i += 1
+            default = {
+                'product_qty': line.product_qty,
+                'carat': line.carat,
+                'gram': line.gram,
+                'price_estimated': cur_obj.round(cr, uid, cur, line.total_price_estimated / line.product_qty),
+                'total_price_estimated': line.total_price_estimated,
+                'price_pawned': cur_obj.round(cr, uid, cur, line.total_price_pawned / line.product_qty),
+                'total_price_pawned': line.total_price_pawned,
+                'description': line.description,
+                'journal_id': item.journal_id.id,
+            }
+            new_item_id = item_obj.copy(cr, uid, item.id, default, context=context)
+            item_obj.write(cr, uid, [new_item_id], {'name': item.name + '.' + str(i)}, context=context)
+            new_item_ids.append(new_item_id)
         # Inactive old item
         item_obj.write(cr, uid, [item.id], {'active': False})
         return self.open_items(cr, uid, new_item_ids, context=context)
+
 
 item_split()
 
@@ -106,11 +163,22 @@ class item_split_line(osv.osv_memory):
         'item_id': fields.many2one('item.split', 'Item Split'),
         'description': fields.text('Description', required=True),
         'product_qty': fields.float('Item Quantity', required=True),
+        'carat': fields.float('Carat'),
+        'gram': fields.float('Gram'),
+        'total_price_estimated': fields.float('Total Estimated Price', required=True),
+        'total_price_pawned': fields.float('Total Pawned Price', required=True),
     }
     _defaults = {
         'description': _get_description,
-        'product_qty': 0.0
+        'product_qty': 0.0,
+        'total_price_estimated': 0.0,
+        'total_price_pawned': 0.0,
     }
+
+    def onchange_total_price_pawned(self, cr, uid, ids, total_price_pawned, context=None):
+        # Not used estimated price now so we define estimated price = pawned price
+        return {'value': {'total_price_estimated': total_price_pawned}}
+
 
 item_split_line()
 

@@ -103,18 +103,17 @@ class product_product(osv.osv):
         for item in self.browse(cr, uid, ids, context=context):
             item_description = ''
             try:
-                if item.line_ids:
-                    for item_line in item.line_ids:
+                if item.order_id and not item.order_line_id:
+                    for order_line in item.order_id.order_line:
                         jewelry_desc = ''
-                        order_line = item_line.item_id.order_line_id
-                        if order_line and order_line.is_jewelry:
+                        if order_line.is_jewelry:
                             if order_line.carat and order_line.gram:
                                 jewelry_desc = ' [' + str(order_line.carat) + ' ' + _('กะรัต') + ', ' + str(order_line.gram) + ' ' + _('กรัม') + ']'
                             elif order_line.carat and not order_line.gram:
                                 jewelry_desc = ' [' + str(order_line.carat) + ' ' + _('กะรัต') + ']'
                             elif not order_line.carat and order_line.gram:
                                 jewelry_desc = ' [' + str(order_line.gram) + ' ' + _('กรัม') + ']'
-                        item_description += item_line.description + jewelry_desc + u' (' + str(item_line.product_qty or 0.0) + '), '
+                        item_description += order_line.name + jewelry_desc + u' (' + str(order_line.product_qty or 0.0) + '), '
                     item_description = item_description[:-2]
                 elif item.description:
                     item_description = item.description
@@ -146,31 +145,10 @@ class product_product(osv.osv):
             fold[loc_status.id] = loc_status.fold or False
         return result, fold
 
-    def _price_all(self, cr, uid, ids, field_name, arg, context=None):
-        res = {}
-        for item in self.browse(cr, uid, ids, context=context):
-            res[item.id] = {
-                'price_estimated': 0.0,
-                'price_pawned': 0.0,
-                'total_price_estimated': 0.0,
-                'total_price_pawned': 0.0,
-            }
-            if item.order_line_id:  # Items
-                res[item.id]['price_estimated'] = item.order_line_id.price_unit
-                res[item.id]['price_pawned'] = item.order_line_id.pawn_price_unit
-                res[item.id]['total_price_estimated'] = item.order_line_id.price_unit * item.product_qty
-                res[item.id]['total_price_pawned'] = item.order_line_id.pawn_price_unit * item.product_qty
-            else:
-                res[item.id]['price_estimated'] = item.order_id.amount_total or False
-                res[item.id]['price_pawned'] =item.order_id.amount_pawned or False
-                res[item.id]['total_price_estimated'] = item.order_id.amount_total and (item.order_id.amount_total * item.product_qty) or False
-                res[item.id]['total_price_pawned'] = item.order_id.amount_pawned and (item.order_id.amount_pawned * item.product_qty) or False
-        return res
-
     # Display price sold, use data from account_voucher_line
     def _price_selling(self, cr, uid, ids, field_name, arg, context=None):
         cr.execute("""
-                select product_id, price_unit * quantity as total_price_sold from account_voucher av
+                select avl.product_id, avl.amount as total_price_sold from account_voucher av
                 join account_voucher_line avl on av.id = avl.voucher_id
                 join product_product pp on pp.id = avl.product_id
                 join product_location_status pls on pp.location_status = pls.id
@@ -285,30 +263,10 @@ class product_product(osv.osv):
         'product_qty': fields.float('Item Quantity', digits_compute=dp.get_precision('Product Unit of Measure'), readonly=True),
         'location_status': fields.many2one('product.location.status', 'Location Status', domain=[('fold', '=', False)], readonly=True),
         'color': fields.integer('Color Index'),
-        'price_estimated': fields.function(_price_all, digits_compute=dp.get_precision('Account'), string='Estimated Price',
-            store={
-                'product.product': (lambda self, cr, uid, ids, ctx: ids, [], 10),
-                'pawn.order': (_get_product, ['amount_total', 'amount_pawned'], 10),
-            },
-            multi='pawn_price', help="Price estimated"),
-        'total_price_estimated': fields.function(_price_all, digits_compute=dp.get_precision('Account'), string='Total Estimated Price',
-            store={
-                'product.product': (lambda self, cr, uid, ids, ctx: ids, [], 10),
-                'pawn.order': (_get_product, ['amount_total', 'amount_pawned'], 10),
-            },
-            multi='pawn_price', help="Total Price estimated"),
-        'price_pawned': fields.function(_price_all, digits_compute=dp.get_precision('Account'), string='Pawned Price',
-            store={
-                'product.product': (lambda self, cr, uid, ids, ctx: ids, [], 10),
-                'pawn.order': (_get_product, ['amount_total', 'amount_pawned'], 10),
-            },
-            multi='pawn_price', help="Price pawned"),
-        'total_price_pawned': fields.function(_price_all, digits_compute=dp.get_precision('Account'), string='Total Pawned Price',
-            store={
-                'product.product': (lambda self, cr, uid, ids, ctx: ids, [], 10),
-                'pawn.order': (_get_product, ['amount_total', 'amount_pawned'], 10),
-            },
-            multi='pawn_price', help="Total Price pawned"),
+        'price_estimated': fields.float('Estimated Price', digits_compute=dp.get_precision('Account'), readonly=True, multi='pawn_price', help="Price estimated"),
+        'total_price_estimated': fields.float('Total Estimated Price', digits_compute=dp.get_precision('Account'), readonly=True, multi='pawn_price', help="Total Price estimated"),
+        'price_pawned': fields.float('Pawned Price', digits_compute=dp.get_precision('Account'), readonly=True, multi='pawn_price', help="Price pawned"),
+        'total_price_pawned': fields.float('Total Pawned Price', digits_compute=dp.get_precision('Account'), readonly=True, multi='pawn_price', help="Total Price pawned"),
         'date_order': fields.related('order_id', 'date_order', string='Pawn Date', readonly=True, type="date", store=True),
         'date_due': fields.related('order_id', 'date_due', string='Grace Period End Date', readonly=True, type="date", store=True),
         'date_final_expired': fields.related('order_id', 'date_final_expired', string='Final Expire Date', readonly=True, type="date", store=True),
@@ -329,8 +287,8 @@ class product_product(osv.osv):
                 'product.product.line': (_get_product_from_line, ['product_qty'], 10),
             }, help="The total quantity."),
         'is_jewelry': fields.related('order_line_id', 'is_jewelry', type='boolean', string='Carat/Gram'),
-        'carat': fields.related('order_line_id', 'carat', type='float', string='Carat'),
-        'gram': fields.related('order_line_id', 'gram', type='float', string='Gram'),
+        'carat': fields.float('Carat', readonly=True),
+        'gram': fields.float('Gram', readonly=True),
         'pawn_item_image_first': fields.related('order_id', 'pawn_item_image_first', type='binary', string='Pawn Item'),
     }
     _defaults = {
@@ -484,6 +442,7 @@ class product_product(osv.osv):
             res['type'] = 'service'
         return {'value': res}
 
+
 class product_product_line(osv.osv):
 
     _name = 'product.product.line'
@@ -501,7 +460,8 @@ class product_product_line(osv.osv):
         'categ_id': fields.related('item_id', 'categ_id', type='many2one', relation='product.category', string='Category'),
         'product_qty': fields.float('Quantity', digits_compute=dp.get_precision('Product Unit of Measure'), required=True),
         'uom_id': fields.related('item_id', 'uom_id', type='many2one', relation='product.uom', string='Unit of Measure'),
-        'price_pawned': fields.related('item_id', 'price_pawned', type='float', string='Pawn Price', digits_compute=dp.get_precision('Product Price')),
+        'price_pawned': fields.related('item_id', 'price_pawned', type='float', string='Pawned Price', digits_compute=dp.get_precision('Account')),
+        'total_price_pawned': fields.related('item_id', 'total_price_pawned', type='float', string='Total Pawned Price', digits_compute=dp.get_precision('Account')),
         'pawn_line_id': fields.many2one('pawn.order.line', 'Pawn Order Line Ref.', select=True),
         'is_jewelry': fields.related('pawn_line_id', 'is_jewelry', type='boolean', string='Carat/Gram'),
         'carat': fields.related('pawn_line_id', 'carat', type='float', string='Carat'),

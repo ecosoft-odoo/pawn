@@ -118,13 +118,15 @@
                                 <tree string="Pawn Ticket Lines" editable="bottom">
                                     <field name="name"/>
                                     <field name="categ_id" on_change="onchange_categ_id(categ_id)" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
-                                    <field name="product_qty" sum="Total Quantity"/>
+                                    <field name="product_qty" sum="Total Quantity" on_change="onchange_price('product_qty', product_qty, price_unit, price_subtotal, pawn_price_unit, pawn_price_subtotal)"/>
                                     <field name="product_uom" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
 									<field name="is_jewelry" invisible="1"/>
                                     <field name="carat" attrs="{'readonly': [('is_jewelry', '!=', True)]}"/>
 									<field name="gram" attrs="{'readonly': [('is_jewelry', '!=', True)]}"/>
-                                    <field name="price_unit"/>
-                                    <field name="price_subtotal" sum="Total Amount"/>
+                                    <field name="price_unit" on_change="onchange_price('price_unit', product_qty, price_unit, price_subtotal, pawn_price_unit, pawn_price_subtotal)" invisible="1"/>
+                                    <field name="price_subtotal" sum="Total Amount" on_change="onchange_price('price_subtotal', product_qty, price_unit, price_subtotal, pawn_price_unit, pawn_price_subtotal)" invisible="1"/>
+                                    <field name="pawn_price_unit" on_change="onchange_price('pawn_price_unit', product_qty, price_unit, price_subtotal, pawn_price_unit, pawn_price_subtotal)"/>
+                                    <field name="pawn_price_subtotal" sum="Total Amount" on_change="onchange_price('pawn_price_subtotal', product_qty, price_unit, price_subtotal, pawn_price_unit, pawn_price_subtotal)"/>
 				                    <button name="%(action_pawn_line_property)d" string="Property" type="action" icon="gtk-justify-fill"/>
                                 </tree>
                             </field>
@@ -358,7 +360,7 @@
                     <field name="date_redeem" />
                     <field name="partner_id"/>
                     <field name="company_id" groups="base.group_multi_company" widget="selection"/>
-                    <field name="amount_total" sum="Total Amount"/>
+                    <field name="amount_total" sum="Total Amount" invisible="1"/>
                     <field name="amount_pawned" sum="Total Pawned Amount"/>
                     <field name="state"/>
                     <field name="extended_x"/>
@@ -459,7 +461,7 @@
                                 <div>
                                     <div style="display: inline-block;vertical-align: top;width: 215px;">
                                         <b>รายละเอียด:</b> <field name="item_description"/><br/>
-                                        <b>ราคารับจำนำ:</b> <field name="price_pawned"/> ฿
+                                        <b>ราคารับจำนำ:</b> <field name="total_price_pawned"/> ฿
                                     </div>
                                     <div style="display: inline-block;vertical-align: top;">
                                         <t t-if="record.pawn_item_image_first and record.pawn_item_image_first.raw_value">
