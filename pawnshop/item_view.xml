@@ -117,7 +117,7 @@
             <field name="model">product.product</field>
             <field eval="7" name="priority"/>
             <field name="arch" type="xml">
-                <tree string="Pawn Items" create="0">
+                <tree string="Pawn Items" create="0" delete="0">
                     <field name="pawn_shop_id" />
                     <field name="journal_id" />
                     <field name="name"/>
@@ -148,7 +148,7 @@
             <field name="model">product.product</field>
             <field eval="7" name="priority"/>
             <field name="arch" type="xml">
-                <tree string="Pawn Items Sold" create="0">
+                <tree string="Pawn Items Sold" create="0" delete="0">
                     <field name="pawn_shop_id" invisible="1"/>
                     <field name="name"/>
 					<field name="partner_customer_id"/>
@@ -177,7 +177,7 @@
             <field name="model">product.product</field>
             <field eval="7" name="priority"/>
             <field name="arch" type="xml">
-                <form string="Pawn Item" create="0" edit="0" version="7.0">
+                <form string="Pawn Item" create="0" edit="0" delete="0" version="7.0">
 	                <header>
                     	<button name="action_asset_sale" string="For Sales" type="object" class="oe_highlight"
                     			attrs="{'invisible': ['|', '|', ('extended', '=', True), ('state', 'not in', ('expire')), ('type', '!=', 'pawn_asset')]}" />
@@ -540,7 +540,7 @@
             <field name="res_model">account.voucher</field>
             <field name="view_type">form</field>
             <field name="domain">[('journal_id.type','in',['sale','sale_refund']), ('type','=','sale')]</field>
-            <field name="context">{'default_type': 'sale', 'type': 'sale', 'default_pawnshop': 1 }</field>
+            <field name="context">{'default_type': 'sale', 'type': 'sale', 'default_pawnshop': True }</field>
             <field name="view_id" eval="False"/>
             <field name="search_view_id" ref="account_voucher.view_voucher_filter_sale"/>
             <field name="target">current</field>
@@ -687,6 +687,17 @@
             	<field name="hr_expense_ok" position="attributes">
                     <attribute name="on_change">onchange_hr_expense_ok(hr_expense_ok)</attribute>
             	</field>
+            </field>
+        </record>
+
+        <record id="product_normal_form_view" model="ir.ui.view">
+            <field name="name">product.normal.form</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <field name="list_price" position="after">
+                    <field name="no_cost"/>
+                </field>
             </field>
         </record>
     </data>

@@ -116,6 +116,9 @@
 	<field name="company_tax" class="java.lang.String">
 		<fieldDescription><![CDATA[company_id/vat]]></fieldDescription>
 	</field>
+	<field name="no_cost" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[line_cr_ids/product_id/no_cost]]></fieldDescription>
+	</field>
 	<variable name="sum_carat" class="java.lang.Number" calculation="Sum">
 		<variableExpression><![CDATA[$F{carat}]]></variableExpression>
 	</variable>
@@ -366,7 +369,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{product_name}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{no_cost} == null || $F{no_cost} == false) ? $F{product_name} : "-"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement positionType="Float" mode="Transparent" x="1" y="6" width="48" height="14" forecolor="#000000" backcolor="#FFFFFF"/>

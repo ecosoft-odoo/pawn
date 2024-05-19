@@ -290,6 +290,7 @@ class product_product(osv.osv):
         'carat': fields.float('Carat', readonly=True),
         'gram': fields.float('Gram', readonly=True),
         'pawn_item_image_first': fields.related('order_id', 'pawn_item_image_first', type='binary', string='Pawn Item'),
+        'no_cost': fields.boolean('No Cost'),  # Extra field for "สินค้าไม่มีต้นทุน"
     }
     _defaults = {
         'color': lambda self, cr, uid, context: randrange(10),
@@ -441,6 +442,15 @@ class product_product(osv.osv):
         if hr_expense_ok:
             res['type'] = 'service'
         return {'value': res}
+
+    def name_get(self, cr, uid, ids, context=None):
+        res = []
+        for product in self.browse(cr, uid, ids, context=context):
+            name = product.name
+            if product.type == 'consu' and product.description:
+                name = '%s (%s)' % (name, product.description)
+            res.append((product.id, name))
+        return res
 
 
 class product_product_line(osv.osv):

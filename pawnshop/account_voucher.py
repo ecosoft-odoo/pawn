@@ -46,6 +46,10 @@ class account_voucher(osv.osv):
             for voucher in self.pool.get('account.voucher').browse(cr, uid, ids, context=context):
                 item_ids = []
                 for line in voucher.line_cr_ids:
+                    # No cost product not update location status
+                    if line.product_id.no_cost:
+                        continue
+                    # --
                     if line.product_id:
                         item_ids.append(line.product_id.id)
                 if voucher.is_refund:
@@ -87,6 +91,37 @@ class account_voucher(osv.osv):
                                                                 'amount': line_amount})
         return True
 
+    def _check_duplicate_item(self, cr, uid, ids, context=None):
+        voucher_line_obj = self.pool.get('account.voucher.line')
+        for voucher in self.browse(cr, uid, ids, context=context):
+            item_ids = []
+            for line in voucher.line_cr_ids:
+                # No cost product not check duplicate item
+                if line.product_id.no_cost:
+                    continue
+                # --
+                if line.product_id:
+                    item_ids.append(line.product_id.id)
+            for item_id in list(set(item_ids)):
+                voucher_line_ids = voucher_line_obj.search(cr, uid, [('voucher_id.state', '!=', 'cancel'), ('product_id', '=', item_id)])
+                if len(voucher_line_ids) > 1:
+                    return False
+        return True
+
+    def _check_different_journal(self, cr, uid, ids, context=None):
+        for voucher in self.browse(cr, uid, ids, context=context):
+            journal_ids = list(set([line.product_id.journal_id.id for line in voucher.line_cr_ids if line.product_id]))
+            if len(journal_ids) > 1:
+                return False
+        return True
+
+    def _check_different_shop(self, cr, uid, ids, context=None):
+        for voucher in self.browse(cr, uid, ids, context=context):
+            shop_ids = list(set([line.product_id.pawn_shop_id.id for line in voucher.line_cr_ids if line.product_id]))
+            if len(shop_ids) > 1:
+                return False
+        return True
+
     _columns = {
         'docnumber': fields.integer('DocNumber', select=True, readonly=True),
         'pawn_shop_id': fields.many2one('pawn.shop', 'Shop', domain="[('company_id','=',company_id)]", readonly=True, states={'draft': [('readonly', False)]}),
@@ -95,6 +130,24 @@ class account_voucher(osv.osv):
         'is_refund': fields.boolean('Refund', readonly=True),
         'product_journal_id': fields.related('line_ids','product_id','journal_id',type='many2one',relation='account.journal',string='Product Journal', store=True, readonly=True),
     }
+
+    _constraints = [
+        (_check_duplicate_item, 'Items must be unique on the sales receipt', ['line_cr_ids']),
+        (_check_different_journal, 'Item from different journal is not allowed', ['line_cr_ids']),
+        (_check_different_shop, 'Item from different shop is not allowed', ['line_cr_ids']),
+    ]
+
+    def onchange_company_id(self, cr, uid, ids, company_id, context=None):
+        if not company_id:
+            return {}
+        # Find shop
+        shop_ids = self.pool.get('pawn.shop').search(cr, uid, [('company_id', '=', company_id), ('user_ids', 'in', uid)], context=context)
+        shop_id = shop_ids and shop_ids[0] or False
+        # Find journal
+        journal_ids = self.pool.get('account.journal').search(cr, uid,
+            [('type', '=', 'sale'), ('company_id', '=', company_id)])
+        journal_id = journal_ids and journal_ids[0] or False
+        return {'value': {'pawn_shop_id': shop_id, 'journal_id': journal_id}}
 
     def _get_next_name(self, cr, uid, date, pawn_shop_id, is_refund, context=None):
         year = date and date[:4] or time.strftime('%Y-%m-%d')[:4]
@@ -113,13 +166,21 @@ class account_voucher(osv.osv):
         return next_name, number
 
     def write(self, cr, uid, ids, vals, context=None):
+        # Reset location status before update voucher lines
+        if vals.get('line_cr_ids', False):
+            for voucher in self.browse(cr, uid, ids, context=context):
+                voucher_state = 'cancel'
+                self._update_items_location_status(cr, uid, [voucher.id], voucher_state, context=context)
+        # --
         res = super(account_voucher, self).write(cr, uid, ids, vals, context=context)
         # If Price Total is set, calculate the appropriate price.
         if vals.get('amount', False) and not vals.get('line_cr_ids', False):
             self._update_voucher_line_price_unit(cr, uid, ids, vals.get('amount'), context=context)
         # update item's location status by voucher state
-        voucher_state = vals.get('state', False)
-        self._update_items_location_status(cr, uid, ids, voucher_state, context=context)
+        if vals.get('line_cr_ids', False) or vals.get('state', False):
+            for voucher in self.browse(cr, uid, ids, context=context):
+                voucher_state = voucher.state
+                self._update_items_location_status(cr, uid, [voucher.id], voucher_state, context=context)
         return res
 
     def create(self, cr, uid, data, context=None):
@@ -256,6 +317,14 @@ class account_voucher(osv.osv):
                     profit_center = pawn_order.journal_id.profit_center
                     debit_account = pawn_order.journal_id.default_debit_account_id
 
+            # No cost product not have pawn order, define pawnshop, profit center, debit account
+            if product.no_cost:
+                pawn_shop = line.voucher_id.pawn_shop_id
+                journal_id = self.pool.get('pawn.order')._get_journal(cr, uid, context=context)
+                journal = self.pool.get('account.journal').browse(cr, uid, journal_id, context=context)
+                profit_center = journal.profit_center
+                debit_account = journal.default_debit_account_id
+
             move_line = {
                 # For Pawn
                 'product_id': product and product.id or False,
@@ -320,33 +389,40 @@ class account_voucher(osv.osv):
             move_line_cash['product_id'] = False
             # rec_ids.append(move_line_obj.create(cr, uid, move_line_cash))
 
-            # PAWN: Create Cost Move Lines
-            prec = self.pool.get('decimal.precision').precision_get(cr, uid, 'Account')
-            move_line_cost = move_line.copy()
-            move_line_cost['account_id'] = product.property_account_cost_reposessed_asset.id
-            amount = round(product.price_pawned * line.quantity, prec)
-            amount = amount < 0 and - amount or amount
-            # Reverse it for cost
-            if move_line_cost['debit']:
-                move_line_cost['credit'] = amount
-                move_line_cost['debit'] = False
-            elif move_line_cost['credit']:
-                move_line_cost['debit'] = amount
-                move_line_cost['credit'] = False
-            # rec_ids.append(move_line_obj.create(cr, uid, move_line_cost))
-            # Reverse it!
-            move_line_cost_reverse = move_line_cost.copy()
-            move_line_cost_reverse['debit'] = move_line_cost['credit']
-            move_line_cost_reverse['credit'] = move_line_cost['debit']
-            move_line_cost_reverse['account_id'] = product.property_account_expire_asset.id
-            # rec_ids.append(move_line_obj.create(cr, uid, move_line_cost))
+            # No cost product not create cost move lines
+            if not line.product_id.no_cost:
+                # PAWN: Create Cost Move Lines
+                prec = self.pool.get('decimal.precision').precision_get(cr, uid, 'Account')
+                move_line_cost = move_line.copy()
+                move_line_cost['account_id'] = product.property_account_cost_reposessed_asset.id
+                amount = round(product.price_pawned * line.quantity, prec)
+                amount = amount < 0 and - amount or amount
+                # Reverse it for cost
+                if move_line_cost['debit']:
+                    move_line_cost['credit'] = amount
+                    move_line_cost['debit'] = False
+                elif move_line_cost['credit']:
+                    move_line_cost['debit'] = amount
+                    move_line_cost['credit'] = False
+                # rec_ids.append(move_line_obj.create(cr, uid, move_line_cost))
+                # Reverse it!
+                move_line_cost_reverse = move_line_cost.copy()
+                move_line_cost_reverse['debit'] = move_line_cost['credit']
+                move_line_cost_reverse['credit'] = move_line_cost['debit']
+                move_line_cost_reverse['account_id'] = product.property_account_expire_asset.id
+                # rec_ids.append(move_line_obj.create(cr, uid, move_line_cost))
 
             move_lines = [
                 (0, 0, move_line),
                 (0, 0, move_line_cash),
-                (0, 0, move_line_cost),
-                (0, 0, move_line_cost_reverse),
             ]
+
+            # No cost product not create cost move lines
+            if not line.product_id.no_cost:
+                move_lines.extend([
+                    (0, 0, move_line_cost),
+                    (0, 0, move_line_cost_reverse),
+                ])
             all_move_lines += move_lines
 
         # Write all records at once after looping
@@ -408,7 +484,7 @@ class account_voucher(osv.osv):
             raise osv.except_osv(_('Warning'),
                                  _("Please verify that every line amount of this Sales Receipt is not zero!"))
 
-        product_ids = [x.product_id.id for x in voucher.line_ids if x.product_id]
+        product_ids = list(set([x.product_id.id for x in voucher.line_ids if x.product_id and not x.product_id.no_cost]))
         if len(product_ids) > 0:
             self.pool.get('product.product').write(cr, uid, product_ids, {'date_sold': voucher.date}, context=context)
         return super(account_voucher, self).proforma_voucher(cr, uid, ids, context=context)
@@ -568,14 +644,17 @@ class account_voucher_line(osv.osv):
         'quantity': fields.float('Quantity', digits_compute= dp.get_precision('Product Unit of Measure')),
         'uos_id': fields.many2one('product.uom', 'Unit of Measure', ondelete='set null', select=True),
         'price_unit': fields.float('Unit Price', digits_compute= dp.get_precision('Product Price')),
-        'is_jewelry': fields.related('product_id', 'is_jewelry', type='boolean', string='Carat/Gram'),
-        'carat': fields.related('product_id', 'carat', type='float', string='Carat'),
-        'gram': fields.related('product_id', 'gram', type='float', string='Gram'),
+        'is_jewelry': fields.related('product_id', 'is_jewelry', type='boolean', string='Carat/Gram', readonly=True),
+        'carat': fields.related('product_id', 'carat', type='float', string='Carat', readonly=True),
+        'gram': fields.related('product_id', 'gram', type='float', string='Gram', readonly=True),
         'price_estimated': fields.related('product_id', 'price_estimated', type='float', digits_compute=dp.get_precision('Account'), string='Estimated Price', readonly=True),
+        'total_price_pawned': fields.related('product_id', 'total_price_pawned', type='float', digits_compute=dp.get_precision('Account'), string='Total Pawned Price', readonly=True),
+        'no_cost': fields.boolean('No Cost'),
     }
 
     def onchange_price(self, cr, uid, ids, field, quantity, price_unit, amount, context=None):
         res = {'value': {}}
+        quantity = float(quantity)
         if field in ('quantity', 'price_unit'):
             prec = self.pool.get('decimal.precision').precision_get(cr, uid, 'Account')
             amount = quantity * price_unit
@@ -585,8 +664,38 @@ class account_voucher_line(osv.osv):
             if not quantity:
                 res['value']['quantity'] = quantity = 1.0
             price_unit = amount / quantity
-            res['value']['price_unit'] = round(price_unit, 2)
+            res['value']['price_unit'] = round(price_unit, prec)
         return res
+
+    def onchange_product_id(self, cr, uid, ids, product_id, context=None):
+        res = {'value': {}}
+        if product_id:
+            item = self.pool.get('product.product').browse(cr, uid, product_id, context=context)
+            res['value'].update({
+                'name': item.description,
+                'account_id': item.property_account_revenue_reposessed_asset.id,
+                'price_unit': item.standard_price,
+                'quantity': item.product_qty,
+                'uos_id': item.uom_id.id,
+                'no_cost': item.no_cost,
+            })
+        return res
+
+    def create(self, cr, uid, vals, context=None):
+        # Force update quantity because readonly field not update into database
+        if ('product_id' in vals and vals['product_id']) and not 'quantity' in vals:
+            item = self.pool.get('product.product').browse(cr, uid, vals['product_id'], context=context)
+            vals['quantity'] = item.product_qty
+        # --
+        return super(account_voucher_line, self).create(cr, uid, vals, context=context)
+
+    def write(self, cr, uid, ids, vals, context=None):
+        # Force update quantity because readonly field not update into database
+        if ('product_id' in vals and vals['product_id']) and not 'quantity' in vals:
+            item = self.pool.get('product.product').browse(cr, uid, vals['product_id'], context=context)
+            vals['quantity'] = item.product_qty
+        # --
+        return super(account_voucher_line, self).write(cr, uid, ids, vals, context=context)
 
 account_voucher_line()
 
