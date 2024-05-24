@@ -21,6 +21,7 @@
 
 from openerp.osv import fields, osv
 from openerp.tools.translate import _
+import openerp.addons.decimal_precision as dp
 import ast
 
 
@@ -29,18 +30,31 @@ class item_split(osv.osv_memory):
     _name = "item.split"
     _description = "Split Item"
 
-    def _get_item_id(self, cr, uid, context=None):
-        if context is None:
-            context = {}
-        return context.get('active_id', False)
-
     _columns = {
         'item_id': fields.many2one('product.product', 'Product', readonly=True),
+        'total_product_qty': fields.float('Total Item Quantity', digits_compute=dp.get_precision('Product Unit of Measure'), readonly=True),
+        'total_price_estimated': fields.float('Total Estimated Price', digits_compute=dp.get_precision('Account'), readonly=True, multi='pawn_price', help="Total Price estimated"),
+        'total_price_pawned': fields.float('Total Pawned Price', digits_compute=dp.get_precision('Account'), readonly=True, multi='pawn_price', help="Total Price pawned"),
+        'total_carat': fields.float('Total Carat', readonly=True),
+        'total_gram': fields.float('Total Gram', readonly=True),
         'split_line': fields.one2many('item.split.line', 'item_id', 'Split Lines', readonly=False),
     }
-    _defaults = {
-        'item_id': _get_item_id,
-    }
+
+    def default_get(self, cr, uid, fields, context=None):
+        res = super(item_split, self).default_get(cr, uid, fields, context=context)
+        if context is None:
+            context = {}
+        if 'active_id' in context and context['active_id']:
+            item = self.pool.get('product.product').browse(cr, uid, context['active_id'], context=context)
+            res.update({
+                'item_id': item.id,
+                'total_product_qty': item.product_qty,
+                'total_price_estimated': item.total_price_estimated,
+                'total_price_pawned': item.total_price_pawned,
+                'total_carat': item.carat,
+                'total_gram': item.gram,
+            })
+        return res
 
     def _validate_line_before_split_item(self, cr, uid, ids, context=None):
         wizard = self.browse(cr, uid, ids[0], context=context)

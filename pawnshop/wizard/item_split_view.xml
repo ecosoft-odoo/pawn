@@ -11,6 +11,17 @@
                         	<field name="item_id" class="oe_inline"/>
                     	</h1>
 	                </group>
+                    <group>
+                        <group>
+                            <field name="total_product_qty"/>
+                            <field name="total_price_estimated" invisible="1"/>
+                            <field name="total_price_pawned"/>
+                        </group>
+                        <group>
+                            <field name="total_carat"/>
+                            <field name="total_gram"/>
+                        </group>
+                    </group>
 	                <field name="split_line" widget="one2many_list" colspan="4" nolabel="1" context="{'active_id': item_id}">
                         <tree string="Split Lines" editable="bottom">
                             <field name="description"/>
