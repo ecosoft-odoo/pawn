@@ -57,6 +57,9 @@
                     <attribute name="create">1</attribute>
                     <attribute name="delete">1</attribute>
                 </xpath>
+                <xpath expr="/form/sheet/notebook/page/field/tree/.." position="before">
+                    <button name="%(action_select_multi_sale_item)d" string="Select Multi Items" type="action" states="draft" class="oe_highlight"/>
+                </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='name']" position="replace">
                     <field name="quantity" on_change="onchange_price('quantity', quantity, price_unit, amount)" attrs="{'readonly': [('no_cost', '=', False)]}"/>
                     <field name="carat"/>
