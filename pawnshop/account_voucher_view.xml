@@ -61,7 +61,7 @@
                     <button name="%(action_select_multi_sale_item)d" string="Select Multi Items" type="action" states="draft" class="oe_highlight"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='name']" position="replace">
-                    <field name="quantity" on_change="onchange_price('quantity', quantity, price_unit, amount)" attrs="{'readonly': [('no_cost', '=', False)]}"/>
+                    <field name="quantity" on_change="onchange_price('quantity', quantity, price_unit, amount)" attrs="{'readonly': [('for_sale', '=', False)]}"/>
                     <field name="carat"/>
                     <field name="gram"/>
                     <field name="uos_id" invisible="1" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
@@ -70,9 +70,9 @@
                     <field name="price_unit" on_change="onchange_price('price_unit', quantity, price_unit, amount)"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='account_id']" position="before">
-                    <field name="product_id" domain="['|', ('no_cost', '=', True), '&amp;', '&amp;', ('type','=','consu'), ('state','=','for_sale'), ('location_status.code', '=', 'item_for_sale')]" on_change="onchange_product_id(product_id)" options="{'limit': 10, 'create': false, 'create_edit': false}" readonly="0" required="1"/>
+                    <field name="product_id" domain="['|', ('for_sale', '=', True), '&amp;', '&amp;', ('type','=','consu'), ('state','=','for_sale'), ('location_status.code', '=', 'item_for_sale')]" on_change="onchange_product_id(product_id)" options="{'limit': 10, 'create': false, 'create_edit': false}" readonly="0" required="1"/>
                     <field name="name" required="1"/>
-                    <field name="no_cost" invisible="1"/>
+                    <field name="for_sale" invisible="1"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='account_id']" position="attributes">
                     <attribute name="domain">[('user_type.report_type','=','income')]</attribute>

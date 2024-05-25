@@ -46,7 +46,7 @@
         'module_data.xml',
         'ir_config_parameter_data.xml',
         'security/pawn_security.xml',
-        #'security/ir.model.access.csv',
+        'security/ir.model.access.csv',
         'pawn_workflow.xml',
         'pawn_sequence.xml',
         'wizard/pawn_line_property_view.xml',

@@ -20,17 +20,26 @@
 
 from openerp.osv import fields, osv
 from openerp import tools
+import openerp.addons.decimal_precision as dp
 
 
 class item_sold_report(osv.osv):
     _name = 'item.sold.report'
+    _order = 'voucher_id desc,id asc'
     _auto = False
 
     _columns = {
-        'product_id': fields.many2one('product.product', 'Product'),
-        'description': fields.char('Description'),
+        'product_id': fields.many2one('product.product', 'Item'),
         'partner_id': fields.many2one('res.partner', 'Customer'),
-        'sale_receipt_number': fields.char('Sale Receipt Number'),
+        'description': fields.char('Description'),
+        'date_order': fields.date('Pawn Date'),
+        'voucher_id': fields.many2one('account.voucher', 'Sale Receipt'),
+        'quantity': fields.float('Item Quantity', digits_compute= dp.get_precision('Product Unit of Measure')),
+        'carat': fields.float('Carat'),
+        'gram': fields.float('Gram'),
+        'total_price_pawned': fields.float('Total Pawned Price', digits_compute=dp.get_precision('Account')),
+        'total_price_sold': fields.float('Total Sold Price', digits_compute=dp.get_precision('Account')),
+        'total_profit': fields.float('Total Profit', digits_compute=dp.get_precision('Account')),
         'date_sold': fields.date('Date Sold'),
     }
 
@@ -38,11 +47,18 @@ class item_sold_report(osv.osv):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""
             create or replace view {} as (
-                select avl.id as id, avl.product_id, avl.name as description, av.partner_id, av.number as sale_receipt_number, av.date as date_sold
+                select
+                    avl.id as id, avl.product_id, av.partner_id, avl.name as description,
+                    pp.date_order, av.id as voucher_id, avl.quantity, avl.carat, avl.gram,
+                    coalesce(avl.total_price_pawned, 0) as total_price_pawned, coalesce(avl.amount, 0) as total_price_sold, coalesce(avl.amount, 0) - coalesce(avl.total_price_pawned, 0) as total_profit,
+                    av.date as date_sold
                 from account_voucher_line avl
                 left join account_voucher av on avl.voucher_id = av.id
                 left join account_journal aj on av.journal_id = aj.id
+                left join product_product pp on avl.product_id = pp.id
                 where aj.type in ('sale', 'sale_refund') and av.type = 'sale' and av.state = 'posted'
-                order by av.date desc, av.id asc
             )
         """.format(self._table))
+
+
+item_sold_report()

@@ -131,8 +131,7 @@ class item_split(osv.osv_memory):
 
         # Start coping and redirecton
         item_obj = self.pool.get('product.product')
-        cur_obj = self.pool.get('res.currency')
-        cur = item.order_id.pricelist_id.currency_id
+        precision_obj = self.pool.get('decimal.precision')
         i = 0
         new_item_ids = []
         for line in wizard.split_line:
@@ -141,9 +140,9 @@ class item_split(osv.osv_memory):
                 'product_qty': line.product_qty,
                 'carat': line.carat,
                 'gram': line.gram,
-                'price_estimated': cur_obj.round(cr, uid, cur, line.total_price_estimated / line.product_qty),
+                'price_estimated': round(line.total_price_estimated / line.product_qty, precision_obj.precision_get(cr, uid, 'Account')),
                 'total_price_estimated': line.total_price_estimated,
-                'price_pawned': cur_obj.round(cr, uid, cur, line.total_price_pawned / line.product_qty),
+                'price_pawned': round(line.total_price_pawned / line.product_qty, precision_obj.precision_get(cr, uid, 'Account')),
                 'total_price_pawned': line.total_price_pawned,
                 'description': line.description,
                 'journal_id': item.journal_id.id,

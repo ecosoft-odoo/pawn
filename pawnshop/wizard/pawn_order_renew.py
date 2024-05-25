@@ -165,7 +165,7 @@ class pawn_order_renew(osv.osv_memory):
         pawn = pawn_obj.browse(cr, uid, pawn_id, context=context)
         state_bf_redeem = pawn.state
         wizard = self.browse(cr, uid, ids[0], context)
-        # Check new pawn amount must equal to sum of pawned subtotal on pawn ticket line
+        # Check new pawn amount must equal to sum of pawned subtotal
         if wizard.new_pawn_amount != sum([line.pawn_price_subtotal for line in wizard.renew_line_ids]):
             raise osv.except_osv(_('Error!'), _('New pawn amount must equal to sum of pawned subtotal'))
         # Check Secret Key (Renewal Transfer Only)
@@ -304,6 +304,7 @@ pawn_order_renew()
 
 class pawn_order_renew_line(osv.osv_memory):
     _name = "pawn.order.renew.line"
+    _description = "renew line"
 
     _columns = {
         'order_line_id': fields.many2one('pawn.order.line', string='Pawn Order Line'),

@@ -5,56 +5,52 @@
             <field name="name">item.sold.report.tree</field>
             <field name="model">item.sold.report</field>
             <field name="arch" type="xml">
-                <tree create="0" delete="0" string="Item Sold Report">
+                <tree create="0" delete="0" string="Items Sold Report">
                     <field name="product_id"/>
-                    <field name="description"/>
                     <field name="partner_id"/>
-                    <field name="sale_receipt_number"/>
+                    <field name="description"/>
+                    <field name="date_order"/>
+                    <field name="voucher_id"/>
+                    <field name="quantity" sum="Total Quantity"/>
+                    <field name="carat"/>
+                    <field name="gram"/>
+                    <field name="total_price_pawned" sum="Total Pawned Price"/>
+                    <field name="total_price_sold" sum="Total Sold Price"/>
+                    <field name="total_profit" sum="Total Profit"/>
                     <field name="date_sold"/>
                 </tree>
             </field>
         </record>
 
-    <!-- <record id="view_sale_receipt_report_search" model="ir.ui.view">
-        <field name="name">sale.receipt.report.search</field>
-        <field name="model">sale.receipt.report</field>
-        <field name="arch" type="xml">
-            <search string="Sales Receipts Analysis">
-                <field name="date"/>
-                <field name="date_due"/>
-                <filter string="Draft" icon="terp-document-new" domain="[('state','=','draft')]" help = "Draft Vouchers"/>
-                <filter string="Pro-forma" icon="terp-gtk-media-pause" domain="[('state','=','proforma')]" help = "Pro-forma Vouchers"/>
-                <filter string="Posted" name="current" icon="terp-check" domain="[('state','not in', ('draft','cancel'))]" help = "Validated Vouchers"/>
-                <field name="partner_id"/>
-                <group expand="0" string="Extended Filters...">
-                    <field name="journal_id"/>
-                    <field name="account_id"/>
-                    <field name="pay_now"/>
-                    <field name="company_id" groups="base.group_multi_company"/>
-                </group>
-                <group expand="1" string="Group By...">
-                    <filter string="Partner" name="partner" icon="terp-partner" context="{'group_by':'partner_id'}"/>
-                    <filter string="Salesperson" name='user' icon="terp-personal" context="{'group_by':'user_id'}"/>
-                    <filter string="Status" icon="terp-stock_effects-object-colorize" context="{'group_by':'state'}"/>
-                    <filter string="Type" icon="terp-stock_symbol-selection" context="{'group_by':'type'}"/>
-                    <filter string="Journal" icon="terp-folder-orange" context="{'group_by':'journal_id'}"/>
-                    <filter string="Due Date" icon="terp-go-today" context="{'group_by':'date_due'}"/>
-                    <filter string="Company" icon="terp-go-home" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>
-                    <filter string="Day" name="day" icon="terp-go-today" context="{'group_by':'day'}" help="Group by Invoice Date"/>
-                    <filter string="Month" name="month" icon="terp-go-month" context="{'group_by':'month'}" help="Group by month of Invoice Date"/>
-                    <filter string="Year" name="year" icon="terp-go-year" context="{'group_by':'year'}" help="Group by year of Invoice Date"/>
-                </group>
-            </search>
-        </field>
-    </record> -->
+        <record id="view_item_sold_report_search" model="ir.ui.view">
+            <field name="name">item.sold.report.search</field>
+            <field name="model">item.sold.report</field>
+            <field name="arch" type="xml">
+                <search string="Items Sold Report">
+                    <field name="product_id"/>
+                    <field name="partner_id"/>
+                    <field name="description"/>
+                    <field name="voucher_id"/>
+                    <group  expand="0" string="Group by...">
+                        <filter string="Customer" domain="[]" context="{'group_by' : 'partner_id'}"/>
+                        <filter string="Sale Receipt" domain="[]" context="{'group_by' : 'voucher_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
 
         <record id="action_item_sold_report" model="ir.actions.act_window">
-            <field name="name">Item Sold Report</field>
+            <field name="name">Items Sold Report</field>
             <field name="res_model">item.sold.report</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree</field>
         </record>
 
-        <menuitem action="action_item_sold_report" id="menu_action_item_sold_report" parent="menu_pawn_for_sale" sequence="45"/>
+        <menuitem
+            action="action_item_sold_report"
+            id="menu_action_item_sold_report"
+            parent="menu_pawn_for_sale"
+            groups="group_pawn_manager,group_pawn_stock,group_pawn_accountant,group_pawn_officer"
+            sequence="45"/>
    </data>
 </openerp>

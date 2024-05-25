@@ -669,8 +669,7 @@ class pawn_order(osv.osv):
 
     # General
     def _prepare_asset(self, cr, uid, order, context=None):
-        cur_obj = self.pool.get('res.currency')
-        cur = order.pricelist_id.currency_id
+        prec = self.pool.get('decimal.precision').precision_get(cr, uid, 'Account')
         total_price_estimated = 0
         total_price_pawned = 0
         for line in order.order_line:
@@ -683,16 +682,15 @@ class pawn_order(osv.osv):
 #             'list_price': order.amount_pawned,
 #             'standard_price': order.amount_total,
             'product_qty': 1.0,
-            'price_estimated': cur_obj.round(cr, uid, cur, total_price_estimated),
-            'price_pawned': cur_obj.round(cr, uid, cur, total_price_pawned),
-            'total_price_estimated': cur_obj.round(cr, uid, cur, total_price_estimated),
-            'total_price_pawned': cur_obj.round(cr, uid, cur, total_price_pawned),
+            'price_estimated': round(total_price_estimated, prec),
+            'price_pawned': round(total_price_pawned, prec),
+            'total_price_estimated': round(total_price_estimated, prec),
+            'total_price_pawned': round(total_price_pawned, prec),
             'image': order.image
         }
 
     def _prepare_item(self, cr, uid, parent, name, line, context=None):
-        cur_obj = self.pool.get('res.currency')
-        cur = line.order_id.pricelist_id.currency_id
+        prec = self.pool.get('decimal.precision').precision_get(cr, uid, 'Account')
         item_dict = {
             'name': name,
             'type': 'consu',
@@ -702,8 +700,8 @@ class pawn_order(osv.osv):
             'categ_id': line.categ_id.id,
             'product_qty': line.product_qty,
             'product_uom': line.product_uom.id,
-            'price_estimated': cur_obj.round(cr, uid, cur, line.price_subtotal / line.product_qty),
-            'price_pawned': cur_obj.round(cr, uid, cur, line.pawn_price_subtotal / line.product_qty),
+            'price_estimated': round(line.price_subtotal / line.product_qty, prec),
+            'price_pawned': round(line.pawn_price_subtotal / line.product_qty, prec),
             'total_price_estimated': line.price_subtotal,
             'total_price_pawned': line.pawn_price_subtotal,
             'carat': line.carat,

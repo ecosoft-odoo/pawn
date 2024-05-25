@@ -24,7 +24,6 @@ import pawn
 import item
 import product
 import pawn_rule
-import report
 import pawn_shop
 import item_property
 import wizard
@@ -39,5 +38,6 @@ import account_transfer
 import account_bank_statement
 import osv_scheduled_actions
 import controllers
+import report
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

@@ -51,8 +51,8 @@ class account_move_line(osv.osv):
         if vals.get('product_id', False):
             product_obj = self.pool.get('product.product')
             product = product_obj.browse(cr, uid, vals.get('product_id'), context=context)
-            # No cost product, not update vals
-            if not product.no_cost:
+            # products for sales, not update vals
+            if not product.for_sale:
                 pawn_order = product.order_id
                 vals.update({
                     'pawn_order_id': pawn_order and pawn_order.id or False,
