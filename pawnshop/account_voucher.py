@@ -718,15 +718,10 @@ class account_voucher_line(osv.osv):
 
     def _update_field(self, cr, uid, vals, context=None):
         if 'product_id' in vals and vals['product_id']:
-            item = self.pool.get('product.product').browse(cr, uid, vals['product_id'], context=context)
-            vals.update({
-                'quantity': vals.get('quantity', item.product_qty),
-                'is_jewelry': vals.get('is_jewelry', item.is_jewelry),
-                'carat': vals.get('carat', item.carat),
-                'gram': vals.get('gram', item.gram),
-                'price_estimated': vals.get('price_estimated', item.price_estimated),
-                'total_price_pawned': vals.get('total_price_pawned', item.total_price_pawned),
-            })
+            voucher_line_dict = self.onchange_product_id(cr, uid, [], vals['product_id'][0] if type(vals['product_id']) is tuple else vals['product_id'], context=context)['value']
+            for key in voucher_line_dict.keys():
+                if key not in vals:
+                    vals[key] = voucher_line_dict[key]
         return vals
 
     def create(self, cr, uid, vals, context=None):

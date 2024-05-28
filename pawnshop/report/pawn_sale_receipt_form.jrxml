@@ -365,7 +365,7 @@
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{price_subtotal}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement positionType="Float" mode="Transparent" x="53" y="6" width="87" height="14" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement positionType="Float" mode="Transparent" x="54" y="6" width="86" height="14" forecolor="#000000" backcolor="#FFFFFF">
                     <printWhenExpression><![CDATA[$F{for_sale} == null || $F{for_sale} == false]]></printWhenExpression>
                 </reportElement>
                 <textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
@@ -374,7 +374,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{product_name}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" mode="Transparent" x="51" y="6" width="89" height="14" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement positionType="Float" mode="Transparent" x="54" y="6" width="86" height="14" forecolor="#000000" backcolor="#FFFFFF">
                     <printWhenExpression><![CDATA[$F{for_sale} != null && $F{for_sale} != false]]></printWhenExpression>
                 </reportElement>
                 <textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">

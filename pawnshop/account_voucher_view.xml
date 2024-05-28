@@ -75,7 +75,9 @@
                     <field name="for_sale" invisible="1"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='account_id']" position="attributes">
-                    <attribute name="domain">[('user_type.report_type','=','income')]</attribute>
+                    <!-- <attribute name="domain">[('user_type.report_type','=','income')]</attribute> -->
+                    <attribute name="domain"></attribute>
+                    <attribute name="readonly">1</attribute>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='amount']" position="attributes">
                     <attribute name="on_change">onchange_price('amount', quantity, price_unit, amount)</attribute>
