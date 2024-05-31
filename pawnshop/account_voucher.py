@@ -37,6 +37,7 @@ LOCATION_STATUS_MAP = {'draft': 'item_sold',
 class account_voucher(osv.osv):
 
     _inherit = 'account.voucher'
+    _rec_name = 'number'
 
     def _update_items_location_status(self, cr, uid, ids, voucher_state, context=None):
         if context == None:
@@ -647,15 +648,6 @@ class account_voucher(osv.osv):
             res.append((voucher.id, voucher.number))
         return res
 
-    def name_search(self, cr, user, name, args=None, operator='ilike', context=None, limit=1000):
-        if not args:
-            args = []
-        if context is None:
-            context = {}
-        ids = []
-        if name:
-            ids = self.search(cr, user, [('number', operator, name)] + args, limit=limit, context=context)
-        return self.name_get(cr, user, ids, context)
 
 account_voucher()
 

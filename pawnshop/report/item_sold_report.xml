@@ -22,6 +22,33 @@
             </field>
         </record>
 
+        <record id="view_item_sold_report_form" model="ir.ui.view">
+            <field name="name">item.sold.report.form</field>
+            <field name="model">item.sold.report</field>
+            <field name="arch" type="xml">
+                <form create="0" edit="0" delete="0" string="Items Sold Report">
+                    <group>
+                        <group>
+                            <field name="product_id" context="{'form_view_ref': 'pawnshop.pawn_item_normal_form_view'}"/>
+                            <field name="partner_id" context="{'form_view_ref': 'pawnshop.view_partner_form'}"/>
+                            <field name="description"/>
+                            <field name="date_order"/>
+                            <field name="voucher_id" context="{'form_view_ref': 'account_voucher.view_sale_receipt_form'}"/>
+                            <field name="quantity"/>
+                        </group>
+                        <group>
+                            <field name="carat"/>
+                            <field name="gram"/>
+                            <field name="total_price_pawned"/>
+                            <field name="total_price_sold"/>
+                            <field name="total_profit"/>
+                            <field name="date_sold"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
         <record id="view_item_sold_report_search" model="ir.ui.view">
             <field name="name">item.sold.report.search</field>
             <field name="model">item.sold.report</field>
@@ -43,7 +70,7 @@
             <field name="name">Items Sold Report</field>
             <field name="res_model">item.sold.report</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree</field>
+            <field name="view_mode">tree,form</field>
         </record>
 
         <menuitem
