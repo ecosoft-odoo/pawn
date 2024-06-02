@@ -78,6 +78,8 @@ class account_voucher(osv.osv):
             i = 0
             total_amount = 0.0
             for line in voucher.line_cr_ids:
+                if not line.product_id.order_id:
+                    raise osv.except_osv(_('Error!'), _('Not allowed update amount in sale receipt lines because of there is some product not pawn item.'))
                 i += 1
                 if i == num_item:  # Last line
                     line_amount = round(voucher.amount - total_amount, 2)
@@ -111,14 +113,14 @@ class account_voucher(osv.osv):
 
     def _check_different_journal(self, cr, uid, ids, context=None):
         for voucher in self.browse(cr, uid, ids, context=context):
-            journal_ids = list(set([line.product_id.journal_id.id for line in voucher.line_cr_ids if line.product_id]))
+            journal_ids = list(set([line.product_id.journal_id.id for line in voucher.line_cr_ids if line.product_id.journal_id]))
             if len(journal_ids) > 1:
                 return False
         return True
 
     def _check_different_shop(self, cr, uid, ids, context=None):
         for voucher in self.browse(cr, uid, ids, context=context):
-            shop_ids = list(set([line.product_id.pawn_shop_id.id for line in voucher.line_cr_ids if line.product_id]))
+            shop_ids = list(set([line.product_id.pawn_shop_id.id for line in voucher.line_cr_ids if line.product_id.pawn_shop_id]))
             if len(shop_ids) > 1:
                 return False
         return True
