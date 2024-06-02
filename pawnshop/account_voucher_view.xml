@@ -70,7 +70,7 @@
                     <field name="price_unit" on_change="onchange_price('price_unit', quantity, price_unit, amount)"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='account_id']" position="before">
-                    <field name="product_id" domain="['|', ('for_sale', '=', True), '&amp;', '&amp;', ('type','=','consu'), ('state','=','for_sale'), ('location_status.code', '=', 'item_for_sale')]" on_change="onchange_product_id(product_id)" options="{'limit': 10, 'create': false, 'create_edit': false}" readonly="0" required="1"/>
+                    <field name="product_id" domain="['|', ('for_sale', '=', True), '&amp;', '&amp;', ('type','=','consu'), ('state','=','for_sale'), ('location_status.code', '=', 'item_for_sale')]" on_change="onchange_product_id(product_id)" options="{'limit': 10, 'create': false, 'create_edit': false, 'no_open': True}" readonly="0" required="1"/>
                     <field name="name" required="1"/>
                     <field name="for_sale" invisible="1"/>
                 </xpath>
