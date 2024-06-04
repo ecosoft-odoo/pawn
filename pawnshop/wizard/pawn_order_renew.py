@@ -252,22 +252,19 @@ class pawn_order_renew(osv.osv_memory):
             }
             pawn_line_obj.copy(cr, uid, line.order_line_id.id, default_pawn_line, context=context)
         amount_net = wizard.increase_pawn_amount - wizard.pay_interest_amount
-        pawn_obj.write(cr, uid, [new_pawn_id], {
+        # Update data in new ticket
+        vals = {
             'parent_id': pawn_id,
             'amount_pawned': wizard.new_pawn_amount,
             'amount_net': amount_net,
             'renewal_transfer_pawn': wizard.renewal_transfer,
-        }, context=context)
-        # Update image for renewal transfer only
-        if wizard.renewal_transfer:
-            vals = {}
-            for i in ['first', 'second', 'third', 'fourth', 'fifth']:
-                vals.update({
-                    'pawn_item_image_%s' % i: pawn['pawn_item_image_%s' % i],
-                    'pawn_item_image_date_%s' % i: pawn['pawn_item_image_date_%s' % i],
-                })
-            if vals:
-                pawn_obj.write(cr, uid, [new_pawn_id], vals, context=context)
+        }
+        for i in ['first', 'second', 'third', 'fourth', 'fifth']:
+            vals.update({
+                'pawn_item_image_%s' % i: pawn['pawn_item_image_%s' % i],
+                'pawn_item_image_date_%s' % i: pawn['pawn_item_image_date_%s' % i],
+            })
+        pawn_obj.write(cr, uid, [new_pawn_id], vals, context=context)
         # Change partner to delegate for the new ticket
         if wizard.delegation_of_authority:
             pawn_obj.write(cr, uid, [new_pawn_id], {'partner_id': wizard.delegate_id.id}, context=context)
