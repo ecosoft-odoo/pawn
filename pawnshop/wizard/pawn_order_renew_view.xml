@@ -18,8 +18,8 @@
                             <field name="addition" string="+ Addition" on_change="onchange_amount('addition', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
                             <group colspan="2">
                                 <field name="pay_interest_amount" string="Pay Interest Amount" on_change="onchange_amount('pay_interest_amount', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
-                                <field name="increase_pawn_amount" string="+/- Pawn Amount" attrs="{'readonly': True}" on_change="onchange_amount('increase_pawn_amount', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
-                                <field name="new_pawn_amount" string="New Pawn Amount" attrs="{'readonly': True}" on_change="onchange_amount('new_pawn_amount', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
+                                <field name="increase_pawn_amount" string="+/- Pawn Amount" on_change="onchange_amount('increase_pawn_amount', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
+                                <field name="new_pawn_amount" string="New Pawn Amount" on_change="onchange_amount('new_pawn_amount', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
                             </group>
                         </group>
                         <group>
