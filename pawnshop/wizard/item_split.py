@@ -66,13 +66,13 @@ class item_split(osv.osv_memory):
         new_gram = 0.0
         for line in wizard.split_line:
             # Check item quantity > 0
-            if line.product_qty <= 0:
+            if round(line.product_qty, 2) <= 0:
                 raise osv.except_osv(_('Warning!'), _('Item quantity must greater than zero'))
             # Check total pawned price > 0
-            if line.total_price_pawned <= 0:
+            if round(line.total_price_pawned, 2) <= 0:
                 raise osv.except_osv(_('Warning!'), _('Total pawned price must greater than zero'))
             # Check total estimated price > 0
-            if line.total_price_estimated <= 0:
+            if round(line.total_price_estimated, 2) <= 0:
                 raise osv.except_osv(_('Warning!'), _('Total estimated price must greater than zero'))
             # Sum qty, total price
             new_qty += line.product_qty
@@ -85,19 +85,19 @@ class item_split(osv.osv_memory):
         if len(wizard.split_line) < 2:
             raise osv.except_osv(_('Warning!'), _('At least 2 split line must be created!'))
         # Check total quantity must equal to original
-        if new_qty != item.product_qty:
+        if round(new_qty, 2) != round(item.product_qty, 2):
             raise osv.except_osv(_('Warning!'), _('Sum of quantity must equal to the original quantity'))
         # Check total pawned price must equal to original
-        if new_total_price_pawned != item.total_price_pawned:
+        if round(new_total_price_pawned, 2) != round(item.total_price_pawned, 2):
             raise osv.except_osv(_('Warning!'), _('Sum of total pawned price must equal to the original total pawned price'))
         # Check total estimated price must equal to original
-        if new_total_price_estimated != item.total_price_estimated:
+        if round(new_total_price_estimated, 2) != round(item.total_price_estimated, 2):
             raise osv.except_osv(_('Warning!'), _('Sum of total estimated price must equal to the original total estimated price'))
         # Check total carat must equal to original
-        if new_carat != item.carat:
+        if round(new_carat, 2) != round(item.carat, 2):
             raise osv.except_osv(_('Warning!'), _('Sum of total carat must equal to the original total carat'))
         # Check total gram must equal to original
-        if new_gram != item.gram:
+        if round(new_gram, 2) != round(item.gram, 2):
             raise osv.except_osv(_('Warning!'), _('Sum of total gram must equal to the original total gram'))
         return True
 
