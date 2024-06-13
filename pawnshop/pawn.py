@@ -744,7 +744,7 @@ class pawn_order(osv.osv):
     def _update_pawn_asset(self, cr, uid, asset_id, order, vals, context=None):
         item_obj = self.pool.get('product.product')
         line_obj = self.pool.get('product.product.line')
-        if vals.get('order_line', False) or vals.get('name', False):
+        if vals.get('order_line', False) or vals.get('name', False) or vals.get('amount_pawned'):
             # Update Ticket's estimated price.
             asset_dict = self._prepare_asset(cr, uid, order, context=context)
             asset_dict.update({
