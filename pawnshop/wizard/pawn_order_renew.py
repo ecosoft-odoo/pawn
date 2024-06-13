@@ -76,9 +76,9 @@ class pawn_order_renew(osv.osv_memory):
         'interest_amount': fields.float('Interest', readonly=True),
         'discount': fields.float('Discount', readonly=False),
         'addition': fields.float('Addition'),
-        'pay_interest_amount': fields.float('Pay Interest Amount', readonly=False),
-        'increase_pawn_amount': fields.float('Increase Pawn Amount', readonly=False),
-        'new_pawn_amount': fields.float('New Pawn Amount', readonly=False),
+        'pay_interest_amount': fields.float('Pay Interest Amount', readonly=False, required=True),
+        'increase_pawn_amount': fields.float('Increase Pawn Amount', readonly=True),
+        'new_pawn_amount': fields.float('New Pawn Amount', readonly=True, required=True),
         'renewal_transfer': fields.boolean('Renewal Transfer'),
         'secret_key': fields.char('Secret Key'),
         'delegation_of_authority': fields.boolean('Delegation of Authority'),
@@ -294,6 +294,26 @@ class pawn_order_renew(osv.osv_memory):
             'context': "{}",
             'type': 'ir.actions.act_window',
         }
+
+    def _update_field(self, cr, uid, vals, context=None):
+        if 'renew_line_ids' in vals and vals['renew_line_ids']:
+            pawn_amount = self._get_pawn_amount(cr, uid, context=context)
+            new_pawn_amount = self.onchange_renew_ids(cr, uid, [], vals['renew_line_ids'], context=context)['value']['new_pawn_amount']
+            increase_pawn_amount = self.onchange_amount(cr, uid, [], 'new_pawn_amount', pawn_amount, False, False, False, False, False, new_pawn_amount, context=context)['value']['increase_pawn_amount']
+            if not ('increase_pawn_amount' in vals) and not ('new_pawn_amount' in vals):
+                vals.update({
+                    'increase_pawn_amount': increase_pawn_amount,
+                    'new_pawn_amount': new_pawn_amount,
+                })
+        return vals
+
+    def create(self, cr, uid, vals, context=None):
+        vals = self._update_field(cr, uid, vals, context=context)
+        return super(pawn_order_renew, self).create(cr, uid, vals, context=context)
+
+    def write(self, cr, uid, ids, vals, context=None):
+        vals = self._update_field(cr, uid, vals, context=context)
+        return super(pawn_order_renew, self).write(cr, uid, ids, vals, context=context)
 
 
 pawn_order_renew()
