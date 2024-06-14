@@ -36,6 +36,9 @@
                 <xpath expr="/form/sheet/group/group/field[@name='reference']" position="after">
                     <field name="ref_voucher_id"/>
                 </xpath>
+                <xpath expr="/form/sheet/group/group/field[@name='partner_id']" position="after">
+                    <field name="address"/>
+                </xpath>
                 <xpath expr="/form/sheet/group/group/field[@name='partner_id']" position="attributes">
                     <attribute name="options">{'limit': 10, 'create': false, 'create_edit': false}</attribute>
                     <attribute name="required">1</attribute>

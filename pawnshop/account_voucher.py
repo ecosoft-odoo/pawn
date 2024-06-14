@@ -144,6 +144,7 @@ class account_voucher(osv.osv):
         'ref_voucher_id': fields.many2one('account.voucher', 'Ref Sales Receipt', readonly=True),
         'is_refund': fields.boolean('Refund', readonly=True),
         'product_journal_id': fields.function(_compute_product_journal_id, type='many2one', relation='account.journal', string='Product Journal', store=True, readonly=True),
+        'address': fields.related('partner_id', 'address_full', type='char', string='Address'),
     }
 
     _constraints = [

@@ -1,14 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
-        
+        <record id="view_account_transfer_tree_ext" model="ir.ui.view">
+            <field name="name">view.account.transfer.tree.ext</field>
+            <field name="model">account.transfer</field>
+            <field name="inherit_id" ref="account_transfer.view_account_transfer_tree"/>
+            <field name="arch" type="xml">
+                <field name="name" position="before">
+                    <field name="date"/>
+                </field>
+                <field name="src_partner_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="dst_partner_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+            </field>
+        </record>
+
         <record id="view_account_transfer_form_ext" model="ir.ui.view">
             <field name="name">view.account.transfer.form.ext</field>
             <field name="model">account.transfer</field>
             <field name="inherit_id" ref="account_transfer.view_account_transfer_form"/>
             <field name="arch" type="xml">
 				<xpath expr="/form/sheet/group//field[@name='origin']" position="after">
-					<field name="pawn_shop_id" on_change="onchange_journal_shop(src_journal_id,dst_journal_id,date,exchange_rate,src_amount,pawn_shop_id)" 
+					<field name="pawn_shop_id" on_change="onchange_journal_shop(src_journal_id,dst_journal_id,date,exchange_rate,src_amount,pawn_shop_id)"
 								options="{'limit': 10, 'create': false, 'create_edit': false}"/>
                 </xpath>
 				<xpath expr="/form/sheet/notebook/page/group//field[@name='src_journal_id']" position="attributes">

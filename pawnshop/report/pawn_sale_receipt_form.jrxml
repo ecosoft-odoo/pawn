@@ -69,7 +69,7 @@
 		<fieldDescription><![CDATA[date]]></fieldDescription>
 	</field>
 	<field name="cust_name" class="java.lang.String">
-		<fieldDescription><![CDATA[partner_id/name]]></fieldDescription>
+		<fieldDescription><![CDATA[partner_id/display_name]]></fieldDescription>
 	</field>
 	<field name="address" class="java.lang.String">
 		<fieldDescription><![CDATA[partner_id/address_full]]></fieldDescription>
