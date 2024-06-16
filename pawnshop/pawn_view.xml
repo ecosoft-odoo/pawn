@@ -451,7 +451,6 @@
                     <field name="categ_id"/>
                     <field name="item_description"/>
                     <field name="image_small"/>
-                    <field name="pawn_item_image_first"/>
                     <field name="state" groups="base.group_no_one"/>
                     <templates>
                     <t t-name="kanban-box">
@@ -464,9 +463,7 @@
                                         <b>ราคารับจำนำ:</b> <field name="total_price_pawned"/> ฿
                                     </div>
                                     <div style="display: inline-block;vertical-align: top;">
-                                        <t t-if="record.pawn_item_image_first and record.pawn_item_image_first.raw_value">
-                                            <img t-att-src="kanban_image('product.product', 'pawn_item_image_first', record.id.raw_value)" t-att-title="record.id.value" style="width: 65px;"/>
-                                        </t>
+                                        <img t-att-src="kanban_image('product.product', 'pawn_item_image_first', record.id.raw_value)" t-att-title="record.id.value" style="width: 65px;"/>
                                     </div>
                                 </div>
                                 <!-- <div class="oe_kanban_bottom_right">
