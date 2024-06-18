@@ -409,6 +409,7 @@ class pawn_order(osv.osv):
          'pawn_item_image_date_fifth': fields.datetime('Date of Pawn Item (Fifth)', readonly=True),
          'delegation_of_authority': fields.boolean('Delegation of Authority', readonly=True),
          'delegate_id': fields.many2one('res.partner', 'Delegate', readonly=True),
+         'run_background': fields.boolean('Run Background', readonly=True, help='Run background to expire tickets'),
     }
     _defaults = {
         'company_id': lambda self, cr, uid, c: self.pool.get('res.users').browse(cr, uid, uid).company_id.id,
@@ -426,6 +427,7 @@ class pawn_order(osv.osv):
         'renewal_transfer_redeem': False,
         'delegation_of_authority': False,
         'delegate_id': False,
+        'run_background': False,
     }
     _sql_constraints = [
         ('name_uniq', 'unique(name, pawn_shop_id)', 'Pawn Ticket Reference must be unique per Pawn Shop!'),
@@ -514,24 +516,32 @@ class pawn_order(osv.osv):
             self._update_fingerprint(cr, uid, [pawn.id], action_type='redeem', context=context)
         return True
 
-    def order_expire(self, cr, uid, ids, context=None):
-        # Extend the ticket don't change state to expire
+    def _check_order_extend(self, cr, uid, ids, context=None):
         for pawn in self.browse(cr, uid, ids, context=context):
+            # Extend the ticket don't change state to expire
             if pawn.extended:
                 raise osv.except_osv(_('Error!'),
                         _('Please unextend the ticket before submit the ticket to expire.'))
-        # Reverse Accrued Interest
-        self.action_move_reversed_accrued_interest_create(cr, uid, ids, context=context)
-        # Inactive any left over accrued interest
-        self.update_active_accrued_interest(cr, uid, ids, False, context=context)
-        # --
-        # Create Move (except extended case)
+        return True
+
+    def order_expire(self, cr, uid, ids, context=None):
         for pawn in self.browse(cr, uid, ids, context=context):
+            # Make sure that pawn state must not equal to expire
+            if pawn.state == 'expire':
+                continue
+            # Check extended order
+            self._check_order_extend(cr, uid, [pawn.id], context=context)
+            # Reverse Accrued Interest
+            self.action_move_reversed_accrued_interest_create(cr, uid, [pawn.id], context=context)
+            # Inactive any left over accrued interest
+            self.update_active_accrued_interest(cr, uid, [pawn.id], False, context=context)
+            # --
+            # Create Move (except extended case)
             if not pawn.extended:
                 self.action_move_create(cr, uid, [pawn.id], context={'direction': 'expire'})
-        date_expired = fields.date.context_today(self, cr, uid, context=context)
-        self.write(cr, uid, ids, {'state': 'expire', 'date_final_expired': date_expired}, context=context)
-        self._update_order_pawn_asset(cr, uid, ids, {'state': 'expire'}, context=context)
+            date_expired = fields.date.context_today(self, cr, uid, context=context)
+            self.write(cr, uid, [pawn.id], {'state': 'expire', 'date_final_expired': date_expired}, context=context)
+            self._update_order_pawn_asset(cr, uid, [pawn.id], {'state': 'expire'}, context=context)
         return True
 
     def action_extend(self, cr, uid, ids, context=None):
@@ -1030,6 +1040,7 @@ class pawn_order(osv.osv):
             'renewal_transfer_redeem': False,
             'delegation_of_authority': False,
             'delegate_id': False,
+            'run_background': False,
         })
         # Default pawn item image
         for i in ['first', 'second', 'third', 'fourth', 'fifth']:
