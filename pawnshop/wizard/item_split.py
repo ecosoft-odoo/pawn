@@ -91,8 +91,8 @@ class item_split(osv.osv_memory):
         if round(new_total_price_pawned, 2) != round(item.total_price_pawned, 2):
             raise osv.except_osv(_('Warning!'), _('Sum of total pawned price must equal to the original total pawned price'))
         # Check total estimated price must equal to original
-        if round(new_total_price_estimated, 2) != round(item.total_price_estimated, 2):
-            raise osv.except_osv(_('Warning!'), _('Sum of total estimated price must equal to the original total estimated price'))
+        # if round(new_total_price_estimated, 2) != round(item.total_price_estimated, 2):
+        #     raise osv.except_osv(_('Warning!'), _('Sum of total estimated price must equal to the original total estimated price'))
         # Check total carat must equal to original
         if round(new_carat, 2) != round(item.carat, 2):
             raise osv.except_osv(_('Warning!'), _('Sum of total carat must equal to the original total carat'))
