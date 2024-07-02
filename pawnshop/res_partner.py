@@ -73,10 +73,7 @@ class res_partner(osv.osv):
         for id in ids:
             result.setdefault(id, [])
         cr.execute("""
-                SELECT distinct partner_id, pt.pawn_shop_id FROM account_voucher av
-                join account_voucher_line avl on av.id = avl.voucher_id
-                join product_product pp on pp.id = avl.product_id
-                join product_template pt on pt.id = pp.product_tmpl_id
+                SELECT distinct partner_id, pawn_shop_id FROM account_voucher av
                 WHERE partner_id in %s
             """,(tuple(ids),))
         res = cr.fetchall()

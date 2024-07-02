@@ -49,6 +49,15 @@ class pawn_order(osv.osv):
         except Exception:
             _logger.exception("Failed processing expired pawn ticket")
 
+    def process_order_expire(self, cr, uid, limit=100, context=None):
+        pawn_ids = self.search(cr, uid, [('ready_to_expire', '=', True), ('state', '=', 'pawn'), ('run_background', '=', True)], limit=limit)
+        for pawn_id in pawn_ids:
+            self.order_expire(cr, uid, [pawn_id], context=context)
+            self.write(cr, uid, [pawn_id], {'run_background': False}, context=context)
+            cr.commit()
+        return True
+
+
 pawn_order()
 
 

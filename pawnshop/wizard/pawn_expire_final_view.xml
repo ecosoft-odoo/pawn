@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-            	
+
         <record id="view_pawn_expire_final" model="ir.ui.view">
             <field name="name">view.pawn.expire.final</field>
             <field name="model">pawn.expire.final</field>
@@ -9,6 +9,12 @@
             <field name="arch" type="xml">
                 <form string="Finalize Expired Ticket" version="7.0">
                 	<p>Select ticket that is ready to expire, and finalize it.</p>
+                    <group>
+                        <group>
+                            <field name="run_background"/>
+                        </group>
+                        <group/>
+                    </group>
                 	<footer>
                         <button string="Submit" name="pawn_expire_final" type="object" default_focus="1" class="oe_highlight"/>
                         or

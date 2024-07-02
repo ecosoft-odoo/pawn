@@ -187,10 +187,10 @@ class PawnJo6ReportXLS(report_xls):
                 item_qty_list.append(po_line.product_qty)
             item_description = '\n'.join(item_description_list)
             item_qty = sum(item_qty_list)
+            date_order = datetime.datetime.strptime(po.date_order, '%Y-%m-%d').date()
             c_specs = [
                 ('number', 1, 0, 'number', i + 1, None, col_center_detail_style),
-                ('date_order', 1, 0, 'text', (
-                    datetime.datetime.strptime(po.date_order, '%Y-%m-%d').date() + relativedelta(years=543)).strftime('%d/%m/%Y'), None, col_center_detail_style),
+                ('date_order', 1, 0, 'text', '{}/{}/{}'.format(str(date_order.day).zfill(2), str(date_order.month).zfill(2), date_order.year + 543), None, col_center_detail_style),
                 ('pawn_number', 1, 0, 'number', po.name[2:], None, col_right_detail_style),
                 ('customer_name', 1, 0, 'text', po.partner_id.name, None, col_left_detail_style),
                 ('customer_address', 1, 0, 'text', po.partner_id.address_full or None, None, col_left_detail_style),

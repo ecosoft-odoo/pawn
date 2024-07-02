@@ -50,12 +50,15 @@ class account_move_line(osv.osv):
             context = {}
         if vals.get('product_id', False):
             product_obj = self.pool.get('product.product')
-            pawn_order = product_obj.browse(cr, uid, vals.get('product_id'), context=context).order_id
-            vals.update({
-                'pawn_order_id': pawn_order and pawn_order.id or False,
-                'pawn_shop_id': pawn_order.pawn_shop_id and pawn_order.pawn_shop_id.id or False,
-                'profit_center': pawn_order.journal_id and pawn_order.journal_id.profit_center or False,
-            })
+            product = product_obj.browse(cr, uid, vals.get('product_id'), context=context)
+            # products for sales, not update vals
+            if not product.for_sale:
+                pawn_order = product.order_id
+                vals.update({
+                    'pawn_order_id': pawn_order and pawn_order.id or False,
+                    'pawn_shop_id': pawn_order.pawn_shop_id and pawn_order.pawn_shop_id.id or False,
+                    'profit_center': pawn_order.journal_id and pawn_order.journal_id.profit_center or False,
+                })
         # For cash register case, get pawn_shop_id and profit center from Cash Register
         if context.get('is_cash_register', False):
             statement_obj = self.pool.get('account.bank.statement')

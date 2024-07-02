@@ -117,7 +117,7 @@
             <field name="model">product.product</field>
             <field eval="7" name="priority"/>
             <field name="arch" type="xml">
-                <tree string="Pawn Items" create="0">
+                <tree string="Pawn Items" create="0" delete="0">
                     <field name="pawn_shop_id" />
                     <field name="journal_id" />
                     <field name="name"/>
@@ -126,11 +126,15 @@
                     <field name="categ_id"/>
                     <field name="date_order"/>
                     <field name="date_due"/>
-                    <field name="product_qty" invisible="context.get('tree_view_type', False) in ['pawn_asset']"/>
+                    <field name="product_qty" sum="Total Quantity" invisible="context.get('tree_view_type', False) in ['pawn_asset']"/>
                     <field name="uom_id" string="Unit of Measure" invisible="context.get('tree_view_type', False) in ['pawn_asset']"/>
+                    <field name="carat" invisible="context.get('tree_view_type', False) in ['pawn_asset']"/>
+                    <field name="gram" invisible="context.get('tree_view_type', False) in ['pawn_asset']"/>
                     <!--field name="price_pawned" string="Pawned Price" invisible="context.get('tree_view_type', False) not in ['pawn_asset']"/-->
-                    <field name="price_estimated" string="Estimated Price"/>
-                    <field name="price_pawned" string="Pawned Price"/>
+                    <field name="price_estimated" string="Estimated Price" invisible="1"/>
+                    <field name="total_price_estimated" string="Total Estimated Price" sum="Total Estimated Price" invisible="1"/>
+                    <field name="price_pawned" string="Pawned Price" invisible="1"/>
+                    <field name="total_price_pawned" string="Total Pawned Price" sum="Total Pawned Price"/>
                     <field name="state"/>
                     <field name="extended_x"/>
                     <field name="parent_order_id"/>
@@ -144,7 +148,7 @@
             <field name="model">product.product</field>
             <field eval="7" name="priority"/>
             <field name="arch" type="xml">
-                <tree string="Pawn Items Sold" create="0">
+                <tree string="Pawn Items Sold" create="0" delete="0">
                     <field name="pawn_shop_id" invisible="1"/>
                     <field name="name"/>
 					<field name="partner_customer_id"/>
@@ -152,9 +156,11 @@
                     <field name="categ_id"/>
                     <field name="date_order"/>
                     <field name="date_due"/>
-                    <field name="product_qty" />
+                    <field name="product_qty" sum="Total Quantity" />
                     <field name="uom_id" string="Unit of Measure" />
-                    <field name="total_price_estimated" sum="Total Estimated Price" />
+                    <field name="carat"/>
+                    <field name="gram"/>
+                    <field name="total_price_estimated" sum="Total Estimated Price" invisible="1" />
                     <field name="total_price_pawned" sum="Total Pawned Price" />
                     <field name="total_price_sold" sum="Total Sold Price"/>
                     <field name="total_profit" sum="Total Profit"/>
@@ -171,7 +177,7 @@
             <field name="model">product.product</field>
             <field eval="7" name="priority"/>
             <field name="arch" type="xml">
-                <form string="Pawn Item" create="0" edit="0" version="7.0">
+                <form string="Pawn Item" create="0" edit="0" delete="0" version="7.0">
 	                <header>
                     	<button name="action_asset_sale" string="For Sales" type="object" class="oe_highlight"
                     			attrs="{'invisible': ['|', '|', ('extended', '=', True), ('state', 'not in', ('expire')), ('type', '!=', 'pawn_asset')]}" />
@@ -223,7 +229,10 @@
                                         <field name="type"/>
                     					<field name="product_qty"/>
                                         <field name="uom_id"/>
-                                        <field name="price_pawned" string="Pawned Price"/>
+                                        <field name="carat" invisible="context.get('tree_view_type', False) in ['pawn_asset']"/>
+                                        <field name="gram" invisible="context.get('tree_view_type', False) in ['pawn_asset']"/>
+                                        <field name="price_pawned" string="Pawned Price" invisible="1"/>
+                                        <field name="total_price_pawned" string="Total Pawned Price"/>
                                     </group>
                                     <group>
                         				<field name="parent_id" attrs="{'invisible': [('parent_id','=',False)]}"/>
@@ -234,7 +243,8 @@
                                         <div name="ean">
                                             <field name="ean13" placeholder="e.g. 5901234123457"/>
                                         </div-->
-                                        <field name="price_estimated" string="Estimated Price"/>
+                                        <field name="price_estimated" string="Estimated Price" invisible="1"/>
+                                        <field name="total_price_estimated" string="Total Estimated Price" invisible="1"/>
                                     </group>
                                 </group>
 	                            <field name="line_ids" attrs="{'invisible': [('parent_id', '!=', False)]}">
@@ -246,7 +256,8 @@
                                         <field name="carat"/>
                                         <field name="gram"/>
 	                                    <field name="uom_id" />
-	                                    <field name="price_pawned"/>
+	                                    <field name="price_pawned" invisible="1"/>
+                                        <field name="total_price_pawned" sum="Total Pawned Price"/>
 	                                </tree>
 	                            </field>
 	                        	<field name="product_qty_total" invisible="1"/>
@@ -383,13 +394,30 @@
             <field name="view_type">form</field>
             <field name="context">{'default_hr_expense_ok': True, 'default_sale_ok': False}</field>
             <field name="domain">[('hr_expense_ok','=',True)]</field>
-            <field name="view_id" ref="product.product_product_tree_view"/>
             <field name="search_view_id" ref="product.product_search_form_view"/>
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">
                 Click to define a new expense product.
               </p>
             </field>
+        </record>
+        <record id="action_product_expense_view1" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">kanban</field>
+            <field name="view_id" ref="product.product_kanban_view"/>
+            <field name="act_window_id" ref="action_product_expense"/>
+        </record>
+        <record id="action_product_expense_view2" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="product.product_product_tree_view"/>
+            <field name="act_window_id" ref="action_product_expense"/>
+        </record>
+        <record id="action_product_expense_view3" model="ir.actions.act_window.view">
+            <field eval="3" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="product.product_normal_form_view"/>
+            <field name="act_window_id" ref="action_product_expense"/>
         </record>
         <menuitem action="action_product_expense" id="menu_product_expense"
         	groups="group_pawn_accountant"
@@ -529,7 +557,7 @@
             <field name="res_model">account.voucher</field>
             <field name="view_type">form</field>
             <field name="domain">[('journal_id.type','in',['sale','sale_refund']), ('type','=','sale')]</field>
-            <field name="context">{'default_type': 'sale', 'type': 'sale', 'default_pawnshop': 1 }</field>
+            <field name="context">{'default_type': 'sale', 'type': 'sale', 'default_pawnshop': True }</field>
             <field name="view_id" eval="False"/>
             <field name="search_view_id" ref="account_voucher.view_voucher_filter_sale"/>
             <field name="target">current</field>
@@ -581,9 +609,9 @@
             <field name="view_id" ref="pawn_item_normal_form_view"/>
             <field name="act_window_id" ref="action_pawn_items_sold"/>
         </record>
-		<menuitem name="Items Sold" id="menu_pawn_items_sold" action="action_pawn_items_sold" sequence="40"
+		<!-- <menuitem name="Items Sold" id="menu_pawn_items_sold" action="action_pawn_items_sold" sequence="40"
 		    parent="menu_pawn_for_sale"
-			groups="group_pawn_manager,group_pawn_stock,group_pawn_accountant,group_pawn_officer"/>
+			groups="group_pawn_manager,group_pawn_stock,group_pawn_accountant,group_pawn_officer"/> -->
 
 		<!-- Ticket Move -->
         <record id="action_asset_move_kanban" model="ir.actions.act_window">
@@ -664,6 +692,26 @@
 			groups="group_pawn_manager,group_pawn_stock,group_pawn_accountant,group_pawn_officer"/>
 
 		 <!-- Unit of Measure -->
+        <record id="product_uom_tree_view" model="ir.ui.view">
+            <field name="name">product.uom.tree</field>
+            <field name="model">product.uom</field>
+            <field name="inherit_id" ref="product.product_uom_tree_view"/>
+            <field name="arch" type="xml">
+                <field name="category_id" position="after">
+                    <field name="sequence"/>
+                </field>
+            </field>
+        </record>
+        <record id="product_uom_form_view" model="ir.ui.view">
+            <field name="name">product.uom.form</field>
+            <field name="model">product.uom</field>
+            <field name="inherit_id" ref="product.product_uom_form_view"/>
+            <field name="arch" type="xml">
+                <field name="active" position="after">
+                    <field name="sequence"/>
+                </field>
+            </field>
+        </record>
         <menuitem action="product.product_uom_form_action" id="pawnshop.menu_product_uom_form_action" parent="pawnshop.menu_pawn_master" sequence="110"
         	groups="group_pawn_accountant"/>
 
@@ -678,5 +726,48 @@
             	</field>
             </field>
         </record>
+
+        <record id="product_normal_form_view" model="ir.ui.view">
+            <field name="name">product.normal.form</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <field name="list_price" position="after">
+                    <field name="for_sale"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- Products For Sales -->
+        <record id="action_product_for_sale" model="ir.actions.act_window">
+            <field name="name">Products For Sales</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">product.product</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+            <field name="context">{'default_sale_ok': True, 'default_for_sale': True, 'default_type': 'service'}</field>
+            <field name="domain">[('for_sale','=',True)]</field>
+            <field name="search_view_id" ref="product.product_search_form_view"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to define a new product for sale.
+              </p>
+            </field>
+        </record>
+        <record id="action_product_for_sale_view1" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="product.product_product_tree_view"/>
+            <field name="act_window_id" ref="action_product_for_sale"/>
+        </record>
+        <record id="action_product_for_sale_view2" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="product.product_normal_form_view"/>
+            <field name="act_window_id" ref="action_product_for_sale"/>
+        </record>
+        <menuitem action="action_product_for_sale" id="menu_product_for_sale"
+            groups="group_pawn_accountant"
+            parent="menu_pawn_master" sequence="80"/>
     </data>
 </openerp>

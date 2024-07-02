@@ -50,8 +50,14 @@ product_category()
 class product_uom(osv.osv):
 
     _inherit = 'product.uom'
+    _order = 'sequence,name'
     _columns = {
         'categ_ids': fields.many2many('product.category', 'category_uom_rel', 'uom_id', 'categ_id', 'Categories'),
+        'sequence': fields.integer('Sequence', select=True, help="Gives the sequence order when displaying a list of product uom."),
+    }
+
+    _defaults = {
+        'sequence': 0,
     }
 
 product_uom()
