@@ -211,21 +211,40 @@ order by pw.period_id) a
 join account_period ap on ap.id = a.period_id
 where a.balance != 0
 UNION
--- Other Income (from Cash Register)
+-- Other Income (from Cash Register + Sales Receipts (not included pawn item))
 select 12 as sequence, 'เงินสดรับจากรายได้อื่น' as desc1, '' as desc2, null as balance
 union
 select 12.1 as sequence, desc1::varchar, ac.name::varchar as desc2, balance from
-(select '' as desc1, l.account_id, coalesce(sum(l.credit),0) as balance
-from account_move_line l
-join account_bank_statement st on st.id = l.statement_id
-join account_journal aj on aj.id = st.journal_id
-where l.statement_id is not null and st.state = 'confirm'
-and l.account_id not in (aj.default_credit_account_id, aj.default_debit_account_id)
-and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
-and l.pawn_shop_id = $P{pawn_shop_id}
-and l.date = $P{date}
-group by l.account_id
-order by l.account_id) a
+(
+select '' as desc1, oi.account_id, coalesce(sum(oi.credit),0) as balance
+from(
+    -- from Cash Register
+    (select l.account_id, l.credit
+    from account_move_line l
+    join account_bank_statement st on st.id = l.statement_id
+    join account_journal aj on aj.id = st.journal_id
+    where l.statement_id is not null and st.state = 'confirm'
+    and l.account_id not in (aj.default_credit_account_id, aj.default_debit_account_id)
+    and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
+    and l.pawn_shop_id = $P{pawn_shop_id}
+    and l.date = $P{date})
+    union
+    -- from Sales Receipts (not included pawn item)
+    (
+    select l.account_id, l.credit
+    from account_move_line l
+    join account_voucher av on l.move_id = av.move_id
+    join account_journal aj on aj.id = av.journal_id
+    join account_journal pj on pj.id = av.product_journal_id
+    where av.id is not null and aj.type in ('sale', 'sale_refund') and av.type = 'sale'
+    and l.pawn_order_id is null
+    and l.account_id not in (pj.default_credit_account_id, pj.default_debit_account_id)
+    and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
+    and l.pawn_shop_id = $P{pawn_shop_id}
+    and l.date = $P{date})
+) oi
+group by oi.account_id
+order by oi.account_id) a
 join account_account ac on ac.id = a.account_id
 where a.balance != 0
 UNION
