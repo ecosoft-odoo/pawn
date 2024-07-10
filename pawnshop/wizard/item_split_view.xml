@@ -9,12 +9,27 @@
                     <group>
                     	<h1>
                         	<field name="item_id" class="oe_inline"/>
-                    	</h1>               
-	                </group>      
+                    	</h1>
+	                </group>
+                    <group>
+                        <group>
+                            <field name="total_product_qty"/>
+                            <field name="total_price_estimated" invisible="1"/>
+                            <field name="total_price_pawned"/>
+                        </group>
+                        <group>
+                            <field name="total_carat"/>
+                            <field name="total_gram"/>
+                        </group>
+                    </group>
 	                <field name="split_line" widget="one2many_list" colspan="4" nolabel="1" context="{'active_id': item_id}">
                         <tree string="Split Lines" editable="bottom">
                             <field name="description"/>
                             <field name="product_qty" sum="Total Quantity"/>
+                            <field name="carat" sum="Total Carat"/>
+                            <field name="gram" sum="Total Gram"/>
+                            <field name="total_price_estimated" sum="Total Estimated Price" invisible="1"/>
+                            <field name="total_price_pawned" sum="Total Pawned Price" on_change="onchange_total_price_pawned(total_price_pawned)"/>
                         </tree>
 	                </field>
                     <footer>

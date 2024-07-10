@@ -85,6 +85,9 @@ class pawn_order_pawn(osv.osv_memory):
         if pawn.state != 'draft':
             raise osv.except_osv(_('Error!'),
                                  _('Ticket need refresh before proceeding!'))
+        # Check pawned amount
+        if pawn.amount_pawned != sum([line.pawn_price_subtotal for line in pawn.order_line]):
+            raise osv.except_osv(_('Error!'), _('Pawned amount must equal to sum of pawned subtotal'))
         # Check pawn item image
         self._check_pawn_item_image_first(cr, uid, pawn, context=context)
         # Write journal_id back to order
@@ -101,6 +104,7 @@ class pawn_order_pawn(osv.osv_memory):
         # cr.commit()
         # cr.close()
         return True
+
 
 pawn_order_pawn()
 

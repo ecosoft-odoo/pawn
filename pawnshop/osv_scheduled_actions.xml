@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-    <data>
+    <data noupdate="1">
         <record model="ir.cron" id="cronjob_check_expired_pawned_order">
             <field name='name'>Check Expired Pawn Ticket</field>
             <field name='interval_number'>1</field>
@@ -33,6 +33,17 @@
             <field name="model">pawn.actual.interest</field>
             <field name="function">process_actual_interest_move</field>
             <field name="args">()</field>
+        </record>
+        <record model="ir.cron" id="cronjob_process_order_expire">
+            <field name='name'>Process Order Expire</field>
+            <field name='interval_number'>1</field>
+            <field name='interval_type'>minutes</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="doall" eval="False" />
+            <field name="model">pawn.order</field>
+            <field name="function">process_order_expire</field>
+            <field name="args">(100,)</field>
         </record>
     </data>
 </openerp>

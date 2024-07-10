@@ -27,20 +27,41 @@ class pawn_expire_final(osv.osv_memory):
 
     _name = "pawn.expire.final"
     _description = "Finalize Expired Ticket"
-    
+
+    _columns = {
+        'run_background': fields.boolean('Run Background', help='Run background to expire tickets'),
+    }
+
+    _defaults = {
+        'run_background': True,
+    }
+
     def pawn_expire_final(self, cr, uid, ids, context=None):
         if context is None:
             context = {}
         pawn_ids = context['active_ids']
         if pawn_ids:
+            PawnOrder = self.pool.get('pawn.order')
             # Check all order are eligible, 1) date_expired < today, 2) no date_due yet
-            valid_ids = self.pool.get('pawn.order').search(cr, uid, [('ready_to_expire','=',True), ('state','=','pawn')], context=context)
+            valid_ids = PawnOrder.search(cr, uid, [('ready_to_expire', '=', True), ('state', '=', 'pawn')], context=context)
             if pawn_ids != valid_ids and not set(pawn_ids).issubset(set(valid_ids)):
                 raise osv.except_osv(_('Warning!'),
                                      _("""Some selection are not eligible to finalize expired ticket"""))
-            # expire it.
-            self.pool.get('pawn.order').order_expire(cr, uid, pawn_ids, context=context)
+            # Check extended order
+            PawnOrder._check_order_extend(cr, uid, pawn_ids, context=context)
+            # --
+            wizard = self.browse(cr, uid, ids, context=context)[0]
+            if wizard.run_background:
+                PawnOrder.write(cr, uid, pawn_ids, {
+                    'run_background': wizard.run_background,
+                }, context=context)
+            else:
+                if PawnOrder.search(cr, uid, [('id', 'in', pawn_ids), ('run_background', '=', True)], context=context):
+                    raise osv.except_osv(_('Warning!'), _("""Please select tickets not run as background"""))
+                # expire it.
+                PawnOrder.order_expire(cr, uid, pawn_ids, context=context)
         return {'type': 'ir.actions.act_window_close'}
+
 
 pawn_expire_final()
 

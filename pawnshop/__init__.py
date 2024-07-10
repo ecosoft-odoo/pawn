@@ -24,6 +24,7 @@ import pawn
 import item
 import product
 import pawn_rule
+import account_voucher
 import report
 import pawn_shop
 import item_property
@@ -34,7 +35,6 @@ import account_bank
 import res_partner
 import res_users
 import res_bank
-import account_voucher
 import account_transfer
 import account_bank_statement
 import osv_scheduled_actions

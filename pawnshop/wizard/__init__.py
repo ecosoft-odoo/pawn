@@ -34,5 +34,6 @@ import account_chart
 import pawn_jor6_submission
 import pawn_expire_final
 import update_partner_fingerprint
+import select_multi_sale_item
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

@@ -21,6 +21,9 @@
                 <button name="cancel_voucher" type="object" position="replace">
                     <button name="cancel_voucher" string="Cancel Receipt" type="object" attrs="{'invisible': ['|', ('state', '!=', 'posted'), '&amp;', ('is_refund', '=', False), ('ref_voucher_id', '!=', False)]}" confirm="Are you sure you want to cancel this receipt?"/>
                 </button>
+                <xpath expr="/form" position="attributes">
+                    <attribute name="delete">0</attribute>
+                </xpath>
                 <xpath expr="/form/sheet/group/group/field[@name='pay_now']" position="attributes">
                     <attribute name="attrs">{'invisible': True}</attribute>
                 </xpath>
@@ -33,6 +36,17 @@
                 <xpath expr="/form/sheet/group/group/field[@name='reference']" position="after">
                     <field name="ref_voucher_id"/>
                 </xpath>
+                <xpath expr="/form/sheet/group/group/field[@name='partner_id']" position="after">
+                    <field name="address"/>
+                </xpath>
+                <xpath expr="/form/sheet/group/group/field[@name='partner_id']" position="attributes">
+                    <attribute name="options">{'limit': 10, 'create': false, 'create_edit': false}</attribute>
+                    <attribute name="required">1</attribute>
+                    <attribute name="domain">[('customer', '=', True), ('pawnshop', '=', pawnshop)]</attribute>
+                </xpath>
+                <xpath expr="/form/sheet/group/group/field[@name='company_id']" position="attributes">
+                    <attribute name="on_change">onchange_company_id(company_id)</attribute>
+                </xpath>
                 <xpath expr="/form/sheet/notebook/page/group/group/field[@name='tax_id']" position="attributes">
                     <attribute name="attrs">{'invisible': True}</attribute>
                 </xpath>
@@ -43,23 +57,30 @@
                     <attribute name="attrs">{'invisible': True}</attribute>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree" position="attributes">
-                    <attribute name="create">0</attribute>
-                    <attribute name="delete">0</attribute>
+                    <attribute name="create">1</attribute>
+                    <attribute name="delete">1</attribute>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page/field/tree/.." position="before">
+                    <button name="%(action_select_multi_sale_item)d" string="Select Multi Items" type="action" states="draft" class="oe_highlight"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='name']" position="replace">
-                    <field name="quantity" on_change="onchange_price('quantity', quantity, price_unit, amount)" readonly="1"/>
+                    <field name="quantity" on_change="onchange_price('quantity', quantity, price_unit, amount)" attrs="{'readonly': [('for_sale', '=', False)]}"/>
                     <field name="carat"/>
                     <field name="gram"/>
                     <field name="uos_id" invisible="1" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
-                    <field name="price_estimated"/>
+                    <field name="price_estimated" invisible="1"/>
+                    <field name="total_price_pawned"/>
                     <field name="price_unit" on_change="onchange_price('price_unit', quantity, price_unit, amount)"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='account_id']" position="before">
-                    <field name="product_id" domain="[('type','=','consu'), ('location_status.code', '=', 'item_for_sale')]" options="{'limit': 10, 'create': false, 'create_edit': false}" readonly="1"/>
-                    <field name="name"/>
+                    <field name="product_id" domain="['|', ('for_sale', '=', True), '&amp;', '&amp;', ('type','=','consu'), ('state','=','for_sale'), ('location_status.code', '=', 'item_for_sale')]" on_change="onchange_product_id(product_id)" options="{'limit': 10, 'create': false, 'create_edit': false, 'no_open': True}" readonly="0" required="1"/>
+                    <field name="name" required="1"/>
+                    <field name="for_sale" invisible="1"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='account_id']" position="attributes">
-                    <attribute name="domain">[('user_type.report_type','=','income')]</attribute>
+                    <!-- <attribute name="domain">[('user_type.report_type','=','income')]</attribute> -->
+                    <attribute name="domain"></attribute>
+                    <attribute name="readonly">1</attribute>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='amount']" position="attributes">
                     <attribute name="on_change">onchange_price('amount', quantity, price_unit, amount)</attribute>
@@ -73,6 +94,9 @@
             <field name="inherit_id" ref="account_voucher.view_voucher_tree"/>
             <field name="arch" type="xml">
                 <data>
+                    <xpath expr="/tree" position="attributes">
+                        <attribute name="delete">0</attribute>
+                    </xpath>
                     <field name="date" position="before">
                         <field name="product_journal_id"/>
                     </field>

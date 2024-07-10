@@ -110,6 +110,7 @@
                             <field name="rule_id" widget="selection"/>
                             <field name="child_id" attrs="{'invisible':[('child_id','=',False)]}"/>
 							<field name="create_date" invisible="1"/>
+                            <field name="run_background" invisible="not context.get('is_ready_to_expire', False)"/>
                         </group>
                     </group>
                     <notebook>
@@ -118,13 +119,15 @@
                                 <tree string="Pawn Ticket Lines" editable="bottom">
                                     <field name="name"/>
                                     <field name="categ_id" on_change="onchange_categ_id(categ_id)" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
-                                    <field name="product_qty" sum="Total Quantity"/>
+                                    <field name="product_qty" sum="Total Quantity" on_change="onchange_price('product_qty', product_qty, price_unit, price_subtotal, pawn_price_unit, pawn_price_subtotal)"/>
                                     <field name="product_uom" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
 									<field name="is_jewelry" invisible="1"/>
                                     <field name="carat" attrs="{'readonly': [('is_jewelry', '!=', True)]}"/>
 									<field name="gram" attrs="{'readonly': [('is_jewelry', '!=', True)]}"/>
-                                    <field name="price_unit"/>
-                                    <field name="price_subtotal" sum="Total Amount"/>
+                                    <field name="price_unit" on_change="onchange_price('price_unit', product_qty, price_unit, price_subtotal, pawn_price_unit, pawn_price_subtotal)" invisible="1"/>
+                                    <field name="price_subtotal" sum="Total Amount" on_change="onchange_price('price_subtotal', product_qty, price_unit, price_subtotal, pawn_price_unit, pawn_price_subtotal)" invisible="1"/>
+                                    <field name="pawn_price_unit" on_change="onchange_price('pawn_price_unit', product_qty, price_unit, price_subtotal, pawn_price_unit, pawn_price_subtotal)"/>
+                                    <field name="pawn_price_subtotal" sum="Total Amount" on_change="onchange_price('pawn_price_subtotal', product_qty, price_unit, price_subtotal, pawn_price_unit, pawn_price_subtotal)"/>
 				                    <button name="%(action_pawn_line_property)d" string="Property" type="action" icon="gtk-justify-fill"/>
                                 </tree>
                             </field>
@@ -326,6 +329,9 @@
                     <separator/>
                     <filter name="extend" string="Extended" domain="[('extended','=',True)]" help="Expired Pawned Orders which has been extended"/>
                     <filter name="not_extend" string="Not Extend" domain="[('extended','=',False)]"/>
+                    <separator/>
+                    <filter name="run_background" string="Run Background" domain="[('run_background','=',True)]" invisible="not context.get('is_ready_to_expire', False)"/>
+                    <filter name="not_run_background" string="Not Run Background" domain="[('run_background','=',False)]" invisible="not context.get('is_ready_to_expire', False)"/>
                     <group expand="0" string="Group By...">
                         <filter string="Shop" domain="[]" context="{'group_by':'pawn_shop_id'}"/>
                         <filter string="Journal" domain="[]" context="{'group_by':'journal_id'}"/>
@@ -358,11 +364,12 @@
                     <field name="date_redeem" />
                     <field name="partner_id"/>
                     <field name="company_id" groups="base.group_multi_company" widget="selection"/>
-                    <field name="amount_total" sum="Total Amount"/>
+                    <field name="amount_total" sum="Total Amount" invisible="1"/>
                     <field name="amount_pawned" sum="Total Pawned Amount"/>
                     <field name="state"/>
                     <field name="extended_x"/>
                     <field name="jor6_submitted" invisible="1"/>
+                    <field name="run_background" invisible="not context.get('is_ready_to_expire', False)"/>
                 </tree>
             </field>
         </record>
@@ -419,7 +426,7 @@
             <field name="view_mode">tree,form,graph</field>
     		<field name="limit">20</field>
     		<field name="domain">[('ready_to_expire','=',True), ('state','=','pawn')]</field>
-            <field name="context">{}</field>
+            <field name="context">{'search_default_not_run_background': 1, 'is_ready_to_expire': 1}</field>
             <field name="search_view_id" ref="view_pawn_order_filter"/>
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">
@@ -449,7 +456,6 @@
                     <field name="categ_id"/>
                     <field name="item_description"/>
                     <field name="image_small"/>
-                    <field name="pawn_item_image_first"/>
                     <field name="state" groups="base.group_no_one"/>
                     <templates>
                     <t t-name="kanban-box">
@@ -459,12 +465,10 @@
                                 <div>
                                     <div style="display: inline-block;vertical-align: top;width: 215px;">
                                         <b>รายละเอียด:</b> <field name="item_description"/><br/>
-                                        <b>ราคารับจำนำ:</b> <field name="price_pawned"/> ฿
+                                        <b>ราคารับจำนำ:</b> <field name="total_price_pawned"/> ฿
                                     </div>
                                     <div style="display: inline-block;vertical-align: top;">
-                                        <t t-if="record.pawn_item_image_first and record.pawn_item_image_first.raw_value">
-                                            <img t-att-src="kanban_image('product.product', 'pawn_item_image_first', record.id.raw_value)" t-att-title="record.id.value" style="width: 65px;"/>
-                                        </t>
+                                        <img t-att-src="kanban_image('product.product', 'pawn_item_image_first', record.id.raw_value)" t-att-title="record.id.value" style="width: 65px;"/>
                                     </div>
                                 </div>
                                 <!-- <div class="oe_kanban_bottom_right">

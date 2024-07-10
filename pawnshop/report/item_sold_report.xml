@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="view_item_sold_report_tree" model="ir.ui.view">
+            <field name="name">item.sold.report.tree</field>
+            <field name="model">item.sold.report</field>
+            <field name="arch" type="xml">
+                <tree create="0" delete="0" string="Items Sold Report">
+                    <field name="product_id"/>
+                    <field name="partner_id"/>
+                    <field name="description"/>
+                    <field name="date_order"/>
+                    <field name="voucher_id"/>
+                    <field name="quantity" sum="Total Quantity"/>
+                    <field name="carat"/>
+                    <field name="gram"/>
+                    <field name="total_price_pawned" sum="Total Pawned Price"/>
+                    <field name="total_price_sold" sum="Total Sold Price"/>
+                    <field name="total_profit" sum="Total Profit"/>
+                    <field name="date_sold"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_item_sold_report_form" model="ir.ui.view">
+            <field name="name">item.sold.report.form</field>
+            <field name="model">item.sold.report</field>
+            <field name="arch" type="xml">
+                <form create="0" edit="0" delete="0" string="Items Sold Report">
+                    <group>
+                        <group>
+                            <field name="product_id" context="{'form_view_ref': 'pawnshop.pawn_item_normal_form_view'}"/>
+                            <field name="partner_id" context="{'form_view_ref': 'pawnshop.view_partner_form'}"/>
+                            <field name="description"/>
+                            <field name="date_order"/>
+                            <field name="voucher_id" context="{'form_view_ref': 'account_voucher.view_sale_receipt_form'}"/>
+                            <field name="quantity"/>
+                        </group>
+                        <group>
+                            <field name="carat"/>
+                            <field name="gram"/>
+                            <field name="total_price_pawned"/>
+                            <field name="total_price_sold"/>
+                            <field name="total_profit"/>
+                            <field name="date_sold"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_item_sold_report_search" model="ir.ui.view">
+            <field name="name">item.sold.report.search</field>
+            <field name="model">item.sold.report</field>
+            <field name="arch" type="xml">
+                <search string="Items Sold Report">
+                    <field name="product_id"/>
+                    <field name="partner_id"/>
+                    <field name="description"/>
+                    <field name="voucher_id"/>
+                    <group  expand="0" string="Group by...">
+                        <filter string="Customer" domain="[]" context="{'group_by' : 'partner_id'}"/>
+                        <filter string="Sale Receipt" domain="[]" context="{'group_by' : 'voucher_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_item_sold_report" model="ir.actions.act_window">
+            <field name="name">Items Sold Report</field>
+            <field name="res_model">item.sold.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem
+            action="action_item_sold_report"
+            id="menu_action_item_sold_report"
+            parent="menu_pawn_for_sale"
+            groups="group_pawn_manager,group_pawn_stock,group_pawn_accountant,group_pawn_officer"
+            sequence="45"/>
+   </data>
+</openerp>

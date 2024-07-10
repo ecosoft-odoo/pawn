@@ -11,40 +11,43 @@
                         	<label string="Please confirm renew amount as following,"/>
                         </group>
                         <group name="amount">
-                            <field name="date_renew" />
-                            <field name="pawn_amount" string="Initial" />
-                            <field name="interest_amount" string="+ Interest Amount" />
+                            <field name="date_renew"/>
+                            <field name="pawn_amount" string="Initial"/>
+                            <field name="interest_amount" string="+ Interest Amount"/>
                             <field name="discount" string="- Discount" on_change="onchange_amount('discount', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
                             <field name="addition" string="+ Addition" on_change="onchange_amount('addition', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
-                        </group>
-                        <group class="oe_subtotal_footer oe_left" >
-                         	<div colspan="2">
-	                         	<h3>
-		                     	 	<label string="Pay Interest Amount"/>
-		                         	<field name="pay_interest_amount" on_change="onchange_amount('pay_interest_amount', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)" class="oe_inline"  />
-	                     	 	</h3>
-		                        <h3>
-	                         		<label string="+/- Pawn Amount"/>
-	                         		<field name="increase_pawn_amount" on_change="onchange_amount('increase_pawn_amount', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)" class="oe_inline" />
-	                         	</h3>
-                         	</div>
-                          	<div class="oe_subtotal_footer_separator oe_inline" colspan="2">
-	                         	<h3>
-	                         	 	<label for="new_pawn_amount"/>
-	                             	<field name="new_pawn_amount" on_change="onchange_amount('new_pawn_amount', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)" class="oe_inline" />
-	                         	</h3>
-                            </div>
+                            <group colspan="2">
+                                <field name="pay_interest_amount" string="Pay Interest Amount" on_change="onchange_amount('pay_interest_amount', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
+                                <field name="increase_pawn_amount" string="+/- Pawn Amount" on_change="onchange_amount('increase_pawn_amount', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
+                                <field name="new_pawn_amount" string="New Pawn Amount" on_change="onchange_amount('new_pawn_amount', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
+                            </group>
                         </group>
                         <group>
                             <field name="delegation_of_authority" on_change="onchange_delegation_of_authority()"/>
                             <field name="delegate_id" domain="[('supplier', '=', 1), ('pawnshop', '=', 1)]" options="{'limit': 10, 'create': false, 'create_edit': false}" attrs="{'invisible': [('delegation_of_authority', '=', False)], 'required': [('delegation_of_authority', '=', True)]}"/>
-                        </group>
-                        <group/>
-                        <group>
                             <field name="renewal_transfer" on_change="onchange_renewal_transfer()"/>
                             <field name="secret_key" password="1" attrs="{'invisible': [('renewal_transfer', '=', False)], 'required': [('renewal_transfer', '=', True)]}"/>
                         </group>
                     </group>
+                    <notebook>
+                        <page string="Pawn Ticket">
+                            <field name="renew_line_ids" on_change="onchange_renew_ids(renew_line_ids)">
+                                <tree string="Pawn Ticket Lines" editable="bottom" create="0" delete="0">
+                                    <field name="name"/>
+                                    <field name="categ_id"/>
+                                    <field name="product_qty" sum="Total Quantity"/>
+                                    <field name="product_uom"/>
+                                    <field name="carat"/>
+                                    <field name="gram"/>
+                                    <field name="price_unit" on_change="onchange_price('price_unit', product_qty, price_unit, price_subtotal, pawn_price_unit, pawn_price_subtotal)" invisible="1"/>
+                                    <field name="price_subtotal" sum="Total Amount" on_change="onchange_price('price_subtotal', product_qty, price_unit, price_subtotal, pawn_price_unit, pawn_price_subtotal)" invisible="1"/>
+                                    <field name="pawn_price_unit" on_change="onchange_price('pawn_price_unit', product_qty, price_unit, price_subtotal, pawn_price_unit, pawn_price_subtotal)"/>
+                                    <field name="pawn_price_subtotal" sum="Total Amount" on_change="onchange_price('pawn_price_subtotal', product_qty, price_unit, price_subtotal, pawn_price_unit, pawn_price_subtotal)"/>
+                                    <field name="order_line_id" invisible="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
                     <footer>
                         <button string="Renew" name="action_renew" type="object" class="oe_highlight"/>
                         or
@@ -58,8 +61,8 @@
             <field name="res_model">pawn.order.renew</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-           <field name="view_id" ref="view_pawn_order_renew"/>
-           <field name="target">new</field>
+            <field name="view_id" ref="view_pawn_order_renew"/>
+            <field name="target">new</field>
         </record>
     </data>
 </openerp>

@@ -190,11 +190,22 @@
 + " " + $F{cust_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="d/M/yyyy" isBlankWhenNull="true">
-				<reportElement positionType="Float" mode="Transparent" x="273" y="289" width="119" height="17" forecolor="#000000" backcolor="#FFFFFF"/>
-				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+				<reportElement positionType="Float" mode="Transparent" x="273" y="289" width="119" height="17" forecolor="#000000" backcolor="#FFFFFF">
+                    <printWhenExpression><![CDATA[new Integer($F{expiry_date}.getYear() + 2443) < 9999]]></printWhenExpression>
+				</reportElement>
+                <textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{expiry_date}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" mode="Transparent" x="273" y="289" width="119" height="17" forecolor="#000000" backcolor="#FFFFFF">
+                    <printWhenExpression><![CDATA[new Integer($F{expiry_date}.getYear() + 2443) >= 9999]]></printWhenExpression>
+				</reportElement>
+                <textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["ตลอดชีพ"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0" isBlankWhenNull="true">
 				<reportElement positionType="Float" mode="Transparent" x="290" y="200" width="44" height="17" forecolor="#000000" backcolor="#FFFFFF"/>

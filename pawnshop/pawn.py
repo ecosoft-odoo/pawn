@@ -96,11 +96,13 @@ class pawn_order(osv.osv):
             res[pawn.id] = {
                 'amount_total': 0.0,
             }
-            val = 0.0
+            amount_total = 0.0
             cur = pawn.pricelist_id.currency_id
             for line in pawn.order_line:
-                val += line.price_subtotal
-            res[pawn.id]['amount_total'] = cur_obj.round(cr, uid, cur, val)
+                amount_total += line.price_subtotal
+            res[pawn.id].update({
+                'amount_total': cur_obj.round(cr, uid, cur, amount_total),
+            })
         return res
 
     def _get_order(self, cr, uid, ids, context=None):
@@ -292,7 +294,7 @@ class pawn_order(osv.osv):
             store={
                 'pawn.order.line': (_get_order, None, 10),
             }, multi="sums", help="The total amount"),
-        'amount_pawned': fields.float('Pawned Amount', readonly=True, states={'draft': [('readonly', False)]}, help="Pawned Amount is the amount that will be used for interest calculation."),
+        'amount_pawned': fields.float('Pawned Amount', readonly=True, help="Pawned Amount is the amount that will be used for interest calculation."),
         'date_expired': fields.function(_calculate_pawn_interest, type='date', string='Ticket Expiry Date',
             store={
                 'pawn.order': (lambda self, cr, uid, ids, c={}: ids, ['date_order', 'rule_id'], 10),
@@ -407,6 +409,7 @@ class pawn_order(osv.osv):
          'pawn_item_image_date_fifth': fields.datetime('Date of Pawn Item (Fifth)', readonly=True),
          'delegation_of_authority': fields.boolean('Delegation of Authority', readonly=True),
          'delegate_id': fields.many2one('res.partner', 'Delegate', readonly=True),
+         'run_background': fields.boolean('Run Background', readonly=True, help='Run background to expire tickets'),
     }
     _defaults = {
         'company_id': lambda self, cr, uid, c: self.pool.get('res.users').browse(cr, uid, uid).company_id.id,
@@ -424,6 +427,7 @@ class pawn_order(osv.osv):
         'renewal_transfer_redeem': False,
         'delegation_of_authority': False,
         'delegate_id': False,
+        'run_background': False,
     }
     _sql_constraints = [
         ('name_uniq', 'unique(name, pawn_shop_id)', 'Pawn Ticket Reference must be unique per Pawn Shop!'),
@@ -512,24 +516,32 @@ class pawn_order(osv.osv):
             self._update_fingerprint(cr, uid, [pawn.id], action_type='redeem', context=context)
         return True
 
-    def order_expire(self, cr, uid, ids, context=None):
-        # Extend the ticket don't change state to expire
+    def _check_order_extend(self, cr, uid, ids, context=None):
         for pawn in self.browse(cr, uid, ids, context=context):
+            # Extend the ticket don't change state to expire
             if pawn.extended:
                 raise osv.except_osv(_('Error!'),
                         _('Please unextend the ticket before submit the ticket to expire.'))
-        # Reverse Accrued Interest
-        self.action_move_reversed_accrued_interest_create(cr, uid, ids, context=context)
-        # Inactive any left over accrued interest
-        self.update_active_accrued_interest(cr, uid, ids, False, context=context)
-        # --
-        # Create Move (except extended case)
+        return True
+
+    def order_expire(self, cr, uid, ids, context=None):
         for pawn in self.browse(cr, uid, ids, context=context):
+            # Make sure that pawn state must not equal to expire
+            if pawn.state == 'expire':
+                continue
+            # Check extended order
+            self._check_order_extend(cr, uid, [pawn.id], context=context)
+            # Reverse Accrued Interest
+            self.action_move_reversed_accrued_interest_create(cr, uid, [pawn.id], context=context)
+            # Inactive any left over accrued interest
+            self.update_active_accrued_interest(cr, uid, [pawn.id], False, context=context)
+            # --
+            # Create Move (except extended case)
             if not pawn.extended:
                 self.action_move_create(cr, uid, [pawn.id], context={'direction': 'expire'})
-        date_expired = fields.date.context_today(self, cr, uid, context=context)
-        self.write(cr, uid, ids, {'state': 'expire', 'date_final_expired': date_expired}, context=context)
-        self._update_order_pawn_asset(cr, uid, ids, {'state': 'expire'}, context=context)
+            date_expired = fields.date.context_today(self, cr, uid, context=context)
+            self.write(cr, uid, [pawn.id], {'state': 'expire', 'date_final_expired': date_expired}, context=context)
+            self._update_order_pawn_asset(cr, uid, [pawn.id], {'state': 'expire'}, context=context)
         return True
 
     def action_extend(self, cr, uid, ids, context=None):
@@ -666,7 +678,13 @@ class pawn_order(osv.osv):
         return True
 
     # General
-    def _prepare_asset(self, order):
+    def _prepare_asset(self, cr, uid, order, context=None):
+        prec = self.pool.get('decimal.precision').precision_get(cr, uid, 'Account')
+        total_price_estimated = 0
+        total_price_pawned = 0
+        for line in order.order_line:
+            total_price_estimated += line.price_subtotal
+            total_price_pawned += line.pawn_price_subtotal
         return {
             'name': order.name,
             'order_id': order.id,
@@ -674,10 +692,15 @@ class pawn_order(osv.osv):
 #             'list_price': order.amount_pawned,
 #             'standard_price': order.amount_total,
             'product_qty': 1.0,
+            'price_estimated': round(total_price_estimated, prec),
+            'price_pawned': round(total_price_pawned, prec),
+            'total_price_estimated': round(total_price_estimated, prec),
+            'total_price_pawned': round(total_price_pawned, prec),
             'image': order.image
         }
 
-    def _prepare_item(self, parent, name, line, context=None):
+    def _prepare_item(self, cr, uid, parent, name, line, context=None):
+        prec = self.pool.get('decimal.precision').precision_get(cr, uid, 'Account')
         item_dict = {
             'name': name,
             'type': 'consu',
@@ -687,6 +710,12 @@ class pawn_order(osv.osv):
             'categ_id': line.categ_id.id,
             'product_qty': line.product_qty,
             'product_uom': line.product_uom.id,
+            'price_estimated': round(line.price_subtotal / line.product_qty, prec),
+            'price_pawned': round(line.pawn_price_subtotal / line.product_qty, prec),
+            'total_price_estimated': line.price_subtotal,
+            'total_price_pawned': line.pawn_price_subtotal,
+            'carat': line.carat,
+            'gram': line.gram,
             'order_line_id': line.id,
 #             'list_price': False,
 #             'standard_price': line.price_unit,
@@ -695,14 +724,12 @@ class pawn_order(osv.osv):
         return item_dict
 
     def _prepare_item_line(self, parent, item_id, line, context=None):
-        print('>>>>>>>>>>>', line.id)
         item_line_dict = {
             'parent_id': parent.id,
             'item_id': item_id,
             'product_qty': line.product_qty,
             'pawn_line_id': line.id,
         }
-        print('======', item_line_dict)
         return item_line_dict
 
     def _create_pawn_asset_item(self, cr, uid, asset_id, order, context=None):
@@ -716,7 +743,7 @@ class pawn_order(osv.osv):
                 raise osv.except_osv(_('Exceed Max Lines!'), _('Only %s lines are allowed') % (MAX_LINE))
             # Create each line as new item
             new_item_name = asset_name + '-' + chr(ord(str(i)) + 16)  # i.e., PW001-A
-            item_dict = self._prepare_item(asset, new_item_name, line, context=context)
+            item_dict = self._prepare_item(cr, uid, asset, new_item_name, line, context=context)
             item_id = item_obj.create(cr, uid, item_dict, context=context)
             # Link it to pawn asset
             item_line_dict = self._prepare_item_line(asset, item_id, line, context=context)
@@ -727,11 +754,14 @@ class pawn_order(osv.osv):
     def _update_pawn_asset(self, cr, uid, asset_id, order, vals, context=None):
         item_obj = self.pool.get('product.product')
         line_obj = self.pool.get('product.product.line')
-        if vals.get('order_line', False) or vals.get('name', False):
+        if vals.get('order_line', False) or vals.get('name', False) or vals.get('amount_pawned'):
             # Update Ticket's estimated price.
-            name = vals.get('name', False) or item_obj.browse(cr, uid, asset_id, context=context).name
-            self.pool.get('product.product').write(cr, uid, [asset_id], {'name': name,
-                                                                         'standard_price': order.amount_total})
+            asset_dict = self._prepare_asset(cr, uid, order, context=context)
+            asset_dict.update({
+                'name': vals.get('name', False) or item_obj.browse(cr, uid, asset_id, context=context).name,
+                'standard_price': order.amount_total,
+            })
+            self.pool.get('product.product').write(cr, uid, [asset_id], asset_dict)
             # Given item_id (asset), search all item lines to unlink them.
             item_line_ids = line_obj.search(cr, uid, [('parent_id', '=', order.item_id.id)])
             line_obj.unlink(cr, uid, item_line_ids)
@@ -767,7 +797,7 @@ class pawn_order(osv.osv):
     def _create_pawn_asset(self, cr, uid, order, context=None):
         # Create new pawn asset.
         item_obj = self.pool.get('product.product')
-        asset_dict = self._prepare_asset(order)
+        asset_dict = self._prepare_asset(cr, uid, order, context=context)
         asset_id = item_obj.create(cr, uid, asset_dict, context=context)
         # Use line from order to create pawn items that link to pawn asset
         asset_id = self._create_pawn_asset_item(cr, uid, asset_id, order, context=context)
@@ -791,7 +821,29 @@ class pawn_order(osv.osv):
         next_name = shop_code + period.fiscalyear_id.code + str(book).zfill(3) + str(number).zfill(3)
         return next_name, book, number
 
+    def _get_amount_pawned(self, cr, uid, order_line, context=None):
+        pawn_line_obj = self.pool.get('pawn.order.line')
+        amount_pawned = 0
+        for line in order_line:
+            if line[0] == 0:
+                # Condition for create line
+                amount_pawned += line[2]['pawn_price_subtotal']
+            elif line[0] == 1:
+                # Condition for update line
+                if 'pawn_price_subtotal' in line[2]:
+                    amount_pawned += line[2]['pawn_price_subtotal']
+                else:
+                    amount_pawned += pawn_line_obj.browse(cr, uid, line[1], context=context).pawn_price_subtotal
+            elif line[0] == 4:
+                # Condition for link line
+                amount_pawned += pawn_line_obj.browse(cr, uid, line[1], context=context).pawn_price_subtotal
+        return amount_pawned
+
     def create(self, cr, uid, vals, context=None):
+        # Update pawned amount
+        if 'order_line' in vals and vals['order_line']:
+            amount_pawned = self._get_amount_pawned(cr, uid, vals['order_line'], context=context)
+            vals.update({'amount_pawned': amount_pawned})
         # Update buddha year
         if 'buddha_year_temp' in vals:
             vals['buddha_year'] = vals['buddha_year_temp']
@@ -807,13 +859,7 @@ class pawn_order(osv.osv):
             vals['internal_number'] = self.pool.get('ir.sequence').get(cr, uid, 'pawn.order') or '/'
         name, book, number = self._get_next_pawn_name(cr, uid, vals.get('period_id', False), vals.get('pawn_shop_id', False), context=context)
         vals.update({'name': name, 'book': book, 'number': number})
-        pawn_id = super(pawn_order, self).create(cr, uid, vals, context=context)
-        pawn = self.browse(cr, uid, pawn_id, context=context)
-        if not vals.get('amount_pawned', False):
-            self.write(cr, uid, [pawn_id], {'amount_pawned': pawn.amount_total})
-        else:
-            self.write(cr, uid, [pawn_id], {'amount_pawned': vals.get('amount_pawned')})
-        return pawn_id
+        return super(pawn_order, self).create(cr, uid, vals, context=context)
 
     def _calculate_interest_date(self, cr, uid, interval, start_date, end_date, context=None):
         dates = []
@@ -880,6 +926,12 @@ class pawn_order(osv.osv):
     def write(self, cr, uid, ids, vals, context=None):
         if context == None:
             context = {}
+        # Update pawned amount
+        if 'order_line' in vals and vals['order_line']:
+            amount_pawned = self._get_amount_pawned(cr, uid, vals['order_line'], context=context)
+            for pawn in self.browse(cr, uid, ids, context=context):
+                if pawn.amount_pawned != amount_pawned:
+                    vals.update({'amount_pawned': amount_pawned})
         # Update buddha year
         if 'buddha_year_temp' in vals:
             vals['buddha_year'] = vals['buddha_year_temp']
@@ -914,12 +966,6 @@ class pawn_order(osv.osv):
             else:  # Create case, no item_id yet
                 item_id = self._create_pawn_asset(cr, uid, pawn)
                 super(pawn_order, self).write(cr, uid, [pawn.id], {'item_id': item_id}, context=context)
-        # Update pawn amount if total is updated
-        if [val for val in vals.keys() if val in ['order_line']]:
-            for pawn in self.browse(cr, uid, ids, context=context):
-                # Renew pawn order not update pawn amount
-                if not pawn.parent_id and not vals.get('amount_pawned', False):
-                    self.write(cr, uid, [pawn.id], {'amount_pawned': pawn.amount_total})
         # Interest table, if update in the following 4 fields
         if [val for val in vals.keys() if val in ['amount_pawned', 'rule_id', 'date_order']]:
             for pawn in self.browse(cr, uid, ids, context=context):
@@ -994,6 +1040,7 @@ class pawn_order(osv.osv):
             'renewal_transfer_redeem': False,
             'delegation_of_authority': False,
             'delegate_id': False,
+            'run_background': False,
         })
         # Default pawn item image
         for i in ['first', 'second', 'third', 'fourth', 'fifth']:
@@ -1482,22 +1529,6 @@ class pawn_order_line(osv.osv):
     _name = 'pawn.order.line'
     _description = 'Pawn Ticket Line'
 
-    def _amount_line(self, cr, uid, ids, prop, arg, context=None):
-        res = {}
-        cur_obj = self.pool.get('res.currency')
-        for line in self.browse(cr, uid, ids, context=context):
-            res[line.id] = {
-                'price_unit': 0.0,
-                'pawn_price_unit': 0.0,
-            }
-            if not line.product_qty:
-                raise osv.except_osv(_('Error!'), _('Quantity can not be zero!'))
-            cur = line.order_id.pricelist_id.currency_id
-            res[line.id]['price_unit'] = cur_obj.round(cr, uid, cur, line.price_subtotal / line.product_qty)
-            pawn_price_unit = line.order_id.amount_total and res[line.id]['price_unit'] * line.order_id.amount_pawned / line.order_id.amount_total or 0.0
-            res[line.id]['pawn_price_unit'] = cur_obj.round(cr, uid, cur, pawn_price_unit)
-        return res
-
     def _get_uom_id(self, cr, uid, context=None):
         try:
             proxy = self.pool.get('ir.model.data')
@@ -1526,14 +1557,10 @@ class pawn_order_line(osv.osv):
         'categ_id': fields.many2one('product.category', 'Category', domain=[('type', '=', 'normal')], required=True),
         'product_qty': fields.float('Quantity', digits_compute=dp.get_precision('Product Unit of Measure'), required=True),
         'product_uom': fields.many2one('product.uom', 'Product Unit of Measure', domain="[('categ_ids', 'in', categ_id)]", required=True),
-        #'price_unit': fields.float('Unit Price', required=True, digits_compute=dp.get_precision('Product Price')),
-        'price_unit': fields.function(_amount_line, string='Unit Price', digits_compute=dp.get_precision('Product Price'), store=True, multi="price"),
-        'pawn_price_unit': fields.function(_amount_line, string='Unit Price', digits_compute=dp.get_precision('Product Price'),
-            store={
-                'pawn.order': (_get_order_line, ['amount_pawned'], 10),
-            }, multi="price"),
-        'price_subtotal': fields.float('Subtotal', required=True, digits_compute=dp.get_precision('Account')),
-        #'price_subtotal': fields.function(_amount_line, string='Subtotal', digits_compute=dp.get_precision('Account')),
+        'price_unit': fields.float('Estimated Price / Unit', required=True, digits_compute=dp.get_precision('Product Price')),
+        'price_subtotal': fields.float('Estimated Subtotal', required=True, digits_compute=dp.get_precision('Account')),
+        'pawn_price_unit': fields.float('Pawned Price / Unit', required=True, digits_compute=dp.get_precision('Product Price')),
+        'pawn_price_subtotal': fields.float('Pawned Subtotal', required=True, digits_compute=dp.get_precision('Account')),
         'order_id': fields.many2one('pawn.order', 'Pawn Ticket Reference', select=True, required=True, ondelete='cascade'),
         'company_id': fields.related('order_id', 'company_id', type='many2one', relation='res.company', string='Company', store=True, readonly=True),
         'state': fields.related('order_id', 'state', string='State', readonly=True, type="selection", selection=STATE_SELECTION),
@@ -1573,12 +1600,21 @@ class pawn_order_line(osv.osv):
                 _('Line price equal to 0.0 is not allowed!'))
 
     def create(self, cr, uid, vals, context=None):
-        self._check_price_subtotal(vals.get('price_subtotal', False))
-        return super(pawn_order_line, self).create(cr, uid, vals, context=context)
+        order_line_id = super(pawn_order_line, self).create(cr, uid, vals, context=context)
+        # Check price not equal to zero
+        order_line = self.browse(cr, uid, order_line_id, context=context)
+        self._check_price_subtotal(order_line.pawn_price_subtotal)
+        self._check_price_subtotal(order_line.price_subtotal)
+        return order_line_id
 
     def write(self, cr, uid, ids, vals, context=None):
-        self._check_price_subtotal(vals.get('price_subtotal', False))
-        return super(pawn_order_line, self).write(cr, uid, ids, vals, context=context)
+        res = super(pawn_order_line, self).write(cr, uid, ids, vals, context=context)
+        # Check price not equal to zero
+        order_lines = self.browse(cr, uid, ids, context=context)
+        for order_line in order_lines:
+            self._check_price_subtotal(order_line.pawn_price_subtotal)
+            self._check_price_subtotal(order_line.price_subtotal)
+        return res
 
     def onchange_categ_id(self, cr, uid, ids, categ_id, context=None):
         res = {}
@@ -1589,6 +1625,39 @@ class pawn_order_line(osv.osv):
             res['gram'] = False
             res['is_jewelry'] = category.is_jewelry or False
         return {'value': res}
+
+    def onchange_price(self, cr, uid, ids, field, product_qty, price_unit, price_subtotal, pawn_price_unit, pawn_price_subtotal):
+        res = {'value': {}}
+        precision = self.pool.get('decimal.precision').precision_get
+        product_qty = float(product_qty)
+        if field == 'product_qty':
+            res['value'].update({
+                'price_subtotal': round(product_qty * price_unit, precision(cr, uid, 'Account')),
+                'pawn_price_subtotal': round(product_qty * pawn_price_unit, precision(cr, uid, 'Account')),
+            })
+        elif field == 'price_unit':
+            res['value'].update({
+                'price_subtotal': round(product_qty * price_unit, precision(cr, uid, 'Account')),
+            })
+        elif field == 'pawn_price_unit':
+            res['value'].update({
+                'pawn_price_subtotal': round(product_qty * pawn_price_unit, precision(cr, uid, 'Account')),
+            })
+        elif field == 'price_subtotal':
+            product_qty = product_qty if product_qty else 1.0
+            res['value'].update({
+                'product_qty': product_qty,
+                'price_unit': round(price_subtotal / product_qty, precision(cr, uid, 'Product Price'))
+            })
+        elif field == 'pawn_price_subtotal':
+            product_qty = product_qty if product_qty else 1.0
+            res['value'].update({
+                'product_qty': product_qty,
+                'pawn_price_unit': round(pawn_price_subtotal / product_qty, precision(cr, uid, 'Product Price'))
+            })
+            # Not used estimated price now so we define estimated price = pawned price
+            res['value']['price_subtotal'] = pawn_price_subtotal
+        return res
 
     def action_update_pawn_line_property(self, cr, uid, property_data, context=None):
         if context == None:

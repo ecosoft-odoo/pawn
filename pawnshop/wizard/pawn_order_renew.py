@@ -21,6 +21,7 @@
 from openerp.osv import fields, osv
 from openerp import netsvc
 import time
+import openerp.addons.decimal_precision as dp
 from openerp import pooler
 from openerp.tools.translate import _
 from openerp.tools import float_compare
@@ -45,6 +46,28 @@ class pawn_order_renew(osv.osv_memory):
             return round(amount_interest, 2)
         return False
 
+    def _prepare_renew_lines(self, cr, uid, line, context=None):
+        return {
+            'order_line_id': line.id,
+            'name': line.name,
+            'categ_id': line.categ_id.id,
+            'product_qty': line.product_qty,
+            'product_uom': line.product_uom.id,
+            'carat': line.carat,
+            'gram': line.gram,
+            'price_unit': line.price_unit,
+            'price_subtotal': line.price_subtotal,
+            'pawn_price_unit': line.pawn_price_unit,
+            'pawn_price_subtotal': line.pawn_price_subtotal,
+        }
+
+    def _get_renew_line_ids(self, cr, uid, context=None):
+        active_id = context.get('active_id', False)
+        if active_id:
+            pawn = self.pool.get('pawn.order').browse(cr, uid, active_id, context=context)
+            return [(0, 0, self._prepare_renew_lines(cr, uid, line, context=context)) for line in pawn.order_line]
+        return False
+
     _name = "pawn.order.renew"
     _description = "renew"
     _columns = {
@@ -53,13 +76,14 @@ class pawn_order_renew(osv.osv_memory):
         'interest_amount': fields.float('Interest', readonly=True),
         'discount': fields.float('Discount', readonly=False),
         'addition': fields.float('Addition'),
-        'pay_interest_amount': fields.float('Pay Interest Amount', readonly=False),
-        'increase_pawn_amount': fields.float('Increase Pawn Amount', readonly=False),
-        'new_pawn_amount': fields.float('New Pawn Amount', readonly=False),
+        'pay_interest_amount': fields.float('Pay Interest Amount', readonly=False, required=True),
+        'increase_pawn_amount': fields.float('Increase Pawn Amount', readonly=True),
+        'new_pawn_amount': fields.float('New Pawn Amount', readonly=True, required=True),
         'renewal_transfer': fields.boolean('Renewal Transfer'),
         'secret_key': fields.char('Secret Key'),
         'delegation_of_authority': fields.boolean('Delegation of Authority'),
         'delegate_id': fields.many2one('res.partner', 'Delegate'),
+        'renew_line_ids': fields.one2many('pawn.order.renew.line', 'renew_id', 'Renew Line'),
     }
     _defaults = {
         'date_renew': fields.date.context_today,
@@ -72,6 +96,7 @@ class pawn_order_renew(osv.osv_memory):
         'renewal_transfer': False,
         'delegation_of_authority': False,
         'delegate_id': False,
+        'renew_line_ids': _get_renew_line_ids,
     }
 
     def onchange_amount(self, cr, uid, ids, field, pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount, context=None):
@@ -98,6 +123,24 @@ class pawn_order_renew(osv.osv_memory):
             res['value']['increase_pawn_amount'] = round(increase_pawn_amount, 2)
         return res
 
+    def onchange_renew_ids(self, cr, uid, ids, renew_line_ids, context=None):
+        renew_line_obj = self.pool.get('pawn.order.renew.line')
+        new_pawn_amount = 0
+        for line in renew_line_ids:
+            if line[0] == 0:
+                # Condition for create line
+                new_pawn_amount += line[2]['pawn_price_subtotal']
+            elif line[0] == 1:
+                # Condition for update line
+                if 'pawn_price_subtotal' in line[2]:
+                    new_pawn_amount += line[2]['pawn_price_subtotal']
+                else:
+                    new_pawn_amount += renew_line_obj.browse(cr, uid, line[1], context=context).pawn_price_subtotal
+            elif line[0] == 4:
+                # Condition for link line
+                new_pawn_amount += renew_line_obj.browse(cr, uid, line[1], context=context).pawn_price_subtotal
+        return {'value': {'new_pawn_amount': new_pawn_amount}}
+
     def onchange_delegation_of_authority(self, cr, uid, ids, context=None):
         return {'value': {'delegate_id': False}}
 
@@ -105,6 +148,7 @@ class pawn_order_renew(osv.osv_memory):
         return {'value': {'secret_key': False}}
 
     def _validate_secret_key(self, cr, uid, renewal_transfer, secret_key, context=None):
+        """This function used for validate secret key renewal transfer"""
         if renewal_transfer:
             valid_secret_key = self.pool.get('ir.config_parameter').get_param(cr, uid, 'pawnshop.renew_secret_key', '')
             if secret_key != valid_secret_key:
@@ -112,20 +156,24 @@ class pawn_order_renew(osv.osv_memory):
         return True
 
     def action_renew(self, cr, uid, ids, context=None):
-        if context == None:
+        if context is None:
             context = {}
         # cr = pooler.get_db(cr.dbname).cursor()
         pawn_id = context.get('active_id')
         pawn_obj = self.pool.get('pawn.order')
+        pawn_line_obj = self.pool.get('pawn.order.line')
         pawn = pawn_obj.browse(cr, uid, pawn_id, context=context)
         state_bf_redeem = pawn.state
         wizard = self.browse(cr, uid, ids[0], context)
-        # Check Secret Key
+        # Check new pawn amount must equal to sum of pawned subtotal
+        if wizard.new_pawn_amount != sum([line.pawn_price_subtotal for line in wizard.renew_line_ids]):
+            raise osv.except_osv(_('Error!'), _('New pawn amount must equal to sum of pawned subtotal'))
+        # Check Secret Key (Renewal Transfer Only)
         self._validate_secret_key(cr, uid, wizard.renewal_transfer, wizard.secret_key, context=context)
-        # Check Delegation of Authority and Renewal Transfer
+        # Renewal Transfer and Delegation of Authority not allowed to select both
         if wizard.delegation_of_authority and wizard.renewal_transfer:
             raise osv.except_osv(_('Error!'), _('Selecting both delegation of authority and renewal transfer is not permitted.'))
-        # Update some data on pawn ticket before redeem it
+        # Update data on old ticket
         pawn_obj.write(cr, uid, [pawn_id], {
             'renewal_transfer_redeem': wizard.renewal_transfer,
             'delegation_of_authority': wizard.delegation_of_authority,
@@ -188,26 +236,35 @@ class pawn_order_renew(osv.osv_memory):
         pawn_obj.write(cr, uid, [pawn_id], {'date_redeem': date})
         # Create the new Pawn by copying the existing one.
         wizard = self.browse(cr, uid, ids[0], context)
-        default = {
+        default_pawn = {
             'parent_id': pawn_id,
             'date_order': wizard.date_renew,
+            'order_line': False,
         }
-        new_pawn_id = pawn_obj.copy(cr, uid, pawn_id, default, context=context)
+        new_pawn_id = pawn_obj.copy(cr, uid, pawn_id, default_pawn, context=context)
+        for line in wizard.renew_line_ids:
+            default_pawn_line = {
+                'order_id': new_pawn_id,
+                'price_unit': line.price_unit,
+                'price_subtotal': line.price_subtotal,
+                'pawn_price_unit': line.pawn_price_unit,
+                'pawn_price_subtotal': line.pawn_price_subtotal,
+            }
+            pawn_line_obj.copy(cr, uid, line.order_line_id.id, default_pawn_line, context=context)
         amount_net = wizard.increase_pawn_amount - wizard.pay_interest_amount
-        pawn_obj.write(cr, uid, [new_pawn_id], {'parent_id': pawn_id,
-                                                'amount_pawned': wizard.new_pawn_amount,
-                                                'amount_net': amount_net,
-                                                'renewal_transfer_pawn': wizard.renewal_transfer}, context=context)
-        # Update image for renewal transfer only
-        if wizard.renewal_transfer:
-            vals = {}
-            for i in ['first', 'second', 'third', 'fourth', 'fifth']:
-                vals.update({
-                    'pawn_item_image_%s' % i: pawn['pawn_item_image_%s' % i],
-                    'pawn_item_image_date_%s' % i: pawn['pawn_item_image_date_%s' % i],
-                })
-            if vals:
-                pawn_obj.write(cr, uid, [new_pawn_id], vals, context=context)
+        # Update data in new ticket
+        vals = {
+            'parent_id': pawn_id,
+            'amount_pawned': wizard.new_pawn_amount,
+            'amount_net': amount_net,
+            'renewal_transfer_pawn': wizard.renewal_transfer,
+        }
+        for i in ['first', 'second', 'third', 'fourth', 'fifth']:
+            vals.update({
+                'pawn_item_image_%s' % i: pawn['pawn_item_image_%s' % i],
+                'pawn_item_image_date_%s' % i: pawn['pawn_item_image_date_%s' % i],
+            })
+        pawn_obj.write(cr, uid, [new_pawn_id], vals, context=context)
         # Change partner to delegate for the new ticket
         if wizard.delegation_of_authority:
             pawn_obj.write(cr, uid, [new_pawn_id], {'partner_id': wizard.delegate_id.id}, context=context)
@@ -238,6 +295,74 @@ class pawn_order_renew(osv.osv_memory):
             'type': 'ir.actions.act_window',
         }
 
+    def _update_field(self, cr, uid, vals, context=None):
+        if 'renew_line_ids' in vals and vals['renew_line_ids']:
+            pawn_amount = self._get_pawn_amount(cr, uid, context=context)
+            new_pawn_amount = self.onchange_renew_ids(cr, uid, [], vals['renew_line_ids'], context=context)['value']['new_pawn_amount']
+            increase_pawn_amount = self.onchange_amount(cr, uid, [], 'new_pawn_amount', pawn_amount, False, False, False, False, False, new_pawn_amount, context=context)['value']['increase_pawn_amount']
+            if not ('increase_pawn_amount' in vals) and not ('new_pawn_amount' in vals):
+                vals.update({
+                    'increase_pawn_amount': increase_pawn_amount,
+                    'new_pawn_amount': new_pawn_amount,
+                })
+        return vals
+
+    def create(self, cr, uid, vals, context=None):
+        vals = self._update_field(cr, uid, vals, context=context)
+        return super(pawn_order_renew, self).create(cr, uid, vals, context=context)
+
+    def write(self, cr, uid, ids, vals, context=None):
+        vals = self._update_field(cr, uid, vals, context=context)
+        return super(pawn_order_renew, self).write(cr, uid, ids, vals, context=context)
+
+
 pawn_order_renew()
+
+
+class pawn_order_renew_line(osv.osv_memory):
+    _name = "pawn.order.renew.line"
+    _description = "renew line"
+
+    _columns = {
+        'order_line_id': fields.many2one('pawn.order.line', string='Pawn Order Line'),
+        'renew_id': fields.many2one('pawn.order.renew', string='Renew'),
+        'name': fields.text('Description', readonly=True),
+        'categ_id': fields.many2one('product.category', string='Category', readonly=True),
+        'product_qty': fields.float('Quantity', readonly=True, digits_compute=dp.get_precision('Product Unit of Measure')),
+        'product_uom': fields.many2one('product.uom', string='Product Unit of Measure', readonly=True),
+        'carat': fields.float('Carat', readonly=True),
+        'gram': fields.float('Gram', readonly=True),
+        'price_unit': fields.float('Estimated Price / Unit', required=True, digits_compute=dp.get_precision('Product Price')),
+        'price_subtotal': fields.float('Estimated Subtotal', required=True, digits_compute=dp.get_precision('Account')),
+        'pawn_price_unit': fields.float('Pawned Price / Unit', required=True, digits_compute=dp.get_precision('Product Price')),
+        'pawn_price_subtotal': fields.float('Pawned Subtotal', required=True, digits_compute=dp.get_precision('Account')),
+    }
+
+    def onchange_price(self, cr, uid, ids, field, product_qty, price_unit, price_subtotal, pawn_price_unit, pawn_price_subtotal):
+        res = {'value': {}}
+        precision = self.pool.get('decimal.precision').precision_get
+        product_qty = float(product_qty)
+        if field == 'price_unit':
+            res['value'].update({
+                'price_subtotal': round(product_qty * price_unit, precision(cr, uid, 'Account')),
+            })
+        elif field == 'pawn_price_unit':
+            res['value'].update({
+                'pawn_price_subtotal': round(product_qty * pawn_price_unit, precision(cr, uid, 'Account')),
+            })
+        elif field == 'price_subtotal':
+            res['value'].update({
+                'price_unit': round(price_subtotal / product_qty, precision(cr, uid, 'Product Price'))
+            })
+        elif field == 'pawn_price_subtotal':
+            res['value'].update({
+                'pawn_price_unit': round(pawn_price_subtotal / product_qty, precision(cr, uid, 'Product Price'))
+            })
+            # Not used estimated price now so we define estimated price = pawned price
+            res['value']['price_subtotal'] = pawn_price_subtotal
+        return res
+
+
+pawn_order_renew_line()
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
