@@ -490,12 +490,12 @@ class pawn_order(osv.osv):
         return True
 
     def order_pawn(self, cr, uid, ids, context=None):
-        # Check order_line
         for order in self.browse(cr, uid, ids, context=context):
+            # Check order_line
             if not len(order.order_line):
                 raise osv.except_osv(_('Warning!'),
                                      _('Pawn Ticket do not have any line items. It can not be pawned.'))
-            if order.state == 'draft':  # case from draft to paen, create action move line, else nothing.
+            if order.state == 'draft':  # case from draft to pawn, create action move line, else nothing.
                 self.action_move_create(cr, uid, [order.id], context={'direction': 'pawn'})
             #elif order.state == 'redeem':  # case from redeem, do not update status.
             self.write(cr, uid, [order.id], {'state': 'pawn'}, context=context)
@@ -859,7 +859,12 @@ class pawn_order(osv.osv):
             vals['internal_number'] = self.pool.get('ir.sequence').get(cr, uid, 'pawn.order') or '/'
         name, book, number = self._get_next_pawn_name(cr, uid, vals.get('period_id', False), vals.get('pawn_shop_id', False), context=context)
         vals.update({'name': name, 'book': book, 'number': number})
-        return super(pawn_order, self).create(cr, uid, vals, context=context)
+        pawn_id = super(pawn_order, self).create(cr, uid, vals, context=context)
+        if not vals.get('amount_pawned', False):
+            self.write(cr, uid, [pawn_id], {'amount_pawned': 0.0})
+        else:
+            self.write(cr, uid, [pawn_id], {'amount_pawned': vals.get('amount_pawned')})
+        return pawn_id
 
     def _calculate_interest_date(self, cr, uid, interval, start_date, end_date, context=None):
         dates = []
@@ -1324,13 +1329,80 @@ class pawn_order(osv.osv):
                 'currency_id': diff_currency_p and pawn.currency_id.id or False,
                 'ref': pawn.name
             })
-            #convert eml into an osv-valid format
+            #convert pml into an osv-valid format
             lines = map(lambda x: (0, 0, self.line_get_convert(cr, uid, x, pawn.partner_id, date, context=context)), pml)
             journal_id = move_pool.browse(cr, uid, move_id, context).journal_id
             # post the journal entry if 'Skip 'Draft' State for Manual Entries' is checked
             if journal_id.entry_posted:
                 move_pool.button_validate(cr, uid, [move_id], context)
             move_pool.write(cr, uid, [move_id], {'line_id': lines}, context=context)
+        return True
+
+    def action_move_bank_create(self, cr, uid, pawn_id, move_id, bank_journal_id, transfer_amount, cash_journal_id, context=None):
+        # Not create move bank if zero transfer amount
+        if not transfer_amount:
+            return True
+        # --
+        move_obj = self.pool.get('account.move')
+        move_line_obj = self.pool.get('account.move.line')
+        journal_obj = self.pool.get('account.journal')
+        bank_journal = journal_obj.browse(cr, uid, bank_journal_id, context=context)
+        cash_journal = journal_obj.browse(cr, uid, cash_journal_id, context=context)
+        move = move_obj.browse(cr, uid, move_id, context=context)
+        for pawn in self.browse(cr, uid, [pawn_id], context=context):
+            # Cancel the journal entry
+            if move.state == 'posted':
+                move_obj.button_cancel(cr, uid, [move_id], context=context)
+            # Create bank move lines
+            t_amount = transfer_amount
+            c_amount = -transfer_amount
+            pml = [
+                {
+                    'pawn_order_id': pawn.id,
+                    'pawn_shop_id': pawn.pawn_shop_id.id,
+                    'profit_center': pawn.journal_id.profit_center,
+                    'name': '/',
+                    'price': t_amount,
+                    'account_id': bank_journal.default_debit_account_id.id if t_amount > 0 else bank_journal.default_credit_account_id.id,
+                    'ref': pawn.name,
+                },
+                {
+                    'pawn_order_id': pawn.id,
+                    'pawn_shop_id': pawn.pawn_shop_id.id,
+                    'profit_center': pawn.journal_id.profit_center,
+                    'name': '/',
+                    'price': c_amount,
+                    'account_id': cash_journal.default_debit_account_id.id if c_amount > 0 else cash_journal.default_credit_account_id.id,
+                    'ref': pawn.name,
+                },
+            ]
+            lines = map(lambda x: (0, 0, self.line_get_convert(cr, uid, x, pawn.partner_id, move.date, context=context)), pml)
+            move_obj.write(cr, uid, [move_id], {'line_id': lines}, context=context)
+            # Group move lines by account
+            move = move_obj.browse(cr, uid, move_id, context=context)
+            account_ids = list(set(map(lambda x: x.account_id.id, move.line_id)))
+            for account_id in account_ids:
+                move_lines = filter(lambda x: x.account_id.id == account_id, move.line_id)
+                if len(move_lines) > 1:
+                    min_move_line_id = min(map(lambda x: x.id, move_lines))
+                    update_move_line_ids, unlink_move_line_ids = [], []
+                    amount = 0
+                    for line in move_lines:
+                        amount += line.debit - line.credit
+                        if line.id == min_move_line_id:
+                            update_move_line_ids.append(line.id)
+                        else:
+                            unlink_move_line_ids.append(line.id)
+                    move_line_obj.write(cr, uid, update_move_line_ids, {
+                        'debit': amount if amount >= 0 else 0.0,
+                        'credit': abs(amount) if amount < 0 else 0.0,
+                    }, context=context)
+                    move_line_obj.unlink(cr, uid, unlink_move_line_ids, context=context)
+                    if amount == 0:
+                        move_line_obj.unlink(cr, uid, update_move_line_ids, context=context)
+            # Post the journal entry  if 'Skip 'Draft' State for Manual Entries' is checked
+            if move.journal_id.entry_posted:
+                move_obj.button_validate(cr, uid, [move_id], context=context)
         return True
 
     def action_move_accrued_interest_create(self, cr, uid, ids, amount_interest, account_date, context=None):
@@ -1759,6 +1831,8 @@ class pawn_actual_interest(osv.osv):
         'move_id': fields.many2one('account.move', 'Account Entry', readonly=True),
         'parent_state': fields.related('pawn_id', 'state', type='char', string='State of Pawn Ticket'),
         'write_date': fields.datetime('Write Date', readonly=True),
+        'bank_journal_id': fields.many2one('account.journal', 'Bank Journal', domain="[('type', '=', 'bank')]"),
+        'transfer_interest_amount': fields.float('Transfer Interest Amount'),
     }
     _defaults = {
         'move_id': False
@@ -1776,6 +1850,9 @@ class pawn_actual_interest(osv.osv):
                 amount_interest = line.interest_amount or 0.0
                 account_date = line.interest_date
                 move_id = pawn_obj.action_move_actual_interest_create(cr, uid, [pawn_id], discount, addition, amount_interest, account_date, context=context)
+                # Create dr, cr for bank move
+                sign = -1 if line.interest_amount < 0 else 1
+                pawn_obj.action_move_bank_create(cr, uid, pawn_id, move_id, line.bank_journal_id.id, sign * line.transfer_interest_amount, line.pawn_id.journal_id.id, context=context)
                 self.write(cr, uid, line.id, {'move_id': move_id}, context=context)
         return True
 

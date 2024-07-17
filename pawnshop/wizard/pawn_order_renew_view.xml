@@ -6,21 +6,16 @@
             <field name="model">pawn.order.renew</field>
             <field name="arch" type="xml">
                 <form string="Renew" version="7.0">
-                    <group>
-                    	<group name="label" colspan="2">
-                        	<label string="Please confirm renew amount as following,"/>
-                        </group>
-                        <group name="amount">
-                            <field name="date_renew"/>
-                            <field name="pawn_amount" string="Initial"/>
-                            <field name="interest_amount" string="+ Interest Amount"/>
-                            <field name="discount" string="- Discount" on_change="onchange_amount('discount', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
-                            <field name="addition" string="+ Addition" on_change="onchange_amount('addition', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
-                            <group colspan="2">
-                                <field name="pay_interest_amount" string="Pay Interest Amount" on_change="onchange_amount('pay_interest_amount', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
-                                <field name="increase_pawn_amount" string="+/- Pawn Amount" on_change="onchange_amount('increase_pawn_amount', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
-                                <field name="new_pawn_amount" string="New Pawn Amount" on_change="onchange_amount('new_pawn_amount', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
-                            </group>
+                    <group string="Total Amount">
+                        <group>
+                            <field name="date_renew" on_change="onchange_date_renew(date_renew, context)"/>
+                            <field name="pawn_amount"/>
+                            <field name="interest_amount"/>
+                            <field name="discount" invisible="1"/>
+                            <field name="addition" invisible="1"/>
+                            <field name="pay_interest_amount" on_change="onchange_amount('pay_interest_amount', pawn_amount, interest_amount, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
+                            <field name="increase_pawn_amount" on_change="onchange_amount('increase_pawn_amount', pawn_amount, interest_amount, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
+                            <field name="new_pawn_amount" on_change="onchange_amount('new_pawn_amount', pawn_amount, interest_amount, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
                         </group>
                         <group>
                             <field name="delegation_of_authority" on_change="onchange_delegation_of_authority()"/>
@@ -29,8 +24,17 @@
                             <field name="secret_key" password="1" attrs="{'invisible': [('renewal_transfer', '=', False)], 'required': [('renewal_transfer', '=', True)]}"/>
                         </group>
                     </group>
+                    <group string="Breakdown of Total Amount">
+                        <group>
+                            <field name="bank_journal_id" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
+                            <field name="transfer_interest_amount" string="Interest Amount" on_change="onchange_interest_amount('transfer', transfer_interest_amount, cash_interest_amount, pay_interest_amount)"/>
+                            <field name="journal_id" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
+                            <field name="cash_interest_amount" string="Interest Amount" on_change="onchange_interest_amount('cash', transfer_interest_amount, cash_interest_amount, pay_interest_amount)"/>
+                        </group>
+                        <group/>
+                    </group>
                     <notebook>
-                        <page string="Pawn Ticket">
+                        <page string="New Pawn Ticket">
                             <field name="renew_line_ids" on_change="onchange_renew_ids(renew_line_ids)">
                                 <tree string="Pawn Ticket Lines" editable="bottom" create="0" delete="0">
                                     <field name="name"/>
@@ -53,7 +57,7 @@
                         or
                         <button string="Cancel" class="oe_link" special="cancel"/>
                     </footer>
-               </form>
+                </form>
             </field>
         </record>
         <record id="action_pawn_order_renew" model="ir.actions.act_window">
