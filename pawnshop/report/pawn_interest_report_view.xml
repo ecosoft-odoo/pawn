@@ -52,9 +52,9 @@
                 <group expand="1" string="Group By...">
                     <filter name="group_journal" string="Journal" context="{'group_by':'journal_id'}"/>
                     <filter name="group_shop" string="Shop" context="{'group_by':'pawn_shop_id'}"/>
-                    <filter name="group_partner" string="Partner" name="Customer" context="{'group_by':'partner_id'}"/>
-                    <filter name="group_period" string="Period" name="period" context="{'group_by':'date_order'}"/>
-                    <filter name="group_day" string="Day" name="day" context="{'group_by':'day'}"/>
+                    <filter name="group_partner" string="Partner" context="{'group_by':'partner_id'}"/>
+                    <filter name="group_period" string="Period" context="{'group_by':'date_order'}"/>
+                    <filter name="group_day" string="Day" context="{'group_by':'day'}"/>
                     <filter name="group_month" string="Month" context="{'group_by':'month'}"/>
                     <filter name="group_year" string="Year" context="{'group_by':'year'}"/>
                 </group>
