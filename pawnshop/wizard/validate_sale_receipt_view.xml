@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <record id="view_pawn_order_pawn" model="ir.ui.view">
-            <field name="name">view.pawn.order.pawn</field>
-            <field name="model">pawn.order.pawn</field>
+        <record id="view_validate_sale_receipt" model="ir.ui.view">
+            <field name="name">view.validate.sale.receipt</field>
+            <field name="model">validate.sale.receipt</field>
             <field name="arch" type="xml">
-                <form string="Pawn" version="7.0">
+                <form string="Validate Sale Receipt" version="7.0">
                     <group string="Total Amount">
                         <group>
                             <field name="amount"/>
                         </group>
-                        <group>
-                            <field name="date_due_ticket"/>
-                            <field name="parent_id" invisible="1"/>
-                        </group>
+                        <group/>
                     </group>
                     <group string="Breakdown of Total Amount">
                         <group>
@@ -25,19 +22,19 @@
                         <group/>
                     </group>
                     <footer>
-                        <button string="Pawn" name="action_pawn" type="object" class="oe_highlight"/>
+                        <button string="Confirm" name="action_confirm" type="object" class="oe_highlight"/>
                         or
                         <button string="Cancel" class="oe_link" special="cancel"/>
                     </footer>
                 </form>
             </field>
         </record>
-        <record id="action_pawn_order_pawn" model="ir.actions.act_window">
-            <field name="name">Pawn</field>
-            <field name="res_model">pawn.order.pawn</field>
+        <record id="action_validate_sale_receipt" model="ir.actions.act_window">
+            <field name="name">Validate Sale Receipt</field>
+            <field name="res_model">validate.sale.receipt</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="view_id" ref="view_pawn_order_pawn"/>
+            <field name="view_id" ref="view_validate_sale_receipt"/>
             <field name="target">new</field>
         </record>
     </data>

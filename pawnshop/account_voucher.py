@@ -438,6 +438,33 @@ class account_voucher(osv.osv):
 
             all_move_lines += move_lines
 
+        if context['transfer_amount'] > 0:
+            move_line_bank = {
+                'product_id': False,
+                'pawn_order_id': False,
+                'pawn_shop_id': voucher.pawn_shop_id and voucher.pawn_shop_id.id or False,
+                'profit_center': voucher.product_journal_id.profit_center or False,
+                'journal_id': voucher.journal_id.id,
+                'period_id': voucher.period_id.id,
+                'name': '/',
+                'account_id': context['bank_account_id'],
+                'move_id': move_id,
+                'partner_id': voucher.partner_id.id,
+                'analytic_account_id': False,
+                'quantity': 1,
+                'credit': 0.0,
+                'debit': context['transfer_amount'],
+                'date': voucher.date
+            }
+            move_line_bank_reverse = move_line_bank.copy()
+            move_line_bank_reverse['debit'] = 0.0
+            move_line_bank_reverse['credit'] = context['transfer_amount']
+            move_line_bank_reverse['account_id'] = context['cash_account_id']
+            all_move_lines.extend([
+                (0, 0, move_line_bank),
+                (0, 0, move_line_bank_reverse),
+            ])
+
         # Write all records at once after looping
         self.pool.get('account.move').write(cr, uid, [move_id], {'line_id': all_move_lines})
 
