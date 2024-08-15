@@ -1,46 +1,12 @@
 <?xml version="1.0"?>
 <openerp>
 <data>
-
     <record id="pawnshop.pawn_order_form_1" model="ir.actions.report.xml">
-        <field name="menu">False</field>
+        <field name="report_file">pawn_form/report/pawn_order_form.jrxml</field>
     </record>
-
+    
     <record id="pawnshop.redeem_order_form_1" model="ir.actions.report.xml">
-        <field name="menu">False</field>
+        <field name="report_file">pawn_form/report/redeem_order_form.jrxml</field>
     </record>
-
-    <!-- New report -->
-
-    <report string="Pawn Ticket"
-        model="pawn.order"
-        auto="True"
-        name="pawn.order.form.new"
-        rml="pawn_form/report/pawn_order_form_new.jrxml"
-        id="pawn_order_form_2"
-        menu="True"
-        header="False"
-        />
-    <record id="pawn_order_form_2" model="ir.actions.report.xml">
-        <field name="jasper_report">True</field>
-        <field name="jasper_output">pdf</field>
-    </record>
-
-    <report string="Redeem Ticket"
-        model="pawn.order"
-        auto="True"
-        name="redeem.order.form.new"
-        rml="pawn_form/report/redeem_order_form_new.jrxml"
-        id="redeem_order_form_2"
-        menu="True"
-        header="False"
-        />
-    <record id="redeem_order_form_2" model="ir.actions.report.xml">
-        <field name="jasper_report">True</field>
-        <field name="jasper_output">pdf</field>
-    </record>
-
-    <!-- End new report -->
-
 </data>
 </openerp>

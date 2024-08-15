@@ -23,23 +23,10 @@
     'name': 'Pawn Shop Form',
     'version': '1.0',
     'author': 'Ecosoft',
-    'summary': '',
-    'description': """
-
-    """,
     'category': 'Pawnshop Management',
-    'website': 'http://www.ecosoft.co.th',
-    'images': [],
-    'depends': ['pawnshop',
-                ],
-    'demo': [],
-    'data': [
-        'report/custom_reports.xml',
-    ],
-    'qweb': [
-    ],
-    'test': [
-    ],
+    'website': 'https://www.ecosoft.co.th',
+    'depends': ['pawnshop'],
+    'data': ['report/custom_reports.xml'],
     'auto_install': False,
     'application': True,
     'installable': True,
