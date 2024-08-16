@@ -409,7 +409,7 @@ class pawn_order(osv.osv):
          'pawn_item_image_date_fifth': fields.datetime('Date of Pawn Item (Fifth)', readonly=True),
          'delegation_of_authority': fields.boolean('Delegation of Authority', readonly=True),
          'delegate_id': fields.many2one('res.partner', 'Delegate', readonly=True),
-         'run_background': fields.boolean('Run Background', readonly=True, help='Run background to expire tickets'),
+         'expire_move_by_cron': fields.boolean(string='Expire Move By Cron', help="If this field is check, account move of expire the ticket will create by ir.cron"),
     }
     _defaults = {
         'company_id': lambda self, cr, uid, c: self.pool.get('res.users').browse(cr, uid, uid).company_id.id,
@@ -427,7 +427,7 @@ class pawn_order(osv.osv):
         'renewal_transfer_redeem': False,
         'delegation_of_authority': False,
         'delegate_id': False,
-        'run_background': False,
+        'expire_move_by_cron': False,
     }
     _sql_constraints = [
         ('name_uniq', 'unique(name, pawn_shop_id)', 'Pawn Ticket Reference must be unique per Pawn Shop!'),
@@ -526,19 +526,18 @@ class pawn_order(osv.osv):
 
     def order_expire(self, cr, uid, ids, context=None):
         for pawn in self.browse(cr, uid, ids, context=context):
-            # Make sure that pawn state must not equal to expire
-            if pawn.state == 'expire':
-                continue
             # Check extended order
             self._check_order_extend(cr, uid, [pawn.id], context=context)
-            # Reverse Accrued Interest
-            self.action_move_reversed_accrued_interest_create(cr, uid, [pawn.id], context=context)
-            # Inactive any left over accrued interest
-            self.update_active_accrued_interest(cr, uid, [pawn.id], False, context=context)
-            # --
-            # Create Move (except extended case)
-            if not pawn.extended:
-                self.action_move_create(cr, uid, [pawn.id], context={'direction': 'expire'})
+            # If expire_move_by_cron checked, account move will create by ir.cron
+            if not pawn.expire_move_by_cron:
+                # Reverse Accrued Interest
+                self.action_move_reversed_accrued_interest_create(cr, uid, [pawn.id], context=context)
+                # Inactive any left over accrued interest
+                self.update_active_accrued_interest(cr, uid, [pawn.id], False, context=context)
+                # --
+                # Create Move (except extended case)
+                if not pawn.extended:
+                    self.action_move_create(cr, uid, [pawn.id], context={'direction': 'expire'})
             date_expired = fields.date.context_today(self, cr, uid, context=context)
             self.write(cr, uid, [pawn.id], {'state': 'expire', 'date_final_expired': date_expired}, context=context)
             self._update_order_pawn_asset(cr, uid, [pawn.id], {'state': 'expire'}, context=context)
@@ -1045,7 +1044,7 @@ class pawn_order(osv.osv):
             'renewal_transfer_redeem': False,
             'delegation_of_authority': False,
             'delegate_id': False,
-            'run_background': False,
+            'expire_move_by_cron': False,
         })
         # Default pawn item image
         for i in ['first', 'second', 'third', 'fourth', 'fifth']:
