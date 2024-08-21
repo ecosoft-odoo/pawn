@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="pawn_order_form" language="groovy" pageWidth="841" pageHeight="595" orientation="Landscape" columnWidth="841" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="1.8150000000000008"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="658"/>
+	<property name="ireport.x" value="243"/>
+	<property name="ireport.y" value="898"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;]"/>
 	<style name="table">
 		<box>
@@ -184,42 +184,42 @@
 	<background>
 		<band height="595" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="763" y="393" width="17" height="114" forecolor="#000000"/>
+				<reportElement positionType="Float" x="764" y="393" width="17" height="114" forecolor="#000000"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="Left" markup="html">
-					<font fontName="Monospaced" size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="Monospaced" size="12" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{doc_name}.substring($F{doc_name}.length() - 6)]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd MMMMM yyyy" isBlankWhenNull="true">
-				<reportElement x="822" y="375" width="17" height="138"/>
+				<reportElement x="824" y="375" width="17" height="138"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="Left">
 					<font fontName="Monospaced" size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_order}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="803" y="420" width="17" height="80" forecolor="#000000"/>
+				<reportElement positionType="Float" x="804" y="420" width="17" height="80" forecolor="#000000"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="Left">
 					<font fontName="Monospaced" size="12"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_pawned}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="816" y="177" width="17" height="27" forecolor="#000000"/>
+				<reportElement positionType="Float" x="818" y="177" width="17" height="27" forecolor="#000000"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="Left" markup="html">
 					<font fontName="Monospaced" size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{parent_book}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="816" y="116" width="17" height="27" forecolor="#000000"/>
+				<reportElement positionType="Float" x="818" y="116" width="17" height="27" forecolor="#000000"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="Left" markup="html">
 					<font fontName="Monospaced" size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{parent_number}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="816" y="23" width="17" height="65"/>
+				<reportElement x="818" y="23" width="17" height="65"/>
 				<textElement verticalAlignment="Middle" rotation="Left">
 					<font fontName="Monospaced" size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -232,50 +232,46 @@
 				</jr:barbecue>
 			</componentElement>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false">
-				<reportElement positionType="Float" x="69" y="13" width="114" height="17" forecolor="#000000"/>
+				<reportElement positionType="Float" x="69" y="5" width="114" height="17" forecolor="#000000"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="18" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[($F{book} < 10 ? "00" + $F{book}.toString() : (
-    $F{book} < 100 ? "0" + $F{book}.toString() : $F{book}.toString()))
-]]></textFieldExpression>
+    $F{book} < 100 ? "0" + $F{book}.toString() : $F{book}.toString()))]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement positionType="Float" x="324" y="13" width="114" height="17" forecolor="#000000"/>
+				<reportElement positionType="Float" x="324" y="5" width="114" height="17" forecolor="#000000"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="18" isBold="true" isItalic="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[($F{number} < 10 ? "00" + $F{number}.toString() : (
-    $F{number} < 100 ? "0" + $F{number}.toString() : $F{number}.toString()))
-]]></textFieldExpression>
+    $F{number} < 100 ? "0" + $F{number}.toString() : $F{number}.toString()))]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement positionType="Float" x="421" y="13" width="114" height="17" forecolor="#000000"/>
+				<reportElement positionType="Float" x="421" y="5" width="114" height="17" forecolor="#000000"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="18" isBold="true" isItalic="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[($F{book} < 10 ? "00" + $F{book}.toString() : (
-    $F{book} < 100 ? "0" + $F{book}.toString() : $F{book}.toString()))
-]]></textFieldExpression>
+    $F{book} < 100 ? "0" + $F{book}.toString() : $F{book}.toString()))]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement positionType="Float" x="676" y="13" width="114" height="17" forecolor="#000000"/>
+				<reportElement positionType="Float" x="682" y="5" width="114" height="17" forecolor="#000000"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="18" isBold="true" isItalic="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[($F{number} < 10 ? "00" + $F{number}.toString() : (
-    $F{number} < 100 ? "0" + $F{number}.toString() : $F{number}.toString()))
-]]></textFieldExpression>
+    $F{number} < 100 ? "0" + $F{number}.toString() : $F{number}.toString()))]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement positionType="Float" x="220" y="90" width="59" height="17" forecolor="#000000"/>
+				<reportElement positionType="Float" x="220" y="88" width="59" height="17" forecolor="#000000"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Monospaced" size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{reg_book}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement positionType="Float" x="279" y="86" width="85" height="17" forecolor="#000000"/>
+				<reportElement positionType="Float" x="279" y="88" width="85" height="17" forecolor="#000000"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Monospaced" size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -296,21 +292,21 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{reg_number}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd MMMMM yyyy" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="87" y="138" width="150" height="17"/>
+				<reportElement positionType="Float" x="87" y="131" width="150" height="17"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Monospaced" size="14" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="Monospaced" size="14" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_order}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="HH.mm" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="237" y="138" width="118" height="17"/>
+			<textField isStretchWithOverflow="true" pattern="HH:mm น." isBlankWhenNull="true">
+				<reportElement positionType="Float" x="237" y="131" width="118" height="17"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Monospaced" size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.sql.Timestamp"><![CDATA[new java.sql.Timestamp($F{create_time}.getTime()+(25200000).longValue())]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="213" y="138" width="166" height="17" forecolor="#000000"/>
+				<reportElement positionType="Float" x="188" y="131" width="166" height="17" forecolor="#000000"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -318,9 +314,9 @@
 "(ตั๋วจำนำใหม่)"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="64" y="155" width="187" height="17"/>
+				<reportElement positionType="Float" x="64" y="150" width="187" height="17"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
-					<font fontName="Monospaced" size="14" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="Monospaced" size="12" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[($F{partner_title} == "mr" ? "นาย" : (
     $F{partner_title} == "mrs" ? "นาง" : (
@@ -330,14 +326,14 @@
 ) + " " + $F{partner_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="245" y="156" width="37" height="17"/>
+				<reportElement positionType="Float" x="245" y="151" width="37" height="17"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{age}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="64" y="174" width="318" height="17"/>
+				<reportElement positionType="Float" x="64" y="170" width="318" height="17"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -369,7 +365,7 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{issue_date}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="313" y="156" width="69" height="17"/>
+				<reportElement positionType="Float" x="313" y="151" width="69" height="17"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -408,7 +404,7 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{monthly_interest}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd MMMMM yyyy" isBlankWhenNull="true">
-				<reportElement x="238" y="524" width="168" height="17" forecolor="#000000"/>
+				<reportElement x="238" y="529" width="168" height="17" forecolor="#000000"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Monospaced" size="12" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -422,7 +418,7 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 				<textFieldExpression class="java.lang.String"><![CDATA["("+(new Scriptlet()).getAmtInWords((new BigDecimal(($F{amount_pawned}==null?0.00:$F{amount_pawned}).toString())).setScale(2).toString(),"THB")+")"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" evaluationTime="Report" pattern="#,##0" isBlankWhenNull="false">
-				<reportElement positionType="Float" x="65" y="420" width="40" height="17" forecolor="#000000"/>
+				<reportElement positionType="Float" x="58" y="420" width="40" height="17" forecolor="#000000"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Monospaced" size="14" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -435,14 +431,14 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 				<imageExpression class="java.lang.String"><![CDATA[$F{fingerprint}]]></imageExpression>
 			</image>
 			<textField isStretchWithOverflow="true" pattern="dd MMMMM yyyy" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="448" y="138" width="150" height="17"/>
+				<reportElement positionType="Float" x="448" y="131" width="150" height="17"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Monospaced" size="14" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="Monospaced" size="14" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_order}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="577" y="138" width="166" height="17" forecolor="#000000"/>
+				<reportElement positionType="Float" x="552" y="131" width="166" height="17" forecolor="#000000"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -450,7 +446,7 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 "(ตั๋วจำนำใหม่)"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" evaluationTime="Report" pattern="#,##0" isBlankWhenNull="false">
-				<reportElement positionType="Float" x="423" y="420" width="40" height="17" forecolor="#000000"/>
+				<reportElement positionType="Float" x="419" y="420" width="40" height="17" forecolor="#000000"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Monospaced" size="14" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -477,9 +473,9 @@ $F{card_type}.equals("passport") ? "หมายเลขหนังสือ�
 $F{card_type}.equals("certificate") ? "หนังสือรับรอง" : ""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="425" y="155" width="187" height="17"/>
+				<reportElement positionType="Float" x="428" y="150" width="187" height="17"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
-					<font fontName="Monospaced" size="14" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="Monospaced" size="12" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[($F{partner_title} == "mr" ? "นาย" : (
     $F{partner_title} == "mrs" ? "นาง" : (
@@ -523,7 +519,7 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{issue_date}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd MMMMM yyyy" isBlankWhenNull="true">
-				<reportElement x="598" y="524" width="168" height="17" forecolor="#000000"/>
+				<reportElement x="602" y="529" width="168" height="17" forecolor="#000000"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Monospaced" size="12" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -546,35 +542,35 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 				<textFieldExpression class="java.lang.String"><![CDATA["("+(new Scriptlet()).getAmtInWords((new BigDecimal(($F{amount_pawned}==null?0.00:$F{amount_pawned}).toString())).setScale(2).toString(),"THB")+")"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="606" y="156" width="37" height="17"/>
+				<reportElement positionType="Float" x="609" y="151" width="37" height="17"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{age}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="425" y="174" width="318" height="17"/>
+				<reportElement positionType="Float" x="425" y="170" width="318" height="17"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{partner_address}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="674" y="156" width="69" height="17"/>
+				<reportElement positionType="Float" x="677" y="151" width="69" height="17"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{partner_country}.equals("Thailand") ? "ไทย" : $F{partner_country}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="HH.mm" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="598" y="138" width="118" height="17"/>
+			<textField isStretchWithOverflow="true" pattern="HH:mm น." isBlankWhenNull="true">
+				<reportElement positionType="Float" x="598" y="131" width="118" height="17"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Monospaced" size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.sql.Timestamp"><![CDATA[new java.sql.Timestamp($F{create_time}.getTime()+(25200000).longValue())]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" evaluationTime="Report" isBlankWhenNull="false">
-				<reportElement positionType="Float" x="783" y="325" width="17" height="182"/>
+				<reportElement positionType="Float" x="784" y="325" width="17" height="182"/>
 				<textElement verticalAlignment="Middle" rotation="Left">
 					<font fontName="Monospaced" size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -597,11 +593,11 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 				</jr:barbecue>
 			</componentElement>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="756" y="149" width="57" height="205"/>
+				<reportElement positionType="Float" x="765" y="165" width="57" height="205"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="Left" markup="styled">
 					<font fontName="Monospaced" size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{item_description}.replace("), ", ")\n")]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{doc_name} + "\n" +$F{item_description}.replace("), ", ")\n")]]></textFieldExpression>
 			</textField>
 		</band>
 	</background>
@@ -611,7 +607,7 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 	<detail>
 		<band height="14">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="45" y="4" width="247" height="10"/>
+				<reportElement positionType="Float" x="36" y="4" width="247" height="10"/>
 				<box topPadding="0"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" markup="none">
 					<font fontName="Monospaced" size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
@@ -619,14 +615,14 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 				<textFieldExpression class="java.lang.String"><![CDATA[$V{item_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="292" y="4" width="43" height="10"/>
+				<reportElement positionType="Float" x="283" y="4" width="43" height="10"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
 					<font fontName="Monospaced" size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{product_qty}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="335" y="4" width="43" height="10"/>
+				<reportElement positionType="Float" x="326" y="4" width="43" height="10"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
 					<font fontName="Monospaced" size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
