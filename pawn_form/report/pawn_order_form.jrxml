@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="pawn_order_form" language="groovy" pageWidth="841" pageHeight="595" orientation="Landscape" columnWidth="841" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="678"/>
-	<property name="ireport.y" value="211"/>
+	<property name="ireport.x" value="808"/>
+	<property name="ireport.y" value="1747"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;]"/>
 	<style name="table">
 		<box>
@@ -579,9 +579,9 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 					<font fontName="Monospaced" size="8" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$V{product_qty}.intValue() + (
-    $V{carat_sum} != null && $V{gram_sum} != null ? "( นน. " + (new BigDecimal(($V{gram_sum}==null?0.00:$V{gram_sum}).toString())).setScale(2).toString() + " กรัม)" :
+    $V{carat_sum} != null && $V{gram_sum} != null ? " (นน. " + (new BigDecimal(($V{gram_sum}==null?0.00:$V{gram_sum}).toString())).setScale(2).toString() + " กรัม)" :
     $V{carat_sum} != null && $V{gram_sum} == null ? "" :
-    $V{carat_sum} == null && $V{gram_sum} != null ? "( นน. " + (new BigDecimal(($V{gram_sum}==null?0.00:$V{gram_sum}).toString())).setScale(2).toString() + " กรัม)" : ""
+    $V{carat_sum} == null && $V{gram_sum} != null ? " (นน. " + (new BigDecimal(($V{gram_sum}==null?0.00:$V{gram_sum}).toString())).setScale(2).toString() + " กรัม)" : ""
 )]]></textFieldExpression>
 			</textField>
 			<componentElement>
@@ -640,14 +640,14 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{product_uom}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="700" y="4" width="43" height="10"/>
+				<reportElement positionType="Float" x="696" y="4" width="43" height="10"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
 					<font fontName="Monospaced" size="8" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{product_uom}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="402" y="4" width="255" height="10"/>
+				<reportElement positionType="Float" x="398" y="4" width="255" height="10"/>
 				<box topPadding="0"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" markup="none">
 					<font fontName="Monospaced" size="8" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
@@ -655,7 +655,7 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 				<textFieldExpression class="java.lang.String"><![CDATA[$V{item_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="657" y="4" width="43" height="10"/>
+				<reportElement positionType="Float" x="653" y="4" width="43" height="10"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
 					<font fontName="Monospaced" size="8" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
