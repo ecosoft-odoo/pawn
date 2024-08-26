@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="pawn_order_form" language="groovy" pageWidth="841" pageHeight="595" orientation="Landscape" columnWidth="841" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="808"/>
-	<property name="ireport.y" value="1747"/>
+	<property name="ireport.y" value="1027"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;]"/>
 	<style name="table">
 		<box>
@@ -205,7 +205,7 @@
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_pawned}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="820" y="177" width="17" height="27" forecolor="#000000"/>
+				<reportElement positionType="Float" x="815" y="177" width="17" height="27" forecolor="#000000"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="Left" markup="html">
 					<font fontName="Monospaced" size="8" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -214,7 +214,7 @@
     $F{parent_book}.length() == 3 ? $F{parent_book} : "")))]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="820" y="114" width="17" height="27" forecolor="#000000"/>
+				<reportElement positionType="Float" x="815" y="114" width="17" height="27" forecolor="#000000"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="Left" markup="html">
 					<font fontName="Monospaced" size="8" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -223,7 +223,7 @@
     $F{parent_number}.length() == 3 ? $F{parent_number} : "")))]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="820" y="11" width="17" height="65"/>
+				<reportElement x="815" y="11" width="17" height="65"/>
 				<textElement verticalAlignment="Middle" rotation="Left">
 					<font fontName="Monospaced" size="8" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -640,14 +640,14 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{product_uom}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="696" y="4" width="43" height="10"/>
+				<reportElement positionType="Float" x="688" y="4" width="43" height="10"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
 					<font fontName="Monospaced" size="8" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{product_uom}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="398" y="4" width="255" height="10"/>
+				<reportElement positionType="Float" x="398" y="4" width="247" height="10"/>
 				<box topPadding="0"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" markup="none">
 					<font fontName="Monospaced" size="8" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
@@ -655,7 +655,7 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 				<textFieldExpression class="java.lang.String"><![CDATA[$V{item_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="653" y="4" width="43" height="10"/>
+				<reportElement positionType="Float" x="645" y="4" width="43" height="10"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
 					<font fontName="Monospaced" size="8" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
