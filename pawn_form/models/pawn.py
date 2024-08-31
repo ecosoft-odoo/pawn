@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    OpenERP, Open Source Management Solution
-#    Copyright (C) 2004-2010 Tiny SPRL (<http://tiny.be>).
+#    Copyright (C) 2013 Ecosoft Co., Ltd. (http://ecosoft.co.th).
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -19,4 +19,16 @@
 #
 ##############################################################################
 
-from . import models
+from openerp.osv import fields, osv
+from openerp.addons.pawnshop import pawn
+
+pawn.MAX_LINE = 6 # Change max pawn line from 8 lines to 6 lines (Objective: print pawn ticket only)
+
+
+class pawn_order_line(osv.osv):
+    _inherit = 'pawn.order.line'
+
+    # Set maximum size of description equal to 85 (Objective: print pawn ticket only)
+    _columns = {
+        'name': fields.text('Description', required=True, size=85),
+    }
