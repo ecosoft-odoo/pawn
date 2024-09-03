@@ -16,6 +16,7 @@
             <field name="arch" type="xml">
             	<field name="to_check" position="before">
             		<field name="pawn_shop_id"/>
+					<field name="adjustment"/>
             	</field>
                 <xpath expr="//tree/field[@name='invoice']" position="after">
                 	<field name="pawn_order_id"/>

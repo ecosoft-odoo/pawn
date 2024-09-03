@@ -30,7 +30,7 @@ class pawn_order_pawn(osv.osv_memory):
 
     def _get_amount(self, cr, uid, context=None):
         """
-            This function show default net amount for 'customer pays money to pawn shop' or 'pawn shop pays money to customer'
+            This function show default net amount
             - If net amount < 0, pawn shop pays money to customer
             - If net amount > 0, customer pays money to pawn shop
         """
@@ -46,12 +46,13 @@ class pawn_order_pawn(osv.osv_memory):
         return False
 
     def _get_date_due_ticket(self, cr, uid, context=None):
+        """ Due Date Ticket = Pawn Date + 5 Months """
         if context is None:
             context = {}
         active_id = context.get('active_id', False)
         if active_id:
             pawn = self.pool.get('pawn.order').browse(cr, uid, active_id, context=context)
-            return str(datetime.strptime(pawn.date_order, "%Y-%m-%d").date() + relativedelta(months=pawn.rule_id.length_month + 1 or 0.0))
+            return str(datetime.strptime(pawn.date_order, '%Y-%m-%d').date() + relativedelta(months=pawn.rule_id.length_month + 1 or 0.0))
         return False
 
     def _get_parent_id(self, cr, uid, context=None):
@@ -63,6 +64,11 @@ class pawn_order_pawn(osv.osv_memory):
             pawn = self.pool.get('pawn.order').browse(cr, uid, active_id, context=context)
             return pawn.parent_id and pawn.parent_id.id or False
         return False
+
+    def _get_bank_journal_id(self, cr, uid, context=None):
+        """ Default bank journal """
+        bank_journal_ids = self.pool.get('account.journal').search(cr, uid, [('type', '=', 'bank'), ('pawn_journal', '=', True)], context=context)
+        return bank_journal_ids[0] if len(bank_journal_ids) == 1 else False
 
     def _get_journal(self, cr, uid, context=None):
         """ Default cash journal from pawn order """
@@ -91,7 +97,7 @@ class pawn_order_pawn(osv.osv_memory):
         'amount': fields.float('Net Amount', readonly=True),
         'date_due_ticket': fields.date(string='Due Date', required=True),
         'parent_id': fields.many2one('pawn.order', 'Previous Pawn Ticket'),
-        'bank_journal_id': fields.many2one('account.journal', 'Bank Journal', domain="[('type', '=', 'bank')]", required=True),
+        'bank_journal_id': fields.many2one('account.journal', 'Bank Journal', domain="[('type', '=', 'bank'), ('pawn_journal', '=', True)]", required=True),
         'transfer_amount': fields.float('Transfer Amount'),
         'journal_id': fields.many2one('account.journal', 'Cash Journal', domain="[('type','=','cash'), ('pawn_journal', '=', True)]", required=True, readonly=True),
         'cash_amount': fields.float('Cash Amount'),
@@ -100,7 +106,10 @@ class pawn_order_pawn(osv.osv_memory):
         'amount': _get_amount,
         'date_due_ticket': _get_date_due_ticket,
         'parent_id': _get_parent_id,
+        'bank_journal_id': _get_bank_journal_id,
         'journal_id': _get_journal,
+        'cash_amount': lambda self, cr, uid, context=None: abs(self._get_amount(cr, uid, context=context)),
+        'transfer_amount': 0.0,
     }
     _constraints = [
         (_check_amount, 'The transfer or cash amount is incorrect !!', ['transfer_amount', 'cash_amount']),
@@ -145,12 +154,7 @@ class pawn_order_pawn(osv.osv_memory):
         # Create dr, cr for bank move
         sign = -1 if wizard.amount < 0 else 1
         pawn = pawn_obj.browse(cr, uid, active_id, context=context)
-        pawn_obj.action_move_bank_create(cr, uid, active_id, pawn.pawn_move_id.id, wizard.bank_journal_id.id, sign * wizard.transfer_amount, wizard.journal_id.id, context=context)
-        # For renew, reverse bank move actual interest
-        if pawn.parent_id:
-            for line in pawn.parent_id.actual_interest_ids:
-                sign = -1 if line.interest_amount > 0 else 1
-                pawn_obj.action_move_bank_create(cr, uid, active_id, pawn.pawn_move_id.id, line.bank_journal_id.id, sign * line.transfer_interest_amount, line.pawn_id.journal_id.id, context=context)
+        pawn_obj.action_move_bank_create(cr, uid, pawn.parent_id.id if (pawn.parent_id and wizard.amount > 0) else active_id, pawn.pawn_move_id.id, wizard.bank_journal_id.id, sign * wizard.transfer_amount, wizard.journal_id.id, context=context)
         return True
 
 

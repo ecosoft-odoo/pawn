@@ -261,8 +261,9 @@ class account_move(osv.osv):
 
     _columns={
         'pawn_shop_id' : fields.function(_get_shop, fnct_search=_search_shop, string='Shop', type='many2one', relation='pawn.shop'),
-    }    
-    
+        'adjustment': fields.selection([('pawn', 'Pawn'), ('redeem', 'Redeem'), ('sale_receipt', 'Sale Receipt')], 'Adjustment'),
+    }
+
 account_move()
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

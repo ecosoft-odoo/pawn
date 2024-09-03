@@ -446,7 +446,7 @@ class account_voucher(osv.osv):
                 'profit_center': voucher.product_journal_id.profit_center or False,
                 'journal_id': voucher.journal_id.id,
                 'period_id': voucher.period_id.id,
-                'name': '/',
+                'name': 'Bank Transfer',
                 'account_id': context['bank_account_id'],
                 'move_id': move_id,
                 'partner_id': voucher.partner_id.id,

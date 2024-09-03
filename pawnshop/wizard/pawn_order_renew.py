@@ -28,6 +28,7 @@ from openerp.tools import float_compare
 class pawn_order_renew(osv.osv_memory):
 
     def _get_pawn_amount(self, cr, uid, context=None):
+        """ Get pawn amount from pawn order """
         if context is None:
             context = {}
         active_id = context.get('active_id', False)
@@ -38,6 +39,7 @@ class pawn_order_renew(osv.osv_memory):
         return False
 
     def _get_interest_amount(self, cr, uid, context=None):
+        """ Calculate interest amount from pawn order """
         if context is None:
             context = {}
         active_id = context.get('active_id', False)
@@ -48,16 +50,8 @@ class pawn_order_renew(osv.osv_memory):
             return round(amount_interest, 2)
         return False
 
-    def _get_journal(self, cr, uid, context=None):
-        if context is None:
-            context = {}
-        active_id = context.get('active_id', False)
-        if active_id:
-            pawn = self.pool.get('pawn.order').browse(cr, uid, active_id, context=context)
-            return pawn.journal_id and pawn.journal_id.id or False
-        return False
-
     def _prepare_renew_lines(self, cr, uid, line, context=None):
+        """ Prepare pawn line """
         return {
             'order_line_id': line.id,
             'name': line.name,
@@ -73,41 +67,28 @@ class pawn_order_renew(osv.osv_memory):
         }
 
     def _get_renew_line_ids(self, cr, uid, context=None):
+        """ Get pawn line from pawn order """
         active_id = context.get('active_id', False)
         if active_id:
             pawn = self.pool.get('pawn.order').browse(cr, uid, active_id, context=context)
             return [(0, 0, self._prepare_renew_lines(cr, uid, line, context=context)) for line in pawn.order_line]
         return False
 
-    def _check_interest_amount(self, cr, uid, ids, context=None):
-        for wizard in self.browse(cr, uid, ids, context=context):
-            # Transfer Interest Amount + Cash Interest Amount must equal to Total Interest Amount
-            if wizard.transfer_interest_amount + wizard.cash_interest_amount != abs(wizard.pay_interest_amount):
-                return False
-            # Transfer Interest Amount / Cash Interest Amount must greater than zero
-            if wizard.transfer_interest_amount < 0 or wizard.cash_interest_amount < 0:
-                return False
-        return True
-
     _name = "pawn.order.renew"
     _description = "Renew"
     _columns = {
         'date_renew': fields.date('Date', readonly=True),
         'pawn_amount': fields.float('Initial', readonly=True),
-        'interest_amount': fields.float('Computed Interest Amount', readonly=True),
+        'interest_amount': fields.float('Computed Interest', readonly=True),
         'discount': fields.float('Discount'),
         'addition': fields.float('Addition'),
-        'pay_interest_amount': fields.float('Pay Interest Amount', required=True),
+        'pay_interest_amount': fields.float('Pay Interest', required=True),
         'increase_pawn_amount': fields.float('Increase Pawn Amount', readonly=True),
         'new_pawn_amount': fields.float('New Pawn Amount', required=True, readonly=True),
         'delegation_of_authority': fields.boolean('Delegation of Authority'),
         'delegate_id': fields.many2one('res.partner', 'Delegate'),
         'renewal_transfer': fields.boolean('Renewal Transfer'),
         'secret_key': fields.char('Secret Key'),
-        'bank_journal_id': fields.many2one('account.journal', 'Bank Journal', domain="[('type', '=', 'bank')]", required=True),
-        'transfer_interest_amount': fields.float('Transfer Interest'),
-        'journal_id': fields.many2one('account.journal', 'Cash Journal', domain="[('type','=','cash'), ('pawn_journal', '=', True)]", required=True, readonly=True),
-        'cash_interest_amount': fields.float('Cash Interest'),
         'renew_line_ids': fields.one2many('pawn.order.renew.line', 'renew_id', 'Renew Line'),
     }
     _defaults = {
@@ -118,15 +99,23 @@ class pawn_order_renew(osv.osv_memory):
         'addition': 0.0,
         'pay_interest_amount': _get_interest_amount,
         'increase_pawn_amount': 0.0,
+        'new_pawn_amount': _get_pawn_amount,
         'renewal_transfer': False,
         'delegation_of_authority': False,
         'delegate_id': False,
-        'journal_id': _get_journal,
         'renew_line_ids': _get_renew_line_ids,
     }
-    _constraints = [
-        (_check_interest_amount, 'The transfer or cash interest amount is incorrect !!', ['transfer_interest_amount', 'cash_interest_amount']),
-    ]
+
+    def onchange_date_renew(self, cr, uid, ids, date_renew, context=None):
+        res = {'value': {}}
+        if context is None:
+            context = {}
+        context['date_renew'] = date_renew
+        res['value']['interest_amount'] = self._get_interest_amount(cr, uid, context=context)
+        res['value']['pay_interest_amount'] = self._get_interest_amount(cr, uid, context=context)
+        res['value']['discount'] = 0.0
+        res['value']['addition'] = 0.0
+        return res
 
     def onchange_amount(self, cr, uid, ids, field, pawn_amount, interest_amount, pay_interest_amount, increase_pawn_amount, new_pawn_amount, context=None):
         res = {'value': {}}
@@ -146,25 +135,6 @@ class pawn_order_renew(osv.osv_memory):
             res['value'].update({
                 'increase_pawn_amount': round(increase_pawn_amount, 2),
             })
-        return res
-
-    def onchange_interest_amount(self, cr, uid, ids, field, transfer_interest_amount, cash_interest_amount, pay_interest_amount):
-        res = {'value': {}}
-        if field == 'transfer':
-            res['value']['cash_interest_amount'] = abs(pay_interest_amount) - transfer_interest_amount
-        elif field == 'cash':
-            res['value']['transfer_interest_amount'] = abs(pay_interest_amount) - cash_interest_amount
-        return res
-
-    def onchange_date_renew(self, cr, uid, ids, date_renew, context=None):
-        res = {'value': {}}
-        if context is None:
-            context = {}
-        context['date_renew'] = date_renew
-        res['value']['interest_amount'] = self._get_interest_amount(cr, uid, context=context)
-        res['value']['pay_interest_amount'] = self._get_interest_amount(cr, uid, context=context)
-        res['value']['discount'] = 0.0
-        res['value']['addition'] = 0.0
         return res
 
     def onchange_renew_ids(self, cr, uid, ids, renew_line_ids, context=None):
@@ -205,7 +175,6 @@ class pawn_order_renew(osv.osv_memory):
         pawn_id = context.get('active_id')
         pawn_obj = self.pool.get('pawn.order')
         pawn_line_obj = self.pool.get('pawn.order.line')
-        interest_obj = self.pool.get('pawn.actual.interest')
         wizard = self.browse(cr, uid, ids[0], context=context)
         pawn = pawn_obj.browse(cr, uid, pawn_id, context=context)
         state_bf_redeem = pawn.state
@@ -238,19 +207,13 @@ class pawn_order_renew(osv.osv_memory):
         if state_bf_redeem != 'expire':
             discount = wizard.discount
             addition = wizard.addition
-            interest_amount = wizard.pay_interest_amount
+            interest_amount = wizard.interest_amount - discount + addition
             # Register Actual Interest
             pawn_obj.register_interest_paid(cr, uid, pawn_id, date, discount, addition, interest_amount, context=context)
             # Reverse Accrued Interest
             pawn_obj.action_move_reversed_accrued_interest_create(cr, uid, [pawn_id], context=context)
             # Inactive Accrued Interest that has not been posted yet.
             pawn_obj.update_active_accrued_interest(cr, uid, [pawn_id], False, context=context)
-            # Create dr, cr for bank move
-            pawn = pawn_obj.browse(cr, uid, pawn_id, context=context)
-            interest_obj.write(cr, uid, [ai.id for ai in pawn.actual_interest_ids], {
-                'bank_journal_id': wizard.bank_journal_id.id,
-                'transfer_interest_amount': wizard.transfer_interest_amount,
-            }, context=context)
         else:
             # Special Case redeem after expired.
             # No register interest, just full amount as sales receipt.
@@ -279,7 +242,7 @@ class pawn_order_renew(osv.osv_memory):
         # Create the new Pawn by copying the existing one.
         default_pawn = {
             'parent_id': pawn_id,
-            'date_order': wizard.date_renew,
+            'date_order': date,
             'order_line': False,
         }
         new_pawn_id = pawn_obj.copy(cr, uid, pawn_id, default_pawn, context=context)

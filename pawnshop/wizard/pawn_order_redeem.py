@@ -27,6 +27,7 @@ from openerp.tools import float_compare
 class pawn_order_redeem(osv.osv_memory):
 
     def _get_pawn_amount(self, cr, uid, context=None):
+        """ Get pawn amount from pawn order """
         if context is None:
             context = {}
         active_id = context.get('active_id', False)
@@ -37,6 +38,7 @@ class pawn_order_redeem(osv.osv_memory):
         return False
 
     def _get_interest_amount(self, cr, uid, context=None):
+        """ Calculate interest amount from pawn order """
         if context is None:
             context = {}
         active_id = context.get('active_id', False)
@@ -48,9 +50,16 @@ class pawn_order_redeem(osv.osv_memory):
         return False
 
     def _get_redeem_amount(self, cr, uid, context=None):
+        """ Compute redeem amount which redeem amount will equal to pawn amount + interest amount """
         return self._get_pawn_amount(cr, uid, context=context) + self._get_interest_amount(cr, uid, context=context)
 
+    def _get_bank_journal_id(self, cr, uid, context=None):
+        """ Default bank journal """
+        bank_journal_ids = self.pool.get('account.journal').search(cr, uid, [('type', '=', 'bank'), ('pawn_journal', '=', True)], context=context)
+        return bank_journal_ids[0] if len(bank_journal_ids) == 1 else False
+
     def _get_journal(self, cr, uid, context=None):
+        """ Default cash journal from pawn order """
         if context is None:
             context = {}
         active_id = context.get('active_id', False)
@@ -59,23 +68,14 @@ class pawn_order_redeem(osv.osv_memory):
             return pawn.journal_id and pawn.journal_id.id or False
         return False
 
-    def _check_pawn_amount(self, cr, uid, ids, context=None):
+    def _check_amount(self, cr, uid, ids, context=None):
+        """ Check transfer amount / cash amount must greater than zero """
         for wizard in self.browse(cr, uid, ids, context=context):
-            # Transfer Pawn Amount + Cash Pawn Amount must equal to Total Pawn Amount
-            if wizard.transfer_pawn_amount + wizard.cash_pawn_amount != abs(wizard.pawn_amount):
+            # Transfer Amount + Cash Amount must equal to Final Redeeem
+            if wizard.transfer_amount + wizard.cash_amount != wizard.redeem_amount:
                 return False
-            # Transfer Pawn Amount / Cash Pawn Amount must greater than zero
-            if wizard.transfer_pawn_amount < 0 or wizard.cash_pawn_amount < 0:
-                return False
-        return True
-
-    def _check_interest_amount(self, cr, uid, ids, context=None):
-        for wizard in self.browse(cr, uid, ids, context=context):
-            # Transfer Interest Amount + Cash Interest Amount must equal to Total Interest Amount
-            if wizard.transfer_interest_amount + wizard.cash_interest_amount != abs(wizard.pay_interest_amount):
-                return False
-            # Transfer Interest Amount / Cash Interest Amount must greater than zero
-            if wizard.transfer_interest_amount < 0 or wizard.cash_interest_amount < 0:
+            # Transfer Amount / Cash Amount must greater than zero
+            if wizard.transfer_amount < 0 or wizard.cash_amount < 0:
                 return False
         return True
 
@@ -84,19 +84,17 @@ class pawn_order_redeem(osv.osv_memory):
     _columns = {
         'date_redeem': fields.date('Date', readonly=True),
         'pawn_amount': fields.float('Initial', readonly=True),
-        'interest_amount': fields.float('Computed Interest Amount', readonly=True),
+        'interest_amount': fields.float('Computed Interest', readonly=True),
         'discount': fields.float('Discount'),
         'addition': fields.float('Addition'),
-        'pay_interest_amount': fields.float('Pay Interest Amount', required=True),
+        'pay_interest_amount': fields.float('Pay Interest', required=True),
         'redeem_amount': fields.float('Final Redeem', required=True),
         'delegation_of_authority': fields.boolean('Delegation of Authority'),
         'delegate_id': fields.many2one('res.partner', 'Delegate'),
-        'bank_journal_id': fields.many2one('account.journal', 'Bank Journal', domain="[('type', '=', 'bank')]", required=True),
-        'transfer_pawn_amount': fields.float('Transfer Initial'),
-        'transfer_interest_amount': fields.float('Transfer Interest'),
+        'bank_journal_id': fields.many2one('account.journal', 'Bank Journal', domain="[('type', '=', 'bank'), ('pawn_journal', '=', True)]", required=True),
+        'transfer_amount': fields.float('Transfer Amount'),
         'journal_id': fields.many2one('account.journal', 'Cash Journal', domain="[('type','=','cash'), ('pawn_journal', '=', True)]", required=True, readonly=True),
-        'cash_pawn_amount': fields.float('Cash Initial'),
-        'cash_interest_amount': fields.float('Cash Interest'),
+        'cash_amount': fields.float('Cash Amount'),
     }
     _defaults = {
         'date_redeem': fields.date.context_today,
@@ -108,45 +106,14 @@ class pawn_order_redeem(osv.osv_memory):
         'redeem_amount': _get_redeem_amount,
         'delegation_of_authority': False,
         'delegate_id': False,
+        'bank_journal_id': _get_bank_journal_id,
         'journal_id': _get_journal,
+        'cash_amount': _get_redeem_amount,
+        'transfer_amount': 0.0,
     }
     _constraints = [
-        (_check_pawn_amount, 'The transfer or cash initial amount is incorrect !!', ['transfer_pawn_amount', 'cash_pawn_amount']),
-        (_check_interest_amount, 'The transfer or cash interest amount is incorrect !!', ['transfer_interest_amount', 'cash_interest_amount']),
+        (_check_amount, 'The transfer or cash amount is incorrect !!', ['transfer_amount', 'cash_amount']),
     ]
-
-    def onchange_amount(self, cr, uid, ids, field, pawn_amount, interest_amount, pay_interest_amount, redeem_amount, context=None):
-        res = {'value': {}}
-        if field == 'pay_interest_amount':
-            redeem_amount = (pawn_amount or 0.0) + (pay_interest_amount or 0.0)
-            addition_interest = (pay_interest_amount or 0.0) - (interest_amount or 0.0)
-            res['value'].update({
-                'redeem_amount': round(redeem_amount, 2),
-                'discount': round(abs(addition_interest), 2) if addition_interest < 0 else 0.0,
-                'addition': round(addition_interest, 2) if addition_interest > 0 else 0.0,
-            })
-        elif field == 'redeem_amount':
-            pay_interest_amount = (redeem_amount or 0.0) - (pawn_amount or 0.0)
-            res['value'].update({
-                'pay_interest_amount': round(pay_interest_amount, 2)
-            })
-        return res
-
-    def onchange_pawn_amount(self, cr, uid, ids, field, transfer_pawn_amount, cash_pawn_amount, total_pawn_amount):
-        res = {'value': {}}
-        if field == 'transfer':
-            res['value']['cash_pawn_amount'] = abs(total_pawn_amount) - transfer_pawn_amount
-        elif field == 'cash':
-            res['value']['transfer_pawn_amount'] = abs(total_pawn_amount) - cash_pawn_amount
-        return res
-
-    def onchange_interest_amount(self, cr, uid, ids, field, transfer_interest_amount, cash_interest_amount, total_interest_amount):
-        res = {'value': {}}
-        if field == 'transfer':
-            res['value']['cash_interest_amount'] = abs(total_interest_amount) - transfer_interest_amount
-        elif field == 'cash':
-            res['value']['transfer_interest_amount'] = abs(total_interest_amount) - cash_interest_amount
-        return res
 
     def onchange_date_redeem(self, cr, uid, ids, date_redeem, context=None):
         res = {'value': {}}
@@ -156,8 +123,33 @@ class pawn_order_redeem(osv.osv_memory):
         res['value']['interest_amount'] = self._get_interest_amount(cr, uid, context=context)
         res['value']['pay_interest_amount'] = self._get_interest_amount(cr, uid, context=context)
         res['value']['redeem_amount'] = self._get_redeem_amount(cr, uid, context=context)
+        res['value']['cash_amount'] = self._get_redeem_amount(cr, uid, context=context)
+        res['value']['transfer_amount'] = 0.0
         res['value']['discount'] = 0.0
         res['value']['addition'] = 0.0
+        return res
+
+    def onchange_amount(self, cr, uid, ids, field, pawn_amount, interest_amount, pay_interest_amount, redeem_amount, transfer_amount, cash_amount, context=None):
+        res = {'value': {}}
+        if field == 'pay_interest_amount':
+            redeem_amount = (pawn_amount or 0.0) + (pay_interest_amount or 0.0)
+            addition_interest = (pay_interest_amount or 0.0) - (interest_amount or 0.0)
+            res['value'].update({
+                'redeem_amount': round(redeem_amount, 2),
+                'cash_amount': round(redeem_amount, 2),
+                'transfer_amount': 0.0,
+                'discount': round(abs(addition_interest), 2) if addition_interest < 0 else 0.0,
+                'addition': round(addition_interest, 2) if addition_interest > 0 else 0.0,
+            })
+        elif field == 'redeem_amount':
+            pay_interest_amount = (redeem_amount or 0.0) - (pawn_amount or 0.0)
+            res['value'].update({
+                'pay_interest_amount': round(pay_interest_amount, 2)
+            })
+        elif field == 'transfer_amount':
+            res['value']['cash_amount'] = redeem_amount - transfer_amount
+        elif field == 'cash_amount':
+            res['value']['transfer_amount'] = redeem_amount - cash_amount
         return res
 
     def onchange_delegation_of_authority(self, cr, uid, ids, context=None):
@@ -168,7 +160,6 @@ class pawn_order_redeem(osv.osv_memory):
             context = {}
         pawn_id = context.get('active_id')
         pawn_obj = self.pool.get('pawn.order')
-        interest_obj = self.pool.get('pawn.actual.interest')
         wizard = self.browse(cr, uid, ids[0], context=context)
         pawn = pawn_obj.browse(cr, uid, pawn_id, context=context)
         state_bf_redeem = pawn.state
@@ -205,11 +196,7 @@ class pawn_order_redeem(osv.osv_memory):
             # Create dr, cr for bank move
             sign = -1 if wizard.pawn_amount < 0 else 1
             pawn = pawn_obj.browse(cr, uid, pawn_id, context=context)
-            pawn_obj.action_move_bank_create(cr, uid, pawn_id, pawn.redeem_move_id.id, wizard.bank_journal_id.id, sign * wizard.transfer_pawn_amount, wizard.journal_id.id, context=context)
-            interest_obj.write(cr, uid, [ai.id for ai in pawn.actual_interest_ids], {
-                'bank_journal_id': wizard.bank_journal_id.id,
-                'transfer_interest_amount': wizard.transfer_interest_amount,
-            }, context=context)
+            pawn_obj.action_move_bank_create(cr, uid, pawn_id, pawn.redeem_move_id.id, wizard.bank_journal_id.id, sign * wizard.transfer_amount, wizard.journal_id.id, context=context)
         else:  # Case redeem after expired. No register interest, just full amount as sales receipt.
             pawn_obj.action_move_expired_redeem_create(cr, uid, pawn.id, wizard.redeem_amount, context=context)
         # Update Redeem Date too.

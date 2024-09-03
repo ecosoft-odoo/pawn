@@ -19,11 +19,14 @@
                 <field name="pawn_shop_id" invisible="1"/>
             	<field name="description"/>
             	<field name="quantity"/>
-            	<field name="amount_estimated" sum="Total Estimated Amount"/>
+            	<field name="amount_estimated" sum="Total Estimated Amount" invisible="1"/>
             	<field name="amount_pawned" sum="Total Pawned Amount"/>
             	<field name="original_interest" sum="Total Interest Amount"/>
             	<field name="amount_interest" sum="Total Interest Amount"/>
             	<field name="percent_interest"/>
+                <field name="transfer_amount"/>
+                <field name="cash_amount"/>
+                <field name="extended"/>
             </tree>
         </field>
     </record>

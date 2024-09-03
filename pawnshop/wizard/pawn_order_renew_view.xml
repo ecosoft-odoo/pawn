@@ -24,15 +24,6 @@
                             <field name="secret_key" password="1" attrs="{'invisible': [('renewal_transfer', '=', False)], 'required': [('renewal_transfer', '=', True)]}"/>
                         </group>
                     </group>
-                    <group string="Breakdown of Total Amount">
-                        <group>
-                            <field name="bank_journal_id" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
-                            <field name="transfer_interest_amount" string="Interest Amount" on_change="onchange_interest_amount('transfer', transfer_interest_amount, cash_interest_amount, pay_interest_amount)"/>
-                            <field name="journal_id" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
-                            <field name="cash_interest_amount" string="Interest Amount" on_change="onchange_interest_amount('cash', transfer_interest_amount, cash_interest_amount, pay_interest_amount)"/>
-                        </group>
-                        <group/>
-                    </group>
                     <notebook>
                         <page string="New Pawn Ticket">
                             <field name="renew_line_ids" on_change="onchange_renew_ids(renew_line_ids)">

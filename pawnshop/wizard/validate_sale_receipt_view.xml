@@ -12,7 +12,7 @@
                         </group>
                         <group/>
                     </group>
-                    <group string="Breakdown of Total Amount">
+                    <group string="Payment Method">
                         <group>
                             <field name="bank_journal_id" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
                             <field name="transfer_amount" on_change="onchange_amount('transfer', transfer_amount, cash_amount, amount)"/>

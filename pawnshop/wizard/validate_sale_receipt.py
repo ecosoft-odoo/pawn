@@ -26,6 +26,7 @@ class validate_sale_receipt(osv.osv_memory):
     _description = 'Validate Sale Receipt'
 
     def _get_amount(self, cr, uid, context=None):
+        """ Default sale receipt amount """
         if context is None:
             context = {}
         active_id = context.get('active_id', False)
@@ -34,7 +35,13 @@ class validate_sale_receipt(osv.osv_memory):
             return voucher.amount
         return False
 
+    def _get_bank_journal_id(self, cr, uid, context=None):
+        """ Default bank journal """
+        bank_journal_ids = self.pool.get('account.journal').search(cr, uid, [('type', '=', 'bank'), ('pawn_journal', '=', True)], context=context)
+        return bank_journal_ids[0] if len(bank_journal_ids) == 1 else False
+
     def _get_journal(self, cr, uid, context=None):
+        """ Default cash journal """
         if context is None:
             context = {}
         active_id = context.get('active_id', False)
@@ -44,6 +51,7 @@ class validate_sale_receipt(osv.osv_memory):
         return False
 
     def _check_amount(self, cr, uid, ids, context=None):
+        """ Check transfer amount / cash amount must greater than zero """
         for wizard in self.browse(cr, uid, ids, context=context):
             # Transfer Amount + Cash Amount must equal to Total Pawn Amount
             if wizard.transfer_amount + wizard.cash_amount != wizard.amount:
@@ -55,14 +63,17 @@ class validate_sale_receipt(osv.osv_memory):
 
     _columns = {
         'amount': fields.float('Amount', readonly=True),
-        'bank_journal_id': fields.many2one('account.journal', 'Bank Journal', domain="[('type', '=', 'bank')]", required=True),
+        'bank_journal_id': fields.many2one('account.journal', 'Bank Journal', domain="[('type', '=', 'bank'), ('pawn_journal', '=', True)]", required=True),
         'transfer_amount': fields.float('Transfer Amount'),
         'journal_id': fields.many2one('account.journal', 'Cash Journal', domain="[('type','=','cash'), ('pawn_journal', '=', True)]", required=True, readonly=True),
         'cash_amount': fields.float('Cash Amount'),
     }
     _defaults = {
         'amount': _get_amount,
+        'bank_journal_id': _get_bank_journal_id,
         'journal_id': _get_journal,
+        'cash_amount': _get_amount,
+        'transfer_amount': 0.0,
     }
     _constraints = [
         (_check_amount, 'The transfer or cash amount is incorrect !!', ['transfer_amount', 'cash_amount']),
@@ -80,7 +91,6 @@ class validate_sale_receipt(osv.osv_memory):
         if context is None:
             context = {}
         active_id = context.get('active_id', False)
-        voucher_obj = self.pool.get('account.voucher')
         if active_id:
             wizard = self.browse(cr, uid, ids[0], context=context)
             context.update({
@@ -89,5 +99,5 @@ class validate_sale_receipt(osv.osv_memory):
                 'cash_account_id': wizard.journal_id.default_credit_account_id.id,
                 'cash_amount': wizard.cash_amount,
             })
-            voucher_obj.proforma_voucher(cr, uid, [active_id], context=context)
+            self.pool.get('account.voucher').proforma_voucher(cr, uid, [active_id], context=context)
         return True
