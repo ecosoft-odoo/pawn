@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<openerp>
+<data>
+    <record id="pawnshop.pawn_order_form_1" model="ir.actions.report.xml">
+        <field name="report_file">pawn_form/report/pawn_order_form.jrxml</field>
+    </record>
+    
+    <record id="pawnshop.redeem_order_form_1" model="ir.actions.report.xml">
+        <field name="report_file">pawn_form/report/redeem_order_form.jrxml</field>
+    </record>
+</data>
+</openerp>
