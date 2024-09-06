@@ -75,28 +75,28 @@
 	<pageHeader>
 		<band height="179" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="0" y="19" width="179" height="17"/>
+				<reportElement positionType="Float" x="0" y="0" width="165" height="17"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Monospaced" size="10" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["โรงรับจำนำ" + $F{pawnshop}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="2" y="34" width="64" height="17"/>
+				<reportElement positionType="Float" x="3" y="22" width="64" height="17"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Monospaced" size="8" isBold="true" isUnderline="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[วันที่ไถ่ถอน]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="false">
-				<reportElement positionType="Float" mode="Transparent" x="1" y="48" width="67" height="17"/>
+				<reportElement positionType="Float" mode="Transparent" x="1" y="41" width="68" height="17"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Monospaced" size="9" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_redeem}]]></textFieldExpression>
 			</textField>
 			<image hAlign="Center" vAlign="Top" isUsingCache="true" isLazy="true">
-				<reportElement x="4" y="68" width="62" height="62">
+				<reportElement x="4" y="65" width="62" height="62">
 					<printWhenExpression><![CDATA[$F{fingerprint}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -116,21 +116,21 @@
 				<text><![CDATA[รับเงินเรียบร้อยแล้ว]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement positionType="Float" x="71" y="34" width="164" height="17"/>
+				<reportElement positionType="Float" x="71" y="22" width="164" height="17"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="10" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["<b><u>ราคา</u> </b>" + new DecimalFormat("#,###.00").format($F{amount_pawned}) + " บาท"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement positionType="Float" x="71" y="50" width="191" height="17"/>
+				<reportElement positionType="Float" x="71" y="41" width="191" height="17"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="8" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["<b><u>เล่มที่</u> </b>" + $F{book} + "<b> <u>เลขที่</u> </b>" + $F{number}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="71" y="69" width="107" height="24"/>
+				<reportElement positionType="Float" x="71" y="60" width="107" height="24"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" markup="html">
 					<font fontName="Monospaced" size="8" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -151,7 +151,7 @@
 	) + " " + $F{cust_name})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="71" y="86" width="143" height="17"/>
+				<reportElement positionType="Float" x="71" y="77" width="143" height="17"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="8" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -172,36 +172,36 @@
 	) + "</u> </b>" + $F{partner_card_number})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="71" y="104" width="74" height="17"/>
+				<reportElement positionType="Float" x="71" y="96" width="74" height="17"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Monospaced" size="8" isBold="true" isUnderline="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[วันที่จำนำ]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="129" y="104" width="80" height="17"/>
+				<reportElement x="129" y="96" width="80" height="17"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Monospaced" size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_order}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="71" y="122" width="74" height="17"/>
+				<reportElement positionType="Float" x="71" y="115" width="74" height="17"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Monospaced" size="8" isBold="true" isUnderline="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[วันที่ครบกำหนด]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="129" y="122" width="85" height="17"/>
+				<reportElement x="129" y="115" width="85" height="17"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Monospaced" size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_due_ticket}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="71" y="139" width="108" height="40"/>
-				<textElement textAlignment="Left" verticalAlignment="Top" markup="html">
+				<reportElement positionType="Float" x="71" y="132" width="108" height="47"/>
+				<textElement textAlignment="Left" lineSpacing="1_1_2" verticalAlignment="Top" markup="html">
 					<font fontName="Monospaced" size="8" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["<b><u>ที่อยู่</u> </b>" + ($F{delegate_name} ? $F{delegate_address} : $F{partner_address})]]></textFieldExpression>
