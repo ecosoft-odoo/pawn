@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="pawn_redeem_form" language="groovy" pageWidth="179" pageHeight="179" columnWidth="179" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="2.727272727272727"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="51"/>
+	<property name="ireport.y" value="48"/>
 	<queryString language="xPath">
 		<![CDATA[/data/record]]>
 	</queryString>
@@ -95,8 +95,8 @@
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_redeem}]]></textFieldExpression>
 			</textField>
-			<image hAlign="Center" vAlign="Top" isUsingCache="true" isLazy="true">
-				<reportElement x="4" y="65" width="62" height="62">
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Top" isUsingCache="true" isLazy="true">
+				<reportElement x="10" y="65" width="51" height="62">
 					<printWhenExpression><![CDATA[$F{fingerprint}]]></printWhenExpression>
 				</reportElement>
 				<box>
