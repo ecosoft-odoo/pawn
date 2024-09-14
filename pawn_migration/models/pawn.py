@@ -11,13 +11,16 @@ class pawn_order(osv.osv):
     _inherit = "pawn.order"
 
     _columns = {
+        # Editable field for import pawn order
         "book": fields.integer(readonly=False, string="Book"),
         "number": fields.integer(readonly=False, string="Number"),
         "date_order": fields.date(readonly=False, string="Pawn Date"),
-        "buddha_year": fields.char(readonly=False, string="Buddha Year")
+        "buddha_year": fields.char(readonly=False, string="Buddha Year"),
+        "amount_pawned": fields.float(readonly=False, string="Pawned Amount"),
     }
 
     def create(self, cr, uid, vals, context=None):
+        # book and number input manually, no generate from system
         book, number = vals.get("book", 0), vals.get("number", 0)
         pawn_id = super(pawn_order, self).create(cr, uid, vals, context=context)
         if not context.get("is_renew"):
@@ -45,15 +48,6 @@ class pawn_order(osv.osv):
         pawn_orders = PawnOrder.browse(cr, uid, pawn_order_ids, context=context)
         for pawn_order in pawn_orders:
             PawnOrder.write(cr, uid, [pawn_order.id], {"name": pawn_order.name}, context=context)
-        # Update data in pawn.order.line
-        PawnOrderLine = self.pool.get("pawn.order.line")
-        line_ids = PawnOrderLine.search(cr, uid, [("order_id", "in", pawn_order_ids)], context=context)
-        lines = PawnOrderLine.browse(cr, uid, line_ids, context=context)
-        for line in lines:
-            price = PawnOrderLine._amount_line(cr, uid, [line.id], ["price_unit", "pawn_price_unit"], None)[line.id]
-            cr.execute("""
-                update pawn_order_line set price_unit = %s, pawn_price_unit = %s where id = %s
-            """ % (price["price_unit"] or 0.0, price["pawn_price_unit"] or 0.0, line.id))
         # Update data in product.template
         ProductTemplate = self.pool.get("product.template")
         product_template_ids = ProductTemplate.search(cr, uid, [("journal_id", "=", False)], context=context)
@@ -68,12 +62,23 @@ class pawn_order(osv.osv):
         product_ids = ProductProduct.search(cr, uid, [("state", "=", "draft")], context=context)
         products = ProductProduct.browse(cr, uid, product_ids, context=context)
         for product in products:
-            item_description = ProductProduct._get_item_description(cr, uid, [product.id], ["item_description"], None)[product.id]
-            price = ProductProduct._price_all(cr, uid, [product.id], ["total_price_pawned", "price_estimated", "price_pawned", "total_price_estimated"], None)[product.id]
-            qty = ProductProduct._product_qty_total(cr, uid, [product.id], ["product_qty_total"], None)[product.id]
-            cr.execute("""
-                update product_product set item_description = '%s', price_estimated = %s, price_pawned = %s, total_price_estimated = %s, total_price_pawned = %s, product_qty_total = %s where id = %s
-            """ % (item_description, price["price_estimated"] or 0.0, price["price_pawned"] or 0.0, price["total_price_estimated"] or 0.0, price["total_price_pawned"] or 0.0, qty or 0.0, product.id))
+            if product.order_id and product.order_line_id:
+                item_description = ProductProduct._get_item_description(cr, uid, [product.id], ["item_description"], None)[product.id]
+                if product.order_line_id:
+                    price_estimated = product.order_line_id.price_unit
+                    price_pawned = product.order_line_id.pawn_price_unit
+                    total_price_estimated = product.order_line_id.price_subtotal
+                    total_price_pawned = product.order_line_id.pawn_price_subtotal
+                    product_qty = product.order_line_id.product_qty
+                else:
+                    price_estimated = sum([line.price_subtotal for line in product.order_id.order_line])
+                    price_pawned = sum([line.pawn_price_subtotal for line in product.order_id.order_line])
+                    total_price_estimated = price_estimated
+                    total_price_pawned = price_pawned
+                    product_qty = 1.0
+                cr.execute("""
+                    update product_product set item_description = '%s', price_estimated = %s, price_pawned = %s, total_price_estimated = %s, total_price_pawned = %s, product_qty = %s where id = %s
+                """ % (item_description, price_estimated or 0.0, price_pawned or 0.0, total_price_estimated or 0.0, total_price_pawned or 0.0, product_qty or 1.0, product.id))
 
     def action_pawn(self, cr, uid, context=None):
         PawnOrder = self.pool.get("pawn.order")
@@ -89,7 +94,7 @@ class pawn_order(osv.osv):
             amount = PawnOrderPawn._get_amount(cr, uid, context=context)
             wizard_id = PawnOrderPawn.create(cr, uid, {
                 "journal_id": journal_id, "parent_id": parent_id, "amount": amount,
-                "date_due_ticket": datetime.strptime(pawn_order.date_expired, "%Y-%m-%d").date() + relativedelta(days=pawn_order.rule_id.length_day or 0.0),
+                "date_due_ticket": str(datetime.strptime(pawn_order.date_order, '%Y-%m-%d').date() + relativedelta(months=pawn_order.rule_id.length_month + 1 or 0.0)),
             })
             PawnOrderPawn.action_pawn(cr, uid, [wizard_id], context=context)
         # Pawn Ticket : Incoming -> In-Stock
