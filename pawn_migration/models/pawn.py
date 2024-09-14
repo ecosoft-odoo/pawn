@@ -41,6 +41,10 @@ class pawn_order(osv.osv):
                 self.write(cr, uid, [pawn.id], {"name": name})
         return res
 
+    def _check_pawn_item_image_first(self, cr, uid, pawn, context=None):
+        # Don't check pawn item image for data migration
+        return True
+
     def update_data(self, cr, uid, context=None):
         # Re assign name (For update pawn asset)
         PawnOrder = self.pool.get("pawn.order")
