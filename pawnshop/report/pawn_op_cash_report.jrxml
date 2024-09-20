@@ -86,6 +86,9 @@ order by date]]>
 	</queryString>
 	<field name="date" class="java.sql.Date"/>
 	<field name="name" class="java.lang.String"/>
+	<group name="Date" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{date}]]></groupExpression>
+	</group>
 	<title>
 		<band height="55">
 			<textField>
@@ -158,7 +161,7 @@ order by date]]>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="15" splitType="Prevent">
+		<band height="15" splitType="Stretch">
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
 				<reportElement stretchType="RelativeToTallestObject" x="0" y="2" width="92" height="13" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center">
@@ -211,7 +214,7 @@ order by date]]>
 				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "pawn_op_cash_report_subreport1.jasper"]]></subreportExpression>
 			</subreport>
 			<staticText>
-				<reportElement style="table" stretchType="RelativeToTallestObject" x="404" y="0" width="151" height="15"/>
+				<reportElement style="table" stretchType="RelativeToTallestObject" x="404" y="0" width="151" height="15" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Monospaced" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>

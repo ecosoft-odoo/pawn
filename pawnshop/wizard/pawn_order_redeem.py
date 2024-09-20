@@ -147,9 +147,9 @@ class pawn_order_redeem(osv.osv_memory):
                 'pay_interest_amount': round(pay_interest_amount, 2)
             })
         elif field == 'transfer_amount':
-            res['value']['cash_amount'] = redeem_amount - transfer_amount
+            res['value']['cash_amount'] = round(redeem_amount - transfer_amount, 2)
         elif field == 'cash_amount':
-            res['value']['transfer_amount'] = redeem_amount - cash_amount
+            res['value']['transfer_amount'] = round(redeem_amount - cash_amount, 2)
         return res
 
     def onchange_delegation_of_authority(self, cr, uid, ids, context=None):
