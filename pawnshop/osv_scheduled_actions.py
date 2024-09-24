@@ -49,12 +49,21 @@ class pawn_order(osv.osv):
         except Exception:
             _logger.exception("Failed processing expired pawn ticket")
 
-    def process_order_expire(self, cr, uid, limit=100, context=None):
-        pawn_ids = self.search(cr, uid, [('ready_to_expire', '=', True), ('state', '=', 'pawn'), ('run_background', '=', True)], limit=limit)
-        for pawn_id in pawn_ids:
-            self.order_expire(cr, uid, [pawn_id], context=context)
-            self.write(cr, uid, [pawn_id], {'run_background': False}, context=context)
-            cr.commit()
+    def process_expired_order_move(self, cr, uid, context=None):
+        """
+        This process will reverse accrued interest, create account move after pawn order expired
+        """
+        pawn_ids = self.search(cr, uid, [('state', '=', 'expire'), ('expire_move_by_cron', '=', True)], context=context)
+        pawns = self.browse(cr, uid, pawn_ids, context=context)
+        for pawn in pawns:
+            # Reverse Accrued Interest
+            self.action_move_reversed_accrued_interest_create(cr, uid, [pawn.id], context=context)
+            # Inactive any left over accrued interest
+            self.update_active_accrued_interest(cr, uid, [pawn.id], False, context=context)
+            # Create Move (except extended case)
+            if not pawn.extended:
+                self.action_move_create(cr, uid, [pawn.id], context={'direction': 'expire'})
+            self.write(cr, uid, [pawn.id], {'expire_move_by_cron': False}, context=context)
         return True
 
 

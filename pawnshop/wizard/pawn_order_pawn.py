@@ -36,6 +36,15 @@ class pawn_order_pawn(osv.osv_memory):
             return pawn.journal_id and pawn.journal_id.id or False
         return False
 
+    def _get_date_due_ticket(self, cr, uid, context=None):
+        if context is None:
+            context = {}
+        active_id = context.get('active_id', False)
+        if active_id:
+            pawn = self.pool.get('pawn.order').browse(cr, uid, active_id, context=context)
+            return str(datetime.strptime(pawn.date_order, "%Y-%m-%d").date() + relativedelta(months=pawn.rule_id.length_month + 1 or 0.0))
+        return False
+
     def _get_parent_id(self, cr, uid, context=None):
         if context is None:
             context = {}
@@ -67,6 +76,7 @@ class pawn_order_pawn(osv.osv_memory):
     }
     _defaults = {
         'journal_id': _get_journal,
+        'date_due_ticket': _get_date_due_ticket,
         'parent_id': _get_parent_id,
         'amount': _get_amount
     }

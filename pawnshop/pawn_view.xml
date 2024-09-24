@@ -110,7 +110,6 @@
                             <field name="rule_id" widget="selection"/>
                             <field name="child_id" attrs="{'invisible':[('child_id','=',False)]}"/>
 							<field name="create_date" invisible="1"/>
-                            <field name="run_background" invisible="not context.get('is_ready_to_expire', False)"/>
                         </group>
                     </group>
                     <notebook>
@@ -329,9 +328,6 @@
                     <separator/>
                     <filter name="extend" string="Extended" domain="[('extended','=',True)]" help="Expired Pawned Orders which has been extended"/>
                     <filter name="not_extend" string="Not Extend" domain="[('extended','=',False)]"/>
-                    <separator/>
-                    <filter name="run_background" string="Run Background" domain="[('run_background','=',True)]" invisible="not context.get('is_ready_to_expire', False)"/>
-                    <filter name="not_run_background" string="Not Run Background" domain="[('run_background','=',False)]" invisible="not context.get('is_ready_to_expire', False)"/>
                     <group expand="0" string="Group By...">
                         <filter string="Shop" domain="[]" context="{'group_by':'pawn_shop_id'}"/>
                         <filter string="Journal" domain="[]" context="{'group_by':'journal_id'}"/>
@@ -369,7 +365,6 @@
                     <field name="state"/>
                     <field name="extended_x"/>
                     <field name="jor6_submitted" invisible="1"/>
-                    <field name="run_background" invisible="not context.get('is_ready_to_expire', False)"/>
                 </tree>
             </field>
         </record>
@@ -426,7 +421,7 @@
             <field name="view_mode">tree,form,graph</field>
     		<field name="limit">20</field>
     		<field name="domain">[('ready_to_expire','=',True), ('state','=','pawn')]</field>
-            <field name="context">{'search_default_not_run_background': 1, 'is_ready_to_expire': 1}</field>
+            <field name="context">{}</field>
             <field name="search_view_id" ref="view_pawn_order_filter"/>
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">
