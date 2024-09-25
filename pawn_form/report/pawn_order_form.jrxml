@@ -312,7 +312,7 @@
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="188" y="131" width="166" height="17" forecolor="#000000"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" markup="html">
-					<font fontName="Monospaced" size="8" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="Monospaced" size="12" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{parent_book} != "" ? "(ส่งดอก)" :
 "(ตั๋วจำนำใหม่)"]]></textFieldExpression>
@@ -444,7 +444,7 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="558" y="131" width="166" height="17" forecolor="#000000"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" markup="html">
-					<font fontName="Monospaced" size="8" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="Monospaced" size="12" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{parent_book} != "" ? "(ส่งดอก)" :
 "(ตั๋วจำนำใหม่)"]]></textFieldExpression>
