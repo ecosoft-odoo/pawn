@@ -3,6 +3,9 @@
 	<property name="ireport.zoom" value="2.727272727272727"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="48"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/kittiu/workspace/openerp_pawnshop/pawnshop-addons/pawnshop/report/"]]></defaultValueExpression>
+	</parameter>
 	<queryString language="xPath">
 		<![CDATA[/data/record]]>
 	</queryString>
@@ -230,6 +233,12 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{child} != "" ? "ต่อตั๋ว" : (
 $F{state} == "redeem" ? "ไถ่ถอน" : "")]]></textFieldExpression>
 			</textField>
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Top" isUsingCache="true" isLazy="true">
+				<reportElement x="55" y="75" width="100" height="70">
+					<printWhenExpression><![CDATA[$F{delegate_name}]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "/authorization.png"]]></imageExpression>
+			</image>
 		</band>
 	</pageHeader>
 </jasperReport>
