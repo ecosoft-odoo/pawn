@@ -428,6 +428,13 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$V{product_qty}]]></textFieldExpression>
 			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" mode="Transparent" x="35" y="506" width="120" height="55" forecolor="#000000" backcolor="#FFFFFF"/>
+                <textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[(new Boolean($F{company_name}.contains("บริษัท")) ? "บจ.": new Boolean($F{company_name}.contains("ห้างหุ้นส่วนสามัญนิติบุคคล")) ? "หสม." : "") + (new Boolean($F{company_name}.contains("โรงรับจำนำ")) ? "โรงรับจำนำ\n" : "") + $F{pawnshop}]]></textFieldExpression>
+			</textField>
 			<image hAlign="Center" vAlign="Top" isUsingCache="true" isLazy="true">
 				<reportElement x="186" y="506" width="55" height="55">
 					<printWhenExpression><![CDATA[$F{fingerprint} != false && $F{fingerprint} != null && $F{fingerprint} != '']]></printWhenExpression>
@@ -510,6 +517,13 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 					<font fontName="Monospaced" size="8" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{card_number}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" mode="Transparent" x="406" y="506" width="120" height="55" forecolor="#000000" backcolor="#FFFFFF"/>
+                <textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[(new Boolean($F{company_name}.contains("บริษัท")) ? "บจ.": new Boolean($F{company_name}.contains("ห้างหุ้นส่วนสามัญนิติบุคคล")) ? "หสม." : "") + (new Boolean($F{company_name}.contains("โรงรับจำนำ")) ? "โรงรับจำนำ\n" : "") + $F{pawnshop}]]></textFieldExpression>
 			</textField>
 			<image hAlign="Center" vAlign="Top" isUsingCache="true" isLazy="true">
 				<reportElement x="534" y="506" width="55" height="55">
