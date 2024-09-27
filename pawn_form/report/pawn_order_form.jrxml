@@ -429,7 +429,7 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 				<textFieldExpression class="java.lang.Number"><![CDATA[$V{product_qty}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" mode="Transparent" x="35" y="506" width="120" height="55" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement positionType="Float" mode="Transparent" x="25" y="526" width="120" height="55" forecolor="#000000" backcolor="#FFFFFF"/>
                 <textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
@@ -441,15 +441,6 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 				</reportElement>
 				<imageExpression class="java.lang.String"><![CDATA[$F{fingerprint}]]></imageExpression>
 			</image>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" mode="Transparent" x="165" y="506" width="90" height="55" forecolor="#000000" backcolor="#FFFFFF">
-                    <printWhenExpression><![CDATA[$F{fingerprint} == false || $F{fingerprint} == null || $F{fingerprint} == '']]></printWhenExpression>
-				</reportElement>
-                <textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
-					<font fontName="Monospaced" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["รออัพเดทลายนิ้วมือ"]]></textFieldExpression>
-			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd MMMMM yyyy" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="454" y="131" width="150" height="17"/>
 				<textElement verticalAlignment="Middle">
@@ -519,7 +510,7 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{card_number}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" mode="Transparent" x="406" y="506" width="120" height="55" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement positionType="Float" mode="Transparent" x="386" y="526" width="120" height="55" forecolor="#000000" backcolor="#FFFFFF"/>
                 <textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
@@ -531,15 +522,6 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 				</reportElement>
 				<imageExpression class="java.lang.String"><![CDATA[$F{fingerprint}]]></imageExpression>
 			</image>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" mode="Transparent" x="534" y="506" width="90" height="55" forecolor="#000000" backcolor="#FFFFFF">
-                    <printWhenExpression><![CDATA[$F{fingerprint} == false || $F{fingerprint} == null || $F{fingerprint} == '']]></printWhenExpression>
-				</reportElement>
-                <textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
-					<font fontName="Monospaced" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["รออัพเดทลายนิ้วมือ"]]></textFieldExpression>
-			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="573" y="423" width="169" height="17" forecolor="#000000"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
