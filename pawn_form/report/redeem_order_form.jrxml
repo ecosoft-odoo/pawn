@@ -111,15 +111,6 @@
 				</box>
 				<imageExpression class="java.lang.String"><![CDATA[$F{fingerprint}]]></imageExpression>
 			</image>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" mode="Transparent" x="7" y="75" width="57" height="57" forecolor="#000000" backcolor="#FFFFFF">
-                    <printWhenExpression><![CDATA[$F{fingerprint} == false || $F{fingerprint} == null || $F{fingerprint} == '']]></printWhenExpression>
-				</reportElement>
-                <textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
-					<font fontName="Monospaced" size="13" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["รออัพเดทลายนิ้วมือ"]]></textFieldExpression>
-			</textField>
 			<staticText>
 				<reportElement positionType="Float" x="0" y="133" width="71" height="34"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
