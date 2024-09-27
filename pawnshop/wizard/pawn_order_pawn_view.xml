@@ -12,6 +12,8 @@
                         </group>
                         <group>
                             <field name="date_due_ticket"/>
+                            <field name="bypass_fingerprint" on_change="onchange_bypass_fingerprint()"/>
+                            <field name="secret_key" password="1" attrs="{'invisible': [('bypass_fingerprint', '=', False)], 'required': [('bypass_fingerprint', '=', True)]}"/>
                             <field name="parent_id" invisible="1"/>
                         </group>
                     </group>

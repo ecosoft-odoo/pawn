@@ -87,7 +87,7 @@ class pawn_order_renew(osv.osv_memory):
         'new_pawn_amount': fields.float('New Pawn Amount', required=True, readonly=True),
         'delegation_of_authority': fields.boolean('Delegation of Authority'),
         'delegate_id': fields.many2one('res.partner', 'Delegate'),
-        'renewal_transfer': fields.boolean('Renewal Transfer'),
+        'renewal_transfer': fields.boolean('Renewal Transfer'), 
         'secret_key': fields.char('Secret Key'),
         'renew_line_ids': fields.one2many('pawn.order.renew.line', 'renew_id', 'Renew Line'),
     }
@@ -198,6 +198,7 @@ class pawn_order_renew(osv.osv_memory):
             'renewal_transfer_redeem': wizard.renewal_transfer,
             'delegation_of_authority': wizard.delegation_of_authority,
             'delegate_id': wizard.delegate_id.id,
+            'bypass_fingerprint_redeem': False,
         }, context=context)
         # Trigger workflow
         # Redeem the current one
@@ -262,6 +263,7 @@ class pawn_order_renew(osv.osv_memory):
             'amount_pawned': wizard.new_pawn_amount,
             'amount_net': amount_net,
             'renewal_transfer_pawn': wizard.renewal_transfer,
+            'bypass_fingerprint_pawn': False,
         }
         for i in ['first', 'second', 'third', 'fourth', 'fifth']:
             vals.update({

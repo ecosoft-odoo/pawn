@@ -410,8 +410,8 @@ class pawn_order(osv.osv):
          'delegation_of_authority': fields.boolean('Delegation of Authority', readonly=True),
          'delegate_id': fields.many2one('res.partner', 'Delegate', readonly=True),
          'expire_move_by_cron': fields.boolean(string='Expire Move By Cron', help="If this field is check, account move of expire the ticket will create by ir.cron"),
-         'bypass_fingerprint_pawn': fields.boolean('Bypass Fingerprint Pawn'),
-         'bypass_fingerprint_redeem': fields.boolean('Bypass Fingerprint Redeem'),
+         'bypass_fingerprint_pawn': fields.boolean('Bypass Fingerprint Pawn', readonly=True),
+         'bypass_fingerprint_redeem': fields.boolean('Bypass Fingerprint Redeem', readonly=True),
     }
     _defaults = {
         'company_id': lambda self, cr, uid, c: self.pool.get('res.users').browse(cr, uid, uid).company_id.id,
@@ -451,6 +451,7 @@ class pawn_order(osv.osv):
             context = {}
         if context.get('action_type'):
             self._update_fingerprint(cr, uid, ids, context['action_type'], context=context)
+            self.write(cr, uid, ids, {'bypass_fingerprint_%s' % context['action_type']: False})
         return True
 
     def _update_fingerprint(self, cr, uid, order_ids, action_type=None, context=None):

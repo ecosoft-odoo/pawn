@@ -101,6 +101,8 @@ class pawn_order_pawn(osv.osv_memory):
         'transfer_amount': fields.float('Transfer Amount'),
         'journal_id': fields.many2one('account.journal', 'Cash Journal', domain="[('type','=','cash'), ('pawn_journal', '=', True)]", required=True, readonly=True),
         'cash_amount': fields.float('Cash Amount'),
+        'bypass_fingerprint': fields.boolean('Bypass Fingerprint Pawn'),
+        'secret_key': fields.char('Secret Key'),
     }
     _defaults = {
         'amount': _get_amount,
@@ -123,6 +125,16 @@ class pawn_order_pawn(osv.osv_memory):
             res['value']['transfer_amount'] = abs(total_amount) - cash_amount
         return res
 
+    def onchange_bypass_fingerprint(self, cr, uid, ids, context=None):
+        return {'value': {'secret_key': False}}
+
+    def _validate_secret_key(self, cr, uid, bypass_fingerprint, secret_key, context=None):
+        """This function used for validate secret key bypass fingerprint check"""
+        if bypass_fingerprint:
+            valid_secret_key = self.pool.get('ir.config_parameter').get_param(cr, uid, 'pawnshop.pawn_secret_key', '')
+            if secret_key != valid_secret_key:
+                raise osv.except_osv(_('Error!'), _('The secret key is invalid.'))
+
     def _check_pawn_item_image_first(self, cr, uid, pawn, context=None):
         if not pawn.pawn_item_image_first:
             raise osv.except_osv(_('Error!'), _('Please provide an image of the item before pawning it.'))
@@ -132,6 +144,7 @@ class pawn_order_pawn(osv.osv_memory):
             context = {}
         active_id = context.get('active_id')
         pawn_obj = self.pool.get('pawn.order')
+        wizard = self.browse(cr, uid, ids[0], context)
         # Check status
         pawn = pawn_obj.browse(cr, uid, active_id)
         if pawn.state != 'draft':
@@ -142,11 +155,13 @@ class pawn_order_pawn(osv.osv_memory):
             raise osv.except_osv(_('Error!'), _('Pawned amount must equal to sum of pawned subtotal'))
         # Check pawn item image
         self._check_pawn_item_image_first(cr, uid, pawn, context=context)
+        # Check Secret Key
+        self._validate_secret_key(cr, uid, wizard.bypass_fingerprint, wizard.secret_key, context=context)
         # Write journal_id back to order
-        wizard = self.browse(cr, uid, ids[0], context)
         pawn_obj.write(cr, uid, [active_id], {
             'journal_id': wizard.journal_id.id,
             'date_due_ticket': wizard.date_due_ticket,
+            'bypass_fingerprint_pawn': wizard.bypass_fingerprint,
         }, context=context)
         # Trigger workflow
         wf_service = netsvc.LocalService("workflow")

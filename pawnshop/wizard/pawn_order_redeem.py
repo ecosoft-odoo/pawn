@@ -95,6 +95,8 @@ class pawn_order_redeem(osv.osv_memory):
         'transfer_amount': fields.float('Transfer Amount'),
         'journal_id': fields.many2one('account.journal', 'Cash Journal', domain="[('type','=','cash'), ('pawn_journal', '=', True)]", required=True, readonly=True),
         'cash_amount': fields.float('Cash Amount'),
+        'bypass_fingerprint': fields.boolean('Bypass Fingerprint Redeem'),
+        'secret_key': fields.char('Secret Key'),
     }
     _defaults = {
         'date_redeem': fields.date.context_today,
@@ -155,6 +157,16 @@ class pawn_order_redeem(osv.osv_memory):
     def onchange_delegation_of_authority(self, cr, uid, ids, context=None):
         return {'value': {'delegate_id': False}}
 
+    def onchange_bypass_fingerprint(self, cr, uid, ids, context=None):
+        return {'value': {'secret_key': False}}
+
+    def _validate_secret_key(self, cr, uid, bypass_fingerprint, secret_key, context=None):
+        """This function used for validate secret key bypass fingerprint check"""
+        if bypass_fingerprint:
+            valid_secret_key = self.pool.get('ir.config_parameter').get_param(cr, uid, 'pawnshop.redeem_secret_key', '')
+            if secret_key != valid_secret_key:
+                raise osv.except_osv(_('Error!'), _('The secret key is invalid.'))
+
     def action_redeem(self, cr, uid, ids, context=None):
         if context is None:
             context = {}
@@ -174,10 +186,13 @@ class pawn_order_redeem(osv.osv_memory):
             raise osv.except_osv(_('Error!'),
                                  _('Initial + Interest Amount - Discount + Addition (%s) must be equal to Final Redeem (%s) !!') % (
                 '{:,.2f}'.format(total_redeem_amount), '{:,.2f}'.format(wizard.redeem_amount)))
+        # Check Secret Key
+        self._validate_secret_key(cr, uid, wizard.bypass_fingerprint, wizard.secret_key, context=context)
         # Update some data on pawn ticket before redeem it
         pawn_obj.write(cr, uid, [pawn_id], {
             'delegation_of_authority': wizard.delegation_of_authority,
-            'delegate_id': wizard.delegate_id.id
+            'delegate_id': wizard.delegate_id.id,
+            'bypass_fingerprint_redeem': wizard.bypass_fingerprint,
         }, context=context)
         # Trigger workflow, reverse of pawn
         wf_service = netsvc.LocalService("workflow")

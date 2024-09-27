@@ -241,24 +241,26 @@
                                 <group string="Pawn">
                                     <field name="fingerprint_pawn" string="Fingerprint" widget="image" class="oe_left oe_avatar"/>
                                     <field name="fingerprint_pawn_date" string="Date of Fingerprint"/>
-                                    <label for="bypass_fingerprint_pawn"/>
-                                    <div>
+                                    <label for="bypass_fingerprint_pawn" attrs="{'invisible': [('bypass_fingerprint_pawn', '=', False)]}"/>
+                                    <div attrs="{'invisible': [('bypass_fingerprint_pawn', '=', False)]}">
                                         <field name="bypass_fingerprint_pawn"/>
                                         <div class="oe_clear"/>
-                                        <button name="get_fingerprint" type="object" string="Get Fingerprint" attrs="{'invisible': [('fingerprint_pawn', '!=', False)]}" context="{'action_type': 'pawn', 'force_update_fp': True}"/>
+                                        <button name="get_fingerprint" type="object" string="Update Fingerprint" context="{'action_type': 'pawn', 'force_update_fp': True}"/>
                                     </div>
+                                    <p colspan="2" style="color:red; font-size: 20px;" attrs="{'invisible': [('bypass_fingerprint_pawn', '=', False)]}">รออัพเดทลายนิ้วมือจำนำ</p>
                                 </group>
                                 <group string="Redeem">
                                     <field name="fingerprint_redeem" string="Fingerprint" widget="image" class="oe_left oe_avatar"/>
                                     <field name="fingerprint_redeem_date" string="Date of Fingerprint"/>
                                     <field name="delegation_of_authority" attrs="{'invisible': [('delegation_of_authority', '=', False)]}"/>
                                     <field name="delegate_id" attrs="{'invisible': [('delegate_id', '=', False)]}"/>
-                                    <label for="bypass_fingerprint_redeem"/>
-                                    <div>
+                                    <label for="bypass_fingerprint_redeem" attrs="{'invisible': [('bypass_fingerprint_redeem', '=', False)]}"/>
+                                    <div attrs="{'invisible': [('bypass_fingerprint_redeem', '=', False)]}">
                                         <field name="bypass_fingerprint_redeem"/>
                                         <div class="oe_clear"/>
-                                        <button name="get_fingerprint" type="object" string="Get Fingerprint" attrs="{'invisible': [('fingerprint_redeem', '!=', False)]}" context="{'action_type': 'redeem', 'force_update_fp': True}"/>
+                                        <button name="get_fingerprint" type="object" string="Update Fingerprint" context="{'action_type': 'redeem', 'force_update_fp': True}"/>
                                     </div>
+                                    <p colspan="2" style="color:red; font-size: 20px;" attrs="{'invisible': [('bypass_fingerprint_redeem', '=', False)]}">รออัพเดทลายนิ้วมือไถ่ถอน</p>
                                 </group>
                             </group>
                         </page>

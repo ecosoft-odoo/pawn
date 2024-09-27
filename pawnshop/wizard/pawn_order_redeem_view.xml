@@ -19,6 +19,8 @@
                         <group>
                             <field name="delegation_of_authority" on_change="onchange_delegation_of_authority()"/>
                             <field name="delegate_id" domain="[('supplier', '=', 1), ('pawnshop', '=', 1)]" options="{'limit': 10, 'create': false, 'create_edit': false}" attrs="{'invisible': [('delegation_of_authority', '=', False)], 'required': [('delegation_of_authority', '=', True)]}"/>
+                            <field name="bypass_fingerprint" on_change="onchange_bypass_fingerprint()"/>
+                            <field name="secret_key" password="1" attrs="{'invisible': [('bypass_fingerprint', '=', False)], 'required': [('bypass_fingerprint', '=', True)]}"/>
                         </group>
                     </group>
                     <group string="Payment Method">
