@@ -75,6 +75,8 @@ class pawn_order_pawn(osv.osv_memory):
         'parent_id': fields.many2one('pawn.order', 'Previous Pawn Ticket'),
         'amount': fields.float('Net Amount', readonly=True),
         'date_due_ticket': fields.date(string='Due Date', required=True),
+        'bypass_fingerprint': fields.boolean('Bypass Fingerprint Pawn'),
+        'secret_key': fields.char('Secret Key'),
     }
     _defaults = {
         'journal_id': _get_journal,
@@ -82,6 +84,16 @@ class pawn_order_pawn(osv.osv_memory):
         'parent_id': _get_parent_id,
         'amount': _get_amount
     }
+
+    def onchange_bypass_fingerprint(self, cr, uid, ids, context=None):
+        return {'value': {'secret_key': False}}
+
+    def _validate_secret_key(self, cr, uid, bypass_fingerprint, secret_key, context=None):
+        """This function used for validate secret key bypass fingerprint check"""
+        if bypass_fingerprint:
+            valid_secret_key = self.pool.get('ir.config_parameter').get_param(cr, uid, 'pawnshop.pawn_secret_key', '')
+            if secret_key != valid_secret_key:
+                raise osv.except_osv(_('Error!'), _('The secret key is invalid.'))
 
     def _check_pawn_item_image_first(self, cr, uid, pawn, context=None):
         if not pawn.pawn_item_image_first:
@@ -92,6 +104,7 @@ class pawn_order_pawn(osv.osv_memory):
             context = {}
         # cr = pooler.get_db(cr.dbname).cursor()
         active_id = context.get('active_id')
+        wizard = self.browse(cr, uid, ids[0], context)
         # Check status
         pawn = self.pool.get('pawn.order').browse(cr, uid, active_id)
         if pawn.state != 'draft':
@@ -102,9 +115,10 @@ class pawn_order_pawn(osv.osv_memory):
             raise osv.except_osv(_('Error!'), _('Pawned amount must equal to sum of pawned subtotal'))
         # Check pawn item image
         self._check_pawn_item_image_first(cr, uid, pawn, context=context)
+        # Check Secret Key
+        self._validate_secret_key(cr, uid, wizard.bypass_fingerprint, wizard.secret_key, context=context)
         # Write journal_id back to order
-        wizard = self.browse(cr, uid, ids[0], context)
-        self.pool.get('pawn.order').write(cr, uid, [active_id], {'journal_id': wizard.journal_id.id, 'date_due_ticket': wizard.date_due_ticket}, context=context)
+        self.pool.get('pawn.order').write(cr, uid, [active_id], {'journal_id': wizard.journal_id.id, 'date_due_ticket': wizard.date_due_ticket, 'bypass_fingerprint_pawn': wizard.bypass_fingerprint}, context=context)
         # Trigger workflow
         wf_service = netsvc.LocalService("workflow")
         wf_service.trg_validate(uid, 'pawn.order', active_id, 'order_pawn', cr)

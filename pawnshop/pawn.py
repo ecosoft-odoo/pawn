@@ -410,6 +410,8 @@ class pawn_order(osv.osv):
          'delegation_of_authority': fields.boolean('Delegation of Authority', readonly=True),
          'delegate_id': fields.many2one('res.partner', 'Delegate', readonly=True),
          'expire_move_by_cron': fields.boolean(string='Expire Move By Cron', help="If this field is check, account move of expire the ticket will create by ir.cron"),
+         'bypass_fingerprint_pawn': fields.boolean('Bypass Fingerprint Pawn', readonly=True),
+         'bypass_fingerprint_redeem': fields.boolean('Bypass Fingerprint Redeem', readonly=True),
     }
     _defaults = {
         'company_id': lambda self, cr, uid, c: self.pool.get('res.users').browse(cr, uid, uid).company_id.id,
@@ -428,6 +430,8 @@ class pawn_order(osv.osv):
         'delegation_of_authority': False,
         'delegate_id': False,
         'expire_move_by_cron': False,
+        'bypass_fingerprint_pawn': False,
+        'bypass_fingerprint_redeem': False,
     }
     _sql_constraints = [
         ('name_uniq', 'unique(name, pawn_shop_id)', 'Pawn Ticket Reference must be unique per Pawn Shop!'),
@@ -441,8 +445,18 @@ class pawn_order(osv.osv):
         pawn_item_obj = self.pool.get('product.product')
         pawn_item_obj.update_asset_status_by_order(cr, uid, order_ids, val, context=context)
         return True
+    
+    def get_fingerprint(self, cr, uid, ids, context=None):
+        if context is None:
+            context = {}
+        if context.get('action_type'):
+            self._update_fingerprint(cr, uid, ids, context['action_type'], context=context)
+            self.write(cr, uid, ids, {'bypass_fingerprint_%s' % context['action_type']: False})
+        return True
 
     def _update_fingerprint(self, cr, uid, order_ids, action_type=None, context=None):
+        if context is None:
+            context = {}
         # Temporary disable update fingerprint
         disable_update_fingerprint = eval(self.pool.get('ir.config_parameter').get_param(cr, uid, 'pawnshop.disable_update_fingerprint', 'False'))
         if disable_update_fingerprint is True:
@@ -450,6 +464,9 @@ class pawn_order(osv.osv):
         # --
         for order in self.browse(cr, uid, order_ids, context=context):
             if action_type and not order['fingerprint_%s' % action_type]:
+                # Don't check and assign fingerprint
+                if not context.get('force_update_fp', False) and order['bypass_fingerprint_%s' % action_type]:
+                    continue
                 if order['renewal_transfer_%s' % action_type]:
                     if action_type == 'redeem':
                         fingerprint = order.fingerprint_pawn
@@ -1045,6 +1062,8 @@ class pawn_order(osv.osv):
             'delegation_of_authority': False,
             'delegate_id': False,
             'expire_move_by_cron': False,
+            'bypass_fingerprint_pawn': False,
+            'bypass_fingerprint_redeem': False,
         })
         # Default pawn item image
         for i in ['first', 'second', 'third', 'fourth', 'fifth']:
