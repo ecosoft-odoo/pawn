@@ -474,6 +474,8 @@ class pawn_order(osv.osv):
                     if action_type == 'pawn':
                         fingerprint = order.parent_id.fingerprint_redeem
                         fingerprint_date = order.parent_id.fingerprint_redeem_date
+                    if not fingerprint:
+                        raise osv.except_osv(_('Error!'), _("The customer's fingerprint was not detected. Kindly submit a new fingerprint."))
                 else:
                     partner = order.partner_id
                     if order.delegate_id:

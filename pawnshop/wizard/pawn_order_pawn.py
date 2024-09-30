@@ -113,6 +113,9 @@ class pawn_order_pawn(osv.osv_memory):
         # Check pawned amount
         if pawn.amount_pawned != sum([line.pawn_price_subtotal for line in pawn.order_line]):
             raise osv.except_osv(_('Error!'), _('Pawned amount must equal to sum of pawned subtotal'))
+        # Fingerprint not found, must check bypass fingerprint
+        if pawn.renewal_transfer_pawn and pawn.parent_id and not pawn.parent_id.fingerprint_redeem and not wizard.bypass_fingerprint:
+            raise osv.except_osv(_('Error!'), _('Please check bypass fingerprint.'))
         # Check pawn item image
         self._check_pawn_item_image_first(cr, uid, pawn, context=context)
         # Check Secret Key
