@@ -198,7 +198,7 @@ class pawn_order_renew(osv.osv_memory):
             'renewal_transfer_redeem': wizard.renewal_transfer,
             'delegation_of_authority': wizard.delegation_of_authority,
             'delegate_id': wizard.delegate_id.id,
-            'bypass_fingerprint_redeem': False,
+            'bypass_fingerprint_redeem': True if (wizard.renewal_transfer and not pawn.fingerprint_pawn) else False,
         }, context=context)
         # Trigger workflow
         # Redeem the current one
