@@ -318,7 +318,7 @@
 "(ตั๋วจำนำใหม่)"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="64" y="150" width="187" height="17"/>
+				<reportElement positionType="Float" x="50" y="150" width="220" height="17"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="12" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -337,7 +337,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{age}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="64" y="170" width="318" height="17"/>
+				<reportElement positionType="Float" x="50" y="170" width="318" height="17"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="8" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -484,7 +484,7 @@ $F{card_type}.equals("passport") ? "หมายเลขหนังสือ�
 $F{card_type}.equals("certificate") ? "หนังสือรับรอง" : ""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="434" y="150" width="187" height="17"/>
+				<reportElement positionType="Float" x="420" y="150" width="220" height="17"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="12" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -567,7 +567,7 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{age}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="431" y="170" width="318" height="17"/>
+				<reportElement positionType="Float" x="420" y="170" width="318" height="17"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="8" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -593,9 +593,9 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 					<font fontName="Monospaced" size="8" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$V{product_qty}.intValue() + (
-    $V{carat_sum} != null && $V{gram_sum} != null ? " (นน. " + (new BigDecimal(($V{gram_sum}==null?0.00:$V{gram_sum}).toString())).setScale(2).toString() + " กรัม)" :
+    $V{carat_sum} != null && $V{gram_sum} != null ? " (นน. " + (new BigDecimal(($V{gram_sum}==null?0.00:$V{gram_sum}).toString())).setScale(2, java.math.RoundingMode.HALF_UP).toString() + " กรัม)" :
     $V{carat_sum} != null && $V{gram_sum} == null ? "" :
-    $V{carat_sum} == null && $V{gram_sum} != null ? " (นน. " + (new BigDecimal(($V{gram_sum}==null?0.00:$V{gram_sum}).toString())).setScale(2).toString() + " กรัม)" : ""
+    $V{carat_sum} == null && $V{gram_sum} != null ? " (นน. " + (new BigDecimal(($V{gram_sum}==null?0.00:$V{gram_sum}).toString())).setScale(2, java.math.RoundingMode.HALF_UP).toString() + " กรัม)" : ""
 )]]></textFieldExpression>
 			</textField>
 			<componentElement>
