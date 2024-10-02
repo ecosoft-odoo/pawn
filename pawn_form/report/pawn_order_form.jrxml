@@ -611,7 +611,7 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 				</jr:barbecue>
 			</componentElement>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="780" y="4" width="40" height="376">
+				<reportElement positionType="Float" x="785" y="4" width="40" height="376">
 					<printWhenExpression><![CDATA[$F{item_description}.length() <= 200]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="Left" markup="styled">
@@ -622,12 +622,12 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="768" y="175" width="57" height="205"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="Left" markup="styled">
-					<font fontName="Monospaced" size="8" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="Monospaced" size="12" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{doc_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="780" y="4" width="40" height="376">
+				<reportElement positionType="Float" x="785" y="4" width="40" height="376">
 					<printWhenExpression><![CDATA[$F{item_description}.length() > 200]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="Left" markup="styled">
