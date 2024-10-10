@@ -20,9 +20,7 @@
 ##############################################################################
 from openerp.osv import fields, osv
 from openerp import netsvc
-import time
 import openerp.addons.decimal_precision as dp
-from openerp import pooler
 from openerp.tools.translate import _
 from openerp.tools import float_compare
 
@@ -30,6 +28,9 @@ from openerp.tools import float_compare
 class pawn_order_renew(osv.osv_memory):
 
     def _get_pawn_amount(self, cr, uid, context=None):
+        """ Get pawn amount from pawn order """
+        if context is None:
+            context = {}
         active_id = context.get('active_id', False)
         if active_id:
             pawn = self.pool.get('pawn.order').browse(cr, uid, active_id, context=context)
@@ -38,15 +39,19 @@ class pawn_order_renew(osv.osv_memory):
         return False
 
     def _get_interest_amount(self, cr, uid, context=None):
+        """ Calculate interest amount from pawn order """
+        if context is None:
+            context = {}
         active_id = context.get('active_id', False)
         pawn_obj = self.pool.get('pawn.order')
-        date_redeem = fields.date.context_today(self, cr, uid, context=context)
-        if active_id:
+        date_redeem = context.get('date_renew', fields.date.context_today(self, cr, uid, context=context))
+        if active_id and date_redeem:
             amount_interest = pawn_obj.calculate_interest_remain(cr, uid, active_id, date_redeem, context=context)
             return round(amount_interest, 2)
         return False
 
     def _prepare_renew_lines(self, cr, uid, line, context=None):
+        """ Prepare pawn line """
         return {
             'order_line_id': line.id,
             'name': line.name,
@@ -62,6 +67,7 @@ class pawn_order_renew(osv.osv_memory):
         }
 
     def _get_renew_line_ids(self, cr, uid, context=None):
+        """ Get pawn line from pawn order """
         active_id = context.get('active_id', False)
         if active_id:
             pawn = self.pool.get('pawn.order').browse(cr, uid, active_id, context=context)
@@ -69,20 +75,20 @@ class pawn_order_renew(osv.osv_memory):
         return False
 
     _name = "pawn.order.renew"
-    _description = "renew"
+    _description = "Renew"
     _columns = {
         'date_renew': fields.date('Date', readonly=True),
-        'pawn_amount': fields.float('Initial Amount', readonly=True),
-        'interest_amount': fields.float('Interest', readonly=True),
-        'discount': fields.float('Discount', readonly=False),
+        'pawn_amount': fields.float('Initial', readonly=True),
+        'interest_amount': fields.float('Computed Interest', readonly=True),
+        'discount': fields.float('Discount'),
         'addition': fields.float('Addition'),
-        'pay_interest_amount': fields.float('Pay Interest Amount', readonly=False, required=True),
+        'pay_interest_amount': fields.float('Pay Interest', required=True),
         'increase_pawn_amount': fields.float('Increase Pawn Amount', readonly=True),
-        'new_pawn_amount': fields.float('New Pawn Amount', readonly=True, required=True),
-        'renewal_transfer': fields.boolean('Renewal Transfer'),
-        'secret_key': fields.char('Secret Key'),
+        'new_pawn_amount': fields.float('New Pawn Amount', required=True, readonly=True),
         'delegation_of_authority': fields.boolean('Delegation of Authority'),
         'delegate_id': fields.many2one('res.partner', 'Delegate'),
+        'renewal_transfer': fields.boolean('Renewal Transfer'), 
+        'secret_key': fields.char('Secret Key'),
         'renew_line_ids': fields.one2many('pawn.order.renew.line', 'renew_id', 'Renew Line'),
     }
     _defaults = {
@@ -93,34 +99,42 @@ class pawn_order_renew(osv.osv_memory):
         'addition': 0.0,
         'pay_interest_amount': _get_interest_amount,
         'increase_pawn_amount': 0.0,
+        'new_pawn_amount': _get_pawn_amount,
         'renewal_transfer': False,
         'delegation_of_authority': False,
         'delegate_id': False,
         'renew_line_ids': _get_renew_line_ids,
     }
 
-    def onchange_amount(self, cr, uid, ids, field, pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount, context=None):
+    def onchange_date_renew(self, cr, uid, ids, date_renew, context=None):
         res = {'value': {}}
-        if field == 'discount':
-            pay_interest_amount = (interest_amount or 0.0) - (discount or 0.0)
-            res['value']['addition'] = 0.0
-            res['value']['pay_interest_amount'] = round(pay_interest_amount, 2)
-        if field == 'addition':
-            pay_interest_amount = (interest_amount or 0.0) + (addition or 0.0)
-            res['value']['discount'] = 0.0
-            res['value']['pay_interest_amount'] = round(pay_interest_amount, 2)
-        elif field == 'pay_interest_amount':
-            diff = (interest_amount or 0.0) - (pay_interest_amount or 0.0)
-            if diff >= 0:
-                res['value']['discount'] = round(diff, 2)
-            else:
-                res['value']['addition'] = - round(diff, 2)
+        if context is None:
+            context = {}
+        context['date_renew'] = date_renew
+        res['value']['interest_amount'] = self._get_interest_amount(cr, uid, context=context)
+        res['value']['pay_interest_amount'] = self._get_interest_amount(cr, uid, context=context)
+        res['value']['discount'] = 0.0
+        res['value']['addition'] = 0.0
+        return res
+
+    def onchange_amount(self, cr, uid, ids, field, pawn_amount, interest_amount, pay_interest_amount, increase_pawn_amount, new_pawn_amount, context=None):
+        res = {'value': {}}
+        if field == 'pay_interest_amount':
+            addition_interest = (pay_interest_amount or 0.0) - (interest_amount or 0.0)
+            res['value'].update({
+                'discount': round(abs(addition_interest), 2) if addition_interest < 0 else 0.0,
+                'addition': round(addition_interest, 2) if addition_interest > 0 else 0.0,
+            })
         elif field in ('increase_pawn_amount'):
             new_pawn_amount = (pawn_amount or 0.0) + (increase_pawn_amount or 0.0)
-            res['value']['new_pawn_amount'] = round(new_pawn_amount, 2)
+            res['value'].update({
+                'new_pawn_amount': round(new_pawn_amount, 2),
+            })
         elif field == 'new_pawn_amount':
             increase_pawn_amount = (new_pawn_amount or 0.0) - (pawn_amount or 0.0)
-            res['value']['increase_pawn_amount'] = round(increase_pawn_amount, 2)
+            res['value'].update({
+                'increase_pawn_amount': round(increase_pawn_amount, 2),
+            })
         return res
 
     def onchange_renew_ids(self, cr, uid, ids, renew_line_ids, context=None):
@@ -158,13 +172,13 @@ class pawn_order_renew(osv.osv_memory):
     def action_renew(self, cr, uid, ids, context=None):
         if context is None:
             context = {}
-        # cr = pooler.get_db(cr.dbname).cursor()
         pawn_id = context.get('active_id')
         pawn_obj = self.pool.get('pawn.order')
         pawn_line_obj = self.pool.get('pawn.order.line')
+        wizard = self.browse(cr, uid, ids[0], context=context)
         pawn = pawn_obj.browse(cr, uid, pawn_id, context=context)
         state_bf_redeem = pawn.state
-        wizard = self.browse(cr, uid, ids[0], context)
+        date = wizard.date_renew
         # Check new pawn amount must equal to sum of pawned subtotal
         if wizard.new_pawn_amount != sum([line.pawn_price_subtotal for line in wizard.renew_line_ids]):
             raise osv.except_osv(_('Error!'), _('New pawn amount must equal to sum of pawned subtotal'))
@@ -173,35 +187,28 @@ class pawn_order_renew(osv.osv_memory):
         # Renewal Transfer and Delegation of Authority not allowed to select both
         if wizard.delegation_of_authority and wizard.renewal_transfer:
             raise osv.except_osv(_('Error!'), _('Selecting both delegation of authority and renewal transfer is not permitted.'))
-        # Update data on old ticket
-        pawn_obj.write(cr, uid, [pawn_id], {
-            'renewal_transfer_redeem': wizard.renewal_transfer,
-            'delegation_of_authority': wizard.delegation_of_authority,
-            'delegate_id': wizard.delegate_id.id,
-        }, context=context)
-        # Trigger workflow
-        # Redeem the current one
-        wf_service = netsvc.LocalService("workflow")
-        wf_service.trg_validate(uid, 'pawn.order', pawn_id, 'order_redeem', cr)
-        # Interest
-        date = wizard.date_renew
         # Check pay interest amount
         total_pay_interest_amount = wizard.interest_amount - wizard.discount + wizard.addition
         if float_compare(total_pay_interest_amount, wizard.pay_interest_amount, precision_digits=2) != 0:
             raise osv.except_osv(_('Error!'),
                                  _('Interest Amount - Discount + Addition (%s) must be equal to Pay Interest Amount (%s) !!') % (
                 '{:,.2f}'.format(total_pay_interest_amount), '{:,.2f}'.format(wizard.pay_interest_amount)))
-        # Warning if today > date_due
-#         if pawn.date_due and pawn.date_due < time.strftime('%Y-%m-%d'):
-#             raise osv.except_osv(
-#                 _('Cannot renew!'),
-#                 _('Today is over grace period end date.\n'
-#                   'Please use normal sales process for expired items.'))
+        # Update data on old ticket
+        pawn_obj.write(cr, uid, [pawn_id], {
+            'renewal_transfer_redeem': wizard.renewal_transfer,
+            'delegation_of_authority': wizard.delegation_of_authority,
+            'delegate_id': wizard.delegate_id.id,
+            'bypass_fingerprint_redeem': True if (wizard.renewal_transfer and not pawn.fingerprint_pawn) else False,
+        }, context=context)
+        # Trigger workflow
+        # Redeem the current one
+        wf_service = netsvc.LocalService("workflow")
+        wf_service.trg_validate(uid, 'pawn.order', pawn_id, 'order_redeem', cr)
         # Normal case, redeem after pawned
         if state_bf_redeem != 'expire':
-            interest_amount = wizard.pay_interest_amount
             discount = wizard.discount
             addition = wizard.addition
+            interest_amount = wizard.interest_amount - discount + addition
             # Register Actual Interest
             pawn_obj.register_interest_paid(cr, uid, pawn_id, date, discount, addition, interest_amount, context=context)
             # Reverse Accrued Interest
@@ -231,14 +238,12 @@ class pawn_order_renew(osv.osv_memory):
             self.pool.get('account.voucher').write(cr, uid, [voucher_id], {'amount': redeem_amount})
             # Validate Receipt
             wf_service.trg_validate(uid, 'account.voucher', voucher_id, 'proforma_voucher', cr)
-
         # Update Redeem Date too.
         pawn_obj.write(cr, uid, [pawn_id], {'date_redeem': date})
         # Create the new Pawn by copying the existing one.
-        wizard = self.browse(cr, uid, ids[0], context)
         default_pawn = {
             'parent_id': pawn_id,
-            'date_order': wizard.date_renew,
+            'date_order': date,
             'order_line': False,
         }
         new_pawn_id = pawn_obj.copy(cr, uid, pawn_id, default_pawn, context=context)
@@ -258,6 +263,7 @@ class pawn_order_renew(osv.osv_memory):
             'amount_pawned': wizard.new_pawn_amount,
             'amount_net': amount_net,
             'renewal_transfer_pawn': wizard.renewal_transfer,
+            'bypass_fingerprint_pawn': False,
         }
         for i in ['first', 'second', 'third', 'fourth', 'fifth']:
             vals.update({
@@ -270,14 +276,9 @@ class pawn_order_renew(osv.osv_memory):
             pawn_obj.write(cr, uid, [new_pawn_id], {'partner_id': wizard.delegate_id.id}, context=context)
         # Write new pawn back to the original
         pawn_obj.write(cr, uid, [pawn_id], {'child_id': new_pawn_id}, context=context)
-        # Commit
-        # cr.commit()
-        # cr.close()
-        # Redirection
         return self.open_pawn_order(cr, uid, new_pawn_id, context=context)
 
     def open_pawn_order(self, cr, uid, pawn_id, context=None):
-        # cr = pooler.get_db(cr.dbname).cursor()
         ir_model_data = self.pool.get('ir.model.data')
         form_res = ir_model_data.get_object_reference(cr, uid, 'pawnshop', 'pawn_order_form')
         form_id = form_res and form_res[1] or False
@@ -299,7 +300,7 @@ class pawn_order_renew(osv.osv_memory):
         if 'renew_line_ids' in vals and vals['renew_line_ids']:
             pawn_amount = self._get_pawn_amount(cr, uid, context=context)
             new_pawn_amount = self.onchange_renew_ids(cr, uid, [], vals['renew_line_ids'], context=context)['value']['new_pawn_amount']
-            increase_pawn_amount = self.onchange_amount(cr, uid, [], 'new_pawn_amount', pawn_amount, False, False, False, False, False, new_pawn_amount, context=context)['value']['increase_pawn_amount']
+            increase_pawn_amount = self.onchange_amount(cr, uid, [], 'new_pawn_amount', pawn_amount, False, False, False, new_pawn_amount, context=context)['value']['increase_pawn_amount']
             if not ('increase_pawn_amount' in vals) and not ('new_pawn_amount' in vals):
                 vals.update({
                     'increase_pawn_amount': increase_pawn_amount,

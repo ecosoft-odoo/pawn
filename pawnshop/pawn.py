@@ -409,7 +409,9 @@ class pawn_order(osv.osv):
          'pawn_item_image_date_fifth': fields.datetime('Date of Pawn Item (Fifth)', readonly=True),
          'delegation_of_authority': fields.boolean('Delegation of Authority', readonly=True),
          'delegate_id': fields.many2one('res.partner', 'Delegate', readonly=True),
-         'run_background': fields.boolean('Run Background', readonly=True, help='Run background to expire tickets'),
+         'expire_move_by_cron': fields.boolean(string='Expire Move By Cron', help="If this field is check, account move of expire the ticket will create by ir.cron"),
+         'bypass_fingerprint_pawn': fields.boolean('Bypass Fingerprint Pawn', readonly=True),
+         'bypass_fingerprint_redeem': fields.boolean('Bypass Fingerprint Redeem', readonly=True),
     }
     _defaults = {
         'company_id': lambda self, cr, uid, c: self.pool.get('res.users').browse(cr, uid, uid).company_id.id,
@@ -427,7 +429,9 @@ class pawn_order(osv.osv):
         'renewal_transfer_redeem': False,
         'delegation_of_authority': False,
         'delegate_id': False,
-        'run_background': False,
+        'expire_move_by_cron': False,
+        'bypass_fingerprint_pawn': False,
+        'bypass_fingerprint_redeem': False,
     }
     _sql_constraints = [
         ('name_uniq', 'unique(name, pawn_shop_id)', 'Pawn Ticket Reference must be unique per Pawn Shop!'),
@@ -442,7 +446,17 @@ class pawn_order(osv.osv):
         pawn_item_obj.update_asset_status_by_order(cr, uid, order_ids, val, context=context)
         return True
 
+    def get_fingerprint(self, cr, uid, ids, context=None):
+        if context is None:
+            context = {}
+        if context.get('action_type'):
+            self._update_fingerprint(cr, uid, ids, context['action_type'], context=context)
+            self.write(cr, uid, ids, {'bypass_fingerprint_%s' % context['action_type']: False})
+        return True
+
     def _update_fingerprint(self, cr, uid, order_ids, action_type=None, context=None):
+        if context is None:
+            context = {}
         # Temporary disable update fingerprint
         disable_update_fingerprint = eval(self.pool.get('ir.config_parameter').get_param(cr, uid, 'pawnshop.disable_update_fingerprint', 'False'))
         if disable_update_fingerprint is True:
@@ -450,6 +464,9 @@ class pawn_order(osv.osv):
         # --
         for order in self.browse(cr, uid, order_ids, context=context):
             if action_type and not order['fingerprint_%s' % action_type]:
+                # Don't check and assign fingerprint
+                if not context.get('force_update_fp', False) and order['bypass_fingerprint_%s' % action_type]:
+                    continue
                 if order['renewal_transfer_%s' % action_type]:
                     if action_type == 'redeem':
                         fingerprint = order.fingerprint_pawn
@@ -457,6 +474,8 @@ class pawn_order(osv.osv):
                     if action_type == 'pawn':
                         fingerprint = order.parent_id.fingerprint_redeem
                         fingerprint_date = order.parent_id.fingerprint_redeem_date
+                    if not fingerprint:
+                        raise osv.except_osv(_('Error!'), _("The customer's fingerprint was not detected. Kindly submit a new fingerprint."))
                 else:
                     partner = order.partner_id
                     if order.delegate_id:
@@ -490,12 +509,12 @@ class pawn_order(osv.osv):
         return True
 
     def order_pawn(self, cr, uid, ids, context=None):
-        # Check order_line
         for order in self.browse(cr, uid, ids, context=context):
+            # Check order_line
             if not len(order.order_line):
                 raise osv.except_osv(_('Warning!'),
                                      _('Pawn Ticket do not have any line items. It can not be pawned.'))
-            if order.state == 'draft':  # case from draft to paen, create action move line, else nothing.
+            if order.state == 'draft':  # case from draft to pawn, create action move line, else nothing.
                 self.action_move_create(cr, uid, [order.id], context={'direction': 'pawn'})
             #elif order.state == 'redeem':  # case from redeem, do not update status.
             self.write(cr, uid, [order.id], {'state': 'pawn'}, context=context)
@@ -526,19 +545,18 @@ class pawn_order(osv.osv):
 
     def order_expire(self, cr, uid, ids, context=None):
         for pawn in self.browse(cr, uid, ids, context=context):
-            # Make sure that pawn state must not equal to expire
-            if pawn.state == 'expire':
-                continue
             # Check extended order
             self._check_order_extend(cr, uid, [pawn.id], context=context)
-            # Reverse Accrued Interest
-            self.action_move_reversed_accrued_interest_create(cr, uid, [pawn.id], context=context)
-            # Inactive any left over accrued interest
-            self.update_active_accrued_interest(cr, uid, [pawn.id], False, context=context)
-            # --
-            # Create Move (except extended case)
-            if not pawn.extended:
-                self.action_move_create(cr, uid, [pawn.id], context={'direction': 'expire'})
+            # If expire_move_by_cron checked, account move will create by ir.cron
+            if not pawn.expire_move_by_cron:
+                # Reverse Accrued Interest
+                self.action_move_reversed_accrued_interest_create(cr, uid, [pawn.id], context=context)
+                # Inactive any left over accrued interest
+                self.update_active_accrued_interest(cr, uid, [pawn.id], False, context=context)
+                # --
+                # Create Move (except extended case)
+                if not pawn.extended:
+                    self.action_move_create(cr, uid, [pawn.id], context={'direction': 'expire'})
             date_expired = fields.date.context_today(self, cr, uid, context=context)
             self.write(cr, uid, [pawn.id], {'state': 'expire', 'date_final_expired': date_expired}, context=context)
             self._update_order_pawn_asset(cr, uid, [pawn.id], {'state': 'expire'}, context=context)
@@ -710,8 +728,8 @@ class pawn_order(osv.osv):
             'categ_id': line.categ_id.id,
             'product_qty': line.product_qty,
             'product_uom': line.product_uom.id,
-            'price_estimated': round(line.price_subtotal / line.product_qty, prec),
-            'price_pawned': round(line.pawn_price_subtotal / line.product_qty, prec),
+            'price_estimated': line.price_unit,
+            'price_pawned': line.pawn_price_unit,
             'total_price_estimated': line.price_subtotal,
             'total_price_pawned': line.pawn_price_subtotal,
             'carat': line.carat,
@@ -859,7 +877,12 @@ class pawn_order(osv.osv):
             vals['internal_number'] = self.pool.get('ir.sequence').get(cr, uid, 'pawn.order') or '/'
         name, book, number = self._get_next_pawn_name(cr, uid, vals.get('period_id', False), vals.get('pawn_shop_id', False), context=context)
         vals.update({'name': name, 'book': book, 'number': number})
-        return super(pawn_order, self).create(cr, uid, vals, context=context)
+        pawn_id = super(pawn_order, self).create(cr, uid, vals, context=context)
+        if not vals.get('amount_pawned', False):
+            self.write(cr, uid, [pawn_id], {'amount_pawned': 0.0})
+        else:
+            self.write(cr, uid, [pawn_id], {'amount_pawned': vals.get('amount_pawned')})
+        return pawn_id
 
     def _calculate_interest_date(self, cr, uid, interval, start_date, end_date, context=None):
         dates = []
@@ -1040,7 +1063,9 @@ class pawn_order(osv.osv):
             'renewal_transfer_redeem': False,
             'delegation_of_authority': False,
             'delegate_id': False,
-            'run_background': False,
+            'expire_move_by_cron': False,
+            'bypass_fingerprint_pawn': False,
+            'bypass_fingerprint_redeem': False,
         })
         # Default pawn item image
         for i in ['first', 'second', 'third', 'fourth', 'fifth']:
@@ -1324,13 +1349,66 @@ class pawn_order(osv.osv):
                 'currency_id': diff_currency_p and pawn.currency_id.id or False,
                 'ref': pawn.name
             })
-            #convert eml into an osv-valid format
+            #convert pml into an osv-valid format
             lines = map(lambda x: (0, 0, self.line_get_convert(cr, uid, x, pawn.partner_id, date, context=context)), pml)
             journal_id = move_pool.browse(cr, uid, move_id, context).journal_id
             # post the journal entry if 'Skip 'Draft' State for Manual Entries' is checked
             if journal_id.entry_posted:
                 move_pool.button_validate(cr, uid, [move_id], context)
             move_pool.write(cr, uid, [move_id], {'line_id': lines}, context=context)
+        return True
+
+    def action_move_bank_create(self, cr, uid, pawn_id, move_id, bank_journal_id, transfer_amount, cash_journal_id, context=None):
+        """
+        Create bank transfer move line
+        Case 1: transfer from bank to cash
+            Dr: cash        100
+                Cr: bank        100
+        Case 2: transfer from cash to bank
+            Dr: bank        100
+                Cr. Cash        100
+        """
+        # Not create move bank if zero transfer amount
+        if not transfer_amount:
+            return True
+        # --
+        move_obj = self.pool.get('account.move')
+        journal_obj = self.pool.get('account.journal')
+        bank_journal = journal_obj.browse(cr, uid, bank_journal_id, context=context)
+        cash_journal = journal_obj.browse(cr, uid, cash_journal_id, context=context)
+        move = move_obj.browse(cr, uid, move_id, context=context)
+        for pawn in self.browse(cr, uid, [pawn_id], context=context):
+            # Cancel the journal entry
+            if move.state == 'posted':
+                move_obj.button_cancel(cr, uid, [move_id], context=context)
+            # Create bank move lines
+            t_amount = transfer_amount
+            c_amount = -transfer_amount
+            pml = [
+                {
+                    'pawn_order_id': pawn.id,
+                    'pawn_shop_id': pawn.pawn_shop_id.id,
+                    'profit_center': pawn.journal_id.profit_center,
+                    'name': 'Bank Transfer',
+                    'price': t_amount,
+                    'account_id': bank_journal.default_debit_account_id.id if t_amount > 0 else bank_journal.default_credit_account_id.id,
+                    'ref': pawn.name,
+                },
+                {
+                    'pawn_order_id': pawn.id,
+                    'pawn_shop_id': pawn.pawn_shop_id.id,
+                    'profit_center': pawn.journal_id.profit_center,
+                    'name': 'Bank Transfer',
+                    'price': c_amount,
+                    'account_id': cash_journal.default_debit_account_id.id if c_amount > 0 else cash_journal.default_credit_account_id.id,
+                    'ref': pawn.name,
+                },
+            ]
+            lines = map(lambda x: (0, 0, self.line_get_convert(cr, uid, x, pawn.partner_id, move.date, context=context)), pml)
+            move_obj.write(cr, uid, [move_id], {'line_id': lines}, context=context)
+            # Post the journal entry  if 'Skip 'Draft' State for Manual Entries' is checked
+            if move.journal_id.entry_posted:
+                move_obj.button_validate(cr, uid, [move_id], context=context)
         return True
 
     def action_move_accrued_interest_create(self, cr, uid, ids, amount_interest, account_date, context=None):
@@ -1559,7 +1637,7 @@ class pawn_order_line(osv.osv):
         'product_uom': fields.many2one('product.uom', 'Product Unit of Measure', domain="[('categ_ids', 'in', categ_id)]", required=True),
         'price_unit': fields.float('Estimated Price / Unit', required=True, digits_compute=dp.get_precision('Product Price')),
         'price_subtotal': fields.float('Estimated Subtotal', required=True, digits_compute=dp.get_precision('Account')),
-        'pawn_price_unit': fields.float('Pawned Price / Unit', required=True, digits_compute=dp.get_precision('Product Price')),
+        'pawn_price_unit': fields.float('Pawned Price / Unit', required=False, digits_compute=dp.get_precision('Product Price'), readonly=True),
         'pawn_price_subtotal': fields.float('Pawned Subtotal', required=True, digits_compute=dp.get_precision('Account')),
         'order_id': fields.many2one('pawn.order', 'Pawn Ticket Reference', select=True, required=True, ondelete='cascade'),
         'company_id': fields.related('order_id', 'company_id', type='many2one', relation='res.company', string='Company', store=True, readonly=True),
@@ -1605,6 +1683,11 @@ class pawn_order_line(osv.osv):
         order_line = self.browse(cr, uid, order_line_id, context=context)
         self._check_price_subtotal(order_line.pawn_price_subtotal)
         self._check_price_subtotal(order_line.price_subtotal)
+        # pawn_price_unit field is readonly, it not store in database if we call onchange function and effect with this field
+        # So, we need to update it
+        if vals.get('pawn_price_subtotal') and not vals.get('pawn_price_unit'):
+            pawn_price_unit = self.onchange_price(cr, uid, [order_line.id], 'pawn_price_subtotal', order_line.product_qty, order_line.price_unit, order_line.price_subtotal, order_line.pawn_price_unit, order_line.pawn_price_subtotal)['value']['pawn_price_unit']
+            self.write(cr, uid, [order_line.id], {'pawn_price_unit': pawn_price_unit}, context=context)
         return order_line_id
 
     def write(self, cr, uid, ids, vals, context=None):
@@ -1614,6 +1697,11 @@ class pawn_order_line(osv.osv):
         for order_line in order_lines:
             self._check_price_subtotal(order_line.pawn_price_subtotal)
             self._check_price_subtotal(order_line.price_subtotal)
+            # pawn_price_unit field is readonly, it not store in database if we call onchange function and effect with this field
+            # So, we need to update it
+            if vals.get('pawn_price_subtotal') and not vals.get('pawn_price_unit'):
+                pawn_price_unit = self.onchange_price(cr, uid, [order_line.id], 'pawn_price_subtotal', order_line.product_qty, order_line.price_unit, order_line.price_subtotal, order_line.pawn_price_unit, order_line.pawn_price_subtotal)['value']['pawn_price_unit']
+                self.write(cr, uid, [order_line.id], {'pawn_price_unit': pawn_price_unit}, context=context)
         return res
 
     def onchange_categ_id(self, cr, uid, ids, categ_id, context=None):
@@ -1635,14 +1723,14 @@ class pawn_order_line(osv.osv):
                 'price_subtotal': round(product_qty * price_unit, precision(cr, uid, 'Account')),
                 'pawn_price_subtotal': round(product_qty * pawn_price_unit, precision(cr, uid, 'Account')),
             })
-        elif field == 'price_unit':
-            res['value'].update({
-                'price_subtotal': round(product_qty * price_unit, precision(cr, uid, 'Account')),
-            })
-        elif field == 'pawn_price_unit':
-            res['value'].update({
-                'pawn_price_subtotal': round(product_qty * pawn_price_unit, precision(cr, uid, 'Account')),
-            })
+        # elif field == 'price_unit':
+        #     res['value'].update({
+        #         'price_subtotal': round(product_qty * price_unit, precision(cr, uid, 'Account')),
+        #     })
+        # elif field == 'pawn_price_unit':
+        #     res['value'].update({
+        #         'pawn_price_subtotal': round(product_qty * pawn_price_unit, precision(cr, uid, 'Account')),
+        #     })
         elif field == 'price_subtotal':
             product_qty = product_qty if product_qty else 1.0
             res['value'].update({

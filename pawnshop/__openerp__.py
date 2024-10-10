@@ -64,6 +64,7 @@
         'wizard/pawn_expire_final_view.xml',
         'wizard/update_partner_fingerprint_view.xml',
         'wizard/select_multi_sale_item_view.xml',
+        'wizard/validate_sale_receipt_view.xml',
         'res_partner_view.xml',
         'pawn_view.xml',
         'item_view.xml',
