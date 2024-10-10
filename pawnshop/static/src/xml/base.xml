@@ -3,7 +3,7 @@
     <t t-extend="Login">
         <t t-jquery="div[class=oe_login_dbpane]" t-operation="after">
             <div style="top: 41px;right: 62px;position: fixed;"><img src="/web/binary/company_logo" style="width: 220px;"/></div>
-            <div style="top: 150px;right: 62px;position: fixed;color: black;text-align: center;font-size: large;"><b>ฐานข้อมูล PAWNSHOP_TEST <br/>ไม่มีการแสดงผลรูปภาพของจำนำ</b></div>
+            <div style="top: 150px;right: 62px;position: fixed;color: red;text-align: center;font-size: large;"><b>ฐานข้อมูล PAWNSHOP_TEST <br/>ไม่มีการแสดงผลรูปภาพของจำนำ</b></div>
         </t>
     </t>
 </templates>
