@@ -1637,7 +1637,7 @@ class pawn_order_line(osv.osv):
         'product_uom': fields.many2one('product.uom', 'Product Unit of Measure', domain="[('categ_ids', 'in', categ_id)]", required=True),
         'price_unit': fields.float('Estimated Price / Unit', required=True, digits_compute=dp.get_precision('Product Price')),
         'price_subtotal': fields.float('Estimated Subtotal', required=True, digits_compute=dp.get_precision('Account')),
-        'pawn_price_unit': fields.float('Pawned Price / Unit', required=True, digits_compute=dp.get_precision('Product Price')),
+        'pawn_price_unit': fields.float('Pawned Price / Unit', required=False, digits_compute=dp.get_precision('Product Price'), readonly=True),
         'pawn_price_subtotal': fields.float('Pawned Subtotal', required=True, digits_compute=dp.get_precision('Account')),
         'order_id': fields.many2one('pawn.order', 'Pawn Ticket Reference', select=True, required=True, ondelete='cascade'),
         'company_id': fields.related('order_id', 'company_id', type='many2one', relation='res.company', string='Company', store=True, readonly=True),
@@ -1683,6 +1683,11 @@ class pawn_order_line(osv.osv):
         order_line = self.browse(cr, uid, order_line_id, context=context)
         self._check_price_subtotal(order_line.pawn_price_subtotal)
         self._check_price_subtotal(order_line.price_subtotal)
+        # pawn_price_unit field is readonly, it not store in database if we call onchange function and effect with this field
+        # So, we need to update it
+        if vals.get('pawn_price_subtotal') and not vals.get('pawn_price_unit'):
+            pawn_price_unit = self.onchange_price(cr, uid, [order_line.id], 'pawn_price_subtotal', order_line.product_qty, order_line.price_unit, order_line.price_subtotal, order_line.pawn_price_unit, order_line.pawn_price_subtotal)['value']['pawn_price_unit']
+            self.write(cr, uid, [order_line.id], {'pawn_price_unit': pawn_price_unit}, context=context)
         return order_line_id
 
     def write(self, cr, uid, ids, vals, context=None):
@@ -1692,6 +1697,11 @@ class pawn_order_line(osv.osv):
         for order_line in order_lines:
             self._check_price_subtotal(order_line.pawn_price_subtotal)
             self._check_price_subtotal(order_line.price_subtotal)
+            # pawn_price_unit field is readonly, it not store in database if we call onchange function and effect with this field
+            # So, we need to update it
+            if vals.get('pawn_price_subtotal') and not vals.get('pawn_price_unit'):
+                pawn_price_unit = self.onchange_price(cr, uid, [order_line.id], 'pawn_price_subtotal', order_line.product_qty, order_line.price_unit, order_line.price_subtotal, order_line.pawn_price_unit, order_line.pawn_price_subtotal)['value']['pawn_price_unit']
+                self.write(cr, uid, [order_line.id], {'pawn_price_unit': pawn_price_unit}, context=context)
         return res
 
     def onchange_categ_id(self, cr, uid, ids, categ_id, context=None):
@@ -1713,14 +1723,14 @@ class pawn_order_line(osv.osv):
                 'price_subtotal': round(product_qty * price_unit, precision(cr, uid, 'Account')),
                 'pawn_price_subtotal': round(product_qty * pawn_price_unit, precision(cr, uid, 'Account')),
             })
-        elif field == 'price_unit':
-            res['value'].update({
-                'price_subtotal': round(product_qty * price_unit, precision(cr, uid, 'Account')),
-            })
-        elif field == 'pawn_price_unit':
-            res['value'].update({
-                'pawn_price_subtotal': round(product_qty * pawn_price_unit, precision(cr, uid, 'Account')),
-            })
+        # elif field == 'price_unit':
+        #     res['value'].update({
+        #         'price_subtotal': round(product_qty * price_unit, precision(cr, uid, 'Account')),
+        #     })
+        # elif field == 'pawn_price_unit':
+        #     res['value'].update({
+        #         'pawn_price_subtotal': round(product_qty * pawn_price_unit, precision(cr, uid, 'Account')),
+        #     })
         elif field == 'price_subtotal':
             product_qty = product_qty if product_qty else 1.0
             res['value'].update({
