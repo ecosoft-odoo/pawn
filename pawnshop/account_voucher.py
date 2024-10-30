@@ -55,8 +55,20 @@ class account_voucher(osv.osv):
                         item_ids.append(line.product_id.id)
                 if voucher.is_refund:
                     voucher_state += '_refund'
-                to_loc_status = loc_status_obj.search(cr, uid, [('code', '=', LOCATION_STATUS_MAP[voucher_state])])[0]
-                self.pool.get('product.product').write(cr, uid, item_ids, {'location_status': to_loc_status})
+                location_status = LOCATION_STATUS_MAP[voucher_state]
+                to_loc_status = loc_status_obj.search(cr, uid, [('code', '=', location_status)])[0]
+                self.pool.get('product.product').write(cr, uid, item_ids, {
+                    'location_status': to_loc_status,
+                    # Item status must same location status
+                    'state': 'sold' if location_status == 'item_sold' else 'for_sale' if location_status == 'item_for_sale' else False,
+                })
+                # Update asset status = 'sold' If all item status = 'sold'
+                items = self.pool.get('product.product').browse(cr, uid, item_ids, context=context)
+                for item in items:
+                    asset_state = 'for_sale'
+                    if len(item.parent_id.item_ids) == len(filter(lambda k: k.state == 'sold', item.parent_id.item_ids)):
+                        asset_state = 'sold'
+                    self.pool.get('product.product').write(cr, uid, [item.parent_id.id], {'state': asset_state}, context=context)
             return True
 
     def _estimated_total(self, cr, uid, voucher_id):
