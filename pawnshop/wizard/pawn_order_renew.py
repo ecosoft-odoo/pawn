@@ -355,7 +355,7 @@ class pawn_order_renew_line(osv.osv_memory):
         'gram': fields.float('Gram', readonly=True),
         'price_unit': fields.float('Estimated Price / Unit', required=True, digits_compute=dp.get_precision('Product Price')),
         'price_subtotal': fields.float('Estimated Subtotal', required=True, digits_compute=dp.get_precision('Account')),
-        'pawn_price_unit': fields.float('Pawned Price / Unit', required=True, digits_compute=dp.get_precision('Product Price')),
+        'pawn_price_unit': fields.float('Pawned Price / Unit', required=False, digits_compute=dp.get_precision('Product Price'), readonly=True),
         'pawn_price_subtotal': fields.float('Pawned Subtotal', required=True, digits_compute=dp.get_precision('Account')),
     }
 
@@ -363,15 +363,15 @@ class pawn_order_renew_line(osv.osv_memory):
         res = {'value': {}}
         precision = self.pool.get('decimal.precision').precision_get
         product_qty = float(product_qty)
-        if field == 'price_unit':
-            res['value'].update({
-                'price_subtotal': round(product_qty * price_unit, precision(cr, uid, 'Account')),
-            })
-        elif field == 'pawn_price_unit':
-            res['value'].update({
-                'pawn_price_subtotal': round(product_qty * pawn_price_unit, precision(cr, uid, 'Account')),
-            })
-        elif field == 'price_subtotal':
+        # if field == 'price_unit':
+        #     res['value'].update({
+        #         'price_subtotal': round(product_qty * price_unit, precision(cr, uid, 'Account')),
+        #     })
+        # elif field == 'pawn_price_unit':
+        #     res['value'].update({
+        #         'pawn_price_subtotal': round(product_qty * pawn_price_unit, precision(cr, uid, 'Account')),
+        #     })
+        if field == 'price_subtotal':
             res['value'].update({
                 'price_unit': round(price_subtotal / product_qty, precision(cr, uid, 'Product Price'))
             })
@@ -381,6 +381,27 @@ class pawn_order_renew_line(osv.osv_memory):
             })
             # Not used estimated price now so we define estimated price = pawned price
             res['value']['price_subtotal'] = pawn_price_subtotal
+        return res
+
+    def create(self, cr, uid, vals, context=None):
+        renew_line_id = super(pawn_order_renew_line, self).create(cr, uid, vals, context=context)
+        # pawn_price_unit field is readonly, it not store in database if we call onchange function and effect with this field
+        # So, we need to update it
+        if vals.get('pawn_price_subtotal'):
+            renew_line = self.browse(cr, uid, renew_line_id, context=context)
+            pawn_price_unit = self.onchange_price(cr, uid, [renew_line.id], 'pawn_price_subtotal', renew_line.product_qty, renew_line.price_unit, renew_line.price_subtotal, renew_line.pawn_price_unit, renew_line.pawn_price_subtotal)['value']['pawn_price_unit']
+            self.write(cr, uid, [renew_line.id], {'pawn_price_unit': pawn_price_unit}, context=context)
+        return renew_line_id
+
+    def write(self, cr, uid, ids, vals, context=None):
+        res = super(pawn_order_renew_line, self).write(cr, uid, ids, vals, context=context)
+        # pawn_price_unit field is readonly, it not store in database if we call onchange function and effect with this field
+        # So, we need to update it
+        if vals.get('pawn_price_subtotal'):
+            renew_lines = self.browse(cr, uid, ids, context=context)
+            for renew_line in renew_lines:
+                pawn_price_unit = self.onchange_price(cr, uid, [renew_line.id], 'pawn_price_subtotal', renew_line.product_qty, renew_line.price_unit, renew_line.price_subtotal, renew_line.pawn_price_unit, renew_line.pawn_price_subtotal)['value']['pawn_price_unit']
+                self.write(cr, uid, [renew_line.id], {'pawn_price_unit': pawn_price_unit}, context=context)
         return res
 
 
