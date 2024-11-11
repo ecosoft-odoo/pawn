@@ -190,7 +190,7 @@ class pawn_order(osv.osv):
         if context.get('period_id', False):
             return context.get('period_id')
         ctx = dict(context, account_period_prefer_normal=True)
-        periods = self.pool.get('account.period').find(cr, uid, context=ctx)
+        periods = self.pool.get('account.period').find(cr, uid, dt=ctx.get('force_date', fields.date.context_today(self, cr, uid, context=ctx)), context=ctx)
         return periods and periods[0] or False
 
     def _check_product(self, cr, uid, ids, context=None):
@@ -250,6 +250,23 @@ class pawn_order(osv.osv):
             else:
                 res[pawn.id] = ''
         return res
+
+    def _check_date_order(self, cr, uid, ids, context=None):
+        today = fields.date.context_today(self, cr, uid, context=context)
+        pawn_orders = self.browse(cr, uid, ids, context=context)
+        for pw in pawn_orders:
+            if today < pw.date_order:
+                return False
+        return True
+
+    def _check_date_redeem(self, cr, uid, ids, context=None):
+        today = fields.date.context_today(self, cr, uid, context=context)
+        pawn_orders = self.browse(cr, uid, ids, context=context)
+        for pw in pawn_orders:
+            if today < pw.date_redeem:
+                return False
+        return True
+
 #
 #     def _order_day(self, cr, uid, ids, field_name, arg, context=None):
 #         res = dict.fromkeys(ids, False)
@@ -267,7 +284,7 @@ class pawn_order(osv.osv):
         'book': fields.integer('Book', select=True, readonly=True),
         'number': fields.integer('Number', select=True, readonly=True),
         'name': fields.char('Internal Number', size=64, required=True, select=True, help="Cross shop reference number"),
-        'date_order': fields.date('Pawn Date', required=True, readonly=True, select=True, help="Date on which this document has been pawned."),
+        'date_order': fields.date('Pawn Date', required=True, readonly=True, states={'draft': [('readonly', False)]}, select=True, help="Date on which this document has been pawned."),
         'day_order': fields.related('date_order', type="char", string="Pawn Day", required=False, readonly=True, store=True),
         'buddha_year': fields.char('Buddha Year', size=4, readonly=True),
         'buddha_year_temp': fields.char('Buddha Year Temp', size=4),
@@ -436,6 +453,10 @@ class pawn_order(osv.osv):
     _sql_constraints = [
         ('name_uniq', 'unique(name, pawn_shop_id)', 'Pawn Ticket Reference must be unique per Pawn Shop!'),
     ]
+    _constraints = [
+        (_check_date_order, 'Error! The pawn date cannot be set to a future date.', ['date_order']),
+        (_check_date_redeem, 'Error! The redeem date cannot be set to a future date.', ['date_redeem']),
+    ]
     _order = 'id desc'
 
     def button_dummy(self, cr, uid, ids, context=None):
@@ -546,17 +567,15 @@ class pawn_order(osv.osv):
     def order_expire(self, cr, uid, ids, context=None):
         for pawn in self.browse(cr, uid, ids, context=context):
             # Check extended order
-            self._check_order_extend(cr, uid, [pawn.id], context=context)
+            # self._check_order_extend(cr, uid, [pawn.id], context=context)
             # If expire_move_by_cron checked, account move will create by ir.cron
             if not pawn.expire_move_by_cron:
                 # Reverse Accrued Interest
                 self.action_move_reversed_accrued_interest_create(cr, uid, [pawn.id], context=context)
                 # Inactive any left over accrued interest
                 self.update_active_accrued_interest(cr, uid, [pawn.id], False, context=context)
-                # --
-                # Create Move (except extended case)
-                if not pawn.extended:
-                    self.action_move_create(cr, uid, [pawn.id], context={'direction': 'expire'})
+                # Create Move
+                self.action_move_create(cr, uid, [pawn.id], context={'direction': 'expire'})
             date_expired = fields.date.context_today(self, cr, uid, context=context)
             self.write(cr, uid, [pawn.id], {'state': 'expire', 'date_final_expired': date_expired}, context=context)
             self._update_order_pawn_asset(cr, uid, [pawn.id], {'state': 'expire'}, context=context)
@@ -589,7 +608,7 @@ class pawn_order(osv.osv):
         today = fields.date.context_today(self, cr, uid, context=context)
         # Verify Status to Cancel, 1) Must be in Draft or Pawn status 2) No Interest has been Paid 3) Must be today order
         for order in self.browse(cr, uid, ids, context=context):
-            if today != order.date_order:
+            if today != order.date_order and not context.get('no_check_date_order', False):
                 raise osv.except_osv(_('Invalid Action!'), _("Only today's pawn ticket can be cancelled"))
             if order.state not in ('draft', 'pawn'):
                 raise osv.except_osv(_('Invalid Action!'), _('Only pawn ticket in "Draft" or "Pawned" state can be cancelled'))
@@ -648,40 +667,31 @@ class pawn_order(osv.osv):
         move_obj = self.pool.get('account.move')
         # Verify Status to Redeem, 1) Must be in Redeemed status 2) No child 3) Must be today order 4) Must not be Extended
         for order in self.browse(cr, uid, ids, context=context):
-            if today != order.date_redeem:
+            if today != order.date_redeem and not context.get('no_check_date_redeem', False):
                 raise osv.except_osv(_('Invalid Action!'), _("Only pawn ticket redeemed today can be can be undo"))
             if order.state not in ('redeem'):
                 raise osv.except_osv(_('Invalid Action!'), _('Only pawn ticket in "Redeemed" state can be undo'))
             if order.child_id:
                 raise osv.except_osv(_('Invalid Action!'), _('Only pawn ticket without child can be undo'))
-            # Delete all redeem_move_id, if any.
+            # Delete all redeem_move_id
             if order.redeem_move_id:
                 move_obj.button_cancel(cr, uid, [order.redeem_move_id.id], context=context)
                 move_obj.unlink(cr, uid, order.redeem_move_id.id, context=context)
-            # Delete todays' interest
-            interest_ids = actual_interest_obj.search(cr, uid, [('pawn_id', '=', order.id), ('interest_date', '=', today)])
-            for interest in actual_interest_obj.browse(cr, uid, interest_ids, context=context):
+            # Delete all actual interest
+            for interest in order.actual_interest_ids:
                 if interest.move_id:
                     move_obj.button_cancel(cr, uid, [interest.move_id.id], context=context)
                     move_obj.unlink(cr, uid, [interest.move_id.id], context=context)
                 actual_interest_obj.unlink(cr, uid, [interest.id], context=context)
             # Activate Accrued Interest that has not been posted yet.
             self.update_active_accrued_interest(cr, uid, [order.id], True, context=context)
-            # Delete accrued interest that was previously reversed today
+            # Delete all reverse accrued interest
             for accrued_interest in order.accrued_interest_ids:
-                if accrued_interest.write_date[:10] == today:
-                    if accrued_interest.reverse_move_id:
-                        move_obj.button_cancel(cr, uid, [accrued_interest.reverse_move_id.id], context=context)
-                        move_obj.unlink(cr, uid, [accrued_interest.reverse_move_id.id], context=context)
+                if accrued_interest.reverse_move_id:
+                    move_obj.button_cancel(cr, uid, [accrued_interest.reverse_move_id.id], context=context)
+                    move_obj.unlink(cr, uid, [accrued_interest.reverse_move_id.id], context=context)
             # --
             wf_service = netsvc.LocalService("workflow")  # Trigger back to Pawn stated
-            # if order.extended: # case from expired
-            #     self._update_order_pawn_asset(cr, uid, [order.id], {'state': 'expire'}, context=context)
-            #     wf_service.trg_validate(uid, 'pawn.order', order.id, 'order_redeem_expire', cr)
-            # else: # normal case
-            #     self._update_order_pawn_asset(cr, uid, [order.id], {'state': 'pawn'}, context=context)
-            #     wf_service.trg_validate(uid, 'pawn.order', order.id, 'order_redeem_pawn', cr)
-            # Pod: all case change state to pawn
             self._update_order_pawn_asset(cr, uid, [order.id], {'state': 'pawn'}, context=context)
             wf_service.trg_validate(uid, 'pawn.order', order.id, 'order_redeem_pawn', cr)
             self.write(cr, uid, [order.id], {'date_redeem': False}, context=context)
@@ -1314,8 +1324,12 @@ class pawn_order(osv.osv):
         direction = context.get('direction', False) or 'pawn'
         move_pool = self.pool.get('account.move')
         for pawn in self.browse(cr, uid, ids, context=context):
-            # Pawn, use Date Order, Redeem and Expire use today
-            date = direction == 'pawn' and pawn.date_order or fields.date.context_today(self, cr, uid, context=context)
+            # Pawn use date order, Redeem use date redeem, Else today
+            date = fields.date.context_today(self, cr, uid, context=context)
+            if direction == 'pawn':
+                date = pawn.date_order
+            elif direction == 'redeem':
+                date = pawn.date_redeem
             company_currency = self._get_company_currency(cr, uid, pawn.id, context)
             diff_currency_p = pawn.currency_id.id != company_currency
             # we select the context to use accordingly if it's a multicurrency case or not
@@ -1468,7 +1482,7 @@ class pawn_order(osv.osv):
             for accrued in accrued_obj.browse(cr, uid, accrued_ids, context=context):
                 # Copy new move and assien pawn.name
                 default = {'period_id': self._get_period(cr, uid, context=context),
-                           'date': fields.date.context_today(self, cr, uid, context=context)}
+                           'date': context.get('force_date', fields.date.context_today(self, cr, uid, context=context))}
                 reverse_move_id = move_obj.copy(cr, uid, accrued.move_id.id, default, context=context)
                 move_obj.write(cr, uid, [reverse_move_id], {'ref': pawn.name})
                 reverse_move_ids.append(int(reverse_move_id))
@@ -1601,6 +1615,15 @@ class pawn_order(osv.osv):
         if not context.get('image_number', False):
             return
         return self.write(cr, uid, ids, {'pawn_item_image_%s' % context['image_number']: False}, context=context)
+
+    def action_unlink_new_pawn_ticket(self, cr, uid, ids, context=None):
+        for pawn in self.browse(cr, uid, ids, context=context):
+            child = pawn.child_id
+            if child.state != 'cancel':
+                raise osv.except_osv(_('Error!'), _('The new pawn ticket must be canceled.'))
+            self.write(cr, uid, [child.id], {'parent_id': False}, context=context)
+            self.write(cr, uid, [pawn.id], {'child_id': False}, context=context)
+        return True
 
 pawn_order()
 

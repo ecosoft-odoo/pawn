@@ -40,7 +40,7 @@ class pawn_expire_final(osv.osv_memory):
                 raise osv.except_osv(_('Warning!'),
                                      _("""Some selection are not eligible to finalize expired ticket"""))
             # Check extended order
-            PawnOrder._check_order_extend(cr, uid, pawn_ids, context=context)
+            # PawnOrder._check_order_extend(cr, uid, pawn_ids, context=context)
             # expire it.
             # Fix click button expire the ticket slow, account move need to create by ir.cron
             PawnOrder.write(cr, uid, pawn_ids, {'expire_move_by_cron': True}, context=context)

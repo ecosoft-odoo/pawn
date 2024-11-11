@@ -77,7 +77,7 @@ class pawn_order_renew(osv.osv_memory):
     _name = "pawn.order.renew"
     _description = "Renew"
     _columns = {
-        'date_renew': fields.date('Date', readonly=True),
+        'date_renew': fields.date('Date'),
         'pawn_amount': fields.float('Initial', readonly=True),
         'interest_amount': fields.float('Computed Interest', readonly=True),
         'discount': fields.float('Discount'),
@@ -169,6 +169,22 @@ class pawn_order_renew(osv.osv_memory):
                 raise osv.except_osv(_('Error!'), _('The secret key is invalid.'))
         return True
 
+    def remove_move_accrued_interest(self, cr, uid, pawn_id, redeem_date, context=None):
+        accrued_obj = self.pool.get('pawn.accrued.interest')
+        move_obj = self.pool.get('account.move')
+        accrued_interest_ids = accrued_obj.search(cr, uid, [('pawn_id', '=', pawn_id), ('interest_date', '>', redeem_date)], context=context)
+        accrued_interests = accrued_obj.browse(cr, uid, accrued_interest_ids, context=context)
+        for accrued_interest in accrued_interests:
+            if accrued_interest.reverse_move_id:
+                move_obj.button_cancel(cr, uid, [accrued_interest.reverse_move_id.id], context=context)
+                move_obj.unlink(cr, uid, [accrued_interest.reverse_move_id.id], context=context)
+            if accrued_interest.move_id:
+                move_obj.button_cancel(cr, uid, [accrued_interest.move_id.id], context=context)
+                move_obj.unlink(cr, uid, [accrued_interest.move_id.id], context=context)
+            # Inactive accrued interest line
+            accrued_obj.write(cr, uid, [accrued_interest.id], {'active': False}, context=context)
+        return True
+
     def action_renew(self, cr, uid, ids, context=None):
         if context is None:
             context = {}
@@ -199,6 +215,7 @@ class pawn_order_renew(osv.osv_memory):
             'delegation_of_authority': wizard.delegation_of_authority,
             'delegate_id': wizard.delegate_id.id,
             'bypass_fingerprint_redeem': True if (wizard.renewal_transfer and not pawn.fingerprint_pawn) else False,
+            'date_redeem': date,  # Update Redeem Date
         }, context=context)
         # Trigger workflow
         # Redeem the current one
@@ -212,9 +229,11 @@ class pawn_order_renew(osv.osv_memory):
             # Register Actual Interest
             pawn_obj.register_interest_paid(cr, uid, pawn_id, date, discount, addition, interest_amount, context=context)
             # Reverse Accrued Interest
-            pawn_obj.action_move_reversed_accrued_interest_create(cr, uid, [pawn_id], context=context)
+            pawn_obj.action_move_reversed_accrued_interest_create(cr, uid, [pawn_id], context=dict(context, **{'force_date': date}))
             # Inactive Accrued Interest that has not been posted yet.
             pawn_obj.update_active_accrued_interest(cr, uid, [pawn_id], False, context=context)
+            # Remove Accrued Interest Move (Case Redeem Date < Today)
+            self.remove_move_accrued_interest(cr, uid, pawn_id, date, context=context)
         else:
             # Special Case redeem after expired.
             # No register interest, just full amount as sales receipt.
@@ -238,8 +257,6 @@ class pawn_order_renew(osv.osv_memory):
             self.pool.get('account.voucher').write(cr, uid, [voucher_id], {'amount': redeem_amount})
             # Validate Receipt
             wf_service.trg_validate(uid, 'account.voucher', voucher_id, 'proforma_voucher', cr)
-        # Update Redeem Date too.
-        pawn_obj.write(cr, uid, [pawn_id], {'date_redeem': date})
         # Create the new Pawn by copying the existing one.
         default_pawn = {
             'parent_id': pawn_id,
@@ -306,6 +323,9 @@ class pawn_order_renew(osv.osv_memory):
                     'increase_pawn_amount': increase_pawn_amount,
                     'new_pawn_amount': new_pawn_amount,
                 })
+        # Update interest_amount (onchange method not store value for readonly field)
+        if vals.get('date_renew') and not vals.get('interest_amount'):
+            vals['interest_amount'] = self.onchange_date_renew(cr, uid, [], vals['date_renew'], context=context)['value']['interest_amount']
         return vals
 
     def create(self, cr, uid, vals, context=None):

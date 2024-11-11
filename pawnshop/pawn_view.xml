@@ -60,6 +60,10 @@
                         <field name="name" class="oe_inline" readonly="1"/>
 	                    <div class="oe_right oe_button_box">
 							<field name="extended" invisible="1"/>
+                            <div style="color:red">
+                                <label string="New Pawn Ticket" attrs="{'invisible': [('parent_id', '!=', False)]}"/>
+                                <label string="Interest Payment" attrs="{'invisible': [('parent_id', '=', False)]}"/>
+                            </div>
  							<div style="color:red">
  								<label string="Extended" attrs="{'invisible': [('extended', '!=', True)]}"/>
 							</div>
@@ -95,7 +99,7 @@
                         	<field name="period_id" invisible="1"/>
                         	<label for="date_order"/>
 							<div class="address_format">
-                            	<field name="date_order" style="width: 40%%" on_change="onchange_date(date_order, currency_id, company_id)"/>
+                            	<field name="date_order" readonly="1" style="width: 40%%" on_change="onchange_date(date_order, currency_id, company_id)"/>
                         		<label for="buddha_year" style="width: 40%%" />
                         		<field name="buddha_year" style="width: 20%%" />
                                 <field name="buddha_year_temp" invisible="1"/>
@@ -318,6 +322,33 @@
                     <field name="message_ids" widget="mail_thread"/>
                 </div>
                 </form>
+            </field>
+        </record>
+
+        <!-- View for Administration / Settings -->
+        <record id="pawn_order_form_for_admin" model="ir.ui.view">
+            <field name="name">pawn.order.form.for.admin</field>
+            <field name="model">pawn.order</field>
+            <field name="inherit_id" ref="pawnshop.pawn_order_form"/>
+            <field name="groups_id" eval="[(6, 0, [ref('base.group_system')])]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date_order']" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                </xpath>
+                <xpath expr="//button[@name='%(action_pawn_undo_cancel)d'][1]" position="attributes">
+                    <attribute name="string">Cancel Pawned Order For Admin</attribute>
+                    <attribute name="context">{'action_type': 'order_cancel', 'no_check_date_order': 1}</attribute>
+                </xpath>
+                <xpath expr="//button[@name='%(action_pawn_undo_cancel)d'][2]" position="attributes">
+                    <attribute name="string">Undo Pay Interest For Admin</attribute>
+                </xpath>
+                <xpath expr="//button[@name='%(action_pawn_undo_cancel)d'][3]" position="attributes">
+                    <attribute name="string">Undo Redeem For Admin</attribute>
+                    <attribute name="context">{'action_type': 'action_undo_redeem', 'no_check_date_redeem': 1}</attribute>
+                </xpath>
+                <xpath expr="//button[@name='%(action_pawn_undo_cancel)d'][3]" position="after">
+                    <button name="action_unlink_new_pawn_ticket" string="Unlink New Pawn Ticket" type="object" attrs="{'invisible': [('child_id', '=', False)]}" confirm="Are you sure to unlink new pawn ticket ?"/>
+                </xpath>
             </field>
         </record>
 

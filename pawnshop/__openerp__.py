@@ -79,6 +79,7 @@
         'osv_scheduled_actions.xml',
         'res_users_view.xml',
         'data/pawn.rule.csv',
+        'data/pawn.interest.rate.csv',
         'data/product.uom.csv',
         'data/product.category.csv',
         'report/custom_reports.xml',

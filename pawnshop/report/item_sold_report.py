@@ -28,6 +28,15 @@ class item_sold_report(osv.osv):
     _order = 'voucher_id desc,id asc'
     _auto = False
 
+    def _get_extended(self, cr, uid, ids, name, args, context=None):
+        res = {}
+        for report in self.browse(cr, uid, ids, context=context):
+            if report.extended:
+                res[report.id] = 'x'
+            else:
+                res[report.id] = ''
+        return res
+
     _columns = {
         'product_id': fields.many2one('product.product', 'Item'),
         'partner_id': fields.many2one('res.partner', 'Customer'),
@@ -41,6 +50,8 @@ class item_sold_report(osv.osv):
         'total_price_sold': fields.float('Total Sold Price', digits_compute=dp.get_precision('Account')),
         'total_profit': fields.float('Total Profit', digits_compute=dp.get_precision('Account')),
         'date_sold': fields.date('Date Sold'),
+        'extended': fields.boolean('Extended'),
+        'extended_x': fields.function(_get_extended, method=True, string='Extended', type='char'),
     }
 
     def init(self, cr):
@@ -51,7 +62,7 @@ class item_sold_report(osv.osv):
                     avl.id as id, avl.product_id, av.partner_id, avl.name as description,
                     pp.date_order, av.id as voucher_id, avl.quantity, avl.carat, avl.gram,
                     coalesce(avl.total_price_pawned, 0) as total_price_pawned, coalesce(avl.amount, 0) as total_price_sold, coalesce(avl.amount, 0) - coalesce(avl.total_price_pawned, 0) as total_profit,
-                    av.date as date_sold
+                    av.date as date_sold, pp.extended
                 from account_voucher_line avl
                 left join account_voucher av on avl.voucher_id = av.id
                 left join account_journal aj on av.journal_id = aj.id

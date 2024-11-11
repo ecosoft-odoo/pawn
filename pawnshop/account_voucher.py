@@ -178,11 +178,15 @@ class account_voucher(osv.osv):
         return {'value': {'pawn_shop_id': shop_id, 'journal_id': journal_id}}
 
     def _get_next_name(self, cr, uid, date, pawn_shop_id, is_refund, context=None):
-        year = date and date[:4] or time.strftime('%Y-%m-%d')[:4]
-        # Get year from date
+        year = time.strftime('%Y-%m-%d')[:4]
+        month = time.strftime('%Y-%m-%d')[5:7]
+        if date:
+            year = date[:4]
+            month = date[5:7]
+        # Search latest doc number of this year and month
         cr.execute("""select coalesce(max(docnumber), 0) from account_voucher
-            where to_char(date, 'YYYY') = %s and pawn_shop_id = %s and is_refund = %s""",
-            (year, pawn_shop_id, is_refund))
+            where to_char(date, 'YYYY') = %s and to_char(date, 'MM') = %s and pawn_shop_id = %s and is_refund = %s""",
+            (year, month, pawn_shop_id, is_refund))
         number = cr.fetchone()[0] or 0
         number += 1
         shop_code = '--'
@@ -190,7 +194,7 @@ class account_voucher(osv.osv):
             shop_code = self.pool.get('pawn.shop').browse(cr, uid, pawn_shop_id).sref_code
         else:
             shop_code = self.pool.get('pawn.shop').browse(cr, uid, pawn_shop_id).srec_code
-        next_name = shop_code + '/' + year + '/' + str(number).zfill(3)
+        next_name = shop_code + '/' + year + '/' + month + '/' + str(number).zfill(3)
         return next_name, number
 
     def write(self, cr, uid, ids, vals, context=None):
