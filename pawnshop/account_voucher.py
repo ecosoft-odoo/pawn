@@ -706,7 +706,7 @@ class account_voucher_line(osv.osv):
         'product_id': fields.many2one('product.product', 'Product', ondelete='set null', select=True),
         'quantity': fields.float('Quantity', digits_compute= dp.get_precision('Product Unit of Measure')),
         'uos_id': fields.many2one('product.uom', 'Unit of Measure', ondelete='set null', select=True),
-        'price_unit': fields.float('Unit Price', digits_compute= dp.get_precision('Product Price')),
+        'price_unit': fields.float('Unit Price', digits_compute= dp.get_precision('Product Price'), readonly=True),
         'is_jewelry': fields.boolean('Carat/Gram', readonly=True),
         'carat': fields.float('Carat', readonly=True),
         'gram': fields.float('Gram', readonly=True),
@@ -718,7 +718,7 @@ class account_voucher_line(osv.osv):
     def onchange_price(self, cr, uid, ids, field, quantity, price_unit, amount, context=None):
         res = {'value': {}}
         quantity = float(quantity)
-        if field in ('quantity', 'price_unit'):
+        if field in ('quantity'):
             prec = self.pool.get('decimal.precision').precision_get(cr, uid, 'Account')
             amount = quantity * price_unit
             res['value']['amount'] = round(amount, prec)
@@ -764,11 +764,26 @@ class account_voucher_line(osv.osv):
 
     def create(self, cr, uid, vals, context=None):
         vals = self._update_field(cr, uid, vals, context=context)
-        return super(account_voucher_line, self).create(cr, uid, vals, context=context)
+        voucher_line_id = super(account_voucher_line, self).create(cr, uid, vals, context=context)
+        # price_unit field is readonly, it not store in database if we call onchange function and effect with this field
+        # So, we need to update it
+        voucher_line = self.browse(cr, uid, voucher_line_id, context=context)
+        if vals.get('amount') and not vals.get('price_unit'):
+            price_unit = self.onchange_price(cr, uid, [voucher_line.id], 'amount', voucher_line.quantity, voucher_line.price_unit, voucher_line.amount, context=context)['value']['price_unit']
+            self.write(cr, uid, [voucher_line.id], {'price_unit': price_unit}, context=context)
+        return voucher_line_id
 
     def write(self, cr, uid, ids, vals, context=None):
         vals = self._update_field(cr, uid, vals, context=context)
-        return super(account_voucher_line, self).write(cr, uid, ids, vals, context=context)
+        res = super(account_voucher_line, self).write(cr, uid, ids, vals, context=context)
+        # price_unit field is readonly, it not store in database if we call onchange function and effect with this field
+        # So, we need to update it
+        voucher_lines = self.browse(cr, uid, ids, context=context)
+        for voucher_line in voucher_lines:
+            if vals.get('amount') and not vals.get('price_unit'):
+                price_unit = self.onchange_price(cr, uid, [voucher_line.id], 'amount', voucher_line.quantity, voucher_line.price_unit, voucher_line.amount, context=context)['value']['price_unit']
+                self.write(cr, uid, [voucher_line.id], {'price_unit': price_unit}, context=context)
+        return res
 
 account_voucher_line()
 
