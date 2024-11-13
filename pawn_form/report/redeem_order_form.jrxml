@@ -99,16 +99,9 @@
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_redeem}]]></textFieldExpression>
 			</textField>
 			<image scaleImage="FillFrame" hAlign="Center" vAlign="Top" isUsingCache="true" isLazy="true">
-				<reportElement x="7" y="62" width="57" height="67">
+				<reportElement x="5" y="58" width="60" height="70">
 					<printWhenExpression><![CDATA[$F{fingerprint}]]></printWhenExpression>
 				</reportElement>
-				<box>
-					<pen lineWidth="1.0"/>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
 				<imageExpression class="java.lang.String"><![CDATA[$F{fingerprint}]]></imageExpression>
 			</image>
 			<staticText>
@@ -205,7 +198,7 @@
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="71" y="132" width="108" height="47"/>
 				<textElement textAlignment="Left" lineSpacing="1_1_2" verticalAlignment="Top" markup="html">
-					<font fontName="Monospaced" size="7" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="Monospaced" size="6" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["<b><u>ที่อยู่</u> </b>" + ($F{delegate_name} ? $F{delegate_address} : $F{partner_address})]]></textFieldExpression>
 			</textField>
