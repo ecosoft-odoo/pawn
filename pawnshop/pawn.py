@@ -788,6 +788,9 @@ class pawn_order(osv.osv):
             item_obj.unlink(cr, uid, item_ids)
             # Use line from order to create pawn items that link to pawn asset
             asset_id = self._create_pawn_asset_item(cr, uid, asset_id, order, context=context)
+            # Update pawn item state (state missing when delete pawn item)
+            item_ids = item_obj.search(cr, uid, [('parent_id', '=', order.item_id.id)])
+            item_obj.write(cr, uid, item_ids, {'state': order.item_id.state}, context=context)
 #         if vals.get('amount_pawned', False):
 #             item_obj.write(cr, uid, [asset_id], {'list_price': vals.get('amount_pawned')})
         elif vals.get('redeem_move_id', False):
