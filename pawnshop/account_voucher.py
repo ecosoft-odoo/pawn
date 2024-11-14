@@ -149,6 +149,23 @@ class account_voucher(osv.osv):
                 res[voucher.id] = journal_ids and journal_ids[0] or False
         return res
 
+    def _get_transfer_amount(self, cr, uid, ids, field_name, arg, context=None):
+        res = {}
+        for voucher in self.browse(cr, uid, ids, context=context):
+            # Default: cash amount = sale amount, transfer amount = 0.0
+            amount_cash = voucher.amount
+            amount_transfer = 0.0
+            # Calculate transfer or cash amount from the voucher
+            for move_line in voucher.move_id.line_id or []:
+                if move_line.account_id.user_type.code == 'bank':
+                    amount_transfer += (move_line.debit - move_line.credit)
+                    amount_cash -= (move_line.debit - move_line.credit)
+            res[voucher.id] = {
+                'amount_cash': amount_cash,
+                'amount_transfer': amount_transfer,
+            }
+        return res
+
     _columns = {
         'docnumber': fields.integer('DocNumber', select=True, readonly=True),
         'pawn_shop_id': fields.many2one('pawn.shop', 'Shop', domain="[('company_id','=',company_id)]", readonly=True, states={'draft': [('readonly', False)]}),
@@ -157,6 +174,8 @@ class account_voucher(osv.osv):
         'is_refund': fields.boolean('Refund', readonly=True),
         'product_journal_id': fields.function(_compute_product_journal_id, type='many2one', relation='account.journal', string='Product Journal', store=True, readonly=True),
         'address': fields.related('partner_id', 'address_full', type='char', string='Address'),
+        'amount_cash': fields.function(_get_transfer_amount, string='Cash Amount', type='float', readonly=True, multi='balance'),
+        'amount_transfer': fields.function(_get_transfer_amount, string='Transfer Amount', type='float', readonly=True, multi='balance'),
     }
 
     _constraints = [

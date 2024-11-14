@@ -105,6 +105,23 @@ class pawn_order(osv.osv):
             })
         return res
 
+    def _get_transfer_pawned(self, cr, uid, ids, field_name, arg, context=None):
+        res = {}
+        for order in self.browse(cr, uid, ids, context=context):
+            # Default: cash amount = pawn amount, transfer amount = 0.0
+            amount_cash_pawned = order.amount_pawned
+            amount_transfer_pawned = 0.0
+            # Calculate transfer or cash amount from the ticket
+            for move_line in filter(lambda k: k.pawn_order_id == order, order.pawn_move_id.line_id or []):
+                if move_line.account_id.user_type.code == 'bank':
+                    amount_transfer_pawned += (move_line.credit - move_line.debit)
+                    amount_cash_pawned -= (move_line.credit - move_line.debit)
+            res[order.id] = {
+                'amount_cash_pawned': amount_cash_pawned,
+                'amount_transfer_pawned': amount_transfer_pawned,
+            }
+        return res
+
     def _get_order(self, cr, uid, ids, context=None):
         result = {}
         for line in self.pool.get('pawn.order.line').browse(cr, uid, ids, context=context):
@@ -312,6 +329,8 @@ class pawn_order(osv.osv):
                 'pawn.order.line': (_get_order, None, 10),
             }, multi="sums", help="The total amount"),
         'amount_pawned': fields.float('Pawned Amount', readonly=True, help="Pawned Amount is the amount that will be used for interest calculation."),
+        'amount_cash_pawned': fields.function(_get_transfer_pawned, string='Pawned Cash Amount', type='float', readonly=True, multi='balance'),
+        'amount_transfer_pawned': fields.function(_get_transfer_pawned, string='Pawned Transfer Amount', type='float', readonly=True, multi='balance'),
         'date_expired': fields.function(_calculate_pawn_interest, type='date', string='Ticket Expiry Date',
             store={
                 'pawn.order': (lambda self, cr, uid, ids, c={}: ids, ['date_order', 'rule_id'], 10),

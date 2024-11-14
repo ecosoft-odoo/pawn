@@ -106,6 +106,10 @@
                     <field name="date" position="before">
                         <field name="product_journal_id"/>
                     </field>
+                    <field name="state" position="after">
+                        <field name="amount_cash"/>
+                        <field name="amount_transfer"/>
+                    </field>
                 </data>
             </field>
         </record>
