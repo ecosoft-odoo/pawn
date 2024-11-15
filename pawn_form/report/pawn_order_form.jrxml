@@ -436,7 +436,7 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 				<textFieldExpression class="java.lang.String"><![CDATA[(new Boolean($F{company_name}.contains("บริษัท")) ? "บจ.": new Boolean($F{company_name}.contains("ห้างหุ้นส่วนสามัญนิติบุคคล")) ? "หสม." : "") + (new Boolean($F{company_name}.contains("โรงรับจำนำ")) ? "โรงรับจำนำ\n" : "") + $F{pawnshop}]]></textFieldExpression>
 			</textField>
 			<image hAlign="Center" vAlign="Top" isUsingCache="true" isLazy="true">
-				<reportElement x="186" y="506" width="55" height="55">
+				<reportElement x="170" y="496" width="65" height="65">
 					<printWhenExpression><![CDATA[$F{fingerprint} != false && $F{fingerprint} != null && $F{fingerprint} != '']]></printWhenExpression>
 				</reportElement>
 				<imageExpression class="java.lang.String"><![CDATA[$F{fingerprint}]]></imageExpression>
@@ -517,7 +517,7 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 				<textFieldExpression class="java.lang.String"><![CDATA[(new Boolean($F{company_name}.contains("บริษัท")) ? "บจ.": new Boolean($F{company_name}.contains("ห้างหุ้นส่วนสามัญนิติบุคคล")) ? "หสม." : "") + (new Boolean($F{company_name}.contains("โรงรับจำนำ")) ? "โรงรับจำนำ\n" : "") + $F{pawnshop}]]></textFieldExpression>
 			</textField>
 			<image hAlign="Center" vAlign="Top" isUsingCache="true" isLazy="true">
-				<reportElement x="534" y="506" width="55" height="55">
+				<reportElement x="534" y="496" width="65" height="65">
 					<printWhenExpression><![CDATA[$F{fingerprint} != false && $F{fingerprint} != null && $F{fingerprint} != '']]></printWhenExpression>
 				</reportElement>
 				<imageExpression class="java.lang.String"><![CDATA[$F{fingerprint}]]></imageExpression>
