@@ -177,7 +177,8 @@
                             <field name="actual_interest_ids">
                                 <tree string="Paid Interest Table">
                                     <field name="interest_date"/>
-                                    <field name="num_days"/>
+                                    <field name="num_days" invisible="1"/>
+                                    <field name="months"/>
                                     <field name="discount" sum="Total Discount"/>
                                     <field name="addition" sum="Total Addition"/>
                                     <field name="interest_amount" sum="Total Interest"/>

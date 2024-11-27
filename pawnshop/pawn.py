@@ -927,11 +927,14 @@ class pawn_order(osv.osv):
         actual_interest_table = []
         pawn = self.browse(cr, uid, pawn_id, context=context)
         base_date = datetime.strptime(pawn.date_order[:10], '%Y-%m-%d')
+        redeem_date = date
         date = datetime.strptime(date, '%Y-%m-%d')
         num_days = (date - base_date).days
+        months = self._calculate_months(cr, uid, pawn.date_order, redeem_date, context=context)
         rec = (0, 0, {'pawn_id': pawn_id, 'interest_date': date,
                       'num_days': num_days, 'discount': discount,
-                      'addition': addition, 'interest_amount': interest_amount})
+                      'addition': addition, 'interest_amount': interest_amount,
+                      'months': months})
         actual_interest_table.append(rec)
         self.write(cr, uid, [pawn.id], {'actual_interest_ids': actual_interest_table})
         return True
@@ -1517,7 +1520,8 @@ class pawn_order(osv.osv):
         pawn_date = datetime.strptime(pawn_date[:10], '%Y-%m-%d')
         redeem_date = datetime.strptime(redeem_date[:10], '%Y-%m-%d')
         delta = relativedelta(redeem_date, pawn_date)
-        months = float(delta.years * 12) + float(delta.months) + (delta.days <= 15 and 0.5 or 1.0)
+        delta_days = delta.days + 1
+        months = float(delta.years * 12) + float(delta.months) + (0 if delta_days == 1 else (0.5 if delta_days <= 15 else 1.0))
         return months
 
     def calculate_interest_remain(self, cr, uid, pawn_id, date, context=None):
@@ -1791,6 +1795,7 @@ class pawn_actual_interest(osv.osv):
         'pawn_id': fields.many2one('pawn.order', 'Pawn Ticket', required=True, readonly=True, select=True),
         'interest_date': fields.date('Date', required=True, readonly=True, select=True, help="Date on which this interest journal will be created"),
         'num_days': fields.integer('Days', readonly=True, required=True),
+        'months': fields.float('Months', readonly=True, required=True),
         'discount': fields.float('Discount', readonly=True, required=True),
         'addition': fields.float('Addition', readonly=True, required=True),
         'interest_amount': fields.float('Interest Amount', readonly=True, required=True),
