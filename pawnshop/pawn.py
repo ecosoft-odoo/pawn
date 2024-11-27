@@ -1489,7 +1489,7 @@ class pawn_order(osv.osv):
         pawn_date = datetime.strptime(pawn_date[:10], '%Y-%m-%d')
         redeem_date = datetime.strptime(redeem_date[:10], '%Y-%m-%d')
         delta = relativedelta(redeem_date, pawn_date)
-        months = float(delta.years * 12) + float(delta.months) + (delta.days <= 15 and 0.5 or 1.0)
+        months = float(delta.years * 12) + float(delta.months) + (0 if delta.days == 0 else (0.5 if delta.days < 15 else 1.0))
         return months
 
     def calculate_interest_remain(self, cr, uid, pawn_id, date, context=None):
