@@ -14,6 +14,8 @@
                             <field name="date_renew"/>
                             <field name="pawn_amount" string="Initial"/>
                             <field name="interest_amount" string="+ Interest Amount"/>
+                            <field name="monthly_interest"/>
+                            <field name="pawn_duration"/>
                             <field name="discount" string="- Discount" on_change="onchange_amount('discount', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
                             <field name="addition" string="+ Addition" on_change="onchange_amount('addition', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
                             <group colspan="2">
