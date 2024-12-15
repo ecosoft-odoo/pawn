@@ -50,6 +50,30 @@ class pawn_order_renew(osv.osv_memory):
             return round(amount_interest, 2)
         return False
 
+    def _get_monthly_interest(self, cr, uid, context=None):
+        """ Get pawn monthly interest from pawn order """
+        if context is None:
+            context = {}
+        active_id = context.get('active_id', False)
+        if active_id:
+            pawn = self.pool.get('pawn.order').browse(cr, uid, active_id, context=context)
+            if pawn:
+                return round(pawn.monthly_interest, 2)
+        return False
+
+    def _get_months(self, cr, uid, context=None):
+        """ Get pawn months from pawn order """
+        if context is None:
+            context = {}
+        active_id = context.get('active_id', False)
+        pawn_obj = self.pool.get('pawn.order')
+        pawn = pawn_obj.browse(cr, uid, active_id, context=context)
+        date_redeem = context.get('date_redeem', fields.date.context_today(self, cr, uid, context=context))
+        if active_id and date_redeem:
+            months = pawn_obj._calculate_months(cr, uid, pawn.date_order, date_redeem, context=context)
+            return months
+        return False
+    
     def _prepare_renew_lines(self, cr, uid, line, context=None):
         """ Prepare pawn line """
         return {
@@ -90,6 +114,8 @@ class pawn_order_renew(osv.osv_memory):
         'renewal_transfer': fields.boolean('Renewal Transfer'), 
         'secret_key': fields.char('Secret Key'),
         'renew_line_ids': fields.one2many('pawn.order.renew.line', 'renew_id', 'Renew Line'),
+        'monthly_interest': fields.float('Monthly Interest', readonly=True),
+        'pawn_duration': fields.float('Pawn Duration (Months)', readonly=True),
     }
     _defaults = {
         'date_renew': fields.date.context_today,
@@ -104,6 +130,8 @@ class pawn_order_renew(osv.osv_memory):
         'delegation_of_authority': False,
         'delegate_id': False,
         'renew_line_ids': _get_renew_line_ids,
+        'monthly_interest': _get_monthly_interest,
+        'pawn_duration': _get_months,
     }
 
     def onchange_date_renew(self, cr, uid, ids, date_renew, context=None):

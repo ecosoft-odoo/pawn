@@ -6,16 +6,23 @@
             <field name="model">pawn.order.renew</field>
             <field name="arch" type="xml">
                 <form string="Renew" version="7.0">
-                    <group string="Total Amount">
-                        <group>
-                            <field name="date_renew" readonly="1" required="1" on_change="onchange_date_renew(date_renew, context)"/>
-                            <field name="pawn_amount"/>
-                            <field name="interest_amount"/>
-                            <field name="discount" invisible="1"/>
-                            <field name="addition" invisible="1"/>
-                            <field name="pay_interest_amount" on_change="onchange_amount('pay_interest_amount', pawn_amount, interest_amount, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
-                            <field name="increase_pawn_amount" on_change="onchange_amount('increase_pawn_amount', pawn_amount, interest_amount, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
-                            <field name="new_pawn_amount" on_change="onchange_amount('new_pawn_amount', pawn_amount, interest_amount, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
+                    <group>
+                    	<group name="label" colspan="2">
+                        	<label string="Please confirm renew amount as following,"/>
+                        </group>
+                        <group name="amount">
+                            <field name="date_renew"/>
+                            <field name="pawn_amount" string="Initial"/>
+                            <field name="interest_amount" string="+ Interest Amount"/>
+                            <field name="monthly_interest"/>
+                            <field name="pawn_duration"/>
+                            <field name="discount" string="- Discount" on_change="onchange_amount('discount', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
+                            <field name="addition" string="+ Addition" on_change="onchange_amount('addition', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
+                            <group colspan="2">
+                                <field name="pay_interest_amount" string="Pay Interest Amount" on_change="onchange_amount('pay_interest_amount', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
+                                <field name="increase_pawn_amount" string="+/- Pawn Amount" on_change="onchange_amount('increase_pawn_amount', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
+                                <field name="new_pawn_amount" string="New Pawn Amount" on_change="onchange_amount('new_pawn_amount', pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
+                            </group>
                         </group>
                         <group>
                             <field name="delegation_of_authority" on_change="onchange_delegation_of_authority()"/>
