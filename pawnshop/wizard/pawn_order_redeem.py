@@ -45,6 +45,30 @@ class pawn_order_redeem(osv.osv_memory):
             return round(amount_interest, 2)
         return False
 
+    def _get_monthly_interest(self, cr, uid, context=None):
+        """ Get pawn monthly interest from pawn order """
+        if context is None:
+            context = {}
+        active_id = context.get('active_id', False)
+        if active_id:
+            pawn = self.pool.get('pawn.order').browse(cr, uid, active_id, context=context)
+            if pawn:
+                return round(pawn.monthly_interest, 2)
+        return False
+
+    def _get_months(self, cr, uid, context=None):
+        """ Get pawn months from pawn order """
+        if context is None:
+            context = {}
+        active_id = context.get('active_id', False)
+        pawn_obj = self.pool.get('pawn.order')
+        pawn = pawn_obj.browse(cr, uid, active_id, context=context)
+        date_redeem = context.get('date_redeem', fields.date.context_today(self, cr, uid, context=context))
+        if active_id and date_redeem:
+            months = pawn_obj._calculate_months(cr, uid, pawn.date_order, date_redeem, context=context)
+            return months
+        return False
+
     def _get_redeem_amount(self, cr, uid, context=None):
         return self._get_pawn_amount(cr, uid, context=context) + self._get_interest_amount(cr, uid, context=context)
 
@@ -61,6 +85,8 @@ class pawn_order_redeem(osv.osv_memory):
         'delegate_id': fields.many2one('res.partner', 'Delegate'),
         'bypass_fingerprint': fields.boolean('Bypass Fingerprint Redeem'),
         'secret_key': fields.char('Secret Key'),
+        'monthly_interest': fields.float('Monthly Interest', readonly=True),
+        'pawn_duration': fields.float('Pawn Duration (Months)', readonly=True),
     }
     _defaults = {
         'date_redeem': fields.date.context_today,
@@ -71,6 +97,8 @@ class pawn_order_redeem(osv.osv_memory):
         'redeem_amount': _get_redeem_amount,
         'delegation_of_authority': False,
         'delegate_id': False,
+        'monthly_interest': _get_monthly_interest,
+        'pawn_duration': _get_months,
     }
 
     def onchange_amount(self, cr, uid, ids, field, pawn_amount, interest_amount, discount, addition, redeem_amount, context=None):

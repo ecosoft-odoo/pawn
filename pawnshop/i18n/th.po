@@ -2764,8 +2764,15 @@ msgstr "คุณแน่ใจว่าคุณต้องการคืน
 
 #. module: pawnshop
 #: field:pawn.order,monthly_interest:0
+#: field:pawn.order.redeem,monthly_interest:0
 msgid "Monthly Interest"
 msgstr "ดอกเบี้ยรายเดือน"
+
+#. module: pawnshop
+#: field:pawn.order.redeem,pawn_duration:0
+#: field:pawn.order.renew,pawn_duration:0
+msgid "Pawn Duration (Months)"
+msgstr "ระยะเวลาการจำนำ (เดือน)"
 
 #. module: pawnshop
 #: report:pawn_jor6_report:0
