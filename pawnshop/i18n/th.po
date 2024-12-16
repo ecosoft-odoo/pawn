@@ -2772,6 +2772,7 @@ msgstr "ดอกเบี้ยรายเดือน"
 #. module: pawnshop
 #: field:pawn.order.redeem,pawn_duration:0
 #: field:pawn.order.renew,pawn_duration:0
+#: field:pawn.actual.interest,months:0
 msgid "Pawn Duration (Months)"
 msgstr "ระยะเวลาการจำนำ (เดือน)"
 
@@ -2828,6 +2829,11 @@ msgstr "$F{expire_amount} == null ? 0.0 : $F{expire_amount}"
 #: field:pawn.rule,length_day:0
 msgid "Days"
 msgstr "วัน"
+
+#. module: pawnshop
+#: field:pawn.actual.interest,months:0
+msgid "Months"
+msgstr "เดือน"
 
 #. module: pawnshop
 #: field:pawn.line.property.line,property_line_id:0

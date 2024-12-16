@@ -1890,7 +1890,7 @@ class pawn_actual_interest(osv.osv):
         'pawn_id': fields.many2one('pawn.order', 'Pawn Ticket', required=True, readonly=True, select=True),
         'interest_date': fields.date('Date', required=True, readonly=True, select=True, help="Date on which this interest journal will be created"),
         'num_days': fields.integer('Days', readonly=True, required=True),
-        'months': fields.float('Months', readonly=True, required=True),
+        'months': fields.float('Pawn Duration (Months)', readonly=True, required=True),
         'discount': fields.float('Discount', readonly=True, required=True),
         'addition': fields.float('Addition', readonly=True, required=True),
         'interest_amount': fields.float('Interest Amount', readonly=True, required=True),
