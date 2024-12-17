@@ -60,7 +60,7 @@
                         <field name="name" class="oe_inline" readonly="1"/>
 	                    <div class="oe_right oe_button_box">
 							<field name="extended" invisible="1"/>
-                            <div style="color:red">
+                            <div style="color:blue">
                                 <label string="New Pawn Ticket" attrs="{'invisible': [('parent_id', '!=', False)]}"/>
                                 <label string="Interest Payment" attrs="{'invisible': [('parent_id', '=', False)]}"/>
                             </div>
@@ -374,6 +374,9 @@
                     <separator/>
                     <filter name="extend" string="Extended" domain="[('extended','=',True)]" help="Expired Pawned Orders which has been extended"/>
                     <filter name="not_extend" string="Not Extend" domain="[('extended','=',False)]"/>
+                    <separator/>
+                    <filter name="new_pawn_ticket" string="New Pawn Ticket" domain="[('parent_id', '=', False)]"/>
+                    <filter name="interest_payment" string="Interest Payment" domain="[('parent_id', '!=', False)]"/>
                     <group expand="0" string="Group By...">
                         <filter string="Shop" domain="[]" context="{'group_by':'pawn_shop_id'}"/>
                         <filter string="Journal" domain="[]" context="{'group_by':'journal_id'}"/>
