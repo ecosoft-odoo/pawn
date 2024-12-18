@@ -6,22 +6,12 @@
             <field name="model">pawn.order.redeem</field>
             <field name="arch" type="xml">
                 <form string="Redeem" version="7.0">
-                    <group>
-                    	<group name="label" colspan="2">
-                        	<label string="Please confirm redeem amount as following,"/>
-                        </group>
-                        <group name="amount">
-                            <field name="date_redeem" on_change="onchange_date_redeem(date_redeem, context)" />
-                            <field name="pawn_amount" string="Initial" />
-                            <field name="monthly_interest"/>
-                            <field name="pawn_duration"/>
-                            <field name="interest_amount" string="+ Interest Amount"/>
-                            <field name="discount" string="- Discount" on_change="onchange_amount('discount', pawn_amount, interest_amount, discount, addition, redeem_amount)"/>
-                            <field name="addition" string="+ Addition" on_change="onchange_amount('addition', pawn_amount, interest_amount, discount, addition, redeem_amount)"/>
-                        </group>
+                    <group string="Total Amount">
                         <group>
                             <field name="date_redeem" readonly="1" required="1" on_change="onchange_date_redeem(date_redeem, context)"/>
                             <field name="pawn_amount"/>
+                            <field name="monthly_interest"/>
+                            <field name="pawn_duration"/>
                             <field name="interest_amount"/>
                             <field name="discount" invisible="1"/>
                             <field name="addition" invisible="1"/>

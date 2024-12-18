@@ -145,24 +145,6 @@ class pawn_order_redeem(osv.osv_memory):
         (_check_amount, 'The transfer or cash amount is incorrect !!', ['transfer_amount', 'cash_amount']),
     ]
 
-    def onchange_amount(self, cr, uid, ids, field, pawn_amount, interest_amount, discount, addition, redeem_amount, context=None):
-        res = {'value': {}}
-        if field == 'discount':
-            redeem_amount = (pawn_amount or 0.0) + (interest_amount or 0.0)  - (discount or 0.0)
-            res['value']['addition'] = 0.0
-            res['value']['redeem_amount'] = round(redeem_amount, 2)
-        if field == 'addition':
-            redeem_amount = (pawn_amount or 0.0) + (interest_amount or 0.0)  + (addition or 0.0)
-            res['value']['discount'] = 0.0
-            res['value']['redeem_amount'] = round(redeem_amount, 2)
-        elif field == 'redeem_amount':
-            diff = (pawn_amount or 0.0) + (interest_amount or 0.0)  - (redeem_amount or 0.0)
-            if diff > 0:
-                res['value']['discount'] = round(diff, 2)
-            else:
-                res['value']['addition'] = - round(diff, 2)
-        return res
-
     def onchange_date_redeem(self, cr, uid, ids, date_redeem, context=None):
         res = {'value': {}}
         if context is None:
