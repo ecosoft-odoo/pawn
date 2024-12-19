@@ -122,6 +122,14 @@ class pawn_order(osv.osv):
             }
         return res
 
+    def _get_account_move_line(self, cr, uid, ids, context=None):
+        MoveLine = self.pool.get('account.move.line')
+        PawnOrder = self.pool.get('pawn.order')
+        pawn_ids = []
+        for move_line in MoveLine.browse(cr, uid, ids, context=context):
+            pawn_ids = PawnOrder.search(cr, uid, [('pawn_move_id', '=', move_line.move_id.id)], context=context)
+        return pawn_ids
+
     def _get_order(self, cr, uid, ids, context=None):
         result = {}
         for line in self.pool.get('pawn.order.line').browse(cr, uid, ids, context=context):
@@ -329,8 +337,14 @@ class pawn_order(osv.osv):
                 'pawn.order.line': (_get_order, None, 10),
             }, multi="sums", help="The total amount"),
         'amount_pawned': fields.float('Pawned Amount', readonly=True, help="Pawned Amount is the amount that will be used for interest calculation."),
-        'amount_cash_pawned': fields.function(_get_transfer_pawned, string='Pawned Cash Amount', type='float', readonly=True, multi='balance'),
-        'amount_transfer_pawned': fields.function(_get_transfer_pawned, string='Pawned Transfer Amount', type='float', readonly=True, multi='balance'),
+        'amount_cash_pawned': fields.function(_get_transfer_pawned, string='Pawned Cash Amount', type='float', store={
+            'pawn.order': (lambda self, cr, uid, ids, c={}: ids, ['order_line', 'pawn_move_id'], 10),
+            'account.move.line': (_get_account_move_line, ['debit', 'credit'], 10),
+        }, multi='balance'),
+        'amount_transfer_pawned': fields.function(_get_transfer_pawned, string='Pawned Transfer Amount', type='float', store={
+            'pawn.order': (lambda self, cr, uid, ids, c={}: ids, ['order_line', 'pawn_move_id'], 10),
+            'account.move.line': (_get_account_move_line, ['debit', 'credit'], 10),
+        }, multi='balance'),
         'date_expired': fields.function(_calculate_pawn_interest, type='date', string='Ticket Expiry Date',
             store={
                 'pawn.order': (lambda self, cr, uid, ids, c={}: ids, ['date_order', 'rule_id'], 10),

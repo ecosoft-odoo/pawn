@@ -226,7 +226,7 @@ select * from
 	having coalesce(sum(l.debit),0) != 0
 	order by ap.id)
 	union
-	select 11 as sequence, 'โอนจำนำ'::varchar as desc1, ''::varchar as desc2, ''::varchar as desc3, coalesce(sum(l.credit),0) - coalesce(sum(l.debit),0) as balance
+	select 11 as sequence, 'โอนจำนำ (จำนวน ' || count(distinct l.pawn_order_id) || ' ตั๋ว)' ::varchar as desc1, ''::varchar as desc2, ''::varchar as desc3, coalesce(sum(l.credit),0) - coalesce(sum(l.debit),0) as balance
 	from account_move_line l
 	join account_move m on l.move_id = m.id
 	join pawn_order pw on l.pawn_order_id = pw.id
