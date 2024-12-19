@@ -37,6 +37,9 @@
 	<field name="amount_pawned" class="java.lang.Number">
 		<fieldDescription><![CDATA[amount_pawned]]></fieldDescription>
 	</field>
+	<field name="amount_net" class="java.lang.Number">
+		<fieldDescription><![CDATA[amount_net]]></fieldDescription>
+	</field>
 	<field name="name" class="java.lang.String">
 		<fieldDescription><![CDATA[order_line/name]]></fieldDescription>
 	</field>
@@ -414,6 +417,16 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_due_ticket}]]></textFieldExpression>
 			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="25" y="375" width="200" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Monospaced" size="8" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[
+$F{amount_net} > 0 ? "เพิ่มเงิน " + new java.text.DecimalFormat("#,##0.00").format($F{amount_net}) + " บาท" : 
+($F{amount_net} < 0 ? "ลดเงิน " + new java.text.DecimalFormat("#,##0.00").format(-1 * $F{amount_net}) + " บาท" : "")
+]]></textFieldExpression>
+			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement positionType="Float" x="127" y="396" width="234" height="17" forecolor="#000000"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="html">
@@ -551,6 +564,16 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 					<font fontName="Monospaced" size="8" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{expiry_date}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="398" y="375" width="200" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Monospaced" size="8" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[
+$F{amount_net} > 0 ? "เพิ่มเงิน " + new java.text.DecimalFormat("#,##0.00").format($F{amount_net}) + " บาท" : 
+($F{amount_net} < 0 ? "ลดเงิน " + new java.text.DecimalFormat("#,##0.00").format(-1 * $F{amount_net}) + " บาท" : "")
+]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement positionType="Float" x="489" y="396" width="241" height="17" forecolor="#000000"/>
