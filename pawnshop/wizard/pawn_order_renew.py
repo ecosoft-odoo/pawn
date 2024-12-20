@@ -143,6 +143,7 @@ class pawn_order_renew(osv.osv_memory):
         res['value']['pay_interest_amount'] = self._get_interest_amount(cr, uid, context=context)
         res['value']['discount'] = 0.0
         res['value']['addition'] = 0.0
+        res['value']['pawn_duration'] = self._get_months(cr, uid, context=context)
         return res
 
     def onchange_amount(self, cr, uid, ids, field, pawn_amount, interest_amount, pay_interest_amount, increase_pawn_amount, new_pawn_amount, context=None):

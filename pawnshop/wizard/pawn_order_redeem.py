@@ -157,6 +157,7 @@ class pawn_order_redeem(osv.osv_memory):
         res['value']['transfer_amount'] = 0.0
         res['value']['discount'] = 0.0
         res['value']['addition'] = 0.0
+        res['value']['pawn_duration'] = self._get_months(cr, uid, context=context)
         return res
 
     def onchange_amount(self, cr, uid, ids, field, pawn_amount, interest_amount, pay_interest_amount, redeem_amount, transfer_amount, cash_amount, context=None):
