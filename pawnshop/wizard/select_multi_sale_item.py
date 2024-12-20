@@ -21,7 +21,7 @@
 from openerp.osv import fields, osv
 
 
-class select_multi_sale_item(osv.osv):
+class select_multi_sale_item(osv.osv_memory):
     _name = 'select.multi.sale.item'
 
     _columns = {
