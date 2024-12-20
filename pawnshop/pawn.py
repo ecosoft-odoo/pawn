@@ -130,6 +130,14 @@ class pawn_order(osv.osv):
             pawn_ids = PawnOrder.search(cr, uid, [('pawn_move_id', '=', move_line.move_id.id)], context=context)
         return pawn_ids
 
+    def _get_res_partner(self, cr, uid, ids, context=None):
+        ResPartner = self.pool.get('res.partner')
+        PawnOrder = self.pool.get('pawn.order')
+        pawn_ids = []
+        for partner in ResPartner.browse(cr, uid, ids, context=context):
+            pawn_ids = PawnOrder.search(cr, uid, [('partner_id', '=', partner.id)], context=context)
+        return pawn_ids
+
     def _get_order(self, cr, uid, ids, context=None):
         result = {}
         for line in self.pool.get('pawn.order.line').browse(cr, uid, ids, context=context):
@@ -322,6 +330,14 @@ class pawn_order(osv.osv):
         'card_type': fields.related('partner_id', 'card_type', type="selection", selection=res_partner.CARD_TYPE_SELECTION, string="Card Type", readonly=True),
         'card_number': fields.related('partner_id', 'card_number', type="char", string="Card Number", readonly=True),
         'age': fields.related('partner_id', 'age', type="integer", string="Age", readonly=True),
+        'nickname': fields.related('partner_id', 'nickname', type='char', string='Nickname', store={
+            'pawn.order': (lambda self, cr, uid, ids, c={}: ids, ['partner_id'], 10),
+            'res.partner': (_get_res_partner, ['nickname'], 10),
+        }),
+        'regular_customer': fields.related('partner_id', 'regular_customer', type='boolean', string='Regular Customer', store={
+            'pawn.order': (lambda self, cr, uid, ids, c={}: ids, ['partner_id'], 10),
+            'res.partner': (_get_res_partner, ['regular_customer'], 10),
+        }),
         'pawn_shop_id': fields.many2one('pawn.shop', 'Shop', domain="[('company_id','=',company_id)]", readonly=True, required=True, states={'draft': [('readonly', False)]}),
         #'location_id': fields.many2one('stock.location', 'Destination', required=True, domain=[('usage', '<>', 'view')], states={'draft': [('readonly', False)]},),
         'rule_id': fields.many2one('pawn.rule', 'Pawn Rule', required=True, readonly=True, states={'draft': [('readonly', False)]}),

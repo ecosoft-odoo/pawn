@@ -360,6 +360,7 @@
                 <search string="Search Pawn Ticket">
                     <field name="name" string="Reference"/>
                     <field name="partner_id" string="Customer"/>
+                    <field name="nickname"/>
                     <field name="create_uid"/>
 					<separator/>
 					<filter name="today" string="Today's" domain="[('date_order','=',time.strftime('%%Y-%%m-%%d'))]" help="Pawn Tickets created today"/>
@@ -377,6 +378,8 @@
                     <separator/>
                     <filter name="new_pawn_ticket" string="New Pawn Ticket" domain="[('parent_id', '=', False)]"/>
                     <filter name="interest_payment" string="Interest Payment" domain="[('parent_id', '!=', False)]"/>
+                    <separator/>
+                    <filter string="Regular Customer" name="regular_customer" domain="[('regular_customer', '=', True)]"/>
                     <group expand="0" string="Group By...">
                         <filter string="Shop" domain="[]" context="{'group_by':'pawn_shop_id'}"/>
                         <filter string="Journal" domain="[]" context="{'group_by':'journal_id'}"/>
@@ -408,6 +411,8 @@
                     <field name="day_order" invisible="1"/>
                     <field name="date_redeem" />
                     <field name="partner_id"/>
+                    <field name="nickname"/>
+                    <field name="regular_customer"/>
                     <field name="company_id" groups="base.group_multi_company" widget="selection"/>
                     <field name="amount_total" sum="Total Amount" invisible="1"/>
                     <field name="amount_pawned" sum="Total Pawned Amount"/>
