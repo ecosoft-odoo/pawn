@@ -632,6 +632,15 @@
 				</textElement>
 				<text><![CDATA[เงินสด]]></text>
 			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" mode="Transparent" x="130" y="58" width="150" height="15" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$F{amount_cash}]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["จำนวน " + new java.text.DecimalFormat("#,##0.00").format($F{amount_cash}) + " บาท"]]></textFieldExpression>
+			</textField>
 			<image scaleImage="FillFrame" hAlign="Center" vAlign="Top" isUsingCache="true" isLazy="true">
 				<reportElement x="80" y="75" width="10" height="10">
 					<printWhenExpression><![CDATA[$F{amount_transfer}]]></printWhenExpression>
@@ -651,6 +660,15 @@
 				</textElement>
 				<text><![CDATA[เงินโอน]]></text>
 			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" mode="Transparent" x="130" y="75" width="150" height="15" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$F{amount_transfer}]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["จำนวน " + new java.text.DecimalFormat("#,##0.00").format($F{amount_transfer}) + " บาท"]]></textFieldExpression>
+			</textField>
 		</band>
 	</lastPageFooter>
 </jasperReport>

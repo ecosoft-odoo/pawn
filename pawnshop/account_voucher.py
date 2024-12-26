@@ -156,7 +156,12 @@ class account_voucher(osv.osv):
             amount_cash = voucher.amount
             amount_transfer = 0.0
             # Calculate transfer or cash amount from the voucher
-            for move_line in voucher.move_id.line_id or []:
+            MoveLine = self.pool.get('account.move.line')
+            voucher_move_lines = voucher.move_id.line_id or []
+            adj_move_line_ids = MoveLine.search(cr, uid, [('move_id.adjustment', '=', 'sale_receipt'), ('move_id.sale_receipt_id', '=', voucher.id)], context=context)
+            adj_move_lines = MoveLine.browse(cr, uid, adj_move_line_ids, context=context)
+            move_lines = voucher_move_lines + adj_move_lines
+            for move_line in move_lines:
                 if move_line.account_id.user_type.code == 'bank':
                     amount_transfer += (move_line.debit - move_line.credit)
                     amount_cash -= (move_line.debit - move_line.credit)
@@ -166,6 +171,24 @@ class account_voucher(osv.osv):
             }
         return res
 
+    def _get_account_move_line(self, cr, uid, ids, context=None):
+        MoveLine = self.pool.get('account.move.line')
+        AccountVoucher = self.pool.get('account.voucher')
+        voucher_ids = []
+        for move_line in MoveLine.browse(cr, uid, ids, context=context):
+            if move_line.move_id.adjustment == 'sale_receipt':
+                voucher_ids = AccountVoucher.search(cr, uid, [('id', '=', move_line.move_id.sale_receipt_id.id)], context=context)
+        return voucher_ids
+
+    def _get_account_move(self, cr, uid, ids, context=None):
+        Move = self.pool.get('account.move')
+        AccountVoucher = self.pool.get('account.voucher')
+        voucher_ids = []
+        for move in Move.browse(cr, uid, ids, context=context):
+            if move.adjustment == 'sale_receipt':
+                voucher_ids = AccountVoucher.search(cr, uid, [('id', '=', move.sale_receipt_id.id)], context=context)
+        return voucher_ids
+
     _columns = {
         'docnumber': fields.integer('DocNumber', select=True, readonly=True),
         'pawn_shop_id': fields.many2one('pawn.shop', 'Shop', domain="[('company_id','=',company_id)]", readonly=True, states={'draft': [('readonly', False)]}),
@@ -174,8 +197,16 @@ class account_voucher(osv.osv):
         'is_refund': fields.boolean('Refund', readonly=True),
         'product_journal_id': fields.function(_compute_product_journal_id, type='many2one', relation='account.journal', string='Product Journal', store=True, readonly=True),
         'address': fields.related('partner_id', 'address_full', type='char', string='Address'),
-        'amount_cash': fields.function(_get_transfer_amount, string='Cash Amount', type='float', readonly=True, multi='balance'),
-        'amount_transfer': fields.function(_get_transfer_amount, string='Transfer Amount', type='float', readonly=True, multi='balance'),
+        'amount_cash': fields.function(_get_transfer_amount, string='Cash Amount', type='float', store={
+            'account.voucher': (lambda self, cr, uid, ids, c={}: ids, ['line_cr_ids', 'move_id'], 10),
+            'account.move.line': (_get_account_move_line, ['debit', 'credit', 'account_id'], 10),
+            'account.move': (_get_account_move, ['adjustment', 'sale_receipt_id'], 10),
+        }, multi='balance'),
+        'amount_transfer': fields.function(_get_transfer_amount, string='Transfer Amount', type='float', store={
+            'account.voucher': (lambda self, cr, uid, ids, c={}: ids, ['line_cr_ids', 'move_id'], 10),
+            'account.move.line': (_get_account_move_line, ['debit', 'credit', 'account_id'], 10),
+            'account.move': (_get_account_move, ['adjustment', 'sale_receipt_id'], 10),
+        }, multi='balance'),
     }
 
     _constraints = [

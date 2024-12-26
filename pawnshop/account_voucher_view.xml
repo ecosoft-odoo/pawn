@@ -107,8 +107,8 @@
                         <field name="product_journal_id"/>
                     </field>
                     <field name="state" position="after">
-                        <field name="amount_cash"/>
-                        <field name="amount_transfer"/>
+                        <field name="amount_cash" sum="Total Cash Amount"/>
+                        <field name="amount_transfer" sum="Total Transfer Amount"/>
                     </field>
                 </data>
             </field>

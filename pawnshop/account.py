@@ -262,7 +262,11 @@ class account_move(osv.osv):
     _columns={
         'pawn_shop_id' : fields.function(_get_shop, fnct_search=_search_shop, string='Shop', type='many2one', relation='pawn.shop'),
         'adjustment': fields.selection([('pawn', 'Pawn'), ('redeem', 'Redeem'), ('sale_receipt', 'Sale Receipt')], 'Adjustment'),
+        'sale_receipt_id': fields.many2one('account.voucher', 'Sale Receipt Ref', domain=[('journal_id.type', 'in', ['sale','sale_refund'])]),
     }
+
+    def onchange_adjustment(self, cr, uid, ids, context=None):
+        return {'value': {'sale_receipt_id': False}}
 
 account_move()
 

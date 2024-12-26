@@ -16,7 +16,8 @@
             <field name="arch" type="xml">
             	<field name="to_check" position="before">
             		<field name="pawn_shop_id"/>
-					<field name="adjustment"/>
+					<field name="adjustment" on_change="onchange_adjustment()"/>
+					<field name="sale_receipt_id" attrs="{'invisible': [('adjustment', '!=', 'sale_receipt')], 'required': [('adjustment', '=', 'sale_receipt')]}"/>
             	</field>
                 <xpath expr="//tree/field[@name='invoice']" position="after">
                 	<field name="pawn_order_id"/>
