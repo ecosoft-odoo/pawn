@@ -38,10 +38,12 @@ class pawn_order_renew(osv.osv_memory):
         return False
 
     def _get_interest_amount(self, cr, uid, context=None):
+        if context is None:
+            context = {}
         active_id = context.get('active_id', False)
         pawn_obj = self.pool.get('pawn.order')
-        date_redeem = fields.date.context_today(self, cr, uid, context=context)
-        if active_id:
+        date_redeem = context.get('date_renew', fields.date.context_today(self, cr, uid, context=context))
+        if active_id and date_redeem:
             amount_interest = pawn_obj.calculate_interest_remain(cr, uid, active_id, date_redeem, context=context)
             return round(amount_interest, 2)
         return False
@@ -64,7 +66,7 @@ class pawn_order_renew(osv.osv_memory):
         active_id = context.get('active_id', False)
         pawn_obj = self.pool.get('pawn.order')
         pawn = pawn_obj.browse(cr, uid, active_id, context=context)
-        date_redeem = context.get('date_redeem', fields.date.context_today(self, cr, uid, context=context))
+        date_redeem = context.get('date_renew', fields.date.context_today(self, cr, uid, context=context))
         if active_id and date_redeem:
             months = pawn_obj._calculate_months(cr, uid, pawn.date_order, date_redeem, context=context)
             return months
@@ -95,7 +97,7 @@ class pawn_order_renew(osv.osv_memory):
     _name = "pawn.order.renew"
     _description = "renew"
     _columns = {
-        'date_renew': fields.date('Date', readonly=True),
+        'date_renew': fields.date('Date'),
         'pawn_amount': fields.float('Initial Amount', readonly=True),
         'interest_amount': fields.float('Interest', readonly=True),
         'discount': fields.float('Discount', readonly=False),
@@ -126,6 +128,18 @@ class pawn_order_renew(osv.osv_memory):
         'monthly_interest': _get_monthly_interest,
         'pawn_duration': _get_months,
     }
+
+    def onchange_date_renew(self, cr, uid, ids, date_renew, context=None):
+        res = {'value': {}}
+        if context is None:
+            context = {}
+        context['date_renew'] = date_renew
+        res['value']['interest_amount'] = self._get_interest_amount(cr, uid, context=context)
+        res['value']['pay_interest_amount'] = self._get_interest_amount(cr, uid, context=context)
+        res['value']['discount'] = 0.0
+        res['value']['addition'] = 0.0
+        res['value']['pawn_duration'] = self._get_months(cr, uid, context=context)
+        return res
 
     def onchange_amount(self, cr, uid, ids, field, pawn_amount, interest_amount, discount, addition, pay_interest_amount, increase_pawn_amount, new_pawn_amount, context=None):
         res = {'value': {}}
@@ -182,6 +196,22 @@ class pawn_order_renew(osv.osv_memory):
             if secret_key != valid_secret_key:
                 raise osv.except_osv(_('Error!'), _('The secret key is invalid.'))
         return True
+    
+    def remove_move_accrued_interest(self, cr, uid, pawn_id, redeem_date, context=None):
+        accrued_obj = self.pool.get('pawn.accrued.interest')
+        move_obj = self.pool.get('account.move')
+        accrued_interest_ids = accrued_obj.search(cr, uid, [('pawn_id', '=', pawn_id), ('interest_date', '>', redeem_date)], context=context)
+        accrued_interests = accrued_obj.browse(cr, uid, accrued_interest_ids, context=context)
+        for accrued_interest in accrued_interests:
+            if accrued_interest.reverse_move_id:
+                move_obj.button_cancel(cr, uid, [accrued_interest.reverse_move_id.id], context=context)
+                move_obj.unlink(cr, uid, [accrued_interest.reverse_move_id.id], context=context)
+            if accrued_interest.move_id:
+                move_obj.button_cancel(cr, uid, [accrued_interest.move_id.id], context=context)
+                move_obj.unlink(cr, uid, [accrued_interest.move_id.id], context=context)
+            # Inactive accrued interest line
+            accrued_obj.write(cr, uid, [accrued_interest.id], {'active': False}, context=context)
+        return True
 
     def action_renew(self, cr, uid, ids, context=None):
         if context is None:
@@ -193,6 +223,7 @@ class pawn_order_renew(osv.osv_memory):
         pawn = pawn_obj.browse(cr, uid, pawn_id, context=context)
         state_bf_redeem = pawn.state
         wizard = self.browse(cr, uid, ids[0], context)
+        date = wizard.date_renew
         # Check new pawn amount must equal to sum of pawned subtotal
         if wizard.new_pawn_amount != sum([line.pawn_price_subtotal for line in wizard.renew_line_ids]):
             raise osv.except_osv(_('Error!'), _('New pawn amount must equal to sum of pawned subtotal'))
@@ -207,13 +238,12 @@ class pawn_order_renew(osv.osv_memory):
             'delegation_of_authority': wizard.delegation_of_authority,
             'delegate_id': wizard.delegate_id.id,
             'bypass_fingerprint_redeem': True if (wizard.renewal_transfer and not pawn.fingerprint_pawn) else False,
+            'date_redeem': date,  # Update Redeem Date
         }, context=context)
         # Trigger workflow
         # Redeem the current one
         wf_service = netsvc.LocalService("workflow")
         wf_service.trg_validate(uid, 'pawn.order', pawn_id, 'order_redeem', cr)
-        # Interest
-        date = wizard.date_renew
         # Check pay interest amount
         total_pay_interest_amount = wizard.interest_amount - wizard.discount + wizard.addition
         if float_compare(total_pay_interest_amount, wizard.pay_interest_amount, precision_digits=2) != 0:
@@ -234,9 +264,11 @@ class pawn_order_renew(osv.osv_memory):
             # Register Actual Interest
             pawn_obj.register_interest_paid(cr, uid, pawn_id, date, discount, addition, interest_amount, context=context)
             # Reverse Accrued Interest
-            pawn_obj.action_move_reversed_accrued_interest_create(cr, uid, [pawn_id], context=context)
+            pawn_obj.action_move_reversed_accrued_interest_create(cr, uid, [pawn_id], context=dict(context, **{'force_date': date}))
             # Inactive Accrued Interest that has not been posted yet.
             pawn_obj.update_active_accrued_interest(cr, uid, [pawn_id], False, context=context)
+            # Remove Accrued Interest Move (Case Redeem Date < Today)
+            self.remove_move_accrued_interest(cr, uid, pawn_id, date, context=context)
         else:
             # Special Case redeem after expired.
             # No register interest, just full amount as sales receipt.
@@ -260,9 +292,6 @@ class pawn_order_renew(osv.osv_memory):
             self.pool.get('account.voucher').write(cr, uid, [voucher_id], {'amount': redeem_amount})
             # Validate Receipt
             wf_service.trg_validate(uid, 'account.voucher', voucher_id, 'proforma_voucher', cr)
-
-        # Update Redeem Date too.
-        pawn_obj.write(cr, uid, [pawn_id], {'date_redeem': date})
         # Create the new Pawn by copying the existing one.
         wizard = self.browse(cr, uid, ids[0], context)
         default_pawn = {
@@ -335,6 +364,13 @@ class pawn_order_renew(osv.osv_memory):
                     'increase_pawn_amount': increase_pawn_amount,
                     'new_pawn_amount': new_pawn_amount,
                 })
+        # Update interest_amount, pawn duration (onchange method not store value for readonly field)
+        if vals.get('date_renew'):
+            prepare_vals = self.onchange_date_renew(cr, uid, [], vals['date_renew'], context=context)['value']
+            if not vals.get('interest_amount'):
+                vals['interest_amount'] = prepare_vals['interest_amount']
+            if not vals.get('pawn_duration'):
+                vals['pawn_duration'] = prepare_vals['pawn_duration']
         return vals
 
     def create(self, cr, uid, vals, context=None):

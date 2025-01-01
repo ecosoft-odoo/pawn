@@ -60,9 +60,8 @@ class pawn_order(osv.osv):
             self.action_move_reversed_accrued_interest_create(cr, uid, [pawn.id], context=context)
             # Inactive any left over accrued interest
             self.update_active_accrued_interest(cr, uid, [pawn.id], False, context=context)
-            # Create Move (except extended case)
-            if not pawn.extended:
-                self.action_move_create(cr, uid, [pawn.id], context={'direction': 'expire'})
+            # Create Move
+            self.action_move_create(cr, uid, [pawn.id], context={'direction': 'expire'})
             self.write(cr, uid, [pawn.id], {'expire_move_by_cron': False}, context=context)
         return True
 

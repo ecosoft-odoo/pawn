@@ -97,15 +97,6 @@
 	<field name="pawnshop" class="java.lang.String">
 		<fieldDescription><![CDATA[pawn_shop_id/name]]></fieldDescription>
 	</field>
-	<field name="prev_date_order" class="java.util.Date">
-		<fieldDescription><![CDATA[parent_id/date_order]]></fieldDescription>
-	</field>
-	<field name="prev_book" class="java.lang.Number">
-		<fieldDescription><![CDATA[parent_id/book]]></fieldDescription>
-	</field>
-	<field name="prev_number" class="java.lang.Number">
-		<fieldDescription><![CDATA[parent_id/number]]></fieldDescription>
-	</field>
 	<field name="profit_center" class="java.lang.Integer">
 		<fieldDescription><![CDATA[journal_id/profit_center]]></fieldDescription>
 	</field>
@@ -162,6 +153,9 @@
 	</field>
 	<field name="parent_date_order" class="java.util.Date">
 		<fieldDescription><![CDATA[parent_id/date_order]]></fieldDescription>
+	</field>
+	<field name="parent_amount_pawned" class="java.lang.Number">
+		<fieldDescription><![CDATA[parent_id/amount_pawned]]></fieldDescription>
 	</field>
 	<variable name="product_qty" class="java.lang.Number" calculation="Sum">
 		<variableExpression><![CDATA[$F{product_qty}]]></variableExpression>
@@ -414,6 +408,18 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_due_ticket}]]></textFieldExpression>
 			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="25" y="375" width="200" height="17">
+					<printWhenExpression><![CDATA[$F{parent_amount_pawned}]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Monospaced" size="8" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[
+($F{amount_pawned} - $F{parent_amount_pawned}) > 0 ? "เพิ่มเงิน " + new java.text.DecimalFormat("#,##0.00").format(($F{amount_pawned} - $F{parent_amount_pawned})) + " บาท" : 
+(($F{amount_pawned} - $F{parent_amount_pawned}) < 0 ? "ลดเงิน " + new java.text.DecimalFormat("#,##0.00").format(-1 * ($F{amount_pawned} - $F{parent_amount_pawned})) + " บาท" : "")
+]]></textFieldExpression>
+			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement positionType="Float" x="127" y="396" width="234" height="17" forecolor="#000000"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="html">
@@ -551,6 +557,18 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 					<font fontName="Monospaced" size="8" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{expiry_date}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="398" y="375" width="200" height="17">
+					<printWhenExpression><![CDATA[$F{parent_amount_pawned}]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Monospaced" size="8" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[
+($F{amount_pawned} - $F{parent_amount_pawned}) > 0 ? "เพิ่มเงิน " + new java.text.DecimalFormat("#,##0.00").format(($F{amount_pawned} - $F{parent_amount_pawned})) + " บาท" : 
+(($F{amount_pawned} - $F{parent_amount_pawned}) < 0 ? "ลดเงิน " + new java.text.DecimalFormat("#,##0.00").format(-1 * ($F{amount_pawned} - $F{parent_amount_pawned})) + " บาท" : "")
+]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement positionType="Float" x="489" y="396" width="241" height="17" forecolor="#000000"/>

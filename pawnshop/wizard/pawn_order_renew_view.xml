@@ -11,7 +11,7 @@
                         	<label string="Please confirm renew amount as following,"/>
                         </group>
                         <group name="amount">
-                            <field name="date_renew"/>
+                            <field name="date_renew" readonly="1" required="1" on_change="onchange_date_renew(date_renew, context)"/>
                             <field name="pawn_amount" string="Initial"/>
                             <field name="monthly_interest"/>
                             <field name="pawn_duration"/>
@@ -58,6 +58,20 @@
                </form>
             </field>
         </record>
+
+        <!-- View for Administration / Settings -->
+        <record id="view_pawn_order_renew_for_admin" model="ir.ui.view">
+            <field name="name">view.pawn.order.renew.for.admin</field>
+            <field name="model">pawn.order.renew</field>
+            <field name="inherit_id" ref="pawnshop.view_pawn_order_renew"/>
+            <field name="groups_id" eval="[(6, 0, [ref('base.group_system')])]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date_renew']" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                </xpath>
+            </field>
+        </record>
+
         <record id="action_pawn_order_renew" model="ir.actions.act_window">
             <field name="name">Renew</field>
             <field name="res_model">pawn.order.renew</field>

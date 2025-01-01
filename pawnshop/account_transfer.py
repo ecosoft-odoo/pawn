@@ -75,6 +75,14 @@ class account_transfer(osv.osv):
                     'exchange_inv': (trans.exchange_rate and 1.0 / trans.exchange_rate or 0.0)
                 }
         return res
+    
+    def _check_date(self, cr, uid, ids, context=None):
+        today = fields.date.context_today(self, cr, uid, context=context)
+        transfers = self.browse(cr, uid, ids, context=context)
+        for transfer in transfers:
+            if today < transfer.date:
+                return False
+        return True
 
     _columns = {
         # docnumber
@@ -91,8 +99,11 @@ class account_transfer(osv.osv):
     _defaults = {
         #'pawn_shop_id': _get_default_shop_id
     }
+    _constraints = [
+        (_check_date, 'Error! The transaction date cannot be set to a future date.', ['date'])
+    ]
     _order = 'id desc'
-    
+
     def _get_next_name(self, cr, uid, date, pawn_shop_id, context=None):
         year = date and date[:4] or time.strftime('%Y-%m-%d')[:4]
         # Get year from date
@@ -102,7 +113,7 @@ class account_transfer(osv.osv):
         number = cr.fetchone()[0] or 0
         number += 1
         shop_code = self.pool.get('pawn.shop').browse(cr, uid, pawn_shop_id).tr_code or '--'
-        next_name = shop_code + '/' + year + '/' + str(number).zfill(3)     
+        next_name = shop_code + '/' + year + '/' + str(number).zfill(3)
         return next_name, number
 
     def create(self, cr, uid, vals, context=None):
@@ -154,5 +165,12 @@ class account_transfer(osv.osv):
         res['value']['exchange_inv'] = res['value']['exchange_rate'] and (1.0 / res['value']['exchange_rate']) or 0.0
         res['value']['dst_amount'] = res['value']['exchange_rate'] * src_amount
         return res
+
+    def action_cancel(self, cr, uid, ids, context=None):
+        if self.pool.get('res.users').has_group(cr, uid, 'base.group_system'):
+            for trans in self.browse(cr, uid, ids, context=context):
+                for voucher in trans.voucher_ids:
+                    self.pool.get('account.voucher').cancel_voucher(cr, uid, [voucher.id], context=context)
+        return super(account_transfer, self).action_cancel(cr, uid, ids, context=context)
 
 account_transfer()
