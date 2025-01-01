@@ -68,7 +68,7 @@ class pawn_order_renew(osv.osv_memory):
         active_id = context.get('active_id', False)
         pawn_obj = self.pool.get('pawn.order')
         pawn = pawn_obj.browse(cr, uid, active_id, context=context)
-        date_redeem = context.get('date_redeem', fields.date.context_today(self, cr, uid, context=context))
+        date_redeem = context.get('date_renew', fields.date.context_today(self, cr, uid, context=context))
         if active_id and date_redeem:
             months = pawn_obj._calculate_months(cr, uid, pawn.date_order, date_redeem, context=context)
             return months
@@ -352,9 +352,13 @@ class pawn_order_renew(osv.osv_memory):
                     'increase_pawn_amount': increase_pawn_amount,
                     'new_pawn_amount': new_pawn_amount,
                 })
-        # Update interest_amount (onchange method not store value for readonly field)
-        if vals.get('date_renew') and not vals.get('interest_amount'):
-            vals['interest_amount'] = self.onchange_date_renew(cr, uid, [], vals['date_renew'], context=context)['value']['interest_amount']
+        # Update interest_amount, pawn duration (onchange method not store value for readonly field)
+        if vals.get('date_renew'):
+            prepare_vals = self.onchange_date_renew(cr, uid, [], vals['date_renew'], context=context)['value']
+            if not vals.get('interest_amount'):
+                vals['interest_amount'] = prepare_vals['interest_amount']
+            if not vals.get('pawn_duration'):
+                vals['pawn_duration'] = prepare_vals['pawn_duration']
         return vals
 
     def create(self, cr, uid, vals, context=None):

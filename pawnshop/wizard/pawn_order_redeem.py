@@ -265,16 +265,24 @@ class pawn_order_redeem(osv.osv_memory):
         return True
 
     def create(self, cr, uid, vals, context=None):
-        # Update interest_amount (onchange method not store value for readonly field)
-        if vals.get('date_redeem') and not vals.get('interest_amount'):
-            vals['interest_amount'] = self.onchange_date_redeem(cr, uid, [], vals['date_redeem'], context=context)['value']['interest_amount']
+        # Update interest_amount, pawn duration (onchange method not store value for readonly field)
+        if vals.get('date_redeem'):
+            prepare_vals = self.onchange_date_redeem(cr, uid, [], vals['date_redeem'], context=context)['value']
+            if not vals.get('interest_amount'):
+                vals['interest_amount'] = prepare_vals['interest_amount']
+            if not vals.get('pawn_duration'):
+                vals['pawn_duration'] = prepare_vals['pawn_duration']
         # --
         return super(pawn_order_redeem, self).create(cr, uid, vals, context=context)
 
     def write(self, cr, uid, ids, vals, context=None):
-        # Update interest_amount (onchange method not store value for readonly field)
-        if vals.get('date_redeem') and not vals.get('interest_amount'):
-            vals['interest_amount'] = self.onchange_date_redeem(cr, uid, [], vals['date_redeem'], context=context)['value']['interest_amount']
+        # Update interest_amount, pawn duration (onchange method not store value for readonly field)
+        if vals.get('date_redeem'):
+            prepare_vals = self.onchange_date_redeem(cr, uid, [], vals['date_redeem'], context=context)['value']
+            if not vals.get('interest_amount'):
+                vals['interest_amount'] = prepare_vals['interest_amount']
+            if not vals.get('pawn_duration'):
+                vals['pawn_duration'] = prepare_vals['pawn_duration']
         # --
         return super(pawn_order_redeem, self).write(cr, uid, ids, vals, context=context)
 
