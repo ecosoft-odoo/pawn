@@ -553,12 +553,11 @@ class pawn_order(osv.osv):
                                      _('Pawn Ticket do not have any line items. It can not be pawned.'))
             if order.state == 'draft':  # case from draft to paen, create action move line, else nothing.
                 self.action_move_create(cr, uid, [order.id], context={'direction': 'pawn'})
-            #elif order.state == 'redeem':  # case from redeem, do not update status.
+                # Fingerprint
+                self._update_fingerprint(cr, uid, [order.id], action_type='pawn', context=context)
+                # self._reset_fingerprint(cr, uid, [order.id], action_type='redeem', context=context)
             self.write(cr, uid, [order.id], {'state': 'pawn'}, context=context)
             self._update_order_pawn_asset(cr, uid, [order.id], {'state': 'pawn'}, context=context)
-            # Fingerprint
-            self._update_fingerprint(cr, uid, [order.id], action_type='pawn', context=context)
-            # self._reset_fingerprint(cr, uid, [order.id], action_type='redeem', context=context)
         return True
 
     def order_redeem(self, cr, uid, ids, context=None):
@@ -566,10 +565,10 @@ class pawn_order(osv.osv):
         for pawn in self.browse(cr, uid, ids, context=context):
             if pawn.state != 'expire':
                 self.action_move_create(cr, uid, [pawn.id], context={'direction': 'redeem'})
-            self.write(cr, uid, [pawn.id], {'state': 'redeem'}, context=context)
-            self._update_order_pawn_asset(cr, uid, [pawn.id], {'state': 'redeem'}, context=context)
             # Fingerprint
             self._update_fingerprint(cr, uid, [pawn.id], action_type='redeem', context=context)
+            self.write(cr, uid, [pawn.id], {'state': 'redeem'}, context=context)
+            self._update_order_pawn_asset(cr, uid, [pawn.id], {'state': 'redeem'}, context=context)
         return True
 
     def _check_order_extend(self, cr, uid, ids, context=None):
