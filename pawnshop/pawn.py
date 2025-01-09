@@ -1591,6 +1591,10 @@ class pawn_order(osv.osv):
             self.write(cr, uid, [pawn.id], {'child_id': False}, context=context)
         return True
 
+    def raise_error(self, message=""):
+        """This function call from server action"""
+        raise osv.except_osv(_('Error!'), _(message))
+
 pawn_order()
 
 
