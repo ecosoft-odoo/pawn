@@ -309,13 +309,27 @@
 				</textElement>
 				<textFieldExpression class="java.sql.Timestamp"><![CDATA[new java.sql.Timestamp($F{create_time}.getTime()+(25200000).longValue())]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="188" y="131" width="166" height="17" forecolor="#000000"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle" markup="html">
+			<textField isStretchWithOverflow="false" isBlankWhenNull="true">
+				<reportElement x="308" y="128" width="72" height="28" forecolor="#ffffff" backcolor="#000000" mode="Opaque">
+					<printWhenExpression><![CDATA[$F{parent_book} != ""]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="14" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{parent_book} != "" ? "(ส่งดอก)" :
-"(ตั๋วจำนำใหม่)"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String">
+					<![CDATA["ส่งดอก"]]>
+				</textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="false" isBlankWhenNull="true">
+				<reportElement x="277" y="128" width="102" height="28" forecolor="#ffffff" backcolor="#000000" mode="Opaque">
+					<printWhenExpression><![CDATA[$F{parent_book} == ""]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+					<font fontName="Monospaced" size="14" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String">
+						<![CDATA["ตั๋วจำนำใหม่"]]>
+				</textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="50" y="150" width="220" height="17"/>
@@ -448,13 +462,27 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_order}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="558" y="131" width="166" height="17" forecolor="#000000"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle" markup="html">
+			<textField isStretchWithOverflow="false" isBlankWhenNull="true">
+				<reportElement x="678" y="128" width="72" height="28" forecolor="#ffffff" backcolor="#000000" mode="Opaque">
+					<printWhenExpression><![CDATA[$F{parent_book} != ""]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="14" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{parent_book} != "" ? "(ส่งดอก)" :
-"(ตั๋วจำนำใหม่)"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String">
+					<![CDATA["ส่งดอก"]]>
+				</textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="false" isBlankWhenNull="true">
+				<reportElement x="647" y="128" width="102" height="28" forecolor="#ffffff" backcolor="#000000" mode="Opaque">
+					<printWhenExpression><![CDATA[$F{parent_book} == ""]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+					<font fontName="Monospaced" size="14" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String">
+					<![CDATA["ตั๋วจำนำใหม่"]]>
+				</textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" evaluationTime="Report" pattern="#,##0" isBlankWhenNull="false">
 				<reportElement positionType="Float" x="419" y="420" width="40" height="17" forecolor="#000000"/>
