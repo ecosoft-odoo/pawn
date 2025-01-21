@@ -8,10 +8,7 @@
                 <form string="Pawn" version="7.0">
                     <group string="Total Amount">
                         <group>
-                            <h2>
-                                <label for="amount" />
-                                <field name="amount" class="oe_inline" />
-                            </h2>
+                            <field name="amount" style="color: red; font-size: 30px;"/>
                         </group>
                         <group>
                             <field name="date_due_ticket"/>

@@ -6,6 +6,13 @@
             <field name="model">pawn.order.redeem</field>
             <field name="arch" type="xml">
                 <form string="Redeem" version="7.0">
+                    <style>
+                        .redeem_amount input {
+                            color: red !important;
+                            height: 30px !important;
+                            font-size: 30px !important;
+                        }
+                    </style>
                     <group string="Total Amount">
                         <group>
                             <field name="date_redeem" readonly="1" required="1" on_change="onchange_date_redeem(date_redeem, context)"/>
@@ -16,7 +23,7 @@
                             <field name="discount" invisible="1"/>
                             <field name="addition" invisible="1"/>
                             <field name="pay_interest_amount" on_change="onchange_amount('pay_interest_amount', pawn_amount, interest_amount, pay_interest_amount, redeem_amount, transfer_amount, cash_amount)"/>
-                            <field name="redeem_amount" on_change="onchange_amount('redeem_amount', pawn_amount, interest_amount, pay_interest_amount, redeem_amount, transfer_amount, cash_amount)"/>
+                            <field name="redeem_amount" class="redeem_amount" on_change="onchange_amount('redeem_amount', pawn_amount, interest_amount, pay_interest_amount, redeem_amount, transfer_amount, cash_amount)"/>
                         </group>
                         <group>
                             <field name="delegation_of_authority" on_change="onchange_delegation_of_authority()"/>

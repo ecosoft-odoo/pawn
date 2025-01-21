@@ -6,6 +6,13 @@
             <field name="model">pawn.order.renew</field>
             <field name="arch" type="xml">
                 <form string="Renew" version="7.0">
+                    <style>
+                        .pay_interest_amount input {
+                            color: red !important;
+                            height: 30px !important;
+                            font-size: 30px !important;
+                        }
+                    </style>
                     <group string="Total Amount">
                         <group>
                             <field name="date_renew" readonly="1" required="1" on_change="onchange_date_renew(date_renew, context)"/>
@@ -15,7 +22,7 @@
                             <field name="interest_amount"/>
                             <field name="discount" invisible="1"/>
                             <field name="addition" invisible="1"/>
-                            <field name="pay_interest_amount" on_change="onchange_amount('pay_interest_amount', pawn_amount, interest_amount, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
+                            <field name="pay_interest_amount" class="pay_interest_amount" on_change="onchange_amount('pay_interest_amount', pawn_amount, interest_amount, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
                             <field name="increase_pawn_amount" on_change="onchange_amount('increase_pawn_amount', pawn_amount, interest_amount, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
                             <field name="new_pawn_amount" on_change="onchange_amount('new_pawn_amount', pawn_amount, interest_amount, pay_interest_amount, increase_pawn_amount, new_pawn_amount)"/>
                         </group>
