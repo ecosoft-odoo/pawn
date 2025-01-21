@@ -173,7 +173,7 @@ select * from
 	select 6.4 as sequence, desc1::varchar, desc2::varchar, desc3::varchar, balance
 	from redeem_interest_unextended
 	union
-	select 7 as sequence, 'โอนไถ่ถอน (ไม่เล้า)'::varchar as desc1, ''::varchar as desc2, ''::varchar as desc3, coalesce(sum(l.credit),0) - coalesce(sum(l.debit),0) as balance
+	select 7 as sequence, 'โอนไถ่ถอน (ไม่เล้า) (จำนวน ' || count(distinct l.pawn_order_id) || ' ตั๋ว)'::varchar as desc1, ''::varchar as desc2, ''::varchar as desc3, coalesce(sum(l.credit),0) - coalesce(sum(l.debit),0) as balance
 	from account_move_line l
 	join account_move m on l.move_id = m.id
 	join pawn_order pw on l.pawn_order_id = pw.id
@@ -199,7 +199,7 @@ select * from
 	select 8.4 as sequence, desc1::varchar, desc2::varchar, desc3::varchar, balance
 	from redeem_interest_extended
 	union
-	select 9 as sequence, 'โอนไถ่ถอน (เล้า)'::varchar as desc1, ''::varchar as desc2, ''::varchar as desc3, coalesce(sum(l.credit),0) - coalesce(sum(l.debit),0) as balance
+	select 9 as sequence, 'โอนไถ่ถอน (เล้า) (จำนวน ' || count(distinct l.pawn_order_id) || ' ตั๋ว)'::varchar as desc1, ''::varchar as desc2, ''::varchar as desc3, coalesce(sum(l.credit),0) - coalesce(sum(l.debit),0) as balance
 	from account_move_line l
 	join account_move m on l.move_id = m.id
 	join pawn_order pw on l.pawn_order_id = pw.id
