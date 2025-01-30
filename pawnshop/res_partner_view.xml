@@ -9,12 +9,15 @@
             <field name="arch" type="xml">
                 <search string="Search Partner" position="inside">
 	        		<field name="card_number" />
+                    <field name="nickname"/>
                 </search>
                 <group position="inside">
                     <filter string="Create Year" context="{'group_by': 'create_year'}"/>
                     <filter string="Create Month" context="{'group_by': 'create_date'}"/>
                 </group>
                 <field name="category_id" position="before">
+                    <filter string="Regular Customer" name="regular_customer" domain="[('regular_customer', '=', True)]"/>
+                    <separator/>
                     <filter string="Customers with pawn ticket items" name="customer_with_pawn_ticket_items" domain="['|', ('active', '=', True), ('active', '=', False), ('pawn_order_ids','!=',False), ('pawn_order_ids.state', 'not in', ['draft', 'cancel'])]"/>
                     <separator/>
                 </field>
@@ -131,6 +134,10 @@
                             <label string="Buyer"/>
                             <field name="supplier" />
                             <label string="Customer"/>
+                            <div>
+                                <field name="regular_customer"/>
+                                <label string="Regular Customer"/>
+                            </div>
                     </div>
                     <group>
                         <group>
@@ -149,6 +156,7 @@
                                 <field name="age" class="oe_inline"/> <label string="Years"/>
                             </div>
                             <field name="phone" />
+                            <field name="nickname"/>
                         </group>
                     </group>
                     <notebook colspan="4">

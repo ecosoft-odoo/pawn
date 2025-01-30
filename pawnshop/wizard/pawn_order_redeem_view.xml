@@ -6,45 +6,70 @@
             <field name="model">pawn.order.redeem</field>
             <field name="arch" type="xml">
                 <form string="Redeem" version="7.0">
-                    <group>
-                    	<group name="label" colspan="2">
-                        	<label string="Please confirm redeem amount as following,"/>
-                        </group>
-                        <group name="amount">
-                            <field name="date_redeem" on_change="onchange_date_redeem(date_redeem, context)" />
-                            <field name="pawn_amount" string="Initial" />
+                    <style>
+                        .redeem_amount input {
+                            color: red !important;
+                            height: 30px !important;
+                            font-size: 30px !important;
+                        }
+                    </style>
+                    <group string="Total Amount">
+                        <group>
+                            <field name="date_redeem" readonly="1" required="1" on_change="onchange_date_redeem(date_redeem, context)"/>
+                            <field name="pawn_amount"/>
                             <field name="monthly_interest"/>
                             <field name="pawn_duration"/>
-                            <field name="interest_amount" string="+ Interest Amount"/>
-                            <field name="discount" string="- Discount" on_change="onchange_amount('discount', pawn_amount, interest_amount, discount, addition, redeem_amount)"/>
-                            <field name="addition" string="+ Addition" on_change="onchange_amount('addition', pawn_amount, interest_amount, discount, addition, redeem_amount)"/>
-                        </group>
-                        <group>
-                            <h2>
-                                <label for="redeem_amount" />
-                                <field name="redeem_amount" on_change="onchange_amount('redeem_amount', pawn_amount, interest_amount, discount, addition, redeem_amount)" class="oe_inline" />
-                            </h2>
+                            <field name="interest_amount"/>
+                            <field name="discount" invisible="1"/>
+                            <field name="addition" invisible="1"/>
+                            <field name="pay_interest_amount" on_change="onchange_amount('pay_interest_amount', pawn_amount, interest_amount, pay_interest_amount, redeem_amount, transfer_amount, cash_amount)"/>
+                            <field name="redeem_amount" class="redeem_amount" on_change="onchange_amount('redeem_amount', pawn_amount, interest_amount, pay_interest_amount, redeem_amount, transfer_amount, cash_amount)"/>
                         </group>
                         <group>
                             <field name="delegation_of_authority" on_change="onchange_delegation_of_authority()"/>
                             <field name="delegate_id" domain="[('supplier', '=', 1), ('pawnshop', '=', 1)]" options="{'limit': 10, 'create': false, 'create_edit': false}" attrs="{'invisible': [('delegation_of_authority', '=', False)], 'required': [('delegation_of_authority', '=', True)]}"/>
+                            <field name="bypass_fingerprint" on_change="onchange_bypass_fingerprint()"/>
+                            <field name="secret_key" password="1" attrs="{'invisible': [('bypass_fingerprint', '=', False)], 'required': [('bypass_fingerprint', '=', True)]}"/>
                         </group>
+                    </group>
+                    <group string="Payment Method">
+                        <group>
+                            <field name="bank_journal_id" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
+                            <field name="transfer_amount" on_change="onchange_amount('transfer_amount', pawn_amount, interest_amount, pay_interest_amount, redeem_amount, transfer_amount, cash_amount)"/>
+                            <field name="journal_id" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
+                            <field name="cash_amount" on_change="onchange_amount('cash_amount', pawn_amount, interest_amount, pay_interest_amount, redeem_amount, transfer_amount, cash_amount)"/>
+                        </group>
+                        <group/>
                     </group>
                     <footer>
                         <button string="Redeem" name="action_redeem" type="object" class="oe_highlight"/>
                         or
                         <button string="Cancel" class="oe_link" special="cancel"/>
                     </footer>
-               </form>
+                </form>
             </field>
         </record>
+
+        <!-- View for Administration / Settings -->
+        <record id="view_pawn_order_redeem_for_admin" model="ir.ui.view">
+            <field name="name">view.pawn.order.redeem.for.admin</field>
+            <field name="model">pawn.order.redeem</field>
+            <field name="inherit_id" ref="pawnshop.view_pawn_order_redeem"/>
+            <field name="groups_id" eval="[(6, 0, [ref('base.group_system')])]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date_redeem']" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                </xpath>
+            </field>
+        </record>
+
         <record id="action_pawn_order_redeem" model="ir.actions.act_window">
             <field name="name">Redeem</field>
             <field name="res_model">pawn.order.redeem</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-           <field name="view_id" ref="view_pawn_order_redeem"/>
-           <field name="target">new</field>
+            <field name="view_id" ref="view_pawn_order_redeem"/>
+            <field name="target">new</field>
         </record>
     </data>
 </openerp>
