@@ -5083,3 +5083,7 @@ msgstr "ร้อยละคงที่"
 msgid "$F{prev_number}"
 msgstr "$F{prev_number}"
 
+#. module: pawnshop
+#: view:item.sold.report:0
+msgid "Pawn Month"
+msgstr "เดือนที่จำนำ"
