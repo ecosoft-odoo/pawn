@@ -61,6 +61,7 @@
                     <group  expand="0" string="Group by...">
                         <filter string="Customer" domain="[]" context="{'group_by' : 'partner_id'}"/>
                         <filter string="Sale Receipt" domain="[]" context="{'group_by' : 'voucher_id'}"/>
+                        <filter string="Pawn Month" domain="[]" context="{'group_by':'date_order'}"/>
                     </group>
                 </search>
             </field>
