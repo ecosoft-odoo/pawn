@@ -2772,6 +2772,7 @@ msgstr "ดอกเบี้ยรายเดือน"
 #. module: pawnshop
 #: field:pawn.order.redeem,pawn_duration:0
 #: field:pawn.order.renew,pawn_duration:0
+#: field:pawn.actual.interest,months:0
 msgid "Pawn Duration (Months)"
 msgstr "ระยะเวลาการจำนำ (เดือน)"
 
