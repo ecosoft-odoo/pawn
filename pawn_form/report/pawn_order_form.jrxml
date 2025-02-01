@@ -293,7 +293,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{reg_number}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd MMMMM yyyy" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="80" y="131" width="150" height="17"/>
+				<reportElement positionType="Float" x="80" y="131" width="152" height="17"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Monospaced" size="14" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -481,7 +481,7 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 				<imageExpression class="java.lang.String"><![CDATA[$F{fingerprint}]]></imageExpression>
 			</image>
 			<textField isStretchWithOverflow="true" pattern="dd MMMMM yyyy" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="454" y="131" width="150" height="17"/>
+				<reportElement positionType="Float" x="454" y="131" width="152" height="17"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Monospaced" size="14" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
