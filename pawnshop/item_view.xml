@@ -187,7 +187,7 @@
                     			attrs="{'invisible': ['|', '|', ('extended', '=', True), ('state', 'not in', ('for_sale')), ('type', '!=', 'pawn_asset')]}" />
                     	<button name="%(action_item_split)d" string="Split Item" type="action" class="oe_highlight"
                     			attrs="{'invisible': ['|', '|', ('type', '=', 'pawn_asset'), ('product_qty','&lt;',2), ('state','!=','for_sale')]}" />
-                    	<field name="state" widget="statusbar" statusbar_visible="draft,pawn,expire,for_sale" readonly="1" />
+                    	<field name="state" widget="statusbar" statusbar_visible="draft,pawn,expire,for_sale,sold" readonly="1" />
 	                </header>
                     <sheet>
                         <field name="image_medium" widget="image" class="oe_avatar oe_left"/>
