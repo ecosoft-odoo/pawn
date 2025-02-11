@@ -8,7 +8,7 @@
             <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="Finalize Expired Ticket" version="7.0">
-                	<p>Select ticket that is ready to expire, and finalize it.</p>
+                	<p>Do you want to classify "Pen" status tickets as expired tickets for sale?</p>
                     <group>
                         <group>
                             <field name="run_background"/>
