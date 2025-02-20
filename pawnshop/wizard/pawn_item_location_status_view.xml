@@ -11,7 +11,7 @@
 						This action will change Expired Ticket to "Items for Sale"
                     </p>
                     <footer>
-                        <button string="Confirm" name="pawn_asset_to_for_sale" type="object" default_focus="1" class="oe_highlight"/>
+                        <button string="Confirm" name="pawn_asset_to_for_sale" type="object" default_focus="1" class="oe_highlight" context="{'allow_for_sale': True}"/>
                         or
                         <button string="Cancel" class="oe_link" special="cancel"/>
                     </footer>
