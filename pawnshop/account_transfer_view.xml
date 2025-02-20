@@ -33,6 +33,25 @@
 				<xpath expr="/form/sheet/notebook/page/group//field[@name='dst_journal_id']" position="attributes">
 					<attribute name="on_change">onchange_journal_shop(src_journal_id,dst_journal_id,date,exchange_rate,src_amount,pawn_shop_id)</attribute>
                 </xpath>
+                <xpath expr="//field[@name='date']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- View for Administration / Settings -->
+        <record id="view_account_transfer_form_for_admin" model="ir.ui.view">
+            <field name="name">view.account.transfer.form.for.admin</field>
+            <field name="model">account.transfer</field>
+            <field name="inherit_id" ref="view_account_transfer_form_ext"/>
+            <field name="groups_id" eval="[(6, 0, [ref('base.group_system')])]"/>
+            <field name="arch" type="xml">
+                <field name="date" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                </field>
+                <button name="transfer_cancel" position="attributes">
+                    <attribute name="string">Cancel For Admin</attribute>
+                </button>
             </field>
         </record>
 	</data>
