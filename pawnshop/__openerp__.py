@@ -89,6 +89,7 @@
         'report/sale_performance_analysis_report.xml',
         'report/customer_report.xml',
         'report/item_sold_report.xml',
+        'report/bank_transfer_report_view.xml',
         'report/wizard/pawn_jor6_wizard.xml',
         'report/wizard/pawn_jor7_wizard.xml',
         'report/wizard/pawn_op_cash_wizard.xml',

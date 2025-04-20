@@ -34,5 +34,6 @@ import sale_performance_analysis_report
 import customer_report
 import pawn_jor6_report_xls
 import item_sold_report
+import bank_transfer_report
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
