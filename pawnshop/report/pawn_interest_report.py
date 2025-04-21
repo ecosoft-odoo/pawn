@@ -37,6 +37,7 @@ class pawn_interest_report(osv.osv):
             ('05', 'May'), ('06', 'June'), ('07', 'July'), ('08', 'August'), ('09', 'September'),
             ('10', 'October'), ('11', 'November'), ('12', 'December')], 'Month', readonly=True),
         'day': fields.char('Day', size=128, readonly=True),
+        'day_redeem': fields.char('Day Reem', size=128, readonly=True),
         'journal_id': fields.many2one('account.journal', 'Journal', readonly=True),
         'pawn_shop_id': fields.many2one('pawn.shop', 'Shop', readonly=True),
         'user_id': fields.many2one('res.users', 'Responsible', readonly=True),
@@ -70,6 +71,7 @@ class pawn_interest_report(osv.osv):
                     to_char(pawn.date_order, 'YYYY') as year,
                     to_char(pawn.date_order, 'MM') as month,
                     to_char(pawn.date_order, 'YYYY-MM-DD') as day,
+                    to_char(pawn.date_redeem, 'YYYY-MM-DD') as day_redeem,
                     product_template.description,
                     pawn_line.quantity,
                     round((case when pawn.amount_pawned is null then 100.0 else (pawn.amount_interest / pawn.amount_pawned) * 100.0 end)::numeric, 2)::varchar as percent_interest
