@@ -5,6 +5,14 @@
             <field name="key">pawnshop.customer_fingerprint_timeout</field>
             <field name="value">600</field>
         </record>
+        <record id="pawn_secret_key" model="ir.config_parameter">
+            <field name="key">pawnshop.pawn_secret_key</field>
+            <field name="value">99</field>
+        </record>
+        <record id="redeem_secret_key" model="ir.config_parameter">
+            <field name="key">pawnshop.redeem_secret_key</field>
+            <field name="value">99</field>
+        </record>
         <record id="renew_secret_key" model="ir.config_parameter">
             <field name="key">pawnshop.renew_secret_key</field>
             <field name="value">99</field>
