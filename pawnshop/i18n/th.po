@@ -246,6 +246,12 @@ msgid "Redeem Date"
 msgstr "วันที่ไถ่ถอน"
 
 #. module: pawnshop
+#: view:pawn.interest.report:0
+#: field:pawn.interest.report,day_redeem:0
+msgid "Day Redeem"
+msgstr "วันที่ไถ่ถอน"
+
+#. module: pawnshop
 #: help:pawn.order,message_unread:0
 msgid "If checked new messages require your attention."
 msgstr "ถ้าเลือก ข้อความใหม่ต้องการความสนใจของคุณ"
