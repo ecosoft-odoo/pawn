@@ -28,8 +28,7 @@ AVAILABLE_STATE = [('draft', 'Draft'),
                     ('redeem', 'Redeemed'),
                     ('expire', 'Expired'),
                     ('cancel', 'Cancelled'),
-                    ('for_sale', 'For Sale'),
-                    ('sold', 'Sold')]
+                    ('for_sale', 'For Sale')]
 
 # This data is in table product_location_status, we just show here for reference.
 LOCATION_STATUS = [('asset_incoming', 'Incoming'),

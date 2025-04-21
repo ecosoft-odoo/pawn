@@ -75,7 +75,7 @@ class pawn_order_redeem(osv.osv_memory):
     _name = "pawn.order.redeem"
     _description = "Redeem"
     _columns = {
-        'date_redeem': fields.date('Date'),
+        'date_redeem': fields.date('Date', readonly=True),
         'pawn_amount': fields.float('Initial Amount', readonly=True),
         'interest_amount': fields.float('Interest', readonly=True),
         'discount': fields.float('Discount', readonly=False),
@@ -83,8 +83,6 @@ class pawn_order_redeem(osv.osv_memory):
         'redeem_amount': fields.float('Final Redeem', readonly=False),
         'delegation_of_authority': fields.boolean('Delegation of Authority'),
         'delegate_id': fields.many2one('res.partner', 'Delegate'),
-        'bypass_fingerprint': fields.boolean('Bypass Fingerprint Redeem'),
-        'secret_key': fields.char('Secret Key'),
         'monthly_interest': fields.float('Monthly Interest', readonly=True),
         'pawn_duration': fields.float('Pawn Duration (Months)', readonly=True),
     }
@@ -128,37 +126,10 @@ class pawn_order_redeem(osv.osv_memory):
         res['value']['redeem_amount'] = self._get_redeem_amount(cr, uid, context=context)
         res['value']['discount'] = 0.0
         res['value']['addition'] = 0.0
-        res['value']['pawn_duration'] = self._get_months(cr, uid, context=context)
         return res
 
     def onchange_delegation_of_authority(self, cr, uid, ids, context=None):
         return {'value': {'delegate_id': False}}
-    
-    def onchange_bypass_fingerprint(self, cr, uid, ids, context=None):
-        return {'value': {'secret_key': False}}
-
-    def _validate_secret_key(self, cr, uid, bypass_fingerprint, secret_key, context=None):
-        """This function used for validate secret key bypass fingerprint check"""
-        if bypass_fingerprint:
-            valid_secret_key = self.pool.get('ir.config_parameter').get_param(cr, uid, 'pawnshop.redeem_secret_key', '')
-            if secret_key != valid_secret_key:
-                raise osv.except_osv(_('Error!'), _('The secret key is invalid.'))
-            
-    def remove_move_accrued_interest(self, cr, uid, pawn_id, redeem_date, context=None):
-        accrued_obj = self.pool.get('pawn.accrued.interest')
-        move_obj = self.pool.get('account.move')
-        accrued_interest_ids = accrued_obj.search(cr, uid, [('pawn_id', '=', pawn_id), ('interest_date', '>', redeem_date)], context=context)
-        accrued_interests = accrued_obj.browse(cr, uid, accrued_interest_ids, context=context)
-        for accrued_interest in accrued_interests:
-            if accrued_interest.reverse_move_id:
-                move_obj.button_cancel(cr, uid, [accrued_interest.reverse_move_id.id], context=context)
-                move_obj.unlink(cr, uid, [accrued_interest.reverse_move_id.id], context=context)
-            if accrued_interest.move_id:
-                move_obj.button_cancel(cr, uid, [accrued_interest.move_id.id], context=context)
-                move_obj.unlink(cr, uid, [accrued_interest.move_id.id], context=context)
-            # Inactive accrued interest line
-            accrued_obj.write(cr, uid, [accrued_interest.id], {'active': False}, context=context)
-        return True
 
     def action_redeem(self, cr, uid, ids, context=None):
         if context is None:
@@ -177,24 +148,20 @@ class pawn_order_redeem(osv.osv_memory):
         state_bf_redeem = pawn.state
         # Update some data on pawn ticket before redeem it
         wizard = self.browse(cr, uid, ids[0], context)
-        date = wizard.date_redeem
         pawn_obj.write(cr, uid, [pawn_id], {
             'delegation_of_authority': wizard.delegation_of_authority,
-            'delegate_id': wizard.delegate_id.id,
-            'bypass_fingerprint_redeem': wizard.bypass_fingerprint,
-            'date_redeem': date,  # Update Redeem Date
+            'delegate_id': wizard.delegate_id.id
         }, context=context)
         # Trigger workflow, reverse of pawn
         wf_service = netsvc.LocalService("workflow")
         wf_service.trg_validate(uid, 'pawn.order', pawn_id, 'order_redeem', cr)
+        date = wizard.date_redeem
         # Check final redeem
         total_redeem_amount = wizard.pawn_amount + wizard.interest_amount - wizard.discount + wizard.addition
         if float_compare(total_redeem_amount, wizard.redeem_amount, precision_digits=2) != 0:
             raise osv.except_osv(_('Error!'),
                                  _('Initial + Interest Amount - Discount + Addition (%s) must be equal to Final Redeem (%s) !!') % (
                 '{:,.2f}'.format(total_redeem_amount), '{:,.2f}'.format(wizard.redeem_amount)))
-        # Check Secret Key
-        self._validate_secret_key(cr, uid, wizard.bypass_fingerprint, wizard.secret_key, context=context)
         # Normal case, redeem after pawned
         if state_bf_redeem != 'expire':
             discount = wizard.discount
@@ -203,40 +170,18 @@ class pawn_order_redeem(osv.osv_memory):
             # Register Actual Interest
             pawn_obj.register_interest_paid(cr, uid, pawn_id, date, discount, addition, interest_amount, context=context)
             # Reverse Accrued Interest
-            pawn_obj.action_move_reversed_accrued_interest_create(cr, uid, [pawn_id], context=dict(context, **{'force_date': date}))
+            pawn_obj.action_move_reversed_accrued_interest_create(cr, uid, [pawn_id], context=context)
             # Inactive Accrued Interest that has not been posted yet.
             pawn_obj.update_active_accrued_interest(cr, uid, [pawn_id], False, context=context)
-            # Remove Accrued Interest Move (Case Redeem Date < Today)
-            self.remove_move_accrued_interest(cr, uid, pawn_id, date, context=context)
         else: # Case redeem after expired. No register interest, just full amount as sales receipt.
             pawn_obj.action_move_expired_redeem_create(cr, uid, pawn.id, wizard.redeem_amount, context=context)
+        # Update Redeem Date too.
+        pawn_obj.write(cr, uid, [pawn_id], {'date_redeem': date})
         # TEST REMOVE CURSOR
         # cr.commit()
         # cr.close()
         # --
         return True
-
-    def create(self, cr, uid, vals, context=None):
-        # Update interest_amount, pawn duration (onchange method not store value for readonly field)
-        if vals.get('date_redeem'):
-            prepare_vals = self.onchange_date_redeem(cr, uid, [], vals['date_redeem'], context=context)['value']
-            if not vals.get('interest_amount'):
-                vals['interest_amount'] = prepare_vals['interest_amount']
-            if not vals.get('pawn_duration'):
-                vals['pawn_duration'] = prepare_vals['pawn_duration']
-        # --
-        return super(pawn_order_redeem, self).create(cr, uid, vals, context=context)
-
-    def write(self, cr, uid, ids, vals, context=None):
-        # Update interest_amount, pawn duration (onchange method not store value for readonly field)
-        if vals.get('date_redeem'):
-            prepare_vals = self.onchange_date_redeem(cr, uid, [], vals['date_redeem'], context=context)['value']
-            if not vals.get('interest_amount'):
-                vals['interest_amount'] = prepare_vals['interest_amount']
-            if not vals.get('pawn_duration'):
-                vals['pawn_duration'] = prepare_vals['pawn_duration']
-        # --
-        return super(pawn_order_redeem, self).write(cr, uid, ids, vals, context=context)
 
 pawn_order_redeem()
 

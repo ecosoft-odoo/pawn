@@ -2778,7 +2778,6 @@ msgstr "ดอกเบี้ยรายเดือน"
 #. module: pawnshop
 #: field:pawn.order.redeem,pawn_duration:0
 #: field:pawn.order.renew,pawn_duration:0
-#: field:pawn.actual.interest,months:0
 msgid "Pawn Duration (Months)"
 msgstr "ระยะเวลาการจำนำ (เดือน)"
 
@@ -4873,8 +4872,8 @@ msgstr "ถนน"
 
 #. module: pawnshop
 #: view:pawn.expire.final:0
-msgid "Do you want to classify \"Pen\" status tickets as expired tickets for sale?"
-msgstr "ต้องการคัดตั๋วสถานะ \"เล้า\" เป็นตั๋วหมดอายุเพื่อขาย หรือไม่"
+msgid "Select ticket that is ready to expire, and finalize it."
+msgstr "เลือกตั๋วสิ้นสุดระยะผ่อนผัน (ไม่คัด) และคัดเป็นหมดอายุ"
 
 #. module: pawnshop
 #: report:pawn.order.form:0

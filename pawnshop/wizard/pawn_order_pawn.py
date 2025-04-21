@@ -19,8 +19,6 @@
 #
 ##############################################################################
 
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
 from openerp.osv import fields, osv
 from openerp import netsvc
 from openerp import pooler
@@ -36,15 +34,6 @@ class pawn_order_pawn(osv.osv_memory):
         if active_id:
             pawn = self.pool.get('pawn.order').browse(cr, uid, active_id, context=context)
             return pawn.journal_id and pawn.journal_id.id or False
-        return False
-
-    def _get_date_due_ticket(self, cr, uid, context=None):
-        if context is None:
-            context = {}
-        active_id = context.get('active_id', False)
-        if active_id:
-            pawn = self.pool.get('pawn.order').browse(cr, uid, active_id, context=context)
-            return str(datetime.strptime(pawn.date_order, "%Y-%m-%d").date() + relativedelta(months=pawn.rule_id.length_month + 1 or 0.0))
         return False
 
     def _get_parent_id(self, cr, uid, context=None):
@@ -75,25 +64,12 @@ class pawn_order_pawn(osv.osv_memory):
         'parent_id': fields.many2one('pawn.order', 'Previous Pawn Ticket'),
         'amount': fields.float('Net Amount', readonly=True),
         'date_due_ticket': fields.date(string='Due Date', required=True),
-        'bypass_fingerprint': fields.boolean('Bypass Fingerprint Pawn'),
-        'secret_key': fields.char('Secret Key'),
     }
     _defaults = {
         'journal_id': _get_journal,
-        'date_due_ticket': _get_date_due_ticket,
         'parent_id': _get_parent_id,
         'amount': _get_amount
     }
-
-    def onchange_bypass_fingerprint(self, cr, uid, ids, context=None):
-        return {'value': {'secret_key': False}}
-
-    def _validate_secret_key(self, cr, uid, bypass_fingerprint, secret_key, context=None):
-        """This function used for validate secret key bypass fingerprint check"""
-        if bypass_fingerprint:
-            valid_secret_key = self.pool.get('ir.config_parameter').get_param(cr, uid, 'pawnshop.pawn_secret_key', '')
-            if secret_key != valid_secret_key:
-                raise osv.except_osv(_('Error!'), _('The secret key is invalid.'))
 
     def _check_pawn_item_image_first(self, cr, uid, pawn, context=None):
         if not pawn.pawn_item_image_first:
@@ -104,7 +80,6 @@ class pawn_order_pawn(osv.osv_memory):
             context = {}
         # cr = pooler.get_db(cr.dbname).cursor()
         active_id = context.get('active_id')
-        wizard = self.browse(cr, uid, ids[0], context)
         # Check status
         pawn = self.pool.get('pawn.order').browse(cr, uid, active_id)
         if pawn.state != 'draft':
@@ -113,15 +88,11 @@ class pawn_order_pawn(osv.osv_memory):
         # Check pawned amount
         if pawn.amount_pawned != sum([line.pawn_price_subtotal for line in pawn.order_line]):
             raise osv.except_osv(_('Error!'), _('Pawned amount must equal to sum of pawned subtotal'))
-        # Fingerprint not found, must check bypass fingerprint
-        if pawn.renewal_transfer_pawn and pawn.parent_id and not pawn.parent_id.fingerprint_redeem and not wizard.bypass_fingerprint:
-            raise osv.except_osv(_('Error!'), _('Please check bypass fingerprint.'))
         # Check pawn item image
         self._check_pawn_item_image_first(cr, uid, pawn, context=context)
-        # Check Secret Key
-        self._validate_secret_key(cr, uid, wizard.bypass_fingerprint, wizard.secret_key, context=context)
         # Write journal_id back to order
-        self.pool.get('pawn.order').write(cr, uid, [active_id], {'journal_id': wizard.journal_id.id, 'date_due_ticket': wizard.date_due_ticket, 'bypass_fingerprint_pawn': wizard.bypass_fingerprint}, context=context)
+        wizard = self.browse(cr, uid, ids[0], context)
+        self.pool.get('pawn.order').write(cr, uid, [active_id], {'journal_id': wizard.journal_id.id, 'date_due_ticket': wizard.date_due_ticket}, context=context)
         # Trigger workflow
         wf_service = netsvc.LocalService("workflow")
         wf_service.trg_validate(uid, 'pawn.order', active_id, 'order_pawn', cr)

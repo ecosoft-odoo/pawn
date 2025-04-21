@@ -34,16 +34,16 @@
             <field name="function">process_actual_interest_move</field>
             <field name="args">()</field>
         </record>
-        <record model="ir.cron" id="cronjob_process_expired_order_move">
-            <field name='name'>Process Expired Order Move</field>
+        <record model="ir.cron" id="cronjob_process_order_expire">
+            <field name='name'>Process Order Expire</field>
             <field name='interval_number'>1</field>
             <field name='interval_type'>minutes</field>
             <field name="numbercall">-1</field>
             <field name="active">True</field>
             <field name="doall" eval="False" />
             <field name="model">pawn.order</field>
-            <field name="function">process_expired_order_move</field>
-            <field name="args">()</field>
+            <field name="function">process_order_expire</field>
+            <field name="args">(100,)</field>
         </record>
     </data>
 </openerp>

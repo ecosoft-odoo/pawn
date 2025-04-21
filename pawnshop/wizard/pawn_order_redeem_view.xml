@@ -11,7 +11,7 @@
                         	<label string="Please confirm redeem amount as following,"/>
                         </group>
                         <group name="amount">
-                            <field name="date_redeem" readonly="1" required="1" on_change="onchange_date_redeem(date_redeem, context)" />
+                            <field name="date_redeem" on_change="onchange_date_redeem(date_redeem, context)" />
                             <field name="pawn_amount" string="Initial" />
                             <field name="monthly_interest"/>
                             <field name="pawn_duration"/>
@@ -28,8 +28,6 @@
                         <group>
                             <field name="delegation_of_authority" on_change="onchange_delegation_of_authority()"/>
                             <field name="delegate_id" domain="[('supplier', '=', 1), ('pawnshop', '=', 1)]" options="{'limit': 10, 'create': false, 'create_edit': false}" attrs="{'invisible': [('delegation_of_authority', '=', False)], 'required': [('delegation_of_authority', '=', True)]}"/>
-                            <field name="bypass_fingerprint" on_change="onchange_bypass_fingerprint()"/>
-                            <field name="secret_key" password="1" attrs="{'invisible': [('bypass_fingerprint', '=', False)], 'required': [('bypass_fingerprint', '=', True)]}"/>
                         </group>
                     </group>
                     <footer>
@@ -40,20 +38,6 @@
                </form>
             </field>
         </record>
-
-        <!-- View for Administration / Settings -->
-        <record id="view_pawn_order_redeem_for_admin" model="ir.ui.view">
-            <field name="name">view.pawn.order.redeem.for.admin</field>
-            <field name="model">pawn.order.redeem</field>
-            <field name="inherit_id" ref="pawnshop.view_pawn_order_redeem"/>
-            <field name="groups_id" eval="[(6, 0, [ref('base.group_system')])]"/>
-            <field name="arch" type="xml">
-                <xpath expr="//field[@name='date_redeem']" position="attributes">
-                    <attribute name="readonly">0</attribute>
-                </xpath>
-            </field>
-        </record>
-
         <record id="action_pawn_order_redeem" model="ir.actions.act_window">
             <field name="name">Redeem</field>
             <field name="res_model">pawn.order.redeem</field>

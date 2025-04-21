@@ -79,8 +79,8 @@
 	<queryString>
 		<![CDATA[select distinct ps.name, l.date from account_move_line l
 join pawn_shop ps on ps.id = l.pawn_shop_id
--- where (l.pawn_order_id is not null or l.statement_id is not null)
-where l.date between $P{from_date} and $P{to_date}
+where (l.pawn_order_id is not null or l.statement_id is not null)
+and l.date between $P{from_date} and $P{to_date}
 and l.pawn_shop_id = $P{pawn_shop_id}
 order by date]]>
 	</queryString>

@@ -28,6 +28,14 @@ class pawn_expire_final(osv.osv_memory):
     _name = "pawn.expire.final"
     _description = "Finalize Expired Ticket"
 
+    _columns = {
+        'run_background': fields.boolean('Run Background', help='Run background to expire tickets'),
+    }
+
+    _defaults = {
+        'run_background': True,
+    }
+
     def pawn_expire_final(self, cr, uid, ids, context=None):
         if context is None:
             context = {}
@@ -40,11 +48,18 @@ class pawn_expire_final(osv.osv_memory):
                 raise osv.except_osv(_('Warning!'),
                                      _("""Some selection are not eligible to finalize expired ticket"""))
             # Check extended order
-            # PawnOrder._check_order_extend(cr, uid, pawn_ids, context=context)
-            # expire it.
-            # Fix click button expire the ticket slow, account move need to create by ir.cron
-            PawnOrder.write(cr, uid, pawn_ids, {'expire_move_by_cron': True}, context=context)
-            PawnOrder.order_expire(cr, uid, pawn_ids, context=context)
+            PawnOrder._check_order_extend(cr, uid, pawn_ids, context=context)
+            # --
+            wizard = self.browse(cr, uid, ids, context=context)[0]
+            if wizard.run_background:
+                PawnOrder.write(cr, uid, pawn_ids, {
+                    'run_background': wizard.run_background,
+                }, context=context)
+            else:
+                if PawnOrder.search(cr, uid, [('id', 'in', pawn_ids), ('run_background', '=', True)], context=context):
+                    raise osv.except_osv(_('Warning!'), _("""Please select tickets not run as background"""))
+                # expire it.
+                PawnOrder.order_expire(cr, uid, pawn_ids, context=context)
         return {'type': 'ir.actions.act_window_close'}
 
 
