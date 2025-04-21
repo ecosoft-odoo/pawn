@@ -60,6 +60,7 @@
                     <filter name="group_year" string="Year" context="{'group_by':'year'}"/>
                     <filter name="group_month" string="Month" context="{'group_by':'month'}"/>
                     <filter name="group_day" string="Day" context="{'group_by':'day'}"/>
+                    <filter name="group_day_redeem" string="Day Redeem" domain="[]" context="{'group_by':'day_redeem'}"/>
                 </group>
             </search>
         </field>
