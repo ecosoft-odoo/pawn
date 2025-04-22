@@ -100,12 +100,12 @@
 				</graphicElement>
 			</line>
 			<textField isStretchWithOverflow="false" isBlankWhenNull="true">
-				<reportElement x="102" y="25" width="172" height="18" forecolor="#051f5d"/>
+				<reportElement x="92" y="25" width="202" height="18" forecolor="#051f5d"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="14" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String">
-					<![CDATA["ใบรับแจ้งความตั๋วหาย"]]>
+					<![CDATA["ใบรับแจ้งความตั๋วจำนำหาย"]]>
 				</textFieldExpression>
 			</textField>
 
@@ -217,7 +217,7 @@
 
 			<!-- ได้รับจำนำ -->
 			<textField isStretchWithOverflow="false" isBlankWhenNull="true">
-				<reportElement x="22" y="153" width="75" height="18" forecolor="#315181"/>
+				<reportElement x="22" y="143" width="75" height="18" forecolor="#315181"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -226,38 +226,44 @@
 				</textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="72" y="167" width="275" height="1"/>
+				<reportElement x="72" y="157" width="275" height="1"/>
 				<graphicElement>
 					<pen lineWidth="1.0" lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement x="25" y="187" width="324" height="1"/>
+				<reportElement x="25" y="175" width="324" height="1"/>
 				<graphicElement>
 					<pen lineWidth="1.0" lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement x="25" y="207" width="242" height="1"/>
+				<reportElement x="25" y="193" width="324" height="1"/>
+				<graphicElement>
+					<pen lineWidth="1.0" lineStyle="Dotted"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="25" y="211" width="242" height="1"/>
 				<graphicElement>
 					<pen lineWidth="1.0" lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="26" y="145" width="325" height="60" positionType="Float"/>
+				<reportElement x="26" y="140" width="325" height="60" positionType="Float"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" lineSpacing="Double" markup="html">
-					<font fontName="Monospaced" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+					<font fontName="Monospaced" size="8" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String">
 					<![CDATA[
-						new String(new char[30]).replace("\0", "&nbsp;") + $F{item_description}.replace("\n", "")
+						new String(new char[34]).replace("\0", "&nbsp;") + $F{item_description}.replace("\n", "")
 					]]>
 				</textFieldExpression>
 			</textField>
 
 			<!-- รวม -->
 			<textField isStretchWithOverflow="false" isBlankWhenNull="true">
-				<reportElement x="255" y="192" width="45" height="18" forecolor="#315181"/>
+				<reportElement x="255" y="197" width="45" height="18" forecolor="#315181"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -266,13 +272,13 @@
 				</textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="290" y="207" width="45" height="1"/>
+				<reportElement x="290" y="211" width="45" height="1"/>
 				<graphicElement>
 					<pen lineWidth="1.0" lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
 			<textField isStretchWithOverflow="false" isBlankWhenNull="true">
-				<reportElement x="325" y="192" width="45" height="18" forecolor="#315181"/>
+				<reportElement x="325" y="197" width="45" height="18" forecolor="#315181"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -281,7 +287,7 @@
 				</textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" evaluationTime="Report" pattern="#,##0" isBlankWhenNull="false">
-				<reportElement x="290" y="191" width="40" height="18"/>
+				<reportElement x="290" y="196" width="40" height="18"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Monospaced" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -290,7 +296,7 @@
 
 			<!-- เป็นจำนวนเงิน -->
 			<textField isStretchWithOverflow="false" isBlankWhenNull="true">
-				<reportElement x="22" y="222" width="80" height="18" forecolor="#315181"/>
+				<reportElement x="22" y="224" width="80" height="18" forecolor="#315181"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -305,7 +311,7 @@
 				</graphicElement>
 			</line>
 			<textField isStretchWithOverflow="false" isBlankWhenNull="true">
-				<reportElement x="247" y="222" width="45" height="18" forecolor="#315181"/>
+				<reportElement x="247" y="224" width="45" height="18" forecolor="#315181"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -314,7 +320,7 @@
 				</textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0" isBlankWhenNull="true">
-				<reportElement x="86" y="222" width="45" height="18"/>
+				<reportElement x="86" y="224" width="45" height="18"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Monospaced" size="10"/>
 				</textElement>
@@ -323,13 +329,13 @@
 			
 			<!-- สตางค์ -->
 			<line>
-				<reportElement x="280" y="237" width="45" height="1"/>
+				<reportElement x="280" y="239" width="45" height="1"/>
 				<graphicElement>
 					<pen lineWidth="1.0" lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
 			<textField isStretchWithOverflow="false" isBlankWhenNull="true">
-				<reportElement x="317" y="222" width="45" height="18" forecolor="#315181"/>
+				<reportElement x="317" y="224" width="45" height="18" forecolor="#315181"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -338,7 +344,7 @@
 				</textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="280" y="222" width="45" height="18"/>
+				<reportElement x="280" y="224" width="45" height="18"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Monospaced" size="10"/>
 				</textElement>
@@ -482,50 +488,50 @@
 
 			<!-- ผู้จำนำได้แจ้งความหายไว้แล้วที่นายร้อยเวร -->
 			<textField isStretchWithOverflow="false" isBlankWhenNull="true">
-				<reportElement x="22" y="297" width="230" height="18" forecolor="#315181"/>
+				<reportElement x="22" y="297" width="290" height="18" forecolor="#315181"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String">
-					<![CDATA["ผู้จำนำได้แจ้งความหายไว้แล้วที่นายร้อยเวร"]]>
+					<![CDATA["ผู้จำนำได้แจ้งความหายไว้แล้วที่นายร้อยเวร (ชื่อ)"]]>
 				</textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="185" y="312" width="165" height="1"/>
+				<reportElement x="225" y="312" width="125" height="1"/>
 				<graphicElement>
 					<pen lineWidth="1.0" lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
 
-			<!-- สน -->
+			<!-- สน. -->
 			<textField isStretchWithOverflow="false" isBlankWhenNull="true">
-				<reportElement x="22" y="322" width="20" height="18" forecolor="#315181"/>
+				<reportElement x="22" y="322" width="30" height="18" forecolor="#315181"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String">
-					<![CDATA["สน"]]>
+					<![CDATA["สน."]]>
 				</textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="40" y="337" width="100" height="1"/>
+				<reportElement x="40" y="337" width="150" height="1"/>
 				<graphicElement>
 					<pen lineWidth="1.0" lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
 
-			<!-- ตาม ป.จ.ว ข้อ -->
+			<!-- ตาม ป.จ.ว. ข้อ -->
 			<textField isStretchWithOverflow="false" isBlankWhenNull="true">
-				<reportElement x="125" y="322" width="90" height="18" forecolor="#315181"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+				<reportElement x="192" y="322" width="90" height="18" forecolor="#315181"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String">
-					<![CDATA["ตาม ป.จ.ว ข้อ"]]>
+					<![CDATA["ตาม ป.จ.ว. ข้อ"]]>
 				</textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="205" y="337" width="145" height="1"/>
+				<reportElement x="255" y="337" width="95" height="1"/>
 				<graphicElement>
 					<pen lineWidth="1.0" lineStyle="Dotted"/>
 				</graphicElement>
@@ -589,19 +595,28 @@
 					<font fontName="Monospaced" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String">
-					<![CDATA["<b><u>ผู้จำนำโปรดทราบ</u></b> ถ้าท่านไม่นำใบแจ้งความนี้ไปแจ้งความยังสถานีตำรวจ"
-					          +"<br/><br/>เพื่อให้เจ้าหน้าที่ตำรวจสลักหลังต้นขั้วจำนำภายใน 3 สัปดาห์นับแต่วันที่ท่านได้"
-							  +"<br/><br/>แจ้งให้ โรงรับจำนำทราบหรือเมื่อเจ้าหน้าที่ตำรวจได้มาสลักหลังต้นขั้วจำนำ"
-							  +"<br/><br/>แล้วแต่ท่านไม่นำใบนี้มาไถ่ถอนทรัพย์สิ่งของท่านภายในกำหนด 4 เดือน กับอีก"
-							  +"<br/><br/>30 วัน นับแต่วันที่จำนำเป็นต้นไปแล้ว ทางโรงรับจำนำถือว่าท่านสละสิทธิ์และ"
-							  +"<br/><br/>ไม่รับผิดชอบใดๆ ทั้งสิ้น"
-					]]>
+					<![CDATA[
+						("&nbsp;" * 24)
+						+ "<b><u>ผู้จำนำโปรดทราบ</u></b> ถ้าท่านไม่นำใบแจ้งความนี้ไปแจ้งความยังสถานีตำรวจ"
+						+ "<br/><br/>เพื่อให้เจ้าหน้าที่ตำรวจสลักหลังต้นขั้วจำนำภายใน 3 วันนับแต่วันที่ท่านได้แจ้งให้"
+						+ "<br/><br/>โรงรับจำนำทราบหรือเมื่อเจ้าหน้าที่ตำรวจได้มาสลักหลังต้นขั้วจำนำแล้วแต่ท่าน"
+						+ "<br/><br/>ไม่นำใบนี้มาไถ่ถอนทรัพย์สิ่งของของท่านภายในกำหนด 4 เดือน กับอีก 30 วัน"
+						+ "<br/><br/>นับแต่วันที่จำนำเป็นต้นไปแล้ว ทางโรงรับจำนำถือว่าท่านสละสิทธิ์และ ไม่รับผิด"
+						+ "<br/><br/>ชอบใดๆ ทั้งสิ้น"
+						]]>
 				</textFieldExpression>
 			</textField>
 
+			<image hAlign="Center" vAlign="Top" isUsingCache="true" isLazy="true">
+				<reportElement x="16" y="510" width="65" height="65">
+					<printWhenExpression><![CDATA[$F{fingerprint} != false && $F{fingerprint} != null && $F{fingerprint} != '']]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA[$F{fingerprint}]]></imageExpression>
+			</image>
+
 			<!-- รับแจ้ง ณ วันที่ -->
 			<textField isStretchWithOverflow="false" isBlankWhenNull="true">
-				<reportElement x="70" y="515" width="110" height="18" forecolor="#315181"/>
+				<reportElement x="75" y="515" width="110" height="18" forecolor="#315181"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -610,13 +625,13 @@
 				</textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="135" y="530" width="40" height="1"/>
+				<reportElement x="140" y="530" width="35" height="1"/>
 				<graphicElement>
 					<pen lineWidth="1.0" lineStyle="Dotted"/>
 				</graphicElement>
 			</line>
 			<textField isStretchWithOverflow="true" pattern="d" isBlankWhenNull="true">
-				<reportElement x="135" y="515" width="40" height="18"/>
+				<reportElement x="140" y="515" width="35" height="18"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Monospaced" size="10" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
