@@ -59,12 +59,37 @@
             </field>
         </record>
 
+        <record id="view_blacklist_sync_filter" model="ir.ui.view">
+            <field name="name">blacklist.sync.list.select</field>
+            <field name="model">blacklist.sync</field>
+            <field name="arch" type="xml">
+                <search string="Search Blacklist">
+                    <field name="partner_id" string="Customer"/>
+                    <field name="card_number"/>
+                    <field name="pawnshop"/>
+                    <field name="unbanned_pawnshop"/>
+					<separator/>
+                    <filter name="draft" string="Draft" domain="[('state','=','draft')]" />
+                    <filter name="active" string="Blacklisted" domain="[('state','=','active')]" />
+                    <filter name="inactive" string="Unblacklisted" domain="[('state','=','inactive')]" />
+                    <separator/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Customer" domain="[]" context="{'group_by':'partner_id'}"/>
+                        <filter string="Status" domain="[]" context="{'group_by':'state'}"/>
+                        <filter string="Pawnshop" domain="[]" context="{'group_by':'pawnshop'}"/>
+                        <filter string="Unbanned Pawnshop" domain="[]" context="{'group_by':'unbanned_pawnshop'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
         <record model="ir.actions.act_window" id="action_blacklist_sync">
             <field name="name">Customer Blacklist</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">blacklist.sync</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_blacklist_sync_filter"/>
         </record>
         
         <!-- Menu -->

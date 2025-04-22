@@ -24,14 +24,15 @@ from datetime import datetime
 from openerp.osv import osv, fields
 from openerp.tools.translate import _
 
-BLACKLIST_STATE = [
+STATE_SELECTION = [
     ('draft', 'Draft'),
-    ('active', 'Active'),
-    ('inactive', 'Inactive'),
+    ('active', 'Blacklisted'),
+    ('inactive', 'Unblacklisted'),
 ]
 
 class BlacklistSync(osv.osv):
     _name = 'blacklist.sync'
+    _description = "Customer Blacklist"
     _inherit = ['mail.thread', 'ir.needaction_mixin']
     _order = 'banned_date desc'
 
@@ -47,7 +48,7 @@ class BlacklistSync(osv.osv):
         'price': fields.float('Price', required=True, readonly=True, states={'draft': [('readonly', False)]}, track_visibility='onchange'),
         'suspicious_asset_image': fields.binary('Suspicious Asset Image', readonly=True, states={'draft': [('readonly', False)]}),
         'suspicious_asset_image_date': fields.datetime('Date of Suspicious Asset Image', readonly=True),
-        'state': fields.selection(BLACKLIST_STATE, 'Status', readonly=True, track_visibility='onchange'),
+        'state': fields.selection(STATE_SELECTION, 'Status', readonly=True, track_visibility='onchange'),
         'index': fields.integer('Index'),
         'active': fields.boolean('Active'),
     }
