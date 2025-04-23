@@ -49,22 +49,22 @@ class report_xml(osv.osv):
 
     _inherit = 'ir.actions.report.xml'
 
-    def _check_pawn_order(self, cr, uid, ids, context=None):
+    def _check_pawn_order(self, cr, uid, report, context=None):
         # Status of pawn order can not print form
         pw_state = {
             'pawn.order.form': ['draft'],
             'redeem.order.form': ['draft', 'pawn', 'expire', 'cancel'],
         }
         # --
-        for report in self.browse(cr, uid, ids, context=context):
-            if report.report_name in pw_state.keys():
-                for obj in self.pool.get('pawn.order').browse(cr, uid, context.get('active_ids', []), context=context):
-                    if (obj.state in pw_state[report.report_name]):
-                        raise openerp.exceptions.Warning("Can't print form in %s state" % (obj.state, ))
+        if report.report_name in pw_state.keys():
+            for obj in self.pool.get('pawn.order').browse(cr, uid, context.get('active_ids', []), context=context):
+                if (obj.state in pw_state[report.report_name]):
+                    raise openerp.exceptions.Warning("Can't print form in %s state" % (obj.state, ))
         return True
 
     def _check_report_condition(self, cr, uid, ids, context=None):
-        self._check_pawn_order(cr, uid, ids, context=context)
+        for report in self.browse(cr, uid, ids, context=context):
+            self._check_pawn_order(cr, uid, report, context=context)
 
     def _report_content(self, cr, uid, ids, name, arg, context=None):
         self._check_report_condition(cr, uid, ids, context=context)
