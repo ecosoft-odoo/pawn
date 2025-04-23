@@ -45,6 +45,10 @@
                     	attrs="{'invisible': ['|', ('state', '!=', 'pawn'), '&amp;', ('state', '=', 'pawn'), ('extended', '=', True)]}"/>
                     <button name="action_unextend" string="Not Extend" type="object"
                     	attrs="{'invisible': ['|', ('state', '!=', 'pawn'), '&amp;', ('state', '=', 'pawn'), ('extended', '=', False)]}"/>
+                    <button name="action_lost_ticket" string="Lost" type="object"
+                        attrs="{'invisible': ['|', ('state', '!=', 'pawn'), '&amp;', ('state', '=', 'pawn'), ('is_lost', '=', True)]}" context="{'is_lost': True}" />
+                    <button name="action_lost_ticket" string="Cancel Lost" type="object"
+                        attrs="{'invisible': ['|', ('state', '!=', 'pawn'), '&amp;', ('state', '=', 'pawn'), ('is_lost', '=', False)]}" context="{'is_lost': False}"/>
                     <!-- <button name="order_cancel" states="draft" string="Cancel Order" /> -->
                     <button name="%(action_pawn_undo_cancel)d" type="action" states="draft,pawn" string="Cancel Pawned Order" context="{'action_type': 'order_cancel'}"/>
                     <button name="action_cancel_draft" states="cancel" type="object" string="Set to Draft" />
@@ -136,7 +140,7 @@
                             </field>
                             <group>
                             	<group>
-                            		<field name="is_lost" />
+                            		<field name="is_lost" invisible="1" />
                                     <field name="renewal_transfer_pawn" attrs="{'invisible': [('renewal_transfer_pawn', '=', False)]}"/>
                                     <field name="renewal_transfer_redeem" attrs="{'invisible': [('renewal_transfer_redeem', '=', False)]}"/>
                             		<field name="amount_net" invisible="1" /> <!-- for renew case, amount_net represent amount left over from previous order, pawnshop need to pay (or receive) to customer -->

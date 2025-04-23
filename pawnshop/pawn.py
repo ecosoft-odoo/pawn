@@ -619,6 +619,14 @@ class pawn_order(osv.osv):
         self.pool.get('product.product').action_asset_unextend(cr, uid, [i['item_id'][0] for i in items], context=context)
         return True
 
+    def action_lost_ticket(self, cr, uid, ids, context=None):
+        if context is None:
+            context = {}
+        if 'is_lost' not in context:
+            raise osv.except_osv(_('Error!'), _('This action is not allowed.'))
+        self.write(cr, uid, ids, {'is_lost': context['is_lost']}, context=context)
+        return True
+
     def order_cancel(self, cr, uid, ids, context=None):
         today = fields.date.context_today(self, cr, uid, context=context)
         # Verify Status to Cancel, 1) Must be in Draft or Pawn status 2) No Interest has been Paid 3) Must be today order
