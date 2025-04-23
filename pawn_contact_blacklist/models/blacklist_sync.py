@@ -194,7 +194,7 @@ class BlacklistSync(osv.osv):
     def get_needed_fields_to_create_fetch(self, cr, uid, model, context=None):
         needed_fields = []
         if model == 'blacklist.sync':
-            needed_fields.extend(['partner_id'])
+            needed_fields.extend(['partner_id', 'suspicious_asset_image'])
         # if model == 'res.partner':
         #     needed_fields.extend(['image'])
         return needed_fields
