@@ -38,7 +38,7 @@ class BlacklistSyncConfig(osv.osv):
     }
 
     _defaults = {
-        'active': True
+        'active': False
     }
 
     _sql_constraints = [

@@ -64,7 +64,7 @@ class BlacklistSync(osv.osv):
     _defaults = {
         'active': True,
         'state': 'draft',
-        'pawnshop' : _get_branch
+        'pawnshop' : _get_branch,
     }
 
     def _login_to_remote(self, cr, uid, server, context=None):
@@ -185,26 +185,18 @@ class BlacklistSync(osv.osv):
 
         return record_data
     
-    # def check_duplicate(self, cr, uid, ids, context=None):
-    #     context = context or {}
-    #     blacklist_obj = self.pool.get('blacklist.sync')
-    #     for obj in self.browse(cr, uid, ids, context=context):
-    #         blacklist_ids = blacklist_obj.search(cr, uid, [
-    #             ('card_number', '=', obj.card_number),
-    #             ('state', '=', 'active'),
-    #         ], context=context)
-    #         if not blacklist_ids:
-    #             return False
-    #     return True
-    
     def get_ignore_fields_to_create_fetch(self, cr, uid, model, context=None):
         ignore_fields = ['create_uid', 'write_uid']
+        if model == 'res.partner':
+            ignore_fields.extend(['fingerprint_date'])
         return ignore_fields
     
     def get_needed_fields_to_create_fetch(self, cr, uid, model, context=None):
         needed_fields = []
         if model == 'blacklist.sync':
             needed_fields.extend(['partner_id'])
+        # if model == 'res.partner':
+        #     needed_fields.extend(['image'])
         return needed_fields
     
     def batch_to_create_fetch(self, cr, uid, ids, model, context=None):
@@ -216,7 +208,7 @@ class BlacklistSync(osv.osv):
         needed_fields = self.get_needed_fields_to_create_fetch(cr, uid, model, context=context)
         ignore_fields.extend([
             field_name for field_name, field_attrs in fields_info.items()
-            if field_attrs.get('type') in ['many2one', 'one2many', 'many2many'] 
+            if field_attrs.get('type') in ['many2one', 'one2many', 'many2many', 'binary'] 
             and not field_attrs.get('required')
             and field_name not in needed_fields
         ])
@@ -366,6 +358,8 @@ class BlacklistSync(osv.osv):
         if context.get('write_remote', True):
             try:
                 for blacklist in self.browse(cr, uid, ids, context=context):
+                    if blacklist.state == 'draft':
+                        continue 
                     cr.execute("SELECT url, db_name, username, password FROM blacklist_sync_config WHERE active = TRUE")
                     servers = cr.fetchall()
                     for server in servers:
@@ -401,5 +395,22 @@ class BlacklistSync(osv.osv):
                 except Exception as e:
                     raise osv.except_osv(_('Error!'), _('Unexpected Error: %s') % str(e))
         return super(BlacklistSync, self).unlink(cr, uid, ids, context=context)
+
+    def copy(self, cr, uid, id, default=None, context=None):
+        if default is None:
+            default = {}
+
+        branch_name = self._get_branch(cr, uid, context)
+
+        default.update({
+            'state': 'draft',
+            'index': 0,
+            'pawnshop': branch_name,
+            'unbanned_pawnshop': False,
+            'banned_date': False,
+            'unbanned_date': False,
+        })
+
+        return super(BlacklistSync, self).copy(cr, uid, id, default, context)
 
 BlacklistSync()
