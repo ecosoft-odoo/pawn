@@ -20,7 +20,7 @@
         <menuitem id="menu_data_sync_model_config" 
             name="Configuration Sync Models" 
             parent="menu_data_sync_root" 
-            sequence="1"
+            sequence="2"
             action="action_data_sync_model_config"
             groups="base.group_system" />
 
