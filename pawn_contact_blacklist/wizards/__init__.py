@@ -19,7 +19,7 @@
 #
 ##############################################################################
 
-import pawn_order_pawn
-import pawn_order_renew
+# import pawn_order_pawn
+# import pawn_order_renew
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

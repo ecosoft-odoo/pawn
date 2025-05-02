@@ -19,22 +19,26 @@
 #
 ##############################################################################
 
-{
-    'name': 'Pawn Shop Black List',
-    'version': '1.0',
-    'author': 'Ecosoft',
-    'category': 'Pawnshop Management',
-    'website': 'https://www.ecosoft.co.th',
-    'depends': ['data_sync', 'pawnshop'],
-    'data': [
-        'security/pawn_security.xml',
-        'security/ir.model.access.csv',
-        'views/blacklist_sync_views.xml',
-        'views/res_partner_view.xml',
-    ],
-    'auto_install': False,
-    'application': True,
-    'installable': True,
-}
+from openerp.osv import osv
 
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
+class pawn_order(osv.osv):
+    _inherit = "pawn.order"
+
+    def onchange_partner_id(self, cr, uid, ids, partner_id):
+        res = super(pawn_order, self).onchange_partner_id(cr, uid, ids, partner_id)
+        partner_obj = self.pool.get('res.partner')
+        if not partner_id:
+            return False
+        partner = partner_obj.browse(cr, uid, partner_id)
+        blacklist_obj = self.pool.get('blacklist.sync')
+        blacklist_id = blacklist_obj.search(cr, uid, [('partner_id', '=', partner.id), ('state', '=', 'active')], limit=1)
+        if blacklist_id and partner.blacklist_customer:
+            blacklist = blacklist_obj.browse(cr, uid, blacklist_id[0])
+            remark_summary = blacklist.remark_summary
+            res['warning'] = {
+                'title': 'Warning',
+                'message': '%s is blacklisted.\nReason: %s' % (partner.name, remark_summary or 'No reason provided')
+            }
+        return res
+
+pawn_order()
