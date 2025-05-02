@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    OpenERP, Open Source Management Solution
-#    Copyright (C) 2013 Ecosoft Co., Ltd. (http://ecosoft.co.th).
+#    Copyright (C) 2004-2010 Tiny SPRL (<http://tiny.be>).
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -19,22 +19,31 @@
 #
 ##############################################################################
 
-{
-    'name': 'Pawn Shop Black List',
-    'version': '1.0',
-    'author': 'Ecosoft',
-    'category': 'Pawnshop Management',
-    'website': 'https://www.ecosoft.co.th',
-    'depends': ['data_sync', 'pawnshop'],
-    'data': [
-        'security/pawn_security.xml',
-        'security/ir.model.access.csv',
-        'views/blacklist_sync_views.xml',
-        'views/res_partner_view.xml',
-    ],
-    'auto_install': False,
-    'application': True,
-    'installable': True,
-}
+from openerp.osv import osv, fields
 
+STATE_SELECTION = [
+    ('draft', 'Draft'),
+    ('active', 'Blacklisted'),
+    ('inactive', 'Unblacklisted'),
+]
+
+class BlacklistSyncLine(osv.osv):
+    _name = 'blacklist.sync.line'
+    _description = 'Blacklist Sync Line'
+
+    _columns = {
+        'name': fields.char('Description', required=True),
+        'image': fields.binary('Image'),
+        'index': fields.integer('Index', readonly=True),
+        'blacklist_id': fields.many2one('blacklist.sync', 'Blacklist'),
+    }
+
+    def create(self, cr, uid, vals, context=None):
+        context = context or {}
+        if 'blacklist_id' in vals and 'index' not in vals:
+            count = self.search_count(cr, uid, [('blacklist_id', '=', vals['blacklist_id'])], context=context)
+            vals['index'] = count + 1
+        return super(BlacklistSyncLine, self).create(cr, uid, vals, context=context)
+    
+BlacklistSyncLine()
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

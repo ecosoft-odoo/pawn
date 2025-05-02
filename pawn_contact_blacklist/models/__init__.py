@@ -20,7 +20,8 @@
 ###########################################################################
 
 import blacklist_sync
-import blacklist_sync_config
+import blacklist_sync_line
 import res_partner
+import pawn
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

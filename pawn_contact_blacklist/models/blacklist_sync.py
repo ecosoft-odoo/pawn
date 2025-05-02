@@ -19,7 +19,6 @@
 #
 ##############################################################################
 
-import xmlrpclib
 from datetime import datetime
 from openerp.osv import osv, fields
 from openerp.tools.translate import _
@@ -36,20 +35,52 @@ class BlacklistSync(osv.osv):
     _inherit = ['mail.thread', 'ir.needaction_mixin']
     _order = 'banned_date desc'
 
+    def _get_remark_summary(self, cr, uid, ids, field_name, arg, context=None):
+        result = {}
+        for record in self.browse(cr, uid, ids, context=context):
+            remark_list = []
+            if record.is_fake:
+                remark_list.append(u'ของปลอม')
+            if record.is_redeemed:
+                remark_list.append(u'ปล่อยของหลุดจำนำ')
+            if record.is_stolen:
+                remark_list.append(u'ทรัพย์ขโมยมา')
+            result[record.id] = ', '.join(remark_list)
+        return result
+
     _columns = {
         'name': fields.related('partner_id', 'name', type='char', string='Name', readonly=True, store=True),
+        'firstname': fields.char('First Name', size=64, readonly=True, states={'draft': [('readonly', False)]}, track_visibility='onchange'),
+        'lastname': fields.char('Last Name', size=64, readonly=True, states={'draft': [('readonly', False)]}, track_visibility='onchange'),
         'card_number': fields.related('partner_id', 'card_number', type='char', string='ID Number', readonly=True, store=True),
         'partner_id': fields.many2one('res.partner', 'Customer (for change)', required=True, readonly=True, states={'draft': [('readonly', False)]}, track_visibility='onchange'),
-        'pawnshop': fields.char('Pawnshop', readonly=True, track_visibility='onchange'),
-        'unbanned_pawnshop': fields.char('Unbanned Pawnshop', readonly=True, track_visibility='onchange'),
+        'pawnshop': fields.char('Pawnshop', readonly=True),
+        'unbanned_pawnshop': fields.char('Unbanned Pawnshop', readonly=True),
         'banned_date': fields.datetime('Blacklist Date', readonly=True),
         'unbanned_date': fields.date('Unbanned Date', readonly=True),
-        'suspicious_asset': fields.text('Suspicious Asset', required=True, size=85, readonly=True, states={'draft': [('readonly', False)]}, track_visibility='onchange'),
-        'price': fields.float('Price', required=True, readonly=True, states={'draft': [('readonly', False)]}, track_visibility='onchange'),
-        'suspicious_asset_image': fields.binary('Suspicious Asset Image', readonly=True, states={'draft': [('readonly', False)]}),
-        'suspicious_asset_image_date': fields.datetime('Date of Suspicious Asset Image', readonly=True),
+        'is_fake': fields.boolean('Fake Item', readonly=True, states={'draft': [('readonly', False)]}),
+        'is_redeemed': fields.boolean('Redeemed Item', readonly=True, states={'draft': [('readonly', False)]}),
+        'is_stolen': fields.boolean('Stolen Property', readonly=True, states={'draft': [('readonly', False)]}),
+        'remark_summary': fields.function(
+            _get_remark_summary,
+            type='char',
+            track_visibility='onchange',
+            string='Remark Summary',
+            store={
+            'blacklist.sync': (
+                lambda self, cr, uid, ids, c={}: ids,
+                ['is_fake', 'is_redeemed', 'is_stolen'],
+                10
+            )
+            }
+        ),
+        #'suspicious_asset': fields.text('Suspicious Asset', required=True, size=85, readonly=True, states={'draft': [('readonly', False)]}, track_visibility='onchange'),
+        #'price': fields.float('Price', required=True, readonly=True, states={'draft': [('readonly', False)]}, track_visibility='onchange'),
+        #'suspicious_asset_image': fields.binary('Suspicious Asset Image', readonly=True, states={'draft': [('readonly', False)]}),
+        #'suspicious_asset_image_date': fields.datetime('Date of Suspicious Asset Image', readonly=True),
         'state': fields.selection(STATE_SELECTION, 'Status', readonly=True, track_visibility='onchange'),
         'index': fields.integer('Index'),
+        'blacklist_line_ids': fields.one2many('blacklist.sync.line', 'blacklist_id', 'Blacklist Line'),
         'active': fields.boolean('Active'),
     }
 
@@ -67,113 +98,24 @@ class BlacklistSync(osv.osv):
         'pawnshop' : _get_branch,
     }
 
-    def _login_to_remote(self, cr, uid, server, context=None):
-        context = context or {}
-        url, db_name, username, password = server
-        common = xmlrpclib.ServerProxy("{}/xmlrpc/common".format(url))
-        uid_remote = common.login(db_name, username, password)
-        if not uid_remote:
-            raise osv.except_osv(_('Connection Failed'), _('Authentication failed. Please check credentials.'))
-        print("Logged in with UID: {}".format(uid_remote))
-        return uid_remote
-    
-    def get_blacklist_remote(self, cr, uid, ids, server, uid_remote, model, context=None):
-        context = context or {}
-        url, db_name, username, password = server
-        models = xmlrpclib.ServerProxy("{}/xmlrpc/object".format(url))
-        for obj in self.browse(cr, uid, ids, context=context):
-            domain = [
-                ('card_number', '=', obj.card_number),
-                ('state', '!=', 'draft'),
-                ('index', '=', obj.index)
-            ]
-            blacklist_ids = models.execute(db_name, uid_remote, password, model, 'search', domain)
-        return blacklist_ids
-    
-    def _get_last_blacklist_info_remote(self, cr, uid, server, uid_remote, blacklist_data, context=None):
-        context = context or {}
-        url, db_name, username, password = server
-        if uid_remote:
-            try:
-                models = xmlrpclib.ServerProxy("{}/xmlrpc/object".format(url))
-                record_data = models.execute(db_name, uid_remote, password, 'blacklist.sync', 'get_last_blacklist_info', blacklist_data, context)
-                return record_data
-            except Exception as e:
-                raise osv.except_osv(_('Remote Sync Error!'), _('Unexpected Error: %s') % str(e))
-    
-    def _get_search_keys(self, cr, uid, model, context=None):
-        """Return list of fields to use for searching"""
-        context = context or {}
-        key = ['name']
-        if model == 'res.partner':
-            key = ['name', 'card_number']
-        return key
-    
-    def _update_blacklist_remote(self, cr, uid, ids, server, uid_remote, vals, context=None):
-        context = context or {}
-        url, db_name, username, password = server
-        context['write_remote'] = False
-        try:
-            if not uid_remote:
-                raise osv.except_osv(_('UserError!'), _('Remote user ID (uid_remote) is missing. Please verify your configuration.'))
-            models = xmlrpclib.ServerProxy("{}/xmlrpc/object".format(url))
-            models.execute(db_name, uid_remote, password, 'blacklist.sync', 'write', ids, vals, context)
-        except Exception as e:
-            raise osv.except_osv(_('Remote Sync Error!'), _('Unexpected Error: %s') % str(e))
-    
-    def _unlink_blacklist_remote(self, cr, uid, ids, server, uid_remote, context=None):
-        context = context or {}
-        url, db_name, username, password = server
-        context['unlink_remote'] = False
-        try:
-            if not uid_remote:
-                raise osv.except_osv(_('UserError!'), _('Remote user ID (uid_remote) is missing. Please verify your configuration.'))
-            models = xmlrpclib.ServerProxy("{}/xmlrpc/object".format(url))
-            models.execute(db_name, uid_remote, password, 'blacklist.sync', 'unlink', ids, context)
-        except Exception as e:
-            raise osv.except_osv(_('Remote Sync Error!'), _('Unexpected Error: %s') % str(e))
-
-    def _create_blacklist_remote(self, cr, uid, server, uid_remote, blacklist_to_fetch, customer_to_fetch, context=None):
-        context = context or {}
-        url, db_name, username, password = server
-        context['bypass_imagetime'] = True
-        try:
-            if not uid_remote:
-                raise osv.except_osv(_('UserError!'), _('Remote user ID (uid_remote) is missing. Please verify your configuration.'))
-            models = xmlrpclib.ServerProxy("{}/xmlrpc/object".format(url))
-            models.execute(db_name, uid_remote, password, 'blacklist.sync', 'create_blacklist', blacklist_to_fetch, customer_to_fetch, context)
-        except Exception as e:
-            raise osv.except_osv(_('Remote Sync Error!'), _('Unexpected Error: %s') % str(e))
-    
-    def inactive_balcklist_remote(self, cr, uid, ids, server, uid_remote, context=None):
-        context = context or {}
-        url, db_name, username, password = server
-        if uid_remote:
-            try:
-                models = xmlrpclib.ServerProxy("{}/xmlrpc/object".format(url))
-                models.execute(db_name, uid_remote, password, 'blacklist.sync', 'inactive_balcklist', ids, context)
-            except Exception as e:
-                raise osv.except_osv(_('Remote Sync Error!'), _('Unexpected Error: %s') % str(e))
-            
-    def _get_customer(self, cr, uid, ids, context=None):
+    def split_partner_name(self, cr, uid, partner_id, context=None):
         context = context or {}
         partner_obj = self.pool.get('res.partner')
-        for obj in self.browse(cr, uid, ids, context=context):
-            partner_ids = partner_obj.search(cr, uid, [
-                ('name', '=', obj.name),
-                ('card_number', '=', obj.card_number)
-            ], context=context)
-        return partner_ids
-    
-    def get_last_blacklist_info(self, cr, uid, blacklist_data, context=None):
+        partner = partner_obj.browse(cr, uid, partner_id, context=context)
+        name_parts = partner.name.split(' ', 1)
+        if len(name_parts) > 1:
+            return name_parts[0], name_parts[1]
+        else:
+            return name_parts[0], ''
+        
+    def get_last_blacklisted_partner(self, cr, uid, partner, context=None):
         context = context or {}
         blacklist_obj = self.pool.get('blacklist.sync')
-        record_data = {'index': 0}
+        last_blacklist = {'index': 0}
         blacklist_ids = blacklist_obj.search(
                     cr, uid,
                     [
-                        ('name', '=', blacklist_data['name']),
-                        ('card_number', '=', blacklist_data['card_number']),
+                        ('partner_id', '=', partner.id),
                         ('state', '!=', 'draft')
                     ],
                     order='banned_date desc',
@@ -181,198 +123,70 @@ class BlacklistSync(osv.osv):
                     context=context
                 )
         if blacklist_ids:
-            record_data = blacklist_obj.read(cr, uid, blacklist_ids, ['index', 'state'], context=context)[0]
+            last_blacklist = blacklist_obj.read(cr, uid, blacklist_ids, ['index', 'state'], context=context)[0]
 
-        return record_data
-    
-    def get_ignore_fields_to_create_fetch(self, cr, uid, model, context=None):
-        ignore_fields = ['create_uid', 'write_uid']
-        if model == 'res.partner':
-            ignore_fields.extend(['fingerprint_date'])
-        return ignore_fields
-    
-    def get_needed_fields_to_create_fetch(self, cr, uid, model, context=None):
-        needed_fields = []
-        if model == 'blacklist.sync':
-            needed_fields.extend(['partner_id', 'suspicious_asset_image'])
-        # if model == 'res.partner':
-        #     needed_fields.extend(['image'])
-        return needed_fields
-    
-    def batch_to_create_fetch(self, cr, uid, ids, model, context=None):
-        context = context or {}
-        objs = self.pool.get(model)
-        
-        fields_info = objs.fields_get(cr, uid, context=context)
-        ignore_fields = self.get_ignore_fields_to_create_fetch(cr, uid, model, context=context)
-        needed_fields = self.get_needed_fields_to_create_fetch(cr, uid, model, context=context)
-        ignore_fields.extend([
-            field_name for field_name, field_attrs in fields_info.items()
-            if field_attrs.get('type') in ['many2one', 'one2many', 'many2many', 'binary'] 
-            and not field_attrs.get('required')
-            and field_name not in needed_fields
-        ])
-        batch_to_fetch = {
-            'vals': {},
-            'many2one': {},
-            'one2many': {},
-            'many2many': {}
-        }
-        for obj in objs.browse(cr, uid, ids, context=context):
-            for field, attrs in fields_info.items():
-                record = getattr(obj, field, False)
-                if field in ignore_fields:
-                    continue
-                field_type = attrs.get('type')
-                if field_type == 'many2one':
-                    relation = attrs.get('relation')
-                    keys = self._get_search_keys(cr, uid, relation, context)
-                    field_objs = self.pool.get(relation)
-                    key_value = field_objs.read(cr, uid, [record.id], keys, context=context)[0]
-                    key_value.pop('id')
-                    search_info = {
-                            'model': relation,
-                            'keys': key_value
-                        }
-                    batch_to_fetch[field_type][field] = search_info
-                elif field_type in ('one2many', 'many2many'):
-                    batch_to_fetch[field_type][field] = attrs.get('relation')
-                else:
-                    batch_to_fetch['vals'][field] = record
+        return last_blacklist
 
-        return batch_to_fetch
-    
-    def search_many2one_data(self, cr, uid, search_data, context=None):
+    def action_active(self, cr, uid, ids, context=None):
         context = context or {}
-        vals = {}
-        for field, info in search_data.items():
-            keys = info.get('keys', {})
-            model = info.get('model')
-            
-            domain = [(k, '=', v) for k, v in keys.items()]
-            
-            obj = self.pool.get(model)
-            ids = obj.search(cr, uid, domain, context=context)
-            if ids:
-                vals[field] = ids[0]
-            else:
-                vals[field] = False 
-        return vals
-    
-    def create_blacklist(self, cr, uid, blacklist_to_fetch, customer_to_fetch, context=None):
-        context = context or {}
-        blacklist_obj = self.pool.get('blacklist.sync')
+        sender_obj = self.pool.get('data.sync.sender')
         partner_obj = self.pool.get('res.partner')
-
-        blacklist_vals = blacklist_to_fetch.get('vals')
-        customer_vals = customer_to_fetch.get('vals')
-        blacklist_many2one_info = blacklist_to_fetch.get('many2one')
-        customer_many2one_info = customer_to_fetch.get('many2one')
-
-        blacklist_many2one_vals = self.search_many2one_data(cr, uid, blacklist_many2one_info, context=context)
-        blacklist_vals.update(blacklist_many2one_vals)
-        partner_id = blacklist_vals.get('partner_id')
-
-        if not partner_id:
-            customer_many2one_vals = self.search_many2one_data(cr, uid, customer_many2one_info, context=context)
-            customer_vals.update(customer_many2one_vals)
-            partner_id = partner_obj.create(cr, uid, customer_vals, context=context)
-            blacklist_vals['partner_id'] = partner_id
-            blacklist_obj.create(cr, uid, blacklist_vals, context=context)
-        else: 
-            blacklist_obj.create(cr, uid, blacklist_vals, context=context)       
-            partner_obj.write(cr, uid, partner_id, {'blacklist_customer': True}, context=context)
-        return True
-    
-    def inactive_balcklist(self, cr, uid, ids, context=None):
-        context = context or {}
-        partner_obj = self.pool.get('res.partner')
+        # context['bypass_imagetime'] = True
         for blacklist in self.browse(cr, uid, ids, context=context):
-            partner_id =  blacklist.partner_id.id
+            partner = blacklist.partner_id
+            l_blacklist = self.get_last_blacklisted_partner(cr, uid, partner, context=context)
+            if l_blacklist.get('state', False) == 'active':
+                raise osv.except_osv(_('UserError!'), _('This customer is already blacklisted.'))
+            now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            next_index = l_blacklist.get('index', 0) + 1
+            to_update = {'state': 'active','banned_date': now,'index': next_index}
+            self.write(cr, uid, [blacklist.id], to_update, context=context)
+            partner_obj.write(cr, uid, [partner.id], {'blacklist_customer': True}, context=context)
+            fetch_vals = self.copy_data(cr, uid, blacklist.id, context=context)
+            fetch_vals.update(to_update)
+            sender_obj.sync_create(cr, uid, 'blacklist.sync', fetch_vals, context=context)
+        return True
+
+    def action_inactive(self, cr, uid, ids, context=None):
+        context = context or {}
+        for blacklist in self.browse(cr, uid, ids, context=context):
             now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             branch  = self._get_branch(cr, uid, context=context)
             self.write(cr, uid, [blacklist.id], {'state': 'inactive','unbanned_date': now, 'unbanned_pawnshop': branch}, context=context)
-            partner_obj.write(cr, uid, partner_id, {'blacklist_customer': False}, context=context)
         return True
-         
-    def action_active(self, cr, uid, ids, context=None):
-        context = context or {}
-        context['write_remote'] = False
-        partner_obj = self.pool.get('res.partner')
-        try:
-            for blacklist in self.browse(cr, uid, ids, context=context):
-                customer = self._get_customer(cr, uid, [blacklist.id], context=context)
-                blacklist_data = {'name': blacklist.name, 'card_number': blacklist.card_number}
-                l_blacklist_info = self.get_last_blacklist_info(cr, uid, blacklist_data, context=context)
-                if not customer:
-                    raise osv.except_osv(_('UserError!'), _('Customer not found.'))
-                if l_blacklist_info.get('state', False) == 'active':
-                    raise osv.except_osv(_('UserError!'), _('This customer is already blacklisted.'))
-                now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                next_index = l_blacklist_info.get('index', 0) + 1
-                self.write(cr, uid, [blacklist.id], {'state': 'active','banned_date': now,'index': next_index}, context=context)
-                partner_obj.write(cr, uid, customer, {'blacklist_customer': True}, context=context)
-                blacklist_to_fetch = self.batch_to_create_fetch(cr, uid, [blacklist.id], 'blacklist.sync', context=context)
-                customer_to_fetch = self.batch_to_create_fetch(cr, uid, customer, 'res.partner', context=context)
-                cr.execute("SELECT url, db_name, username, password FROM blacklist_sync_config WHERE active = TRUE")
-                servers = cr.fetchall()
-                for server in servers:
-                    uid_remote = self._login_to_remote(cr, uid, server, context=context)
-                    l_blacklist_info_remote = self._get_last_blacklist_info_remote(cr, uid, server, uid_remote, blacklist_data, context=context)
-                    if l_blacklist_info_remote.get('state', False) == 'active':
-                        raise osv.except_osv(_('UserError!'), _('This customer is already blacklisted on another Pawnshop'))
-                    self._create_blacklist_remote(cr, uid, server, uid_remote, blacklist_to_fetch, customer_to_fetch, context=context)
-        except osv.except_osv:
-            raise
-        except Exception as e:
-            raise osv.except_osv(_('Error!'), _('Unexpected Error: %s') % str(e))
-        
-    def action_inactive(self, cr, uid, ids, context=None):
-        context = context or {}
-        context['write_remote'] = False
-        try:
-            for blacklist in self.browse(cr, uid, ids, context=context):
-                self.inactive_balcklist(cr, uid, [blacklist.id], context=context)
-                cr.execute("SELECT url, db_name, username, password FROM blacklist_sync_config WHERE active = TRUE")
-                servers = cr.fetchall()
-                for server in servers:
-                    uid_remote = self._login_to_remote(cr, uid, server, context=context)
-                    if uid_remote:
-                        blacklist_ids = self.get_blacklist_remote(cr, uid, [blacklist.id], server, uid_remote, 'blacklist.sync', context=context)
-                        self.inactive_balcklist_remote(cr, uid, blacklist_ids, server, uid_remote, context=context)
-        except osv.except_osv:
-            raise
-        except Exception as e:
-            raise osv.except_osv(_('Error!'), _('Unexpected Error: %s') % str(e))
-        
+
     def create(self, cr, uid, vals, context=None):
         context = context or {}
-        if vals.get('suspicious_asset_image', False) and not context.get('bypass_imagetime', False):
-            vals['suspicious_asset_image_date'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        # if vals.get('suspicious_asset_image', False) and not context.get('bypass_imagetime', False):
+        #     vals['suspicious_asset_image_date'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        if vals.get('partner_id', False):
+            partner_obj = self.pool.get('res.partner')
+            partner_id = vals.get('partner_id', False)
+            if not vals.get('firstname', False) and not vals.get('lastname', False):
+                vals['firstname'], vals['lastname'] = self.split_partner_name(cr, uid, partner_id, context=context)
+            partner_obj.write(cr, uid, [partner_id], {'blacklist_customer': True}, context=context)
         return super(BlacklistSync, self).create(cr, uid, vals, context=context)
-        
+
     def write(self, cr, uid, ids, vals, context=None):
         context = context or {}
-        if vals.get('suspicious_asset_image', False) and not vals.get('suspicious_asset_image_date', False):
-            vals['suspicious_asset_image_date'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        if context.get('write_remote', True):
-            try:
-                for blacklist in self.browse(cr, uid, ids, context=context):
-                    if blacklist.state == 'draft':
-                        continue 
-                    cr.execute("SELECT url, db_name, username, password FROM blacklist_sync_config WHERE active = TRUE")
-                    servers = cr.fetchall()
-                    for server in servers:
-                        uid_remote = self._login_to_remote(cr, uid, server, context=context)
-                        if uid_remote:
-                            blacklist_ids = self.get_blacklist_remote(cr, uid, [blacklist.id], server, uid_remote, 'blacklist.sync', context=context)
-                            self._update_blacklist_remote(cr, uid, blacklist_ids, server, uid_remote, vals, context=context)
-            except osv.except_osv:
-                raise
-            except Exception as e:
-                raise osv.except_osv(_('Error!'), _('Unexpected Error: %s') % str(e))
+        # if vals.get('suspicious_asset_image', False) and not vals.get('suspicious_asset_image_date', False):
+        #     vals['suspicious_asset_image_date'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        for blacklist in self.browse(cr, uid, ids, context=context):
+            sender_obj = self.pool.get('data.sync.sender')
+            if blacklist.state != 'draft' and context.get('sync', True):
+                # อัพเดทข้อมูลใน server อื่น ถ้า สถานะไม่ใช่ draft และ ไม่มีการส่งcontext 'sync' = False
+                sender_obj.sync_write(cr, uid, blacklist.id, 'blacklist.sync', vals, context=context)
+            if vals.get('state', False) == 'inactive':
+                # ถ้ามีการอัพเดทสถานะ inactive ให้ทำการอัพเดท partner ให้ติด blacklist เป็น Flase
+                partner_obj = self.pool.get('res.partner')
+                partner_id =  blacklist.partner_id.id
+                partner_obj.write(cr, uid, partner_id, {'blacklist_customer': False}, context=context)
+            if vals.get('partner_id', False):
+                partner_id = vals.get('partner_id', False)
+                if not vals.get('firstname', False) and not vals.get('lastname', False):
+                    vals['firstname'], vals['lastname'] = self.split_partner_name(cr, uid, partner_id, context=context)
         return super(BlacklistSync, self).write(cr, uid, ids, vals, context=context)
-
+    
     def unlink(self, cr, uid, ids, context=None):
         context = context or {}
         for blacklist in self.browse(cr, uid, ids, context=context):
@@ -381,19 +195,9 @@ class BlacklistSync(osv.osv):
                     _('Error!'),
                     _('Cannot delete history in active state.')
                 )
-            elif blacklist.state == 'inactive' and context.get('unlink_remote', True):
-                try:
-                    cr.execute("SELECT url, db_name, username, password FROM blacklist_sync_config WHERE active = TRUE")
-                    servers = cr.fetchall()
-                    for server in servers:
-                        uid_remote = self._login_to_remote(cr, uid, server, context=context)
-                        if uid_remote:
-                            blacklist_ids = self.get_blacklist_remote(cr, uid, [blacklist.id], server, uid_remote, 'blacklist.sync', context=context)
-                            self._unlink_blacklist_remote(cr, uid, blacklist_ids, server, uid_remote, context=context)
-                except osv.except_osv:
-                        raise
-                except Exception as e:
-                    raise osv.except_osv(_('Error!'), _('Unexpected Error: %s') % str(e))
+            sender_obj = self.pool.get('data.sync.sender')
+            if blacklist.state == 'inactive' and context.get('sync', True):
+                sender_obj.sync_unlink(cr, uid, blacklist.id, 'blacklist.sync', context=context)
         return super(BlacklistSync, self).unlink(cr, uid, ids, context=context)
 
     def copy(self, cr, uid, id, default=None, context=None):
@@ -414,3 +218,4 @@ class BlacklistSync(osv.osv):
         return super(BlacklistSync, self).copy(cr, uid, id, default, context)
 
 BlacklistSync()
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

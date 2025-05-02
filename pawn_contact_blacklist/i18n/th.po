@@ -20,18 +20,12 @@ msgstr ""
 #: model:ir.actions.act_window,name:pawn_contact_blacklist.action_blacklist_sync
 #: model:ir.ui.menu,name:pawn_contact_blacklist.menu_blacklist_sync
 msgid "Customer Blacklist"
-msgstr "ลูกค้าบัญชีดำ"
-
-#. module: pawn_contact_blacklist
-#: model:ir.actions.act_window,name:pawn_contact_blacklist.action_blacklist_config
-#: model:ir.ui.menu,name:pawn_contact_blacklist.menu_blacklist_sync_config
-msgid "Blacklist API Settings"
-msgstr "การตั้งค่า API สำหรับบัญชีดำ"
+msgstr "ลูกค้าบัญชีเฝ้าระวัง"
 
 #. module: pawn_contact_blacklist
 #: field:blacklist.sync,card_number:0
 msgid "ID Number"
-msgstr "หมายเลขบัตรประจำตัว"
+msgstr "เลขที่บัตรประชาชน"
 
 #. module: pawn_contact_blacklist
 #: field:blacklist.sync,name:0
