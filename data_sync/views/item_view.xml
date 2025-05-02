@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Root Menu -->
+        <menuitem id="menu_data_sync_root" 
+                  name="Configuration Sync Data" 
+                  parent="base.menu_custom" 
+                  sequence="99"
+                  groups="base.group_system" />
+        
+        <!-- Sub Menu -->
+        <menuitem id="menu_data_sync_server" 
+            name="Servers" 
+            parent="menu_data_sync_root" 
+            sequence="1"
+            action="action_data_sync_server"
+            groups="base.group_system" />
+
+        <menuitem id="menu_data_sync_model_config" 
+            name="Configuration Sync Models" 
+            parent="menu_data_sync_root" 
+            sequence="1"
+            action="action_data_sync_model_config"
+            groups="base.group_system" />
+
+    </data>
+</openerp>

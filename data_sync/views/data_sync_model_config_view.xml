@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+            <!-- Tree View -->
+            <record id="view_data_sync_model_config_tree" model="ir.ui.view">
+                <field name="name">data.sync.model.config.tree</field>
+                <field name="model">data.sync.model.config</field>
+                <field name="arch" type="xml">
+                    <tree string="Configuration Sync Models">
+                        <field name="model_id"/>
+                        <field 
+                            name="keywords_field_ids"
+                            widget="many2many_tags"
+                        />
+                    </tree>
+                </field>
+            </record>
+        
+                <!-- Form View -->
+                <record id="view_data_sync_model_config_form" model="ir.ui.view">
+                    <field name="name">data.sync.model.config.form</field>
+                    <field name="model">data.sync.model.config</field>
+                    <field name="arch" type="xml">
+                        <form string="Configuration Sync Models" version="7.0">
+                            <header>
+                                <button name="action_compute_needed_fields" type="object" string="Compute Needed Fields" class="oe_highlight"/>
+                            </header>
+                            <sheet>
+                                <group>
+                                    <group>
+                                        <group>
+                                            <field name="model_id" />
+                                            <field 
+                                                name="auto_create_field_ids"
+                                                options="{'no_open':True,'no_create':1,'no_create_edit':1}" 
+                                                widget="many2many_tags"
+                                                domain="[
+                                                    ('ttype', '=', 'many2one'),
+                                                    ('model_id', '=', model_id),
+                                                ]"
+                                            />
+                                        </group>   
+                                        <group>
+                                            <field 
+                                                name="keywords_field_ids"
+                                                widget="many2many_tags"
+                                                domain="[
+                                                    ('model_id', '=', model_id),
+                                                    ('ttype', 'not in', ['one2many', 'binary']),
+                                                ]"
+                                            />
+                                        </group>   
+                                    </group>
+                                </group>
+                                <notebook>
+                                    <page name="Needed Field" string="Needed Fields">
+                                        <field 
+                                            name="needed_field_ids" 
+                                            widget="many2many"
+                                            domain="[
+                                                ('model_id', '=', model_id),
+                                                ('required', '=', 0),
+                                            ]"
+                                        />
+                                    </page>
+                                </notebook>
+                            </sheet>
+                        </form>
+                    </field>
+                </record>
+        
+        <!-- Action -->
+        <record id="action_data_sync_model_config" model="ir.actions.act_window">
+            <field name="name">Configuration Sync Models</field>
+            <field name="res_model">data.sync.model.config</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+        </record>
+
+    </data>
+</openerp>
