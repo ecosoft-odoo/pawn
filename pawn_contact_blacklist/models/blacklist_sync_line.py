@@ -34,6 +34,7 @@ class BlacklistSyncLine(osv.osv):
     _columns = {
         'name': fields.char('Description', required=True),
         'image': fields.binary('Image'),
+        'filename': fields.char('Filename', readonly=True),
         'index': fields.integer('Index', readonly=True),
         'blacklist_id': fields.many2one('blacklist.sync', 'Blacklist'),
     }
@@ -43,7 +44,13 @@ class BlacklistSyncLine(osv.osv):
         if 'blacklist_id' in vals and 'index' not in vals:
             count = self.search_count(cr, uid, [('blacklist_id', '=', vals['blacklist_id'])], context=context)
             vals['index'] = count + 1
+            vals['filename'] = 'รูปภาพ.png'
         return super(BlacklistSyncLine, self).create(cr, uid, vals, context=context)
     
+    def write(self, cr, uid, ids, vals, context=None):
+        if vals.get('image', False):
+            vals['filename'] = 'รูปภาพ.png'
+        return super(BlacklistSyncLine, self).write(cr, uid, ids, vals, context=context)
+
 BlacklistSyncLine()
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

@@ -37,10 +37,10 @@
                                 <field name="lastname"/>
                                 <field name="partner_id"/>
                                 <field name="card_number"/>
-                                <field name="banned_date" widget="date" attrs="{'invisible':[('state', '=', 'draft')]}" groups="pawnshop.group_pawn_manager"/>
-                                <field name="unbanned_date" widget="date" attrs="{'invisible':[('state', '!=', 'inactive')]}" groups="pawnshop.group_pawn_manager"/>
-                                <field name="pawnshop" groups="pawnshop.group_pawn_manager"/>
-                                <field name="unbanned_pawnshop" attrs="{'invisible':[('state', '!=', 'inactive')]}" groups="pawnshop.group_pawn_manager"/>
+                                <field name="banned_date" widget="date" attrs="{'invisible':[('state', '=', 'draft')]}" groups="pawn_contact_blacklist.group_pawn_blacklist_manager"/>
+                                <field name="unbanned_date" widget="date" attrs="{'invisible':[('state', '!=', 'inactive')]}" groups="pawn_contact_blacklist.group_pawn_blacklist_manager"/>
+                                <field name="pawnshop" groups="pawn_contact_blacklist.group_pawn_blacklist_manager"/>
+                                <field name="unbanned_pawnshop" attrs="{'invisible':[('state', '!=', 'inactive')]}" groups="pawn_contact_blacklist.group_pawn_blacklist_manager"/>
                             </group>   
                             <group>
                                 <!-- <field name="suspicious_asset" />
@@ -60,18 +60,20 @@
                             <page string="Blacklist Line">                        
                                 <field name="blacklist_line_ids" context="{'form_view_initial_mode': 'edit'}">
                                     <tree>
+                                        <field name="filename" invisible="1"/>
                                         <field name="name"/>
-                                        <field name="image" widget="image"/>
+                                        <field name="image" widget="binary" filename="filename"/>
                                     </tree>
                                     <form string="Blacklist Line">
+                                        <field name="filename" invisible="1"/>
                                         <field name="name"/>
-                                        <field name="image" widget="image"/>
+                                        <field name="image" widget="image" class="oe_avatar oe_left" filename="filename"/>
                                     </form>
                                 </field>
                             </page>				
                         </notebook>
                     </sheet>
-                    <group groups="pawnshop.group_pawn_manager">
+                    <group groups="pawn_contact_blacklist.group_pawn_blacklist_manager">
                         <div class="oe_chatter">
                             <field name="message_follower_ids" widget="mail_followers"/>
                             <field name="message_ids" widget="mail_thread"/>
@@ -88,8 +90,8 @@
                 <search string="Search Blacklist">
                     <field name="partner_id" string="Customer"/>
                     <field name="card_number"/>
-                    <field name="pawnshop" groups="pawnshop.group_pawn_manager"/>
-                    <field name="unbanned_pawnshop" groups="pawnshop.group_pawn_manager"/>
+                    <field name="pawnshop" groups="pawn_contact_blacklist.group_pawn_blacklist_manager"/>
+                    <field name="unbanned_pawnshop" groups="pawn_contact_blacklist.group_pawn_blacklist_manager"/>
 					<separator/>
                     <filter name="draft" string="Draft" domain="[('state','=','draft')]" />
                     <filter name="active" string="Blacklisted" domain="[('state','=','active')]" />
@@ -99,9 +101,9 @@
                         <filter string="Customer" domain="[]" context="{'group_by':'partner_id'}"/>
                         <filter string="Status" domain="[]" context="{'group_by':'state'}"/>
                         <filter string="Pawnshop" domain="[]" context="{'group_by':'pawnshop'}"
-                                groups="pawnshop.group_pawn_manager"/>
+                                groups="pawn_contact_blacklist.group_pawn_blacklist_manager"/>
                         <filter string="Unbanned Pawnshop" domain="[]" context="{'group_by':'unbanned_pawnshop'}"
-                                groups="pawnshop.group_pawn_manager"/>
+                                groups="pawn_contact_blacklist.group_pawn_blacklist_manager"/>
                     </group>
                 </search>
             </field>

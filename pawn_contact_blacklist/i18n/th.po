@@ -47,7 +47,7 @@ msgstr "โรงรับจำนำ"
 #: view:blacklist.sync:0
 #: field:blacklist.sync,unbanned_pawnshop:0
 msgid "Unbanned Pawnshop"
-msgstr "โรงรับจำนำที่ปลดบัญชีดำ"
+msgstr "โรงรับจำนำที่ปลดบัญชีเฝ้าระวัง"
 
 #. module: pawn_contact_blacklist
 #: view:blacklist.sync:0
@@ -57,10 +57,10 @@ msgstr "จัดกลุ่มโดย"
 #. module: pawn_contact_blacklist
 #: model:ir.model,name:pawn_contact_blacklist.model_pawn_contact_blacklist
 msgid "Customer Blacklist"
-msgstr "ลูกค้าบัญชีดำ"
+msgstr "ลูกค้าบัญชีเฝ้าระวัง"
 
 msgid "Search Blacklist"
-msgstr "ค้นหาบัญชีดำ"
+msgstr "ค้นหาบัญชีเฝ้าระวัง"
 
 #. module: pawn_contact_blacklist
 #: view:blacklist.sync:0
@@ -78,13 +78,13 @@ msgstr "ร่าง"
 #: selection:blacklist.sync,state:0
 #: view:blacklist.sync:0
 msgid "Blacklisted"
-msgstr "บัญชีดำ"
+msgstr "บัญชีเฝ้าระวัง"
 
 #. module: pawn_contact_blacklist
 #: selection:blacklist.sync,state:0
 #: view:blacklist.sync:0
 msgid "Unblacklisted"
-msgstr "ปลดบัญชีดำ"
+msgstr "ปลดบัญชีเฝ้าระวัง"
 
 #. module: pawn_contact_blacklist
 #: view:blacklist.sync:0
@@ -92,14 +92,20 @@ msgid "Customer"
 msgstr "ลูกค้า"
 
 #. module: pawn_contact_blacklist
+#: view:blacklist.sync:0
+#: field:blacklist.sync,blacklist_line_ids:0
+msgid "Blacklist Line"
+msgstr "รายการสินทรัพย์เฝ้าระวัง"
+
+#. module: pawn_contact_blacklist
 #: field:blacklist.sync,banned_date:0
 msgid "Blacklist Date"
-msgstr "วันที่ติดบัญชีดำ"
+msgstr "วันที่ติดบัญชีเฝ้าระวัง"
 
 #. module: pawn_contact_blacklist
 #: field:blacklist.sync,unbanned_date:0
 msgid "Unbanned Date"
-msgstr "วันที่ปลดบัญชีดำ"
+msgstr "วันที่ปลดบัญชีเฝ้าระวัง"
 
 #. module: pawn_contact_blacklist
 #: field:blacklist.sync,suspicious_asset:0
@@ -122,22 +128,62 @@ msgid "Upload Image Date"
 msgstr "วันที่ของสินทรัพย์ที่ต้องระวัง"
 
 #. module: pawn_contact_blacklist
+#: field:blacklist.sync,firstname:0
+msgid "First Name"
+msgstr "ชื่อจริง"
+
+#. module: pawn_contact_blacklist
+#: field:blacklist.sync,lastname:0
+msgid "Last Name"
+msgstr "นามสกุล"
+
+#. module: pawn_contact_blacklist
+#: field:blacklist.sync,is_fake:0
+msgid "Fake Item"
+msgstr "ของปลอม"
+
+#. module: pawn_contact_blacklist
+#: field:blacklist.sync,is_redeemed:0
+msgid "Redeemed Item"
+msgstr "ปล่อยของหลุดจำนำ"
+
+#. module: pawn_contact_blacklist
+#: field:blacklist.sync,is_stolen:0
+msgid "Stolen Property"
+msgstr "ทรัพย์ขโมยมา"
+
+#. module: pawn_contact_blacklist
+#: field:blacklist.sync,remark_summary:0
+msgid "Remark"
+msgstr "สาเหตุเฝ้าระวัง"
+
+#. module: pawn_contact_blacklist
 #: view:res.partner:0
 #: field:res.partner,blacklist_customer:0
 msgid "Blacklist Customer"
-msgstr "ลูกค้าบัญชีดำ"
+msgstr "ลูกค้าบัญชีเฝ้าระวัง"
+
+#. module: pawn_contact_blacklist
+#: field:blacklist.sync.line,name:0
+msgid "Description"
+msgstr "รายละเอียด"
+
+#. module: pawn_contact_blacklist
+#: field:blacklist.sync.line,image:0
+msgid "Image"
+msgstr "รูปภาพ"
 
 #. module: pawn_contact_blacklist
 #: code:addons/pawn_contact_blacklist/wizards/pawn_order_pawn.py:53
 #, python-format
 msgid "%s is blacklisted."
-msgstr "%s ถูกขึ้นบัญชีดำ"
+msgstr "%s ถูกขึ้นบัญชีเฝ้าระวัง"
 
 #. module: pawn_contact_blacklist
 #: code:addons/pawn_contact_blacklist/wizards/pawn_order_renew.py:55
 #, python-format
 msgid "%s is blacklisted."
-msgstr "%s ถูกขึ้นบัญชีดำ"
+msgstr "%s ถูกขึ้นบัญชีเฝ้าระวัง"
 
 #. module: pawn_contact_blacklist
 #: code:addons/pawn_contact_blacklist/models/blacklist_sync.py:387
@@ -149,13 +195,13 @@ msgstr "ไม่สามารถลบประวัติในสถาน
 #: code:addons/pawn_contact_blacklist/models/blacklist_sync.py:330
 #, python-format
 msgid "This customer is already blacklisted on another Pawnshop"
-msgstr "ลูกค้ารายนี้ถูกขึ้นบัญชีดำในร้านจำนำสาขาอื่นแล้ว"
+msgstr "ลูกค้ารายนี้ถูกขึ้นบัญชีเฝ้าระวังในร้านจำนำสาขาอื่นแล้ว"
 
 #. module: pawn_contact_blacklist
 #: code:addons/pawn_contact_blacklist/models/blacklist_sync.py:317
 #, python-format
 msgid "This customer is already blacklisted."
-msgstr "ลูกค้ารายนี้ถูกขึ้นบัญชีดำแล้ว"
+msgstr "ลูกค้ารายนี้ถูกขึ้นบัญชีเฝ้าระวังแล้ว"
 
 #. module: pawn_contact_blacklist
 #: code:addons/pawn_contact_blacklist/models/blacklist_sync.py:315
@@ -180,3 +226,20 @@ msgstr "ไม่มีรหัสผู้ใช้ระยะไกล (uid_
 #, python-format
 msgid "Remote user ID (uid_remote) is missing. Please verify your configuration."
 msgstr "ไม่มีรหัสผู้ใช้ระยะไกล (uid_remote) กรุณาตรวจสอบการกำหนดค่าของคุณ"
+
+#. module: pawn_contact_blacklist
+#: code:addons/pawn_contact_blacklist/models/pawn.py:40
+#, python-format
+msgid "%s is blacklisted.\nReason: %s"
+msgstr "%s ถูกขึ้นบัญชีเฝ้าระวัง\nเหตุผล: %s"
+
+#. module: pawn_contact_blacklist
+#: code:addons/pawn_contact_blacklist/models/pawn.py:40
+#, python-format
+msgid "No reason provided"
+msgstr "ไม่มีเหตุผลที่ระบุ"
+
+#. module: pawn_contact_blacklist
+#: model:res.groups,name:pawn_contact_blacklist.group_pawn_blacklist_manager
+msgid "Blacklist Manager"
+msgstr "ผู้จัดการบัญชีเฝ้าระวัง"
