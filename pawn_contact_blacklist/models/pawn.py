@@ -20,6 +20,7 @@
 ##############################################################################
 
 from openerp.osv import osv
+from openerp.tools.translate import _
 
 class pawn_order(osv.osv):
     _inherit = "pawn.order"
@@ -37,7 +38,7 @@ class pawn_order(osv.osv):
             remark_summary = blacklist.remark_summary
             res['warning'] = {
                 'title': 'Warning',
-                'message': '%s is blacklisted.\nReason: %s' % (partner.name, remark_summary or 'No reason provided')
+                'message': _('%s is blacklisted.\nReason: %s') % (partner.name, remark_summary or _('No reason provided'))
             }
         return res
 
