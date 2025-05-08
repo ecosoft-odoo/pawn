@@ -45,6 +45,10 @@
                     	attrs="{'invisible': ['|', ('state', '!=', 'pawn'), '&amp;', ('state', '=', 'pawn'), ('extended', '=', True)]}"/>
                     <button name="action_unextend" string="Not Extend" type="object"
                     	attrs="{'invisible': ['|', ('state', '!=', 'pawn'), '&amp;', ('state', '=', 'pawn'), ('extended', '=', False)]}"/>
+                    <button name="action_lost_ticket" string="Lost" type="object"
+                        attrs="{'invisible': ['|', ('state', '!=', 'pawn'), '&amp;', ('state', '=', 'pawn'), ('is_lost', '=', True)]}" context="{'is_lost': True}" />
+                    <button name="action_lost_ticket" string="Cancel Lost" type="object"
+                        attrs="{'invisible': ['|', ('state', '!=', 'pawn'), '&amp;', ('state', '=', 'pawn'), ('is_lost', '=', False)]}" context="{'is_lost': False}"/>
                     <!-- <button name="order_cancel" states="draft" string="Cancel Order" /> -->
                     <button name="%(action_pawn_undo_cancel)d" type="action" states="draft,pawn" string="Cancel Pawned Order" context="{'action_type': 'order_cancel'}"/>
                     <button name="action_cancel_draft" states="cancel" type="object" string="Set to Draft" />
@@ -60,6 +64,10 @@
                         <field name="name" class="oe_inline" readonly="1"/>
 	                    <div class="oe_right oe_button_box">
 							<field name="extended" invisible="1"/>
+                            <div style="color:blue">
+                                <label string="New Pawn Ticket" attrs="{'invisible': [('parent_id', '!=', False)]}"/>
+                                <label string="Interest Payment" attrs="{'invisible': [('parent_id', '=', False)]}"/>
+                            </div>
  							<div style="color:red">
  								<label string="Extended" attrs="{'invisible': [('extended', '!=', True)]}"/>
 							</div>
@@ -95,7 +103,7 @@
                         	<field name="period_id" invisible="1"/>
                         	<label for="date_order"/>
 							<div class="address_format">
-                            	<field name="date_order" style="width: 40%%" on_change="onchange_date(date_order, currency_id, company_id)"/>
+                            	<field name="date_order" readonly="1" style="width: 40%%" on_change="onchange_date(date_order, currency_id, company_id)"/>
                         		<label for="buddha_year" style="width: 40%%" />
                         		<field name="buddha_year" style="width: 20%%" />
                                 <field name="buddha_year_temp" invisible="1"/>
@@ -110,7 +118,6 @@
                             <field name="rule_id" widget="selection"/>
                             <field name="child_id" attrs="{'invisible':[('child_id','=',False)]}"/>
 							<field name="create_date" invisible="1"/>
-                            <field name="run_background" invisible="not context.get('is_ready_to_expire', False)"/>
                         </group>
                     </group>
                     <notebook>
@@ -133,7 +140,7 @@
                             </field>
                             <group>
                             	<group>
-                            		<field name="is_lost" />
+                            		<field name="is_lost" invisible="1" />
                                     <field name="renewal_transfer_pawn" attrs="{'invisible': [('renewal_transfer_pawn', '=', False)]}"/>
                                     <field name="renewal_transfer_redeem" attrs="{'invisible': [('renewal_transfer_redeem', '=', False)]}"/>
                             		<field name="amount_net" invisible="1" /> <!-- for renew case, amount_net represent amount left over from previous order, pawnshop need to pay (or receive) to customer -->
@@ -178,7 +185,8 @@
                             <field name="actual_interest_ids">
                                 <tree string="Paid Interest Table">
                                     <field name="interest_date"/>
-                                    <field name="num_days"/>
+                                    <field name="num_days" invisible="1"/>
+                                    <field name="months"/>
                                     <field name="discount" sum="Total Discount"/>
                                     <field name="addition" sum="Total Addition"/>
                                     <field name="interest_amount" sum="Total Interest"/>
@@ -242,12 +250,26 @@
                                 <group string="Pawn">
                                     <field name="fingerprint_pawn" string="Fingerprint" widget="image" class="oe_left oe_avatar"/>
                                     <field name="fingerprint_pawn_date" string="Date of Fingerprint"/>
+                                    <label for="bypass_fingerprint_pawn" attrs="{'invisible': [('bypass_fingerprint_pawn', '=', False)]}"/>
+                                    <div attrs="{'invisible': [('bypass_fingerprint_pawn', '=', False)]}">
+                                        <field name="bypass_fingerprint_pawn"/>
+                                        <div class="oe_clear"/>
+                                        <button name="get_fingerprint" type="object" string="Update Fingerprint" context="{'action_type': 'pawn', 'force_update_fp': True}"/>
+                                    </div>
+                                    <p colspan="2" style="color:red; font-size: 20px;" attrs="{'invisible': [('bypass_fingerprint_pawn', '=', False)]}">รออัพเดทลายนิ้วมือจำนำ</p>
                                 </group>
                                 <group string="Redeem">
                                     <field name="fingerprint_redeem" string="Fingerprint" widget="image" class="oe_left oe_avatar"/>
                                     <field name="fingerprint_redeem_date" string="Date of Fingerprint"/>
                                     <field name="delegation_of_authority" attrs="{'invisible': [('delegation_of_authority', '=', False)]}"/>
                                     <field name="delegate_id" attrs="{'invisible': [('delegate_id', '=', False)]}"/>
+                                    <label for="bypass_fingerprint_redeem" attrs="{'invisible': [('bypass_fingerprint_redeem', '=', False)]}"/>
+                                    <div attrs="{'invisible': [('bypass_fingerprint_redeem', '=', False)]}">
+                                        <field name="bypass_fingerprint_redeem"/>
+                                        <div class="oe_clear"/>
+                                        <button name="get_fingerprint" type="object" string="Update Fingerprint" context="{'action_type': 'redeem', 'force_update_fp': True}"/>
+                                    </div>
+                                    <p colspan="2" style="color:red; font-size: 20px;" attrs="{'invisible': [('bypass_fingerprint_redeem', '=', False)]}">รออัพเดทลายนิ้วมือไถ่ถอน</p>
                                 </group>
                             </group>
                         </page>
@@ -308,6 +330,33 @@
             </field>
         </record>
 
+        <!-- View for Administration / Settings -->
+        <record id="pawn_order_form_for_admin" model="ir.ui.view">
+            <field name="name">pawn.order.form.for.admin</field>
+            <field name="model">pawn.order</field>
+            <field name="inherit_id" ref="pawnshop.pawn_order_form"/>
+            <field name="groups_id" eval="[(6, 0, [ref('base.group_system')])]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date_order']" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                </xpath>
+                <xpath expr="//button[@name='%(action_pawn_undo_cancel)d'][1]" position="attributes">
+                    <attribute name="string">Cancel Pawned Order For Admin</attribute>
+                    <attribute name="context">{'action_type': 'order_cancel', 'no_check_date_order': 1}</attribute>
+                </xpath>
+                <xpath expr="//button[@name='%(action_pawn_undo_cancel)d'][2]" position="attributes">
+                    <attribute name="string">Undo Pay Interest For Admin</attribute>
+                </xpath>
+                <xpath expr="//button[@name='%(action_pawn_undo_cancel)d'][3]" position="attributes">
+                    <attribute name="string">Undo Redeem For Admin</attribute>
+                    <attribute name="context">{'action_type': 'action_undo_redeem', 'no_check_date_redeem': 1}</attribute>
+                </xpath>
+                <xpath expr="//button[@name='%(action_pawn_undo_cancel)d'][3]" position="after">
+                    <button name="action_unlink_new_pawn_ticket" string="Unlink New Pawn Ticket" type="object" attrs="{'invisible': [('child_id', '=', False)]}" confirm="Are you sure to unlink new pawn ticket ?"/>
+                </xpath>
+            </field>
+        </record>
+
         <record id="view_pawn_order_filter" model="ir.ui.view">
             <field name="name">pawn.order.list.select</field>
             <field name="model">pawn.order</field>
@@ -315,6 +364,7 @@
                 <search string="Search Pawn Ticket">
                     <field name="name" string="Reference"/>
                     <field name="partner_id" string="Customer"/>
+                    <field name="nickname"/>
                     <field name="create_uid"/>
 					<separator/>
 					<filter name="today" string="Today's" domain="[('date_order','=',time.strftime('%%Y-%%m-%%d'))]" help="Pawn Tickets created today"/>
@@ -330,8 +380,10 @@
                     <filter name="extend" string="Extended" domain="[('extended','=',True)]" help="Expired Pawned Orders which has been extended"/>
                     <filter name="not_extend" string="Not Extend" domain="[('extended','=',False)]"/>
                     <separator/>
-                    <filter name="run_background" string="Run Background" domain="[('run_background','=',True)]" invisible="not context.get('is_ready_to_expire', False)"/>
-                    <filter name="not_run_background" string="Not Run Background" domain="[('run_background','=',False)]" invisible="not context.get('is_ready_to_expire', False)"/>
+                    <filter name="new_pawn_ticket" string="New Pawn Ticket" domain="[('parent_id', '=', False)]"/>
+                    <filter name="interest_payment" string="Interest Payment" domain="[('parent_id', '!=', False)]"/>
+                    <separator/>
+                    <filter string="Regular Customer" name="regular_customer" domain="[('regular_customer', '=', True)]"/>
                     <group expand="0" string="Group By...">
                         <filter string="Shop" domain="[]" context="{'group_by':'pawn_shop_id'}"/>
                         <filter string="Journal" domain="[]" context="{'group_by':'journal_id'}"/>
@@ -363,13 +415,14 @@
                     <field name="day_order" invisible="1"/>
                     <field name="date_redeem" />
                     <field name="partner_id"/>
+                    <field name="nickname"/>
+                    <field name="regular_customer"/>
                     <field name="company_id" groups="base.group_multi_company" widget="selection"/>
                     <field name="amount_total" sum="Total Amount" invisible="1"/>
                     <field name="amount_pawned" sum="Total Pawned Amount"/>
                     <field name="state"/>
                     <field name="extended_x"/>
                     <field name="jor6_submitted" invisible="1"/>
-                    <field name="run_background" invisible="not context.get('is_ready_to_expire', False)"/>
                 </tree>
             </field>
         </record>
@@ -426,7 +479,7 @@
             <field name="view_mode">tree,form,graph</field>
     		<field name="limit">20</field>
     		<field name="domain">[('ready_to_expire','=',True), ('state','=','pawn')]</field>
-            <field name="context">{'search_default_not_run_background': 1, 'is_ready_to_expire': 1}</field>
+            <field name="context">{}</field>
             <field name="search_view_id" ref="view_pawn_order_filter"/>
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">

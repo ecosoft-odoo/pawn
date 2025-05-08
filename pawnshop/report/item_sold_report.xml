@@ -18,6 +18,7 @@
                     <field name="total_price_sold" sum="Total Sold Price"/>
                     <field name="total_profit" sum="Total Profit"/>
                     <field name="date_sold"/>
+                    <field name="extended_x"/>
                 </tree>
             </field>
         </record>
