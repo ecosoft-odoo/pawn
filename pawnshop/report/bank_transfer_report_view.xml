@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+    <record id="view_bank_transfer_report_tree" model="ir.ui.view">
+        <field name="name">bank.transfer.report.tree</field>
+        <field name="model">bank.transfer.report</field>
+        <field name="arch" type="xml">
+            <tree string="Bank Transfer Report" create="0" delete="0">
+                <field name="date"/>
+                <field name="reference"/>
+                <field name="account_id"/>
+                <field name="type"/>
+                <field name="amount" sum="Total Amount"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_bank_transfer_report_form" model="ir.ui.view">
+        <field name="name">bank.transfer.report.form</field>
+        <field name="model">bank.transfer.report</field>
+        <field name="arch" type="xml">
+            <form string="Bank Transfer Report" version="7.0" create="0" edit="0" delete="0">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="date"/>
+                            <field name="reference"/>
+                            <field name="account_id"/>
+                            <field name="type"/>
+                            <field name="amount"/>
+                        </group>
+                        <group/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_bank_transfer_report_search" model="ir.ui.view">
+        <field name="name">bank.transfer.report.search</field>
+        <field name="model">bank.transfer.report</field>
+        <field name="arch" type="xml">
+            <search string="Bank Transfer Report">
+                <field name="reference"/>
+                <field name="account_id"/>
+                <field name="type"/>
+                <group expand="0" string="Group By...">
+                    <filter string="Reference" domain="[]" context="{'group_by':'reference'}"/>
+                    <filter string="Account" domain="[]" context="{'group_by':'account_id'}"/>
+                    <filter string="Type" domain="[]" context="{'group_by':'type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_bank_transfer_report" model="ir.actions.act_window">
+        <field name="name">Bank Transfer Report</field>
+        <field name="res_model">bank.transfer.report</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_bank_transfer_report_search"/>
+    </record>
+
+    <menuitem
+        action="action_bank_transfer_report"
+        id="menu_bank_transfer_report"
+	    groups="group_pawn_accountant,group_pawn_manager,group_pawn_officer"
+        parent="menu_pawn_report" sequence="80"/>
+</data>
+</openerp>
