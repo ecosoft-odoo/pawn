@@ -164,6 +164,16 @@ msgid "Blacklist Customer"
 msgstr "ลูกค้าบัญชีเฝ้าระวัง"
 
 #. module: pawn_contact_blacklist
+#: field:blacklist.sync,create_user:0
+msgid "Create User"
+msgstr "ผู้สร้าง"
+
+#. module: pawn_contact_blacklist
+#: field:blacklist.sync,write_user:0
+msgid "Modifier User"
+msgstr "ผู้แก้ไขล่าสุด"
+
+#. module: pawn_contact_blacklist
 #: field:blacklist.sync.line,name:0
 msgid "Description"
 msgstr "รายละเอียด"

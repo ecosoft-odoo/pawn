@@ -75,13 +75,13 @@ class BlacklistSync(osv.osv):
             )
             }
         ),
-        #'suspicious_asset': fields.text('Suspicious Asset', required=True, size=85, readonly=True, states={'draft': [('readonly', False)]}, track_visibility='onchange'),
-        #'price': fields.float('Price', required=True, readonly=True, states={'draft': [('readonly', False)]}, track_visibility='onchange'),
-        #'suspicious_asset_image': fields.binary('Suspicious Asset Image', readonly=True, states={'draft': [('readonly', False)]}),
-        #'suspicious_asset_image_date': fields.datetime('Date of Suspicious Asset Image', readonly=True),
         'state': fields.selection(STATE_SELECTION, 'Status', readonly=True, track_visibility='onchange'),
         'index': fields.integer('Index'),
-        'blacklist_line_ids': fields.one2many('blacklist.sync.line', 'blacklist_id', 'Blacklist Line'),
+        'blacklist_line_ids': fields.one2many('blacklist.sync.line', 'blacklist_id', 'Blacklist Line', track_visibility='onchange'),
+        'create_uid': fields.many2one('res.users', 'Responsible', readonly=True),
+        'create_user': fields.char(string='Create User', readonly=True, track_visibility='onchange'),
+        'write_uid': fields.many2one('res.users', "Modifier", readonly=True),
+        'write_user': fields.char(string='Modifier User', readonly=True, track_visibility='onchange'),
         'active': fields.boolean('Active'),
     }
 
@@ -158,20 +158,28 @@ class BlacklistSync(osv.osv):
 
     def create(self, cr, uid, vals, context=None):
         context = context or {}
-        # if vals.get('suspicious_asset_image', False) and not context.get('bypass_imagetime', False):
-        #     vals['suspicious_asset_image_date'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         if vals.get('partner_id', False):
+            # ถ้ามีการส่งลูกค้าจะทำการแยกชื่อและนามสกุล
             partner_obj = self.pool.get('res.partner')
             partner_id = vals.get('partner_id', False)
             if not vals.get('firstname', False) and not vals.get('lastname', False):
                 vals['firstname'], vals['lastname'] = self.split_partner_name(cr, uid, partner_id, context=context)
             partner_obj.write(cr, uid, [partner_id], {'blacklist_customer': True}, context=context)
+        if context.get('sync', True):
+            # ถ้าไม่มีการส่ง sync เป็น False
+            user_obj = self.pool.get('res.users')
+            user = user_obj.browse(cr, uid, uid, context=context)
+            vals['create_user'] = user.name
+            vals['write_user'] = user.name
         return super(BlacklistSync, self).create(cr, uid, vals, context=context)
 
     def write(self, cr, uid, ids, vals, context=None):
         context = context or {}
-        # if vals.get('suspicious_asset_image', False) and not vals.get('suspicious_asset_image_date', False):
-        #     vals['suspicious_asset_image_date'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        if context.get('sync', True):
+            # ถ้าไม่มีการส่ง sync เป็น False
+            user_obj = self.pool.get('res.users')
+            user = user_obj.browse(cr, uid, uid, context=context)
+            vals['write_user'] = user.name
         for blacklist in self.browse(cr, uid, ids, context=context):
             sender_obj = self.pool.get('data.sync.sender')
             if blacklist.state != 'draft' and context.get('sync', True):
