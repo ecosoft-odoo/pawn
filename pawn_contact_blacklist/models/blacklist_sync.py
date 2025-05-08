@@ -53,7 +53,7 @@ class BlacklistSync(osv.osv):
         'firstname': fields.char('First Name', size=64, track_visibility='onchange'),
         'lastname': fields.char('Last Name', size=64, track_visibility='onchange'),
         'card_number': fields.related('partner_id', 'card_number', type='char', string='ID Number', store=True, track_visibility='onchange'),
-        'partner_id': fields.many2one('res.partner', 'Customer (for change)', required=True, track_visibility='onchange'),
+        'partner_id': fields.many2one('res.partner', 'Customer (for change)', required=True, readonly=True, states={'draft': [('readonly', False)]}, track_visibility='onchange'),
         'pawnshop': fields.char('Pawnshop', track_visibility='onchange'),
         'unbanned_pawnshop': fields.char('Unbanned Pawnshop', track_visibility='onchange'),
         'banned_date': fields.datetime('Blacklist Date', track_visibility='onchange'),
