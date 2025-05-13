@@ -380,7 +380,7 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{issue_date}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement  x="313" y="151" width="69" height="17"/>
+				<reportElement  x="313" y="154" width="69" height="17"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="8" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -655,7 +655,7 @@ $F{card_type}.equals("certificate") ? "หนังสือรับรอง" 
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{partner_address}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement  x="683" y="151" width="69" height="17"/>
+				<reportElement  x="683" y="154" width="69" height="17"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
 					<font fontName="Monospaced" size="8" isBold="true" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
