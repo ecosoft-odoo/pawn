@@ -55,8 +55,20 @@ class account_voucher(osv.osv):
                         item_ids.append(line.product_id.id)
                 if voucher.is_refund:
                     voucher_state += '_refund'
-                to_loc_status = loc_status_obj.search(cr, uid, [('code', '=', LOCATION_STATUS_MAP[voucher_state])])[0]
-                self.pool.get('product.product').write(cr, uid, item_ids, {'location_status': to_loc_status})
+                location_status = LOCATION_STATUS_MAP[voucher_state]
+                to_loc_status = loc_status_obj.search(cr, uid, [('code', '=', location_status)])[0]
+                self.pool.get('product.product').write(cr, uid, item_ids, {
+                    'location_status': to_loc_status,
+                    # Item status must same location status
+                    'state': 'sold' if location_status == 'item_sold' else 'for_sale' if location_status == 'item_for_sale' else False,
+                })
+                # Update asset status = 'sold' If all item status = 'sold'
+                items = self.pool.get('product.product').browse(cr, uid, item_ids, context=context)
+                for item in items:
+                    asset_state = 'for_sale'
+                    if len(item.parent_id.item_ids) == len(filter(lambda k: k.state == 'sold', item.parent_id.item_ids)):
+                        asset_state = 'sold'
+                    self.pool.get('product.product').write(cr, uid, [item.parent_id.id], {'state': asset_state}, context=context)
             return True
 
     def _estimated_total(self, cr, uid, voucher_id):
@@ -166,11 +178,15 @@ class account_voucher(osv.osv):
         return {'value': {'pawn_shop_id': shop_id, 'journal_id': journal_id}}
 
     def _get_next_name(self, cr, uid, date, pawn_shop_id, is_refund, context=None):
-        year = date and date[:4] or time.strftime('%Y-%m-%d')[:4]
-        # Get year from date
+        year = time.strftime('%Y-%m-%d')[:4]
+        month = time.strftime('%Y-%m-%d')[5:7]
+        if date:
+            year = date[:4]
+            month = date[5:7]
+        # Search latest doc number of this year and month
         cr.execute("""select coalesce(max(docnumber), 0) from account_voucher
-            where to_char(date, 'YYYY') = %s and pawn_shop_id = %s and is_refund = %s""",
-            (year, pawn_shop_id, is_refund))
+            where to_char(date, 'YYYY') = %s and to_char(date, 'MM') = %s and pawn_shop_id = %s and is_refund = %s""",
+            (year, month, pawn_shop_id, is_refund))
         number = cr.fetchone()[0] or 0
         number += 1
         shop_code = '--'
@@ -178,7 +194,7 @@ class account_voucher(osv.osv):
             shop_code = self.pool.get('pawn.shop').browse(cr, uid, pawn_shop_id).sref_code
         else:
             shop_code = self.pool.get('pawn.shop').browse(cr, uid, pawn_shop_id).srec_code
-        next_name = shop_code + '/' + year + '/' + str(number).zfill(3)
+        next_name = shop_code + '/' + year + '/' + month + '/' + str(number).zfill(3)
         return next_name, number
 
     def write(self, cr, uid, ids, vals, context=None):
@@ -663,7 +679,7 @@ class account_voucher_line(osv.osv):
         'product_id': fields.many2one('product.product', 'Product', ondelete='set null', select=True),
         'quantity': fields.float('Quantity', digits_compute= dp.get_precision('Product Unit of Measure')),
         'uos_id': fields.many2one('product.uom', 'Unit of Measure', ondelete='set null', select=True),
-        'price_unit': fields.float('Unit Price', digits_compute= dp.get_precision('Product Price')),
+        'price_unit': fields.float('Unit Price', digits_compute= dp.get_precision('Product Price'), readonly=True),
         'is_jewelry': fields.boolean('Carat/Gram', readonly=True),
         'carat': fields.float('Carat', readonly=True),
         'gram': fields.float('Gram', readonly=True),
@@ -675,7 +691,7 @@ class account_voucher_line(osv.osv):
     def onchange_price(self, cr, uid, ids, field, quantity, price_unit, amount, context=None):
         res = {'value': {}}
         quantity = float(quantity)
-        if field in ('quantity', 'price_unit'):
+        if field in ('quantity'):
             prec = self.pool.get('decimal.precision').precision_get(cr, uid, 'Account')
             amount = quantity * price_unit
             res['value']['amount'] = round(amount, prec)
@@ -721,11 +737,26 @@ class account_voucher_line(osv.osv):
 
     def create(self, cr, uid, vals, context=None):
         vals = self._update_field(cr, uid, vals, context=context)
-        return super(account_voucher_line, self).create(cr, uid, vals, context=context)
+        voucher_line_id = super(account_voucher_line, self).create(cr, uid, vals, context=context)
+        # price_unit field is readonly, it not store in database if we call onchange function and effect with this field
+        # So, we need to update it
+        voucher_line = self.browse(cr, uid, voucher_line_id, context=context)
+        if vals.get('amount') and not vals.get('price_unit'):
+            price_unit = self.onchange_price(cr, uid, [voucher_line.id], 'amount', voucher_line.quantity, voucher_line.price_unit, voucher_line.amount, context=context)['value']['price_unit']
+            self.write(cr, uid, [voucher_line.id], {'price_unit': price_unit}, context=context)
+        return voucher_line_id
 
     def write(self, cr, uid, ids, vals, context=None):
         vals = self._update_field(cr, uid, vals, context=context)
-        return super(account_voucher_line, self).write(cr, uid, ids, vals, context=context)
+        res = super(account_voucher_line, self).write(cr, uid, ids, vals, context=context)
+        # price_unit field is readonly, it not store in database if we call onchange function and effect with this field
+        # So, we need to update it
+        voucher_lines = self.browse(cr, uid, ids, context=context)
+        for voucher_line in voucher_lines:
+            if vals.get('amount') and not vals.get('price_unit'):
+                price_unit = self.onchange_price(cr, uid, [voucher_line.id], 'amount', voucher_line.quantity, voucher_line.price_unit, voucher_line.amount, context=context)['value']['price_unit']
+                self.write(cr, uid, [voucher_line.id], {'price_unit': price_unit}, context=context)
+        return res
 
 account_voucher_line()
 
