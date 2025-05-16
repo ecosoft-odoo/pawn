@@ -45,6 +45,8 @@ class BlacklistSync(osv.osv):
                 remark_list.append(u'ปล่อยของหลุดจำนำ')
             if record.is_stolen:
                 remark_list.append(u'ทรัพย์ขโมยมา')
+            if record.other:
+                remark_list.append(record.other)
             result[record.id] = ', '.join(remark_list)
         return result
 
@@ -61,6 +63,7 @@ class BlacklistSync(osv.osv):
         'is_fake': fields.boolean('Fake Item', track_visibility='onchange'),
         'is_redeemed': fields.boolean('Redeemed Item', track_visibility='onchange',),
         'is_stolen': fields.boolean('Stolen Property', track_visibility='onchange',),
+        'other': fields.char('Other', size=256, track_visibility='onchange'),
         'remark_summary': fields.function(
             _get_remark_summary,
             type='char',
@@ -70,7 +73,7 @@ class BlacklistSync(osv.osv):
             store={
             'blacklist.sync': (
                 lambda self, cr, uid, ids, c={}: ids,
-                ['is_fake', 'is_redeemed', 'is_stolen'],
+                ['is_fake', 'is_redeemed', 'is_stolen', 'other'],
                 10
             )
             }
