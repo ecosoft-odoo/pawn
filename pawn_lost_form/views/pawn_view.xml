@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="pawn_order_form" model="ir.ui.view">
+            <field name="name">pawn.order.form.inherit</field>
+            <field name="model">pawn.order</field>
+            <field name="inherit_id" ref="pawnshop.pawn_order_form"/>
+            <field name="arch" type="xml">
+                <field name="is_lost" position="attributes">
+                    <attribute name="on_change">onchange_is_lost(is_lost)</attribute>
+                </field>
+                <xpath expr="//field[@name='date_due']" position="after">
+                    <field name="lost_date" invisible="1" />
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>
