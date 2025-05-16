@@ -54,6 +54,14 @@ class bank_transfer_report(osv.osv):
             string="Amount",
             readonly=True,
         ),
+        "amount_pawned": fields.float(
+            string="Amount Pawned",
+            readonly=True,
+        ),
+        "actual_interest": fields.float(
+            string="Actual Interest",
+            readonly=True,
+        )
     }
 
     def init(self, cr):
@@ -64,7 +72,14 @@ class bank_transfer_report(osv.osv):
                 from (
                     -- pawn
                     (
-                        select m.date, pw.name as reference, l.account_id, 'pawn' as type, coalesce(sum(l.debit),0) - coalesce(sum(l.credit),0) as amount
+                        select 
+                            m.date, 
+                            pw.name as reference, 
+                            l.account_id,
+                            'pawn' as type, 
+                            coalesce(sum(l.debit),0) - coalesce(sum(l.credit),0) as amount, 
+                            max(pw.amount_pawned) as amount_pawned,
+                            NULL::numeric as actual_interest
                         from account_move_line l
                         join account_move m on l.move_id = m.id
                         join pawn_order pw on l.pawn_order_id = pw.id
@@ -75,11 +90,22 @@ class bank_transfer_report(osv.osv):
                     union all
                     -- redeem
                     (
-                        select m.date, pw.name as reference, l.account_id, 'redeem' as type, coalesce(sum(l.debit),0) - coalesce(sum(l.credit),0) as amount
+                        select 
+                            m.date, 
+                            pw.name as reference, 
+                            l.account_id, 'redeem' as type,
+                            coalesce(sum(l.debit),0) - coalesce(sum(l.credit),0) as amount, 
+                            max(pw.amount_pawned) as amount_pawned,
+                            COALESCE(MAX(pai.interest_total), 0) as actual_interest
                         from account_move_line l
                         join account_move m on l.move_id = m.id
                         join pawn_order pw on l.pawn_order_id = pw.id
                         left join pawn_order child on pw.child_id = child.id
+                        left join (
+                            select pawn_id, sum(interest_amount) as interest_total
+                            from pawn_actual_interest pai
+                            group by pawn_id
+                        ) pai on pai.pawn_id = pw.id
                         where l.pawn_order_id is not null and pw.state = 'redeem' and (m.id in (pw.redeem_move_id, child.pawn_move_id) or m.adjustment = 'redeem')
                             and l.account_id in (select aa.id from account_account aa join account_account_type aat on aa.user_type = aat.id where aat.code = 'bank')
                         group by m.date, pw.name, l.account_id
@@ -87,7 +113,13 @@ class bank_transfer_report(osv.osv):
                     union all
                     -- sale
                     (
-                        select m.date, av.number as reference, l.account_id, 'sale' as type, coalesce(sum(l.debit),0) - coalesce(sum(l.credit),0) as amount
+                        select 
+                            m.date, 
+                            av.number as reference, 
+                            l.account_id, 'sale' as type, 
+                            coalesce(sum(l.debit),0) - coalesce(sum(l.credit),0) as amount, 
+                            NULL::numeric as amount_pawned,
+                            NULL::numeric as actual_interest
                         from account_move_line l
                         join account_move m on l.move_id = m.id
                         left join account_voucher av on m.id = av.move_id or m.sale_receipt_id = av.id
