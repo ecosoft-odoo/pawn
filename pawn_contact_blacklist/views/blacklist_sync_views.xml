@@ -43,6 +43,7 @@
                                 <field name="is_fake"/>
                                 <field name="is_redeemed"/>
                                 <field name="is_stolen"/>
+                                <field name="other"/>
                                 <field name="remark_summary"/>
                             </group>   
                         </group>
