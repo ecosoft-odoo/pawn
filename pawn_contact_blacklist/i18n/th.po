@@ -238,13 +238,13 @@ msgid "Remote user ID (uid_remote) is missing. Please verify your configuration.
 msgstr "ไม่มีรหัสผู้ใช้ระยะไกล (uid_remote) กรุณาตรวจสอบการกำหนดค่าของคุณ"
 
 #. module: pawn_contact_blacklist
-#: code:addons/pawn_contact_blacklist/models/pawn.py:40
+#: code:addons/pawn_contact_blacklist/models/pawn.py:41
 #, python-format
-msgid "%s is blacklisted.\nReason: %s"
-msgstr "%s ถูกขึ้นบัญชีเฝ้าระวัง\nเหตุผล: %s"
+msgid "%s is blacklisted. Reason: %s"
+msgstr "%s ถูกขึ้นบัญชีเฝ้าระวัง เหตุผล: %s"
 
 #. module: pawn_contact_blacklist
-#: code:addons/pawn_contact_blacklist/models/pawn.py:40
+#: code:addons/pawn_contact_blacklist/models/pawn.py:43
 #, python-format
 msgid "No reason provided"
 msgstr "ไม่มีเหตุผลที่ระบุ"
