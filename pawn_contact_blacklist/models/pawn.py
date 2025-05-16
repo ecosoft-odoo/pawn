@@ -38,7 +38,9 @@ class pawn_order(osv.osv):
             remark_summary = blacklist.remark_summary
             res['warning'] = {
                 'title': 'Warning',
-                'message': _('%s is blacklisted.\nReason: %s') % (partner.name, remark_summary or _('No reason provided'))
+                'message': _('%s is blacklisted. Reason: %s') % (
+                    partner.name,
+                    remark_summary or _('No reason provided'))
             }
         return res
 
