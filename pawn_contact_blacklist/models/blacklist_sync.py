@@ -135,7 +135,6 @@ class BlacklistSync(osv.osv):
         context = context or {}
         sender_obj = self.pool.get('data.sync.sender')
         partner_obj = self.pool.get('res.partner')
-        # context['bypass_imagetime'] = True
         for blacklist in self.browse(cr, uid, ids, context=context):
             partner = blacklist.partner_id
             l_blacklist = self.get_last_blacklisted_partner(cr, uid, partner, context=context)
@@ -148,6 +147,8 @@ class BlacklistSync(osv.osv):
             partner_obj.write(cr, uid, [partner.id], {'blacklist_customer': True}, context=context)
             fetch_vals = self.copy_data(cr, uid, blacklist.id, context=context)
             fetch_vals.update(to_update)
+            context['check_card_number'] = partner.card_number
+            context['check_customer_name'] = partner.name
             sender_obj.sync_create(cr, uid, 'blacklist.sync', fetch_vals, context=context)
         return True
 
