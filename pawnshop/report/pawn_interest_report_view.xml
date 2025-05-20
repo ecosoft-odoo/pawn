@@ -58,6 +58,7 @@
                     <filter name="group_month" string="Month" context="{'group_by':'month'}"/>
                     <filter name="group_day" string="Day" context="{'group_by':'day'}"/>
                     <filter name="group_day_redeem" string="Day Redeem" domain="[]" context="{'group_by':'day_redeem'}"/>
+                    <filter name="group_month_redeem" string="Month Redeem" domain="[]" context="{'group_by':'month_redeem'}"/>
                 </group>
             </search>
         </field>
