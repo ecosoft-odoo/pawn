@@ -119,6 +119,12 @@
 	<field name="for_sale" class="java.lang.Boolean">
 		<fieldDescription><![CDATA[line_cr_ids/product_id/for_sale]]></fieldDescription>
 	</field>
+	<field name="amount_cash" class="java.lang.Number">
+		<fieldDescription><![CDATA[amount_cash]]></fieldDescription>
+	</field>
+	<field name="amount_transfer" class="java.lang.Number">
+		<fieldDescription><![CDATA[amount_transfer]]></fieldDescription>
+	</field>
 	<variable name="sum_carat" class="java.lang.Number" calculation="Sum">
 		<variableExpression><![CDATA[$F{carat}]]></variableExpression>
 	</variable>
@@ -600,6 +606,69 @@
 				</textElement>
 				<text><![CDATA[-]]></text>
 			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="15" y="58" width="99" height="15"/>
+				<textElement verticalAlignment="Top" lineSpacing="Single">
+					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[วิธีการรับชำระ]]></text>
+			</staticText>
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Top" isUsingCache="true" isLazy="true">
+				<reportElement x="80" y="58" width="10" height="10">
+					<printWhenExpression><![CDATA[$F{amount_cash}]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "/check.png"]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Top" isUsingCache="true" isLazy="true">
+				<reportElement x="80" y="58" width="10" height="10">
+					<printWhenExpression><![CDATA[!$F{amount_cash}]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "/uncheck.png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement mode="Transparent" x="95" y="58" width="99" height="15"/>
+				<textElement verticalAlignment="Top" lineSpacing="Single">
+					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[เงินสด]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" mode="Transparent" x="130" y="58" width="150" height="15" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$F{amount_cash}]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["จำนวน " + new java.text.DecimalFormat("#,##0.00").format($F{amount_cash}) + " บาท"]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Top" isUsingCache="true" isLazy="true">
+				<reportElement x="80" y="75" width="10" height="10">
+					<printWhenExpression><![CDATA[$F{amount_transfer}]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "/check.png"]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Top" isUsingCache="true" isLazy="true">
+				<reportElement x="80" y="75" width="10" height="10">
+					<printWhenExpression><![CDATA[!$F{amount_transfer}]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "/uncheck.png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement mode="Transparent" x="95" y="75" width="99" height="15"/>
+				<textElement verticalAlignment="Top" lineSpacing="Single">
+					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[เงินโอน]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" mode="Transparent" x="130" y="75" width="150" height="15" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$F{amount_transfer}]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["จำนวน " + new java.text.DecimalFormat("#,##0.00").format($F{amount_transfer}) + " บาท"]]></textFieldExpression>
+			</textField>
 		</band>
 	</lastPageFooter>
 </jasperReport>

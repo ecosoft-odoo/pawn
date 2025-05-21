@@ -6,28 +6,32 @@
             <field name="model">pawn.order.pawn</field>
             <field name="arch" type="xml">
                 <form string="Pawn" version="7.0">
-                    <group>
-                         <group name="label" colspan="2">
-                             <label string="Please select journal"/>
-                         </group>
-                         <group name="amount">
-                             <field name="journal_id" attrs="{'readonly': [('parent_id', '!=', False )]}" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
-                             <field name="date_due_ticket"/>
-                             <field name="parent_id" invisible="1" />
-                         </group>
-                         <group >
-                         	 <h2>
-                         	 	<label for="amount" />
-                             	<field name="amount" class="oe_inline" />
-                         	 </h2>
-                         </group>
+                    <group string="Total Amount">
+                        <group>
+                            <field name="amount" style="color: red; font-size: 30px;"/>
+                        </group>
+                        <group>
+                            <field name="date_due_ticket"/>
+                            <field name="bypass_fingerprint" on_change="onchange_bypass_fingerprint()"/>
+                            <field name="secret_key" password="1" attrs="{'invisible': [('bypass_fingerprint', '=', False)], 'required': [('bypass_fingerprint', '=', True)]}"/>
+                            <field name="parent_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group string="Payment Method">
+                        <group>
+                            <field name="bank_journal_id" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
+                            <field name="transfer_amount" on_change="onchange_amount('transfer', transfer_amount, cash_amount, amount)"/>
+                            <field name="journal_id" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
+                            <field name="cash_amount" on_change="onchange_amount('cash', transfer_amount, cash_amount, amount)"/>
+                        </group>
+                        <group/>
                     </group>
                     <footer>
                         <button string="Pawn" name="action_pawn" type="object" class="oe_highlight"/>
                         or
                         <button string="Cancel" class="oe_link" special="cancel"/>
                     </footer>
-               </form>
+                </form>
             </field>
         </record>
         <record id="action_pawn_order_pawn" model="ir.actions.act_window">
@@ -35,8 +39,8 @@
             <field name="res_model">pawn.order.pawn</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-           <field name="view_id" ref="view_pawn_order_pawn"/>
-           <field name="target">new</field>
+            <field name="view_id" ref="view_pawn_order_pawn"/>
+            <field name="target">new</field>
         </record>
     </data>
 </openerp>

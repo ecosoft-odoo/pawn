@@ -1,0 +1,56 @@
+# -*- coding: utf-8 -*-
+##############################################################################
+#
+#    OpenERP, Open Source Management Solution
+#    Copyright (C) 2004-2010 Tiny SPRL (<http://tiny.be>).
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Affero General Public License as
+#    published by the Free Software Foundation, either version 3 of the
+#    License, or (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU Affero General Public License for more details.
+#
+#    You should have received a copy of the GNU Affero General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+##############################################################################
+
+from openerp.osv import osv, fields
+
+STATE_SELECTION = [
+    ('draft', 'Draft'),
+    ('active', 'Blacklisted'),
+    ('inactive', 'Unblacklisted'),
+]
+
+class BlacklistSyncLine(osv.osv):
+    _name = 'blacklist.sync.line'
+    _description = 'Blacklist Sync Line'
+
+    _columns = {
+        'name': fields.char('Description', required=True),
+        'image': fields.binary('Image'),
+        'filename': fields.char('Filename', readonly=True),
+        'index': fields.integer('Index', readonly=True),
+        'blacklist_id': fields.many2one('blacklist.sync', 'Blacklist'),
+    }
+
+    def create(self, cr, uid, vals, context=None):
+        context = context or {}
+        if 'blacklist_id' in vals and 'index' not in vals:
+            count = self.search_count(cr, uid, [('blacklist_id', '=', vals['blacklist_id'])], context=context)
+            vals['index'] = count + 1
+            vals['filename'] = 'รูปภาพ.png'
+        return super(BlacklistSyncLine, self).create(cr, uid, vals, context=context)
+    
+    def write(self, cr, uid, ids, vals, context=None):
+        if vals.get('image', False):
+            vals['filename'] = 'รูปภาพ.png'
+        return super(BlacklistSyncLine, self).write(cr, uid, ids, vals, context=context)
+
+BlacklistSyncLine()
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

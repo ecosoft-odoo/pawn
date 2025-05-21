@@ -252,6 +252,18 @@ msgid "Day Redeem"
 msgstr "วันที่ไถ่ถอน"
 
 #. module: pawnshop
+#: view:pawn.interest.report:0
+#: field:pawn.interest.report,month_redeem:0
+msgid "Month Redeem"
+msgstr "เดือนไถ่ถอน"
+
+#. module: pawnshop
+#: view:pawn.interest.report:0
+#: field:pawn.interest.report,year_redeem:0
+msgid "Year Redeem"
+msgstr "ปีไถ่ถอน"
+
+#. module: pawnshop
 #: help:pawn.order,message_unread:0
 msgid "If checked new messages require your attention."
 msgstr "ถ้าเลือก ข้อความใหม่ต้องการความสนใจของคุณ"
@@ -789,6 +801,7 @@ msgstr "คุณสมบัติ"
 #: selection:pawn.amount.by.period,month:0
 #: selection:pawn.interest.report,month:0
 #: selection:pawn.report,month:0
+#: selection:pawn.interest.report,month_redeem:0
 msgid "August"
 msgstr "สิงหาคม"
 
@@ -812,6 +825,7 @@ msgstr "กรุณาเปิดการใช้งานเลขลำด
 #: selection:pawn.amount.by.period,month:0
 #: selection:pawn.interest.report,month:0
 #: selection:pawn.report,month:0
+#: selection:pawn.interest.report,month_redeem:0
 msgid "June"
 msgstr "มิถุนายน"
 
@@ -886,6 +900,7 @@ msgstr "ตั๋ว"
 #: selection:pawn.amount.by.period,month:0
 #: selection:pawn.interest.report,month:0
 #: selection:pawn.report,month:0
+#: selection:pawn.interest.report,month_redeem:0
 msgid "October"
 msgstr "ตุลาคม"
 
@@ -1467,6 +1482,7 @@ msgstr "หมายเหตุ"
 #: selection:pawn.amount.by.period,month:0
 #: selection:pawn.interest.report,month:0
 #: selection:pawn.report,month:0
+#: selection:pawn.interest.report,month_redeem:0
 msgid "March"
 msgstr "มีนาคม"
 
@@ -1918,6 +1934,7 @@ msgstr "หมายเลขประชาชน"
 #: selection:pawn.amount.by.period,month:0
 #: selection:pawn.interest.report,month:0
 #: selection:pawn.report,month:0
+#: selection:pawn.interest.report,month_redeem:0
 msgid "September"
 msgstr "กันยายน"
 
@@ -2195,6 +2212,7 @@ msgstr "จำนวนเงินที่จำนำเป็นจำนว
 #: selection:pawn.amount.by.period,month:0
 #: selection:pawn.interest.report,month:0
 #: selection:pawn.report,month:0
+#: selection:pawn.interest.report,month_redeem:0
 msgid "November"
 msgstr "พฤศจิกายน"
 
@@ -2778,6 +2796,7 @@ msgstr "ดอกเบี้ยรายเดือน"
 #. module: pawnshop
 #: field:pawn.order.redeem,pawn_duration:0
 #: field:pawn.order.renew,pawn_duration:0
+#: field:pawn.actual.interest,months:0
 msgid "Pawn Duration (Months)"
 msgstr "ระยะเวลาการจำนำ (เดือน)"
 
@@ -2836,6 +2855,11 @@ msgid "Days"
 msgstr "วัน"
 
 #. module: pawnshop
+#: field:pawn.actual.interest,months:0
+msgid "Months"
+msgstr "เดือน"
+
+#. module: pawnshop
 #: field:pawn.line.property.line,property_line_id:0
 #: field:pawn.order.line.properties,property_line_id:0
 msgid "Value"
@@ -2879,6 +2903,7 @@ msgstr "Interest Rate (%)"
 #: selection:pawn.amount.by.period,month:0
 #: selection:pawn.interest.report,month:0
 #: selection:pawn.report,month:0
+#: selection:pawn.interest.report,month_redeem:0
 msgid "July"
 msgstr "กรกฎาคม"
 
@@ -4406,6 +4431,7 @@ msgstr "line_cr_ids/product_id/name"
 #: selection:pawn.amount.by.period,month:0
 #: selection:pawn.interest.report,month:0
 #: selection:pawn.report,month:0
+#: selection:pawn.interest.report,month_redeem:0
 msgid "December"
 msgstr "ธันวาคม"
 
@@ -4630,6 +4656,7 @@ msgstr "4 เดือน"
 #: selection:pawn.amount.by.period,month:0
 #: selection:pawn.interest.report,month:0
 #: selection:pawn.report,month:0
+#: selection:pawn.interest.report,month_redeem:0
 msgid "January"
 msgstr "มกราคม"
 
@@ -4833,6 +4860,7 @@ msgstr "Pawn Admin"
 #: selection:pawn.amount.by.period,month:0
 #: selection:pawn.interest.report,month:0
 #: selection:pawn.report,month:0
+#: selection:pawn.interest.report,month_redeem:0
 msgid "May"
 msgstr "พฤษภาคม"
 
@@ -4872,8 +4900,8 @@ msgstr "ถนน"
 
 #. module: pawnshop
 #: view:pawn.expire.final:0
-msgid "Select ticket that is ready to expire, and finalize it."
-msgstr "เลือกตั๋วสิ้นสุดระยะผ่อนผัน (ไม่คัด) และคัดเป็นหมดอายุ"
+msgid "Do you want to classify \"Pen\" status tickets as expired tickets for sale?"
+msgstr "ต้องการคัดตั๋วสถานะ \"เล้า\" เป็นตั๋วหมดอายุเพื่อขาย หรือไม่"
 
 #. module: pawnshop
 #: report:pawn.order.form:0
@@ -4908,6 +4936,7 @@ msgstr "ลูกค้า"
 #: selection:pawn.amount.by.period,month:0
 #: selection:pawn.interest.report,month:0
 #: selection:pawn.report,month:0
+#: selection:pawn.interest.report,month_redeem:0
 msgid "February"
 msgstr "กุมภาพันธ์"
 
@@ -4945,6 +4974,7 @@ msgstr "1:2 อัตราส่วนคาดหวัง"
 #: selection:pawn.amount.by.period,month:0
 #: selection:pawn.interest.report,month:0
 #: selection:pawn.report,month:0
+#: selection:pawn.interest.report,month_redeem:0
 msgid "April"
 msgstr "เมษายน"
 

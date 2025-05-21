@@ -41,250 +41,318 @@
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[select * from
+		<![CDATA[
+with
+redeem_unextended as (
+	select ''::varchar as desc1, ''::varchar as desc2, (ap.name || ' (จำนวน ' || sum(case when coalesce(l.credit,0) != 0 then 1 else 0 end)::varchar || ' ตั๋ว)')::varchar as desc3, coalesce(sum(l.credit),0) as balance
+	from account_move_line l
+	join pawn_order pw on l.pawn_order_id = pw.id
+	join account_period ap on pw.period_id = ap.id
+	where l.pawn_order_id is not null and pw.state = 'redeem' and pw.extended = false
+		and l.account_id = $P{redeem_account_id}
+		and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
+		and l.pawn_shop_id = $P{pawn_shop_id}
+		and l.date = $P{date}
+	group by ap.id
+	having coalesce(sum(l.credit),0) != 0
+	order by ap.id
+),
+redeem_interest_unextended as (
+	select ''::varchar as desc1, ''::varchar as desc2, (ap.name || ' (จำนวน ' || count(distinct l.pawn_order_id)::varchar || ' ตั๋ว)')::varchar as desc3, coalesce(sum(l.credit),0) - coalesce(sum(l.debit),0) as balance
+	from account_move_line l
+	join pawn_order pw on l.pawn_order_id = pw.id
+	join account_period ap on pw.period_id = ap.id
+	where l.pawn_order_id is not null and pw.state = 'redeem' and pw.extended = false
+		and l.account_id in ($P{accrued_interest_account_id}, $P{interest_account_id}, $P{interest_disc_account_id}, $P{interest_add_account_id})
+		and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
+		and l.pawn_shop_id = $P{pawn_shop_id}
+		and l.date = $P{date}
+	group by ap.id
+	having coalesce(sum(l.credit),0) - coalesce(sum(l.debit),0) != 0
+	order by ap.id
+),
+redeem_extended as (
+	select ''::varchar as desc1, ''::varchar as desc2, (ap.name || ' (จำนวน ' || sum(case when coalesce(l.credit,0) != 0 then 1 else 0 end)::varchar || ' ตั๋ว)')::varchar as desc3, coalesce(sum(l.credit),0) as balance
+	from account_move_line l
+	join pawn_order pw on l.pawn_order_id = pw.id
+	join account_period ap on pw.period_id = ap.id
+	where l.pawn_order_id is not null and pw.state = 'redeem' and pw.extended = true
+		and l.account_id = $P{redeem_account_id}
+		and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
+		and l.pawn_shop_id = $P{pawn_shop_id}
+		and l.date = $P{date}
+	group by ap.id
+	having coalesce(sum(l.credit),0) != 0
+	order by ap.id
+),
+redeem_interest_extended as (
+	select ''::varchar as desc1, ''::varchar as desc2, (ap.name || ' (จำนวน ' || count(distinct l.pawn_order_id)::varchar || ' ตั๋ว)')::varchar as desc3, coalesce(sum(l.credit),0) - coalesce(sum(l.debit),0) as balance
+	from account_move_line l
+	join pawn_order pw on l.pawn_order_id = pw.id
+	join account_period ap on pw.period_id = ap.id
+	where l.pawn_order_id is not null and pw.state = 'redeem' and pw.extended = true
+		and l.account_id in ($P{accrued_interest_account_id}, $P{interest_account_id}, $P{interest_disc_account_id}, $P{interest_add_account_id})
+		and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
+		and l.pawn_shop_id = $P{pawn_shop_id}
+		and l.date = $P{date}
+	group by ap.id
+	having coalesce(sum(l.credit),0) - coalesce(sum(l.debit),0) != 0
+	order by ap.id
+)
+select * from
 (
--- Beginning Balance
-select 1 as sequence, 'ยอดยกมา'::varchar as desc1, ''::varchar as desc2, coalesce(sum(l.debit),0) - coalesce(sum(l.credit),0) as balance
-from account_move_line l
-join account_move m on m.id = l.move_id
-where
--- (l.pawn_order_id is not null or l.statement_id is not null)
-l.account_id = (select default_debit_account_id from account_journal where id = $P{journal_id})
-and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
-and l.pawn_shop_id = $P{pawn_shop_id}
-and l.date < $P{date}
---and m.ref is not null
-UNION
--- Transfer from Stock
-select 2 as sequence, desc1::varchar, desc2::varchar as desc2, balance from
-(select 'เงินสดเข้าจากคลัง' as desc1, '' as desc2, coalesce(sum(l.debit),0) as balance
-from account_move_line l
-join account_voucher av on av.move_id = l.move_id
-where av.transfer_id is not null
-and l.account_id = (select default_debit_account_id from account_journal where id = $P{journal_id})
-and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
-and l.pawn_shop_id = $P{pawn_shop_id}
-and l.date = $P{date}) a
-UNION
--- Transfer To Stock
-select 3 as sequence, desc1::varchar, desc2::varchar as desc2, balance from
-(select 'เงินสดออกไปคลัง' as desc1, '' as desc2, -coalesce(sum(l.credit),0) as balance
-from account_move_line l
-join account_voucher av on av.move_id = l.move_id
-join account_transfer at on av.transfer_id = at.id
-join account_journal aj on at.dst_journal_id = aj.id
-where av.transfer_id is not null and aj.type <> 'bank'
-and l.account_id = (select default_debit_account_id from account_journal where id = $P{journal_id})
-and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
-and l.pawn_shop_id = $P{pawn_shop_id}
-and l.date = $P{date}) a
-UNION
--- Transfer To Bank
-select 4 as sequence, desc1::varchar, desc2::varchar as desc2, balance from
-(select 'เงินสดออกไปธนาคาร' as desc1, '' as desc2, -coalesce(sum(l.credit),0) as balance
-from account_move_line l
-join account_voucher av on av.move_id = l.move_id
-join account_transfer at on av.transfer_id = at.id
-join account_journal aj on at.dst_journal_id = aj.id
-where av.transfer_id is not null and aj.type = 'bank'
-and l.account_id = (select default_debit_account_id from account_journal where id = $P{journal_id})
-and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
-and l.pawn_shop_id = $P{pawn_shop_id}
-and l.date = $P{date}) a
-UNION
--- Redeem Amount (only redeemed order) :: case not extended order
-select 5 as sequence, 'เงินสดรับจากการไถ่ถอน' as desc1, '' as desc2, null as balance
-union
-select 5.1 as sequence, desc1::varchar, ap.name::varchar as desc2, balance from
-(select '' as desc1, pw.period_id, coalesce(sum(l.credit),0) as balance
-from account_move_line l
-join pawn_order pw on pw.id = l.pawn_order_id
-where l.pawn_order_id is not null and pw.state = 'redeem' and pw.extended = false
-and l.account_id in ($P{redeem_account_id})
-and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
-and l.pawn_shop_id = $P{pawn_shop_id}
-and l.date = $P{date}
-group by pw.period_id
-order by pw.period_id) a
-join account_period ap on ap.id = a.period_id
-where a.balance != 0
-UNION
--- Redeem Amount (only redeemed order) :: case extended order
-select 6 as sequence, 'เงินสดรับจากการไถ่ถอน (เล้า)' as desc1, '' as desc2, null as balance
-union
-select 6.1 as sequence, desc1::varchar, ap.name::varchar as desc2, balance from
-(select '' as desc1, pw.period_id, coalesce(sum(l.credit),0) as balance
-from account_move_line l
-join pawn_order pw on pw.id = l.pawn_order_id
-where l.pawn_order_id is not null and pw.state = 'redeem' and pw.extended = true
-and l.account_id in ($P{redeem_account_id})
-and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
-and l.pawn_shop_id = $P{pawn_shop_id}
-and l.date = $P{date}
-group by pw.period_id
-order by pw.period_id) a
-join account_period ap on ap.id = a.period_id
-where a.balance != 0
-UNION
--- Interest Amount (only redeemed order)
-select 7 as sequence, 'เงินสดรับจากดอกเบี้ย' as desc1, '' as desc2, null as balance
-union
-select 7.1 as sequence, desc1::varchar, ap.name::varchar as desc2, balance from
-(select '' as desc1, pw.period_id, coalesce(sum(l.credit),0) - coalesce(sum(l.debit),0) as balance
-from account_move_line l
-join pawn_order pw on pw.id = l.pawn_order_id
-where l.pawn_order_id is not null and pw.state = 'redeem'
-and l.account_id in ($P{accrued_interest_account_id}, $P{interest_account_id}, $P{interest_disc_account_id}, $P{interest_add_account_id})
-and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
-and l.pawn_shop_id = $P{pawn_shop_id}
-and l.date = $P{date}
-group by pw.period_id
-order by pw.period_id) a
-join account_period ap on ap.id = a.period_id
-where a.balance != 0
-UNION
--- Pawn Amount
-select 8 as sequence, 'เงินสดจ่ายจากการรับจำนำ' as desc1, '' as desc2, null as balance
-union
-select 8.1 as sequence, desc1::varchar, ap.name::varchar as desc2, balance from
-(select '' as desc1, pw.period_id, -coalesce(sum(l.debit),0) as balance
-from account_move_line l
-join pawn_order pw on pw.id = l.pawn_order_id
-where l.pawn_order_id is not null
-and l.account_id = $P{redeem_account_id}
-and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
-and l.pawn_shop_id = $P{pawn_shop_id}
-and l.date = $P{date}
-group by pw.period_id
-order by pw.period_id) a
-join account_period ap on ap.id = a.period_id
-where a.balance != 0
-UNION
--- Sales (only expired order) :: case not extended order
-select 9 as sequence, 'เงินสดรับจากการขายทรัพย์หลุด' as desc1, '' as desc2, null as balance
-union
-select 9.1 as sequence, desc1::varchar, ap.name::varchar as desc2, balance from
-(select '' as desc1, pw.period_id, coalesce(sum(l.credit),0) as balance
-from account_move_line l
-join pawn_order pw on pw.id = l.pawn_order_id
-where l.pawn_order_id is not null and pw.state = 'expire' and pw.extended = false
-and l.account_id = $P{sale_account_id}
-and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
-and l.pawn_shop_id = $P{pawn_shop_id}
-and l.date = $P{date}
-group by pw.period_id
-order by pw.period_id) a
-join account_period ap on ap.id = a.period_id
-where a.balance != 0
-UNION
--- Sales (only expired order) :: case extended order
-select 10 as sequence, 'เงินสดรับจากการขายทรัพย์หลุด (เล้า)' as desc1, '' as desc2, null as balance
-union
-select 10.1 as sequence, desc1::varchar, ap.name::varchar as desc2, balance from
-(select '' as desc1, pw.period_id, coalesce(sum(l.credit),0) as balance
-from account_move_line l
-join pawn_order pw on pw.id = l.pawn_order_id
-where l.pawn_order_id is not null and pw.state = 'expire' and pw.extended = true
-and l.account_id = $P{sale_account_id}
-and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
-and l.pawn_shop_id = $P{pawn_shop_id}
-and l.date = $P{date}
-group by pw.period_id
-order by pw.period_id) a
-join account_period ap on ap.id = a.period_id
-where a.balance != 0
-UNION
--- Refund (only expired order)
-select 11 as sequence, 'เงินสดจ่ายจากการคืนทรัพย์หลุด' as desc1, '' as desc2, null as balance
-union
-select 11.1 as sequence, desc1::varchar, ap.name::varchar as desc2, balance from
-(select '' as desc1, pw.period_id, -coalesce(sum(l.debit),0) as balance
-from account_move_line l
-join pawn_order pw on pw.id = l.pawn_order_id
-where l.pawn_order_id is not null and pw.state = 'expire'
-and l.account_id = $P{refund_account_id}
-and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
-and l.pawn_shop_id = $P{pawn_shop_id}
-and l.date = $P{date}
-group by pw.period_id
-order by pw.period_id) a
-join account_period ap on ap.id = a.period_id
-where a.balance != 0
-UNION
--- Other Income (from Cash Register + Sales Receipts (not included pawn item))
-select 12 as sequence, 'เงินสดรับจากรายได้อื่น' as desc1, '' as desc2, null as balance
-union
-select 12.1 as sequence, desc1::varchar, ac.name::varchar as desc2, balance from
-(
-select '' as desc1, oi.account_id, coalesce(sum(oi.credit),0) as balance
-from(
-    -- from Cash Register
-    (select l.account_id, l.credit
-    from account_move_line l
-    join account_bank_statement st on st.id = l.statement_id
-    join account_journal aj on aj.id = st.journal_id
-    where l.statement_id is not null and st.state = 'confirm'
-    and l.account_id not in (aj.default_credit_account_id, aj.default_debit_account_id)
-    and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
-    and l.pawn_shop_id = $P{pawn_shop_id}
-    and l.date = $P{date})
-    union
-    -- from Sales Receipts (not included pawn item)
-    (
-    select l.account_id, l.credit
-    from account_move_line l
-    join account_voucher av on l.move_id = av.move_id
-    join account_journal aj on aj.id = av.journal_id
-    join account_journal pj on pj.id = av.product_journal_id
-    where av.id is not null and aj.type in ('sale', 'sale_refund') and av.type = 'sale'
-    and l.pawn_order_id is null
-    and l.account_id not in (pj.default_credit_account_id, pj.default_debit_account_id)
-    and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
-    and l.pawn_shop_id = $P{pawn_shop_id}
-    and l.date = $P{date})
-) oi
-group by oi.account_id
-order by oi.account_id) a
-join account_account ac on ac.id = a.account_id
-where a.balance != 0
-UNION
--- Other Expense (from Cash Register)
-select 13 as sequence, 'เงินสดจ่ายจากรายจ่ายอื่น' as desc1, '' as desc2, null as balance
-union
-select 13.1 as sequence, desc1::varchar, ac.name::varchar as desc2, balance from
-(select '' as desc1, l.account_id, -coalesce(sum(l.debit),0) as balance
-from account_move_line l
-join account_bank_statement st on st.id = l.statement_id
-join account_journal aj on aj.id = st.journal_id
-where l.statement_id is not null and st.state = 'confirm'
-and l.account_id not in (aj.default_credit_account_id, aj.default_debit_account_id)
-and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
-and l.pawn_shop_id = $P{pawn_shop_id}
-and l.date = $P{date}
-group by l.account_id
-order by l.account_id) a
-join account_account ac on ac.id = a.account_id
-where a.balance != 0
-UNION
--- Adjustment from Accounting Department
-select 14 as sequence, desc1::varchar, desc2::varchar as desc2, balance
-from
-(select 'รายการปรับปรุงเงินสดจากทางฝ่ายบัญชี' as desc1, '' as desc2, coalesce(sum(l.debit),0) - coalesce(sum(l.credit),0) as balance
-from account_move_line l
-where l.statement_id is null and l.pawn_order_id is null
-and l.id not in (select l.id from account_move_line l join account_voucher av on av.move_id = l.move_id)
-and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
-and l.pawn_shop_id = $P{pawn_shop_id}
-and l.account_id = $P{op_cash_account_id}
-and l.date = $P{date}
+	-- Beginning Balance
+	select 1 as sequence, 'ยอดยกมา'::varchar as desc1, ''::varchar as desc2, ''::varchar as desc3, coalesce(sum(l.debit),0) - coalesce(sum(l.credit),0) as balance
+	from account_move_line l
+	where 
+		l.account_id = (select default_debit_account_id from account_journal where id = $P{journal_id})
+		and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
+		and l.pawn_shop_id = $P{pawn_shop_id}
+		and l.date < $P{date}
+	union
+	-- Transfer from Stock
+	select 2 as sequence, 'ลิ้นชักเบิกเงินจากเซฟ'::varchar as desc1, ''::varchar as desc2, ''::varchar as desc3, coalesce(sum(l.debit),0) as balance
+	from account_move_line l
+	join account_voucher av on l.move_id = av.move_id
+	join account_transfer at on av.transfer_id = at.id
+	join account_journal aj on at.src_journal_id = aj.id
+	where av.transfer_id is not null and aj.type <> 'bank'
+		and l.account_id = (select default_debit_account_id from account_journal where id = $P{journal_id})
+		and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
+		and l.pawn_shop_id = $P{pawn_shop_id}
+		and l.date = $P{date}
+	union
+	-- Transfer To Stock
+	select 3 as sequence, 'ลิ้นชักคืนเซฟ'::varchar as desc1, ''::varchar as desc2, ''::varchar as desc3, -coalesce(sum(l.credit),0) as balance
+	from account_move_line l
+	join account_voucher av on l.move_id = av.move_id
+	join account_transfer at on av.transfer_id = at.id
+	join account_journal aj on at.dst_journal_id = aj.id
+	where av.transfer_id is not null and aj.type <> 'bank'
+		and l.account_id = (select default_debit_account_id from account_journal where id = $P{journal_id})
+		and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
+		and l.pawn_shop_id = $P{pawn_shop_id}
+		and l.date = $P{date}
+	union
+	-- Transfer From Bank
+	select 4 as sequence, 'ลิ้นชักเบิกเงินจากธนาคาร'::varchar as desc1, ''::varchar as desc2, ''::varchar as desc3, coalesce(sum(l.debit),0) as balance
+	from account_move_line l
+	join account_voucher av on l.move_id = av.move_id
+	join account_transfer at on av.transfer_id = at.id
+	join account_journal aj on at.src_journal_id = aj.id
+	where av.transfer_id is not null and aj.type = 'bank'
+		and l.account_id = (select default_debit_account_id from account_journal where id = $P{journal_id})
+		and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
+		and l.pawn_shop_id = $P{pawn_shop_id}
+		and l.date = $P{date}
+	union
+	-- Transfer To Bank
+	select 5 as sequence, 'ลิ้นชักคืนธนาคาร'::varchar as desc1, ''::varchar as desc2, ''::varchar as desc3, -coalesce(sum(l.credit),0) as balance
+	from account_move_line l
+	join account_voucher av on l.move_id = av.move_id
+	join account_transfer at on av.transfer_id = at.id
+	join account_journal aj on at.dst_journal_id = aj.id
+	where av.transfer_id is not null and aj.type = 'bank'
+		and l.account_id = (select default_debit_account_id from account_journal where id = $P{journal_id})
+		and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
+		and l.pawn_shop_id = $P{pawn_shop_id}
+		and l.date = $P{date}
+	union
+	-- Redeem Amount (Unextended)
+	select 6 as sequence, 'รายการไถ่ถอน (ไม่เล้า)'::varchar as desc1, ''::varchar as desc2, ''::varchar as desc3, null as balance
+	union
+	select 6.1 as sequence, ''::varchar as desc1, 'เงินต้น'::varchar as desc2, ''::varchar as desc3, null as balance
+	where exists (select 1 from redeem_unextended)
+	union
+	select 6.2 as sequence, desc1::varchar, desc2::varchar, desc3::varchar, balance
+	from redeem_unextended
+	union
+	select 6.3 as sequence, ''::varchar as desc1, 'ดอกเบี้ย'::varchar as desc2, ''::varchar as desc3, null as balance
+	where exists (select 1 from redeem_interest_unextended)
+	union
+	select 6.4 as sequence, desc1::varchar, desc2::varchar, desc3::varchar, balance
+	from redeem_interest_unextended
+	union
+	select 7 as sequence, 'โอนไถ่ถอน (ไม่เล้า) (จำนวน ' || count(distinct l.pawn_order_id) || ' ตั๋ว)'::varchar as desc1, ''::varchar as desc2, ''::varchar as desc3, coalesce(sum(l.credit),0) - coalesce(sum(l.debit),0) as balance
+	from account_move_line l
+	join account_move m on l.move_id = m.id
+	join pawn_order pw on l.pawn_order_id = pw.id
+	left join pawn_order child on pw.child_id = child.id
+	where l.pawn_order_id is not null and pw.state = 'redeem' and pw.extended = false and (m.id in (pw.redeem_move_id, child.pawn_move_id) or m.adjustment = 'redeem')
+		and l.account_id in (select aa.id from account_account aa join account_account_type aat on aa.user_type = aat.id where aat.code = 'bank')
+		and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
+		and l.pawn_shop_id = $P{pawn_shop_id}
+		and l.date = $P{date}
+	union
+	-- Redeem Amount (Extended)
+	select 8 as sequence, 'รายการไถ่ถอน (เล้า)'::varchar as desc1, ''::varchar as desc2, ''::varchar as desc3, null as balance
+	union
+	select 8.1 as sequence, ''::varchar as desc1, 'เงินต้น'::varchar as desc2, ''::varchar as desc3, null as balance
+	where exists (select 1 from redeem_extended)
+	union
+	select 8.2 as sequence, desc1::varchar, desc2::varchar, desc3::varchar, balance
+	from redeem_extended
+	union
+	select 8.3 as sequence, ''::varchar as desc1, 'ดอกเบี้ย'::varchar as desc2, ''::varchar as desc3, null as balance
+	where exists (select 1 from redeem_interest_extended)
+	union
+	select 8.4 as sequence, desc1::varchar, desc2::varchar, desc3::varchar, balance
+	from redeem_interest_extended
+	union
+	select 9 as sequence, 'โอนไถ่ถอน (เล้า) (จำนวน ' || count(distinct l.pawn_order_id) || ' ตั๋ว)'::varchar as desc1, ''::varchar as desc2, ''::varchar as desc3, coalesce(sum(l.credit),0) - coalesce(sum(l.debit),0) as balance
+	from account_move_line l
+	join account_move m on l.move_id = m.id
+	join pawn_order pw on l.pawn_order_id = pw.id
+	left join pawn_order child on pw.child_id = child.id
+	where l.pawn_order_id is not null and pw.state = 'redeem' and pw.extended = true and (m.id in (pw.redeem_move_id, child.pawn_move_id) or m.adjustment = 'redeem')
+		and l.account_id in (select aa.id from account_account aa join account_account_type aat on aa.user_type = aat.id where aat.code = 'bank')
+		and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
+		and l.pawn_shop_id = $P{pawn_shop_id}
+		and l.date = $P{date}
+	union
+	-- Pawn Amount
+	select 10 as sequence, 'รายการรับจำนำ'::varchar as desc1, ''::varchar as desc2, ''::varchar as desc3, null as balance
+	union
+	(select 10.1 as sequence, ''::varchar as desc1, (ap.name || ' (จำนวน ' || sum(case when coalesce(l.debit,0) != 0 then 1 else 0 end)::varchar || ' ตั๋ว)')::varchar as desc2, ''::varchar as desc3, -coalesce(sum(l.debit),0) as balance
+	from account_move_line l
+	join pawn_order pw on l.pawn_order_id = pw.id
+	join account_period ap on pw.period_id = ap.id
+	where l.pawn_order_id is not null
+		and l.account_id = $P{redeem_account_id}
+		and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
+		and l.pawn_shop_id = $P{pawn_shop_id}
+		and l.date = $P{date}
+	group by ap.id
+	having coalesce(sum(l.debit),0) != 0
+	order by ap.id)
+	union
+	select 11 as sequence, 'โอนจำนำ (จำนวน ' || count(distinct l.pawn_order_id) || ' ตั๋ว)' ::varchar as desc1, ''::varchar as desc2, ''::varchar as desc3, coalesce(sum(l.credit),0) - coalesce(sum(l.debit),0) as balance
+	from account_move_line l
+	join account_move m on l.move_id = m.id
+	join pawn_order pw on l.pawn_order_id = pw.id
+	where l.pawn_order_id is not null and (m.id = pw.pawn_move_id or m.adjustment = 'pawn')
+		and l.account_id in (select aa.id from account_account aa join account_account_type aat on aa.user_type = aat.id where aat.code = 'bank')
+		and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
+		and l.pawn_shop_id = $P{pawn_shop_id}
+		and l.date = $P{date}
+	union
+	-- Sales (only expired order) :: case not extended order
+	select 12 as sequence, 'รายการขายทรัพย์หลุด (ไม่เล้า)'::varchar as desc1, ''::varchar as desc2, ''::varchar as desc3, null as balance
+	union
+	(select 12.1 as sequence, ''::varchar as desc1, ap.name::varchar as desc2, ''::varchar as desc3, coalesce(sum(l.credit),0) as balance
+	from account_move_line l
+	join pawn_order pw on l.pawn_order_id = pw.id
+	join account_period ap on pw.period_id = ap.id
+	where l.pawn_order_id is not null and pw.state = 'expire' and pw.extended = false
+		and l.account_id = $P{sale_account_id}
+		and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
+		and l.pawn_shop_id = $P{pawn_shop_id}
+		and l.date = $P{date}
+	group by ap.id
+	having coalesce(sum(l.credit),0) != 0
+	order by ap.id)
+	union
+	-- Sales (only expired order) :: case extended order
+	select 13 as sequence, 'รายการขายทรัพย์หลุด (เล้า)'::varchar as desc1, ''::varchar as desc2, ''::varchar as desc3, null as balance
+	union
+	(select 13.1 as sequence, ''::varchar as desc1, ap.name::varchar as desc2, ''::varchar as desc3, coalesce(sum(l.credit),0) as balance
+	from account_move_line l
+	join pawn_order pw on l.pawn_order_id = pw.id
+	join account_period ap on pw.period_id = ap.id
+	where l.pawn_order_id is not null and pw.state = 'expire' and pw.extended = true
+		and l.account_id = $P{sale_account_id}
+		and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
+		and l.pawn_shop_id = $P{pawn_shop_id}
+		and l.date = $P{date}
+	group by ap.id
+	having coalesce(sum(l.credit),0) != 0
+	order by ap.id)
+	union
+	select 14 as sequence, 'โอนขายทรัพย์'::varchar as desc1, ''::varchar as desc2, ''::varchar as desc3, coalesce(sum(l.credit),0) - coalesce(sum(l.debit),0) as balance
+	from account_move_line l
+	join account_move m on l.move_id = m.id
+	left join account_voucher av on m.id = av.move_id
+	left join account_journal aj on av.journal_id = aj.id
+	where ((aj.type in ('sale', 'sale_refund') and av.type = 'sale') or m.adjustment = 'sale_receipt')
+		and l.account_id in (select aa.id from account_account aa join account_account_type aat on aa.user_type = aat.id where aat.code = 'bank')
+		and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
+		and l.pawn_shop_id = $P{pawn_shop_id}
+		and l.date = $P{date}
+	union
+	-- Other Income (from Cash Register + Sales Receipts (not included pawn item))
+	select 15 as sequence, 'รายการรายได้อื่น'::varchar as desc1, ''::varchar as desc2, ''::varchar as desc3, null as balance
+	union
+	(select 15.1 as sequence, ''::varchar as desc1, min(oi.account_name)::varchar as desc2, ''::varchar as desc3, coalesce(sum(oi.credit),0) as balance
+	from(
+    	-- from Cash Register
+    	(
+			select aa.id as account_id, aa.name as account_name, l.credit
+    		from account_move_line l
+    		join account_bank_statement st on l.statement_id = st.id
+    		join account_journal aj on st.journal_id = aj.id
+			join account_account aa on l.account_id = aa.id
+   	 		where l.statement_id is not null and st.state = 'confirm'
+    			and l.account_id not in (aj.default_credit_account_id, aj.default_debit_account_id)
+    			and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
+    			and l.pawn_shop_id = $P{pawn_shop_id}
+    			and l.date = $P{date}
+		)
+    	union
+    	-- from Sales Receipts (not included pawn item)
+    	(
+    		select aa.id as account_id, aa.name as account_name, l.credit
+    		from account_move_line l
+    		join account_voucher av on l.move_id = av.move_id
+    		join account_journal aj on av.journal_id = aj.id
+    		join account_journal pj on av.product_journal_id = pj.id
+			join account_account aa on l.account_id = aa.id
+    		where av.id is not null and aj.type in ('sale', 'sale_refund') and av.type = 'sale'
+    			and l.pawn_order_id is null
+    			and l.account_id not in (pj.default_credit_account_id, pj.default_debit_account_id)
+    			and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
+    			and l.pawn_shop_id = $P{pawn_shop_id}
+    			and l.date = $P{date}
+		)
+	) oi
+	group by oi.account_id
+	having coalesce(sum(oi.credit),0) != 0
+	order by oi.account_id)
+	union
+	-- Other Expense (from Cash Register)
+	select 16 as sequence, 'รายการค่าใช้จ่าย'::varchar as desc1, ''::varchar as desc2, ''::varchar as desc3, null as balance
+	union
+	(select 16.1 as sequence, ''::varchar as desc1, min(aa.name)::varchar as desc2, ''::varchar as desc3, -coalesce(sum(l.debit),0) as balance
+	from account_move_line l
+	join account_bank_statement st on l.statement_id = st.id
+	join account_journal aj on st.journal_id = aj.id
+	join account_account aa on l.account_id = aa.id
+	where l.statement_id is not null and st.state = 'confirm'
+		and l.account_id not in (aj.default_credit_account_id, aj.default_debit_account_id)
+		and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
+		and l.pawn_shop_id = $P{pawn_shop_id}
+		and l.date = $P{date}
+		group by aa.id
+		having coalesce(sum(l.debit),0) != 0
+		order by aa.id)
+	union
+	-- Adjustment from Accounting Department
+	select 17 as sequence, 'รายการปรับปรุงเงินสดจากทางฝ่ายบัญชี'::varchar as desc1, ''::varchar as desc2, ''::varchar as desc3, coalesce(sum(l.debit),0) - coalesce(sum(l.credit),0) as balance
+	from account_move_line l
+	join account_move m on l.move_id = m.id
+	where l.statement_id is null and l.pawn_order_id is null
+		and l.id not in (select l.id from account_move_line l join account_voucher av on av.move_id = l.move_id) and m.adjustment is null
+		and l.profit_center = (select profit_center from account_journal where id = $P{journal_id})
+		and l.pawn_shop_id = $P{pawn_shop_id}
+		and l.account_id = $P{op_cash_account_id}
+		and l.date = $P{date}
+	-- END
 ) a
--- END
-) a
-order by sequence, desc2]]>
+order by sequence, desc1, desc2, desc3]]>
 	</queryString>
 	<field name="sequence" class="java.math.BigDecimal"/>
 	<field name="desc1" class="java.lang.String"/>
 	<field name="desc2" class="java.lang.String"/>
+	<field name="desc3" class="java.lang.String"/>
 	<field name="balance" class="java.math.BigDecimal"/>
 	<variable name="total_balance" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{balance}]]></variableExpression>
@@ -299,11 +367,18 @@ order by sequence, desc2]]>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{desc1}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="55" y="2" width="257" height="15"/>
+				<reportElement x="25" y="2" width="257" height="15"/>
 				<textElement>
 					<font fontName="Monospaced" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{desc2}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="46" y="2" width="257" height="15"/>
+				<textElement>
+					<font fontName="Monospaced" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{desc3}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="312" y="2" width="145" height="15"/>

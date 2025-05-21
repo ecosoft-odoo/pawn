@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_validate_sale_receipt" model="ir.ui.view">
+            <field name="name">view.validate.sale.receipt</field>
+            <field name="model">validate.sale.receipt</field>
+            <field name="arch" type="xml">
+                <form string="Validate Sale Receipt" version="7.0">
+                    <group string="Total Amount">
+                        <group>
+                            <field name="amount"/>
+                        </group>
+                        <group/>
+                    </group>
+                    <group string="Payment Method">
+                        <group>
+                            <field name="bank_journal_id" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
+                            <field name="transfer_amount" on_change="onchange_amount('transfer', transfer_amount, cash_amount, amount)"/>
+                            <field name="journal_id" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
+                            <field name="cash_amount" on_change="onchange_amount('cash', transfer_amount, cash_amount, amount)"/>
+                        </group>
+                        <group/>
+                    </group>
+                    <footer>
+                        <button string="Confirm" name="action_confirm" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="action_validate_sale_receipt" model="ir.actions.act_window">
+            <field name="name">Validate Sale Receipt</field>
+            <field name="res_model">validate.sale.receipt</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_validate_sale_receipt"/>
+            <field name="target">new</field>
+        </record>
+    </data>
+</openerp>
