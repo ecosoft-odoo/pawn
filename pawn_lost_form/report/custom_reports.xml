@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<openerp>
+<data>
+    <report string="Lost Pawn Tickets"
+        model="pawn.order"
+        auto="True"
+        name="lost.pawn.order.form"
+        rml="pawn_lost_form/report/lost_pawn_order_form.jrxml"
+        id="lost_pawn_order_form_1"
+        menu="True"
+        header="False"
+        />
+    <record id="lost_pawn_order_form_1" model="ir.actions.report.xml">
+        <field name="jasper_report">True</field>
+        <field name="jasper_output">pdf</field>
+    </record>
+</data>
+</openerp>

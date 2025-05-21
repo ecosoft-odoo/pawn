@@ -128,6 +128,8 @@ class res_partner(osv.osv):
         'phone': fields.char('Phone', size=64, track_visibility='onchange'),
         'customer': fields.boolean('Customer', track_visibility='onchange', help="Check this box if this contact is a customer."),
         'supplier': fields.boolean('Supplier', track_visibility='onchange', help="Check this box if this contact is a supplier. If it's not checked, purchase people will not see it when encoding a purchase order."),
+        'regular_customer': fields.boolean('Regular Customer', track_visibility='onchange'),
+        'nickname': fields.char('Nickname', track_visibility='onchange'),
     }
     _defaults = {
         'pawnshop': True
