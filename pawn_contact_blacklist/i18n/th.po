@@ -189,16 +189,11 @@ msgid "Image"
 msgstr "รูปภาพ"
 
 #. module: pawn_contact_blacklist
-#: code:addons/pawn_contact_blacklist/wizards/pawn_order_pawn.py:53
+#: code:addons/pawn_contact_blacklist/wizards/pawn_order_pawn.py:55
+#: code:addons/pawn_contact_blacklist/wizards/pawn_order_renew.py:58
 #, python-format
-msgid "%s is blacklisted."
-msgstr "%s ถูกขึ้นบัญชีเฝ้าระวัง"
-
-#. module: pawn_contact_blacklist
-#: code:addons/pawn_contact_blacklist/wizards/pawn_order_renew.py:55
-#, python-format
-msgid "%s is blacklisted."
-msgstr "%s ถูกขึ้นบัญชีเฝ้าระวัง"
+msgid "This asset is reported as stolen and cannot be used for transactions."
+msgstr "ทรัพย์ขโมยมา ไม่สามารถทำธุรกรรมได้"
 
 #. module: pawn_contact_blacklist
 #: code:addons/pawn_contact_blacklist/models/blacklist_sync.py:387
