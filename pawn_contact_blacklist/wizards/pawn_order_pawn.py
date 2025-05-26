@@ -45,12 +45,15 @@ class pawn_order_pawn(osv.osv_memory):
     def action_pawn(self, cr, uid, ids, context=None):
         if context is None:
             context = {}
-        for wizard in self.browse(cr, uid, ids, context=context):
-            partner = wizard.partner_id
-            if partner and partner.blacklist_customer:
+        blacklist_obj = self.pool.get('blacklist.sync')
+        wizard = self.browse(cr, uid, ids[0], context)
+        blacklist_ids = blacklist_obj.search(cr, uid, [('state', '=', 'active'),('partner_id', '=', wizard.partner_id.id)], context=context)
+        if blacklist_ids:
+            blacklist = blacklist_obj.browse(cr, uid, blacklist_ids[0], context=context)
+            if blacklist.is_stolen:
                 raise osv.except_osv(
                     _('UserError!'),
-                    _('%s is blacklisted.') % (partner.name)
+                    _('This asset is reported as stolen and cannot be used for transactions.')
                 )
         return super(pawn_order_pawn, self).action_pawn(cr, uid, ids, context=context)
 
