@@ -8,7 +8,7 @@
                 <form string="Validate Sale Receipt" version="7.0">
                     <group string="Total Amount">
                         <group>
-                            <field name="amount"/>
+                            <field name="amount" style="color:red; font-size: 20px;"/>
                         </group>
                         <group/>
                     </group>

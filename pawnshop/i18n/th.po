@@ -290,6 +290,7 @@ msgstr "ยกเลิกการจ่ายดอกเบี้ย"
 
 #. module: pawnshop
 #: view:pawn.order:0
+#: field:bank.transfer.report,reference:0
 msgid "Reference"
 msgstr "อ้างอิง"
 
@@ -2120,6 +2121,7 @@ msgstr "หมายเลขข้าราชการ"
 #: field:pawn.order.pay.interest,date_pay_interest:0
 #: field:pawn.order.redeem,date_redeem:0
 #: field:pawn.order.renew,date_renew:0
+#: field:bank.transfer.report,date:0
 msgid "Date"
 msgstr "วันที่"
 
@@ -2833,6 +2835,7 @@ msgstr "หน้าสอง"
 
 #. module: pawnshop
 #: model:ir.model,name:pawnshop.model_account_account
+#: field:bank.transfer.report,account_id:0
 msgid "Account"
 msgstr "บัญชี"
 
@@ -5123,3 +5126,29 @@ msgstr "$F{prev_number}"
 #: view:item.sold.report:0
 msgid "Pawn Month"
 msgstr "เดือนที่จำนำ"
+
+#. module: pawnshop
+#: field:bank.transfer.report,type:0
+msgid "Type"
+msgstr "ประเภท"
+
+#. module: pawnshop
+#: field:bank.transfer.report,amount:0
+msgid "Amount"
+msgstr "จำนวนเงินโอน"
+
+#. module: pawnshop
+#: field:bank.transfer.report,amount_pawned:0
+msgid "Amount Pawned"
+msgstr "ราคารับจำนำ"
+
+#. module: pawnshop
+#: field:bank.transfer.report,actual_interest:0
+msgid "Actual Interest"
+msgstr "ดอกเบี้ยสุทธิ"
+
+#. module: pawnshop
+#: model:ir.actions.act_window,name:pawnshop.action_bank_transfer_report
+#: model:ir.ui.menu,name:pawnshop.menu_bank_transfer_report
+msgid "Bank Transfer Report"
+msgstr "รายงานการโอนเงินผ่านธนาคาร"

@@ -10,6 +10,8 @@
                 <field name="reference"/>
                 <field name="account_id"/>
                 <field name="type"/>
+                <field name="amount_pawned" sum="Total Amount Pawned"/>
+                <field name="actual_interest" sum="Total Actual Interest"/>
                 <field name="amount" sum="Total Amount"/>
             </tree>
         </field>
@@ -27,6 +29,8 @@
                             <field name="reference"/>
                             <field name="account_id"/>
                             <field name="type"/>
+                            <field name="amount_pawned"/>
+                            <field name="actual_interest"/>
                             <field name="amount"/>
                         </group>
                         <group/>
