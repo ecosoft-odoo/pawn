@@ -72,6 +72,26 @@ class pawn_order_redeem(osv.osv_memory):
             months = pawn_obj._calculate_months(cr, uid, pawn.date_order, date_redeem, context=context)
             return months
         return False
+    
+    def _get_days(self, cr, uid, context=None):
+        """ Get pawn days from pawn order """
+        if context is None:
+            context = {}
+        active_id = context.get('active_id', False)
+        pawn_obj = self.pool.get('pawn.order')
+        pawn = pawn_obj.browse(cr, uid, active_id, context=context)
+        date_redeem = context.get('date_redeem', fields.date.context_today(self, cr, uid, context=context))
+        if active_id and date_redeem:
+            year_day_list = pawn_obj._calculate_days_per_year(cr, uid, pawn.date_order, date_redeem, context=context)
+            return sum(year_day_list.values())
+        return False
+    
+    def _get_use_new_calc(self, cr, uid, context=None):
+        if context is None:
+            context = {}
+        ir_config = self.pool.get('ir.config_parameter')
+        use_new_calc = eval(ir_config.get_param(cr, uid, 'pawnshop.use_new_calc', 'False'))
+        return use_new_calc
 
     def _get_redeem_amount(self, cr, uid, context=None):
         """ Compute redeem amount which redeem amount will equal to pawn amount + interest amount """
@@ -90,6 +110,16 @@ class pawn_order_redeem(osv.osv_memory):
         if active_id:
             pawn = self.pool.get('pawn.order').browse(cr, uid, active_id, context=context)
             return pawn.journal_id and pawn.journal_id.id or False
+        return False
+    
+    def _get_is_annual_interest(self, cr, uid, context=None):
+        """ Default is annual interest from pawn order """
+        if context is None:
+            context = {}
+        active_id = context.get('active_id', False)
+        if active_id:
+            pawn = self.pool.get('pawn.order').browse(cr, uid, active_id, context=context)
+            return pawn.is_annual_interest
         return False
 
     def _check_amount(self, cr, uid, ids, context=None):
@@ -123,6 +153,9 @@ class pawn_order_redeem(osv.osv_memory):
         'secret_key': fields.char('Secret Key'),
         'monthly_interest': fields.float('Monthly Interest', readonly=True),
         'pawn_duration': fields.float('Pawn Duration (Months)', readonly=True),
+        'days_duration': fields.float('Pawn Duration (Days)', readonly=True),
+        'is_annual_interest': fields.boolean('Is Annual Interest', readonly=True),
+        'use_new_calc': fields.boolean('New Interest Calculation'),
     }
     _defaults = {
         'date_redeem': fields.date.context_today,
@@ -140,6 +173,9 @@ class pawn_order_redeem(osv.osv_memory):
         'transfer_amount': 0.0,
         'monthly_interest': _get_monthly_interest,
         'pawn_duration': _get_months,
+        'days_duration': _get_days,
+        'is_annual_interest': _get_is_annual_interest,
+        'use_new_calc': _get_use_new_calc,
     }
     _constraints = [
         (_check_amount, 'The transfer or cash amount is incorrect !!', ['transfer_amount', 'cash_amount']),
@@ -158,6 +194,7 @@ class pawn_order_redeem(osv.osv_memory):
         res['value']['discount'] = 0.0
         res['value']['addition'] = 0.0
         res['value']['pawn_duration'] = self._get_months(cr, uid, context=context)
+        res['value']['days_duration'] = self._get_days(cr, uid, context=context)
         return res
 
     def onchange_amount(self, cr, uid, ids, field, pawn_amount, interest_amount, pay_interest_amount, redeem_amount, transfer_amount, cash_amount, context=None):
@@ -272,6 +309,8 @@ class pawn_order_redeem(osv.osv_memory):
                 vals['interest_amount'] = prepare_vals['interest_amount']
             if not vals.get('pawn_duration'):
                 vals['pawn_duration'] = prepare_vals['pawn_duration']
+            if not vals.get('days_duration'):
+                vals['days_duration'] = prepare_vals['days_duration']
         # --
         return super(pawn_order_redeem, self).create(cr, uid, vals, context=context)
 
@@ -283,6 +322,8 @@ class pawn_order_redeem(osv.osv_memory):
                 vals['interest_amount'] = prepare_vals['interest_amount']
             if not vals.get('pawn_duration'):
                 vals['pawn_duration'] = prepare_vals['pawn_duration']
+            if not vals.get('days_duration'):
+                vals['days_duration'] = prepare_vals['days_duration']
         # --
         return super(pawn_order_redeem, self).write(cr, uid, ids, vals, context=context)
 

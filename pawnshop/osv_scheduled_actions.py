@@ -64,7 +64,14 @@ class pawn_order(osv.osv):
             self.action_move_create(cr, uid, [pawn.id], context={'direction': 'expire'})
             self.write(cr, uid, [pawn.id], {'expire_move_by_cron': False}, context=context)
         return True
-
+    
+    def process_annual_interest_table(self, cr, uid, context=None):
+        pawn_ids = self.search(cr, uid, [('is_annual_interest', '=', True), ('state', '=', 'pawn')], context=context)
+        pawns = self.browse(cr, uid, pawn_ids, context=context)
+        for pawn in pawns:
+            annual_interest_table = self._calculate_annual_interest_table(cr, uid, pawn.id, context=context)
+            self.write(cr, uid, [pawn.id], {'annual_interest_ids': annual_interest_table})
+        return True
 
 pawn_order()
 

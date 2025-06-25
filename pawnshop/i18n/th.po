@@ -976,6 +976,17 @@ msgid "Paid Interest"
 msgstr "ดอกเบี้ยจ่าย"
 
 #. module: pawnshop
+#: view:pawn.order:0
+#: field:pawn.order,annual_interest_ids:0
+msgid "Annual Interest Rate"
+msgstr "อัตราดอกเบี้ยรายปี"
+
+#. module: pawnshop
+#: field:pawn.order,use_new_calc:0
+msgid "New Interest Calculation"
+msgstr "การคำนวณดอกเบี้ยแบบใหม่"
+
+#. module: pawnshop
 #: help:pawn.order,date_extend:0
 msgid "Date on which this document has been extended."
 msgstr "Date on which this document has been extended."
@@ -2803,6 +2814,13 @@ msgid "Pawn Duration (Months)"
 msgstr "ระยะเวลาการจำนำ (เดือน)"
 
 #. module: pawnshop
+#: field:pawn.order.redeem,days_duration:0
+#: field:pawn.order.renew,days_duration:0
+#: field:pawn.actual.interest,days:0
+msgid "Pawn Duration (Days)"
+msgstr "ระยะเวลาการจำนำ (วัน)"
+
+#. module: pawnshop
 #: report:pawn_jor6_report:0
 #: report:pawn_jor72_report:0
 msgid "ทรัพย์จำนำ"
@@ -2990,6 +3008,7 @@ msgstr "This field holds the image used as image for the product, limited to 102
 
 #. module: pawnshop
 #: field:pawn.order,daily_interest:0
+#: field:pawn.annual.interest,daily_interest:0
 msgid "Daily Interest"
 msgstr "ดอกเบี้ยรายวัน"
 
@@ -5104,6 +5123,7 @@ msgstr "ระบุความถี่ในการสร้างดอก
 #: field:pawn.interest.report,year:0
 #: view:pawn.report:0
 #: field:pawn.report,year:0
+#: field:pawn.annual.interest,year:0
 msgid "Year"
 msgstr "ปี"
 

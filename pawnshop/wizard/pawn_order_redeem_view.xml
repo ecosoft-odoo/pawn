@@ -17,8 +17,11 @@
                         <group>
                             <field name="date_redeem" readonly="1" required="1" on_change="onchange_date_redeem(date_redeem, context)"/>
                             <field name="pawn_amount"/>
-                            <field name="monthly_interest"/>
-                            <field name="pawn_duration"/>
+                            <field name="is_annual_interest" invisible="1"/>
+                            <field name="use_new_calc" invisible="1"/>
+                            <field name="monthly_interest" attrs="{'invisible': [('is_annual_interest', '=', True), ('use_new_calc', '=', True)]}"/>
+                            <field name="pawn_duration" attrs="{'invisible': [('is_annual_interest', '=', True), ('use_new_calc', '=', True)]}"/>
+                            <field name="days_duration" attrs="{'invisible': ['|', ('is_annual_interest', '=', False), ('use_new_calc', '=', False)]}"/> 
                             <field name="interest_amount"/>
                             <field name="discount" invisible="1"/>
                             <field name="addition" invisible="1"/>

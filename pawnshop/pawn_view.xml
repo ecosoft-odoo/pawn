@@ -64,6 +64,7 @@
                         <field name="name" class="oe_inline" readonly="1"/>
 	                    <div class="oe_right oe_button_box">
 							<field name="extended" invisible="1"/>
+                            <field name="is_annual_interest" invisible="1"/>
                             <div style="color:blue">
                                 <label string="New Pawn Ticket" attrs="{'invisible': [('parent_id', '!=', False)]}"/>
                                 <label string="Interest Payment" attrs="{'invisible': [('parent_id', '=', False)]}"/>
@@ -117,6 +118,7 @@
                             <field name="pawn_shop_id" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
                             <field name="rule_id" widget="selection"/>
                             <field name="child_id" attrs="{'invisible':[('child_id','=',False)]}"/>
+                            <field name="use_new_calc" groups="base.group_system"/>
 							<field name="create_date" invisible="1"/>
                         </group>
                     </group>
@@ -148,8 +150,20 @@
 	                            <group>
 		                            <h2><label for="amount_pawned"/></h2>
 		                        	<h2><field name="amount_pawned" nolabel="1" class="oe_left" widget="monetary" options="{'currency_field': 'currency_id'}"/></h2>
-		                            <h2><label for="monthly_interest"/></h2>
-		                        	<h2><field name="monthly_interest"  widget='monetary' nolabel="1" options="{'currency_field': 'currency_id'}" class="oe_left"/></h2>
+		                            <h2 
+                                        attrs="{
+                                            'invisible': [('is_annual_interest', '=', True), ('use_new_calc', '=', True)]
+                                        }"
+                                    >
+                                        <label for="monthly_interest"/>
+                                    </h2>
+		                        	<h2 
+                                        attrs="{
+                                            'invisible': [('is_annual_interest', '=', True), ('use_new_calc', '=', True)]
+                                        }"
+                                    >
+                                        <field name="monthly_interest"  widget='monetary' nolabel="1" options="{'currency_field': 'currency_id'}" class="oe_left"/>
+                                    </h2>
 	                            </group>
 							</group>
 							<div class="oe_clear"/>
@@ -170,7 +184,13 @@
                                 </tree>
                             </field>
 				        	<group>
-								<group string="Interest Update Status">
+								<group 
+                                    attrs="{
+                                        'invisible': [
+                                            ('is_annual_interest', '=', True), ('use_new_calc', '=', True)]
+                                    }"
+                                    string="Interest Update Status"
+                                >
                                 	<field name="interest_interval"/>
                                 	<field name="daily_interest"/>
                                 	<field name="amount_interest_todate"/>
@@ -186,7 +206,8 @@
                                 <tree string="Paid Interest Table">
                                     <field name="interest_date"/>
                                     <field name="num_days" invisible="1"/>
-                                    <field name="months"/>
+                                    <field name="months" />
+                                    <field name="days" />
                                     <field name="discount" sum="Total Discount"/>
                                     <field name="addition" sum="Total Addition"/>
                                     <field name="interest_amount" sum="Total Interest"/>
@@ -194,6 +215,14 @@
                                     <button name="create_interest_move" attrs="{'invisible':['|',('move_id','!=',False),('parent_state','not in',('pawn', 'redeem'))]}" icon="gtk-execute" string="Create Account Entry" type="object"
                                     		context="{'amount_interest': interest_amount,'account_date': interest_date}"/>
                                     <field name="move_id"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Annual Interest Rate" groups="pawnshop.group_pawn_accountant">
+                            <field name="annual_interest_ids">
+                                <tree string="Paid Interest Table">
+                                    <field name="year"/>
+                                    <field name="daily_interest"/>
                                 </tree>
                             </field>
                         </page>

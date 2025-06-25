@@ -21,5 +21,13 @@
             <field name="key">pawnshop.update_fingerprint_secret_key</field>
             <field name="value">88</field>
         </record>
+        <record id="pawn_annual_interest_rate" model="ir.config_parameter">
+            <field name="key">pawnshop.annual_interest_rate</field>
+            <field name="value">15</field>
+        </record>
+        <record id="pawn_interest_cutoff_date" model="ir.config_parameter">
+            <field name="key">pawnshop.interest_cutoff_date</field>
+            <field name="value">False</field>
+        </record>
     </data>
 </openerp>

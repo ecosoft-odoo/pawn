@@ -22,6 +22,7 @@ import logging
 import time
 import res_partner
 import res_config
+import calendar
 from datetime import datetime, timedelta
 from openerp.osv import fields, osv
 from openerp import netsvc, tools
@@ -237,6 +238,13 @@ class pawn_order(osv.osv):
         ctx = dict(context, account_period_prefer_normal=True)
         periods = self.pool.get('account.period').find(cr, uid, dt=ctx.get('force_date', fields.date.context_today(self, cr, uid, context=ctx)), context=ctx)
         return periods and periods[0] or False
+    
+    def _get_use_new_calc(self, cr, uid, context=None):
+        if context is None:
+            context = {}
+        ir_config = self.pool.get('ir.config_parameter')
+        use_new_calc = eval(ir_config.get_param(cr, uid, 'pawnshop.use_new_calc', 'False'))
+        return use_new_calc
 
     def _check_product(self, cr, uid, ids, context=None):
         all_prod = []
@@ -438,6 +446,9 @@ class pawn_order(osv.osv):
         'accrued_interest_ids': fields.one2many('pawn.accrued.interest', 'pawn_id', 'Pawn Ticket Interest', readonly=True, help="This shows estimated interest to be move_created for this pawn order."),
         'interest_interval': fields.selection(res_config.INTEREST_INTERVAL, 'Calculation Interval', readonly=True, help="Specify how often interest journal will be created."),
         'actual_interest_ids': fields.one2many('pawn.actual.interest', 'pawn_id', 'Paid Interest', readonly=True, help="This shows interest already paid by customer. This amount will deduct the full amount when redeem."),
+        'annual_interest_ids': fields.one2many('pawn.annual.interest', 'pawn_id', 'Annual Interest Rate', readonly=True, help="This shows annual interest already paid by customer. This amount will deduct the full amount when redeem."),
+        'is_annual_interest': fields.boolean('Is Annual Interest', readonly=True),
+        'use_new_calc': fields.boolean('New Interest Calculation', readonly=True, states={'draft': [('readonly', False)]}),
         'extended': fields.boolean('Extended', readonly=True),
         'extended_x': fields.function(_get_extended, method=True, string='Extended', type='char'),
         'parent_id': fields.many2one('pawn.order', 'Previous Pawn Ticket', readonly=True),
@@ -512,6 +523,7 @@ class pawn_order(osv.osv):
         'expire_move_by_cron': False,
         'bypass_fingerprint_pawn': False,
         'bypass_fingerprint_redeem': False,
+        'use_new_calc': _get_use_new_calc,
     }
     _sql_constraints = [
         ('name_uniq', 'unique(name, pawn_shop_id)', 'Pawn Ticket Reference must be unique per Pawn Shop!'),
@@ -947,7 +959,7 @@ class pawn_order(osv.osv):
             vals.update({'amount_pawned': amount_pawned})
         # Update buddha year
         if 'buddha_year_temp' in vals:
-            vals['buddha_year'] = vals['buddha_year_temp']
+            vals['buddha_year'] = vals['buddha_year_temp']            
         # Update pawn item image date
         for i in ['first', 'second', 'third', 'fourth', 'fifth']:
             if 'pawn_item_image_%s' % i in vals:
@@ -966,6 +978,20 @@ class pawn_order(osv.osv):
         else:
             self.write(cr, uid, [pawn_id], {'amount_pawned': vals.get('amount_pawned')})
         return pawn_id
+    
+    def _get_annual_interest(self, cr, uid, pawn_id, year, context=None):
+        if not pawn_id:
+            return False
+        
+        interest_obj = self.pool.get('pawn.annual.interest')
+        interest_ids = interest_obj.search(cr, uid, [
+            ('pawn_id', '=', pawn_id),
+            ('year', '=', year)
+        ], context=context)
+        
+        if interest_ids:
+            return interest_obj.browse(cr, uid, interest_ids[0], context=context).daily_interest
+        return False
 
     def _calculate_interest_date(self, cr, uid, interval, start_date, end_date, context=None):
         dates = []
@@ -991,13 +1017,36 @@ class pawn_order(osv.osv):
         base_date = context.get('date_due', False) \
                     and datetime.strptime(pawn.date_expired[:10], '%Y-%m-%d') - relativedelta(days=1) \
                     or datetime.strptime(pawn.date_order[:10], '%Y-%m-%d') - relativedelta(days=1)
+        daily_interest = pawn.daily_interest
         for date in dates:
+            if pawn.is_annual_interest and pawn.use_new_calc:
+                daily_interest = self._get_annual_interest(cr, uid, pawn_id, date.year, context=context)
             num_days = (date - base_date).days
-            interest_amount = num_days * pawn.daily_interest
+            interest_amount = num_days * daily_interest
             rec = (0, 0, {'pawn_id': pawn_id, 'interest_date': date, 'num_days': num_days, 'interest_amount': interest_amount})
             accrued_interest_table.append(rec)
             base_date = date
         return accrued_interest_table
+    
+    def _calculate_annual_interest_table(self, cr, uid, pawn_id, context=None):
+        if not pawn_id:
+            return False
+        annual_interest_table = []
+        pawn = self.browse(cr, uid, pawn_id, context=context)
+        init_year = int(pawn.date_order[:4])
+        years = [init_year + i for i in range(10)]
+        annual_interest_rate = self.pool.get('ir.config_parameter').get_param(cr, uid, 'pawnshop.annual_interest_rate', 15.00)
+        annual_interest_rate = float(annual_interest_rate)
+        for year in years:
+            days_in_year = 366 if calendar.isleap(year) else 365
+            daily_interest = (pawn.amount_pawned * (annual_interest_rate/100)) / days_in_year
+            rec = (0, 0, {
+                'pawn_id': pawn_id,
+                'year': year,
+                'daily_interest': daily_interest,
+            })
+            annual_interest_table.append(rec)
+        return annual_interest_table
 
     def register_interest_paid(self, cr, uid, pawn_id, date, discount, addition, interest_amount, context=None):
         if not pawn_id:
@@ -1014,7 +1063,9 @@ class pawn_order(osv.osv):
         rec = (0, 0, {'pawn_id': pawn_id, 'interest_date': date,
                       'num_days': num_days, 'discount': discount,
                       'addition': addition, 'interest_amount': interest_amount,
-                      'months': months})
+                      'months': months, 'days': num_days+1,
+                      }
+                    )
         actual_interest_table.append(rec)
         self.write(cr, uid, [pawn.id], {'actual_interest_ids': actual_interest_table})
         return True
@@ -1051,6 +1102,7 @@ class pawn_order(osv.osv):
                     vals['pawn_item_image_date_%s' % i] = vals.get('pawn_item_image_date_%s' % i, fields.datetime.now())
                 else:
                     vals['pawn_item_image_date_%s' % i] = False
+        pawn_annual_interest = self.pool.get('pawn.annual.interest')
         # Update Number
         for pawn in self.browse(cr, uid, ids, context=context):
             period_id = vals.get('period_id', False)
@@ -1066,6 +1118,14 @@ class pawn_order(osv.osv):
                 diff = vals.get('amount_pawned', False) - pawn.amount_pawned
                 if diff:
                     vals.update({'amount_net': pawn.amount_net + diff})
+            # Pawn Is Annual Interest when amount_pawned > 100000
+            if vals.get('amount_pawned', False):
+                is_annual_interest = vals.get('amount_pawned', False) > 100000
+                vals.update({'is_annual_interest': is_annual_interest})
+                if is_annual_interest:
+                    pawn_annual_interest.unlink(cr, uid, pawn_annual_interest.search(cr, uid, [('pawn_id', '=', pawn.id)]))
+                    annual_interest_table = self._calculate_annual_interest_table(cr, uid, pawn.id, context=context)
+                    vals.update({'annual_interest_ids': annual_interest_table})
         # Update Super
         res = super(pawn_order, self).write(cr, uid, ids, vals, context=context)
         # Update Pawn Ticket
@@ -1076,16 +1136,17 @@ class pawn_order(osv.osv):
                 item_id = self._create_pawn_asset(cr, uid, pawn)
                 super(pawn_order, self).write(cr, uid, [pawn.id], {'item_id': item_id}, context=context)
         # Interest table, if update in the following 4 fields
-        if [val for val in vals.keys() if val in ['amount_pawned', 'rule_id', 'date_order']]:
+        if [val for val in vals.keys() if val in ['amount_pawned', 'rule_id', 'date_order', 'use_new_calc']]:
+            pawn_interest = self.pool.get('pawn.accrued.interest')
             for pawn in self.browse(cr, uid, ids, context=context):
-                pawn_interest = self.pool.get('pawn.accrued.interest')
+                # Remove all accrued interest and annual interest
                 pawn_interest.unlink(cr, uid, pawn_interest.search(cr, uid, [('pawn_id', '=', pawn.id)]))
                 interest_table = self._calculate_interest_table(cr, uid, pawn.id, context=context)
                 self.write(cr, uid, [pawn.id], {'accrued_interest_ids': interest_table})
         # Adding records in Interest table, if date_due is updated
         if [val for val in vals.keys() if val in ['date_due']]:
+            pawn_interest = self.pool.get('pawn.accrued.interest')
             for pawn in self.browse(cr, uid, ids, context=context):
-                pawn_interest = self.pool.get('pawn.accrued.interest')
                 context.update({'date_due': vals.get('date_due')})
                 interest_table = self._calculate_interest_table(cr, uid, pawn.id, context=context)
                 self.write(cr, uid, [pawn.id], {'accrued_interest_ids': interest_table})
@@ -1138,6 +1199,9 @@ class pawn_order(osv.osv):
             'move_line_ids': [],
             'accrued_interest_ids': [],
             'actual_interest_ids': [],
+            'annual_interest_ids': [],
+            'is_annual_interest': False,
+            'use_new_calc': self._get_use_new_calc(cr, uid),
             #'name': self.pool.get('ir.sequence').get(cr, uid, 'pawn.order'),
             'amount_net': False,
             'is_lost': False,
@@ -1653,6 +1717,23 @@ class pawn_order(osv.osv):
         move_pool.write(cr, uid, [move_id], {'line_id': lines}, context=context)
         return True
 
+    def _calculate_days_per_year(self, cr, uid, pawn_date_str, redeem_date_str, context=None):
+        pawn_date = datetime.strptime(pawn_date_str[:10], '%Y-%m-%d')
+        redeem_date = datetime.strptime(redeem_date_str[:10], '%Y-%m-%d')
+
+        current = pawn_date
+        end = redeem_date
+        days_per_year = {}
+
+        while current <= end:
+            year = current.year
+            next_year = datetime(year + 1, 1, 1)
+            period_end = min(next_year - timedelta(days=1), end)
+            days = (period_end - current).days + 1
+            days_per_year[year] = days_per_year.get(year, 0) + days
+            current = period_end + timedelta(days=1)
+        return days_per_year
+
     def _calculate_months(self, cr, uid, pawn_date, redeem_date, context=None):
         pawn_date = datetime.strptime(pawn_date[:10], '%Y-%m-%d')
         redeem_date = datetime.strptime(redeem_date[:10], '%Y-%m-%d')
@@ -1668,8 +1749,16 @@ class pawn_order(osv.osv):
 
     def calculate_interest_todate(self, cr, uid, pawn_id, date, context=None):
         pawn = self.browse(cr, uid, pawn_id, context=context)
-        months = self._calculate_months(cr, uid, pawn.date_order, date, context=context)
-        amount_interest = pawn.monthly_interest * months
+        amount_interest = 0.0
+        use_new_calc = self._get_use_new_calc(cr, uid, context=context)
+        if pawn.is_annual_interest and use_new_calc:
+            year_day_list = self._calculate_days_per_year(cr, uid, pawn.date_order, date, context=context)
+            for year, days in year_day_list.items():
+                daily_interest = self._get_annual_interest(cr, uid, pawn.id, year, context=context)
+                amount_interest += daily_interest * days
+        else:
+            months = self._calculate_months(cr, uid, pawn.date_order, date, context=context)
+            amount_interest = pawn.monthly_interest * months
         return amount_interest
 
     def calculate_interest_paid(self, cr, uid, pawn_id, context=None):
@@ -1946,6 +2035,7 @@ class pawn_actual_interest(osv.osv):
         'interest_date': fields.date('Date', required=True, readonly=True, select=True, help="Date on which this interest journal will be created"),
         'num_days': fields.integer('Days', readonly=True, required=True),
         'months': fields.float('Pawn Duration (Months)', readonly=True, required=True),
+        'days': fields.float('Pawn Duration (Days)', readonly=True),
         'discount': fields.float('Discount', readonly=True, required=True),
         'addition': fields.float('Addition', readonly=True, required=True),
         'interest_amount': fields.float('Interest Amount', readonly=True, required=True),
@@ -1954,7 +2044,7 @@ class pawn_actual_interest(osv.osv):
         'write_date': fields.datetime('Write Date', readonly=True),
     }
     _defaults = {
-        'move_id': False
+        'move_id': False,
     }
 
     def create_interest_move(self, cr, uid, ids, context=None):
@@ -1988,5 +2078,18 @@ class pawn_status_history(osv.osv):
     }
 
 pawn_status_history()
+
+class pawn_annual_interest(osv.osv):
+
+    _name = 'pawn.annual.interest'
+    _description = 'Annual Interest'
+
+    _columns = {
+        'pawn_id': fields.many2one('pawn.order', 'Pawn Ticket', required=True, readonly=True, select=True),
+        'year': fields.char('Year', required=True, readonly=True),
+        'daily_interest': fields.float('Daily Interest', readonly=True, digits=(16, 12)),
+    }
+
+pawn_annual_interest()
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
