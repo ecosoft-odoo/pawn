@@ -280,6 +280,8 @@ class data_sync_sender(osv.AbstractModel):
                 )
                 if not is_ready:
                     raise Exception('Server {} not ready for model {} with method {}'.format(url, model, method))
+            except osv.except_osv as e:
+                raise
             except Exception as e:
                 raise osv.except_osv('Sync Error', 'Server {} not ready: {}'.format(url, str(e)))
 
