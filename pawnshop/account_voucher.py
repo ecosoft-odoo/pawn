@@ -157,6 +157,7 @@ class account_voucher(osv.osv):
         'is_refund': fields.boolean('Refund', readonly=True),
         'product_journal_id': fields.function(_compute_product_journal_id, type='many2one', relation='account.journal', string='Product Journal', store=True, readonly=True),
         'address': fields.related('partner_id', 'address_full', type='char', string='Address'),
+        'invoice_category': fields.selection([('redeem_sale', 'Redeem Sale Income'),('rental_fee', 'Rental Fee Income')], string='Income Category', required=True, readonly=True, states={'draft': [('readonly', False)]}),
     }
 
     _constraints = [

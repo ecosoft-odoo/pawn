@@ -530,11 +530,14 @@
                 	<xpath expr="/search/field[@name='number']" position="before">
                     	<filter string="Receipt" domain="[('is_refund','!=',True)]" help="Sales Receipt"/>
                     	<filter string="Refund" domain="[('is_refund','=',True)]" help="Sales Refund"/>
+                        <filter string="Redeem Sale Income" domain="[('invoice_category','=','redeem_sale')]" help="Redeem Sale Income"/>
+                    	<filter string="Rental Fee Income" domain="[('invoice_category','=','rental_fee')]" help="Rental Fee Income"/>
                 	    <separator/>
                 	</xpath>
                 	<xpath expr="/search/group" position="inside">
                         <filter string="Shop" domain="[]" context="{'group_by':'pawn_shop_id'}"/>
                         <filter string="product_journal_id" domain="[]" context="{'group_by':'product_journal_id'}"/>
+                        <filter string="Income Category" domain="[]" context="{'group_by':'invoice_category'}"/>
 	                </xpath>
 	            </data>
 	         </field>

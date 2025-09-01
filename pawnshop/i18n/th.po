@@ -4555,6 +4555,8 @@ msgstr "Pawn Tickets which are in expired state"
 #: view:product.product:0
 #: field:product.product,extended:0
 #: field:product.product,extended_x:0
+#: field:pawn.interest.report,extended:0
+#: view:pawn.interest.report:0
 msgid "Extended"
 msgstr "เล้า"
 
@@ -5118,3 +5120,21 @@ msgstr "$F{prev_number}"
 #: view:item.sold.report:0
 msgid "Pawn Month"
 msgstr "เดือนที่จำนำ"
+
+#. module: pawnshop
+#: field:account.voucher,invoice_category:0
+#: view:account.voucher:0
+msgid "Income Category"
+msgstr "ประเภทรายได้"
+
+#. module: pawnshop
+#: selection:account.voucher,invoice_category:0
+#: view:account.voucher:0
+msgid "Redeem Sale Income"
+msgstr "รายได้ขายของหลุด"
+
+#. module: pawnshop
+#: selection:account.voucher,invoice_category:0
+#: view:account.voucher:0
+msgid "Rental Fee Income"
+msgstr "รายได้ค่าเช่าหน้าร้าน"
