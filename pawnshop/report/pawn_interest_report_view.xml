@@ -27,6 +27,7 @@
             	<field name="original_interest" sum="Total Interest Amount"/>
             	<field name="amount_interest" sum="Total Interest Amount"/>
             	<field name="percent_interest"/>
+                <field name="extended"/>
             </tree>
         </field>
     </record>
@@ -51,6 +52,7 @@
                 <field name="name"/>
                 <field name="partner_id"/>
                 <field name="description"/>
+                <filter name="extended" string="Extended" domain="[('extended', '=', True)]"/>
                 <filter name="today" string="Today's" domain="[('date_redeem','=',time.strftime('%%Y-%%m-%%d'))]" help="Pawn Tickets created today"/>
                 <group expand="1" string="Group By...">
                     <filter name="group_journal" string="Journal" context="{'group_by':'journal_id'}"/>

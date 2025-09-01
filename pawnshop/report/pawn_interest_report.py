@@ -53,6 +53,7 @@ class pawn_interest_report(osv.osv):
         'percent_interest': fields.char('Net Interest (%)', readonly=True),  # Make it char field to not displayed as sum in group by
         'description': fields.char('Description', readonly=True),
         'quantity': fields.float('Quantity', readonly=True),
+        'extended': fields.boolean('Extended', readonly=True),
     }
     _order = 'name'
 
@@ -92,6 +93,7 @@ class pawn_interest_report(osv.osv):
                     po.date_redeem,
                     po.date_expired,
                     po.date_due,
+                    po.extended,
                     po.amount_total as amount_estimated,
                     po.amount_pawned,
                     sum(coalesce(am_line.amount_interest, 0.0) + coalesce(am_line.discount, 0.0) - coalesce(am_line.addition, 0.0)) as original_interest,
@@ -120,6 +122,7 @@ class pawn_interest_report(osv.osv):
                     po.date_redeem,
                     po.date_expired,
                     po.date_due,
+                    po.extended,
                     po.amount_pawned) pawn
                 left outer join
                 (select pt.order_id, pp.item_description as description
