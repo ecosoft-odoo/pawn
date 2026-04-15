@@ -532,6 +532,7 @@
                     	<filter string="Refund" domain="[('is_refund','=',True)]" help="Sales Refund"/>
                         <filter string="Redeem Sale Income" domain="[('invoice_category','=','redeem_sale')]" help="Redeem Sale Income"/>
                     	<filter string="Rental Fee Income" domain="[('invoice_category','=','rental_fee')]" help="Rental Fee Income"/>
+                        <filter string="Other Income" domain="[('invoice_category','=','other')]" help="Other Income"/>
                 	    <separator/>
                 	</xpath>
                 	<xpath expr="/search/group" position="inside">

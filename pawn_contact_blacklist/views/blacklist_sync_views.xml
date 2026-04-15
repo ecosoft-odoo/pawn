@@ -53,7 +53,7 @@
                                     <tree>
                                         <field name="filename" invisible="1"/>
                                         <field name="name"/>
-                                        <field name="image" widget="binary" filename="filename"/>
+                                        <field name="image" widget="binary" filename="filename" attrs="{'invisible': [('image', '=', False)]}"/>
                                     </tree>
                                     <form string="Blacklist Line">
                                         <field name="filename" invisible="1"/>

@@ -135,7 +135,7 @@
                                     <field name="price_subtotal" sum="Total Amount" on_change="onchange_price('price_subtotal', product_qty, price_unit, price_subtotal, pawn_price_unit, pawn_price_subtotal)" invisible="1"/>
                                     <field name="pawn_price_unit" on_change="onchange_price('pawn_price_unit', product_qty, price_unit, price_subtotal, pawn_price_unit, pawn_price_subtotal)"/>
                                     <field name="pawn_price_subtotal" sum="Total Amount" on_change="onchange_price('pawn_price_subtotal', product_qty, price_unit, price_subtotal, pawn_price_unit, pawn_price_subtotal)"/>
-				                    <button name="%(action_pawn_line_property)d" string="Property" type="action" icon="gtk-justify-fill"/>
+				                    <button name="%(action_pawn_line_property)d" string="Property" type="action" icon="gtk-justify-fill" groups="base.group_system"/>
                                 </tree>
                             </field>
                             <group>

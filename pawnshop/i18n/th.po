@@ -5138,3 +5138,9 @@ msgstr "รายได้ขายของหลุด"
 #: view:account.voucher:0
 msgid "Rental Fee Income"
 msgstr "รายได้ค่าเช่าหน้าร้าน"
+
+#. module: pawnshop
+#: selection:account.voucher,invoice_category:0
+#: view:account.voucher:0
+msgid "Other Income"
+msgstr "รายได้อื่นๆ"

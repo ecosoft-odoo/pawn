@@ -157,7 +157,7 @@ class account_voucher(osv.osv):
         'is_refund': fields.boolean('Refund', readonly=True),
         'product_journal_id': fields.function(_compute_product_journal_id, type='many2one', relation='account.journal', string='Product Journal', store=True, readonly=True),
         'address': fields.related('partner_id', 'address_full', type='char', string='Address'),
-        'invoice_category': fields.selection([('redeem_sale', 'Redeem Sale Income'),('rental_fee', 'Rental Fee Income')], string='Income Category', required=True, readonly=True, states={'draft': [('readonly', False)]}),
+        'invoice_category': fields.selection([('redeem_sale', 'Redeem Sale Income'),('rental_fee', 'Rental Fee Income'),('other', 'Other Income')], string='Income Category', required=True, readonly=True, states={'draft': [('readonly', False)]}),
     }
 
     _constraints = [
@@ -510,9 +510,9 @@ class account_voucher(osv.osv):
         if not voucher.amount:
             raise osv.except_osv(_('Warning'),
                                  _("Please verify that the total amount of this Sales Receipt is not zero!"))
-        if 0 in [v.amount or 0.0 for v in voucher.line_ids]:
-            raise osv.except_osv(_('Warning'),
-                                 _("Please verify that every line amount of this Sales Receipt is not zero!"))
+        # if 0 in [v.amount or 0.0 for v in voucher.line_ids]:
+        #     raise osv.except_osv(_('Warning'),
+        #                          _("Please verify that every line amount of this Sales Receipt is not zero!"))
 
         product_ids = list(set([x.product_id.id for x in voucher.line_ids if x.product_id and not x.product_id.for_sale]))
         if len(product_ids) > 0:

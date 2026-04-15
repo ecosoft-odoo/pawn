@@ -22,6 +22,9 @@ import logging
 import time
 import res_partner
 import res_config
+import base64
+from io import BytesIO
+from PIL import Image
 from datetime import datetime, timedelta
 from openerp.osv import fields, osv
 from openerp import netsvc, tools
@@ -501,6 +504,7 @@ class pawn_order(osv.osv):
         # --
         for order in self.browse(cr, uid, order_ids, context=context):
             if action_type and not order['fingerprint_%s' % action_type]:
+                fingerprint = False
                 # Don't check and assign fingerprint
                 if not context.get('force_update_fp', False) and order['bypass_fingerprint_%s' % action_type]:
                     continue
@@ -511,9 +515,7 @@ class pawn_order(osv.osv):
                     if action_type == 'pawn':
                         fingerprint = order.parent_id.fingerprint_redeem
                         fingerprint_date = order.parent_id.fingerprint_redeem_date
-                    if not fingerprint:
-                        raise osv.except_osv(_('Error!'), _("The customer's fingerprint was not detected. Kindly submit a new fingerprint."))
-                else:
+                if not fingerprint:
                     partner = order.partner_id
                     if order.delegate_id:
                         partner = order.delegate_id
@@ -618,6 +620,20 @@ class pawn_order(osv.osv):
         items = self.read(cr, uid, ids, ['item_id'], context=context)
         self.pool.get('product.product').action_asset_unextend(cr, uid, [i['item_id'][0] for i in items], context=context)
         return True
+
+    def action_extend_expire(self, cr, uid, ids, context=None):
+        for pawn in self.browse(cr, uid, ids, context=context):
+            date_order = datetime.strptime(pawn.date_order, "%Y-%m-%d").date()
+            date_extend = date_order + relativedelta(months=+6)
+            self.write(cr, uid, ids, {
+                'extended': True,
+                'date_extend': date_extend,
+                'date_extend_last': date_extend,
+                'date_unextend_last': False,
+            }, context=context)
+            items = self.read(cr, uid, ids, ['item_id'], context=context)
+            self.pool.get('product.product').action_asset_extend(cr, uid, [i['item_id'][0] for i in items], context=context)
+            return True
 
     def action_lost_ticket(self, cr, uid, ids, context=None):
         if context is None:
@@ -892,6 +908,20 @@ class pawn_order(osv.osv):
                 # Condition for link line
                 amount_pawned += pawn_line_obj.browse(cr, uid, line[1], context=context).pawn_price_subtotal
         return amount_pawned
+    
+    def convert_png_to_jpeg(self, cr, uid, image_base64):
+        image_data = base64.b64decode(image_base64)
+        img = Image.open(BytesIO(image_data))
+        img = img.convert("RGB")
+        buffer = BytesIO()
+        img.save(
+            buffer,
+            format="JPEG",
+            quality=60,
+            optimize=True,
+            subsampling=2,
+        )
+        return base64.b64encode(buffer.getvalue())
 
     def create(self, cr, uid, vals, context=None):
         # Update pawned amount
@@ -1001,6 +1031,7 @@ class pawn_order(osv.osv):
         for i in ['first', 'second', 'third', 'fourth', 'fifth']:
             if 'pawn_item_image_%s' % i in vals:
                 if vals['pawn_item_image_%s' % i]:
+                    vals['pawn_item_image_%s' % i] = self.convert_png_to_jpeg(cr, uid, vals['pawn_item_image_%s' % i])
                     vals['pawn_item_image_date_%s' % i] = vals.get('pawn_item_image_date_%s' % i, fields.datetime.now())
                 else:
                     vals['pawn_item_image_date_%s' % i] = False

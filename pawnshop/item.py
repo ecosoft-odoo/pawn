@@ -169,9 +169,12 @@ class product_product(osv.osv):
             }
         # Update price sold
         for r in data:
+            sold = r[1]
+            if not sold:
+                sold = 0.0
             res[r[0]].update({
-                'total_price_sold': r[1],
-                'total_profit': r[1] - total_price_pawned[r[0]],
+                'total_price_sold': sold,
+                'total_profit': sold - total_price_pawned[r[0]],
             })
         return res
 
