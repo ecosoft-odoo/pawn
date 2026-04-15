@@ -38,6 +38,7 @@
                 </xpath>
                 <xpath expr="/form/sheet/group/group/field[@name='partner_id']" position="after">
                     <field name="address"/>
+                    <field name="invoice_category"/>
                 </xpath>
                 <xpath expr="/form/sheet/group/group/field[@name='partner_id']" position="attributes">
                     <attribute name="options">{'limit': 10, 'create': false, 'create_edit': false}</attribute>

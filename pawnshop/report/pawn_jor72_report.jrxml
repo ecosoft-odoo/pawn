@@ -35,116 +35,166 @@
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[select a.id, journal_id, pawn_shop_id, history_period_id, num_order, redeem_num_order, expire_num_order,
-amount, redeem_amount, expire_amount,
-people, redeem_people, expire_people,
-ap.name as period_name, ps.name as shop_name, ps.full_address, ps.reg_book, ps.reg_number,
--- amount_interest
-(select sum(interest_amount - discount + addition) from pawn_actual_interest pai
-join pawn_order po on po.id = pai.pawn_id
-where interest_date >= ap.date_start and interest_date <= ap.date_stop
-and po.journal_id = $P{journal_id} and po.pawn_shop_id = $P{pawn_shop_id}) amount_interest
+<![CDATA[
+with props as (
+    select
+       (select split_part(ip.value_reference, ',', 2)::integer
+        from ir_property ip
+        where ip.res_id is null
+          and ip.fields_id = (
+              select imf.id
+              from ir_model_fields imf
+              where imf.name = 'property_journal_actual_interest'
+                and imf.model = 'pawn.order'
+              limit 1
+          )
+        limit 1) as journal_actual_interest
+)
+select
+  a.id,
+  journal_id,
+  pawn_shop_id,
+  history_period_id,
+  num_order,
+  redeem_num_order,
+  expire_num_order,
+  amount,
+  redeem_amount,
+  expire_amount,
+  people,
+  redeem_people,
+  expire_people,
+  ap.name as period_name,
+  ps.name as shop_name,
+  ps.full_address,
+  ps.reg_book,
+  ps.reg_number,
+
+  (
+    select coalesce(sum(
+      case when aml.account_id = aj.default_debit_account_id then aml.debit - aml.credit else 0 end
+    ), 0)
+    from account_move_line aml
+    join account_move am on am.id = aml.move_id
+    left join account_journal aj on aj.id = aml.journal_id
+    join pawn_order po on po.id = aml.pawn_order_id
+    cross join props
+    where aml.pawn_order_id is not null
+      and aml.journal_id = props.journal_actual_interest
+      and am.state = 'posted'
+      and po.state = 'redeem'
+      and am.date >= ap.date_start
+      and am.date <= ap.date_stop
+      and po.journal_id = a.journal_id
+      and po.pawn_shop_id = a.pawn_shop_id
+  ) as amount_interest
+
 from
 (
-select (period.journal_id::varchar || period.pawn_shop_id::varchar || period.history_period_id::varchar)::int id,
-    period.journal_id, period.pawn_shop_id, period.history_period_id,
+  select
+    (period.journal_id::varchar || period.pawn_shop_id::varchar || period.history_period_id::varchar)::int id,
+    period.journal_id,
+    period.pawn_shop_id,
+    period.history_period_id,
     pawn.num_order num_order,
-    redeem.num_order redeem_num_order, expire.num_order expire_num_order,
+    redeem.num_order redeem_num_order,
+    expire.num_order expire_num_order,
     pawn.amount amount,
-    redeem.amount redeem_amount, expire.amount expire_amount,
+    redeem.amount redeem_amount,
+    expire.amount expire_amount,
     pawn.people people,
-    redeem.people redeem_people, expire.people expire_people
-from -- PAWN ORDER NORMAL
-	-- start
-	(select distinct journal_id, pawn_shop_id, psh.period_id history_period_id
-	from pawn_order pw
-	join pawn_status_history psh on psh.order_id = pw.id
-	order by history_period_id)
-	-- end
-	period
-left outer join -- PAWN
-	-- start
-	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order
-	from
-	(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order
-	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned
-	from pawn_order pw
-	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in
-	(select min(id) from pawn_status_history group by order_id, state)
-	where pw.state not in ('draft', 'cancel')
-	order by order_id, psh.period_id) a
-	where a.state = 'pawn'
-	group by journal_id, pawn_shop_id, period_id) amount
-	join
-	(select journal_id, pawn_shop_id, period_id, count(partner_id) people
-	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id
-	from pawn_order pw
-	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in
-	(select min(id) from pawn_status_history group by order_id, state)
-	where pw.state not in ('draft', 'cancel')) a
-	where a.state = 'pawn'
-	group by journal_id, pawn_shop_id, period_id) people
-	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id)
-	-- end
-	pawn
-    on period.journal_id = pawn.journal_id and period.pawn_shop_id = pawn.pawn_shop_id and period.history_period_id = pawn.period_id
-left outer join -- REDEEM
-	-- start
-	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order
-	from
-	(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order
-	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned
-	from pawn_order pw
-	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in
-	(select min(id) from pawn_status_history group by order_id, state)
-	where pw.state not in ('draft', 'cancel')
-	order by order_id, psh.period_id) a
-	where a.state = 'redeem'
-	group by journal_id, pawn_shop_id, period_id) amount
-	join
-	(select journal_id, pawn_shop_id, period_id, count(partner_id) people
-	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id
-	from pawn_order pw
-	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in
-	(select min(id) from pawn_status_history group by order_id, state)
-	where pw.state not in ('draft', 'cancel')) a
-	where a.state = 'redeem'
-	group by journal_id, pawn_shop_id, period_id) people
-	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id)
-	-- end
-	redeem
-    on period.journal_id = redeem.journal_id and period.pawn_shop_id = redeem.pawn_shop_id and period.history_period_id = redeem.period_id
-left outer join -- EXPIRE
-	-- start
-	(select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order
-	from
-	(select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order
-	from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned
-	from pawn_order pw
-	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in
-	(select min(id) from pawn_status_history group by order_id, state)
-	where pw.state not in ('draft', 'cancel')
-	order by order_id, psh.period_id) a
-	where a.state = 'expire'
-	group by journal_id, pawn_shop_id, period_id) amount
-	join
-	(select journal_id, pawn_shop_id, period_id, count(partner_id) people
-	from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id
-	from pawn_order pw
-	left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in
-	(select min(id) from pawn_status_history group by order_id, state)
-	where pw.state not in ('draft', 'cancel')) a
-	where a.state = 'expire'
-	group by journal_id, pawn_shop_id, period_id) people
-	on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id)
-	-- end
-	expire
-    on period.journal_id = expire.journal_id and period.pawn_shop_id = expire.pawn_shop_id and period.history_period_id = expire.period_id
-)
-a
-join pawn_shop ps on ps.id = pawn_shop_id
-join account_period ap on ap.id = history_period_id
-where journal_id = $P{journal_id} and pawn_shop_id = $P{pawn_shop_id} and history_period_id = $P{period_id}]]>
+    redeem.people redeem_people,
+    expire.people expire_people
+  from
+    -- PAWN ORDER NORMAL (period)
+    (select distinct journal_id, pawn_shop_id, psh.period_id history_period_id
+     from pawn_order pw
+     join pawn_status_history psh on psh.order_id = pw.id
+     order by history_period_id) period
+
+  left outer join
+    -- PAWN
+    (select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order
+     from
+       (select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order
+        from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned
+              from pawn_order pw
+              left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in
+                  (select min(id) from pawn_status_history group by order_id, state)
+              where pw.state not in ('draft', 'cancel')
+              order by order_id, psh.period_id) a
+        where a.state = 'pawn'
+        group by journal_id, pawn_shop_id, period_id) amount
+     join
+       (select journal_id, pawn_shop_id, period_id, count(partner_id) people
+        from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id
+              from pawn_order pw
+              left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in
+                  (select min(id) from pawn_status_history group by order_id, state)
+              where pw.state not in ('draft', 'cancel')) a
+        where a.state = 'pawn'
+        group by journal_id, pawn_shop_id, period_id) people
+     on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id)
+  pawn
+  on period.journal_id = pawn.journal_id and period.pawn_shop_id = pawn.pawn_shop_id and period.history_period_id = pawn.period_id
+
+  left outer join
+    -- REDEEM
+    (select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order
+     from
+       (select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order
+        from (select journal_id, pawn_shop_id, ap.id AS period_id, pw.state, pw.amount_pawned
+            from pawn_order pw
+			join account_period ap
+            	on pw.date_redeem BETWEEN ap.date_start AND ap.date_stop
+       		where pw.state = 'redeem' AND ap.id = $P{period_id}) sub
+        group by journal_id, pawn_shop_id, period_id) amount
+     join
+       (select journal_id, pawn_shop_id, period_id, count(partner_id) people
+        from (select DISTINCT journal_id, pawn_shop_id, ap.id AS period_id, pw.state, pw.partner_id
+            from pawn_order pw
+			join account_period ap
+            	on pw.date_redeem BETWEEN ap.date_start AND ap.date_stop
+       		where pw.state = 'redeem' AND ap.id = $P{period_id}) sub
+        group by journal_id, pawn_shop_id, period_id) people
+     on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id)
+  redeem
+  on period.journal_id = redeem.journal_id and period.pawn_shop_id = redeem.pawn_shop_id and period.history_period_id = redeem.period_id
+
+  left outer join
+    -- EXPIRE
+    (select amount.journal_id, amount.pawn_shop_id, amount.period_id, amount.amount, people.people, num_order
+     from
+       (select journal_id, pawn_shop_id, period_id, sum(amount_pawned) amount, count(*) num_order
+        from (select journal_id, pawn_shop_id, psh.period_id, psh.state, pw.amount_pawned
+              from pawn_order pw
+              left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in
+                  (select min(id) from pawn_status_history group by order_id, state)
+              where pw.state not in ('draft', 'cancel', 'redeem')
+              order by order_id, psh.period_id) a
+        where a.state = 'expire'
+        group by journal_id, pawn_shop_id, period_id) amount
+     join
+       (select journal_id, pawn_shop_id, period_id, count(partner_id) people
+        from (select distinct journal_id, pawn_shop_id, psh.period_id, psh.state, pw.partner_id
+              from pawn_order pw
+              left outer join pawn_status_history psh on psh.order_id = pw.id and psh.id in
+                  (select min(id) from pawn_status_history group by order_id, state)
+              where pw.state not in ('draft', 'cancel', 'redeem')) a
+        where a.state = 'expire'
+        group by journal_id, pawn_shop_id, period_id) people
+     on amount.journal_id = people.journal_id and amount.pawn_shop_id = people.pawn_shop_id and amount.period_id = people.period_id)
+  expire
+  on period.journal_id = expire.journal_id and period.pawn_shop_id = expire.pawn_shop_id and period.history_period_id = expire.period_id
+
+) a
+join pawn_shop ps on ps.id = a.pawn_shop_id
+join account_period ap on ap.id = a.history_period_id
+where a.journal_id = $P{journal_id}
+  and a.pawn_shop_id = $P{pawn_shop_id}
+  and a.history_period_id = $P{period_id}
+;
+]]>
 	</queryString>
 	<field name="id" class="java.lang.Integer"/>
 	<field name="journal_id" class="java.lang.Integer"/>

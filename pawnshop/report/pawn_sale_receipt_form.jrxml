@@ -68,8 +68,11 @@
 	<field name="date" class="java.util.Date">
 		<fieldDescription><![CDATA[date]]></fieldDescription>
 	</field>
-	<field name="cust_name" class="java.lang.String">
-		<fieldDescription><![CDATA[partner_id/display_name]]></fieldDescription>
+	<field name="partner_name" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/name]]></fieldDescription>
+	</field>
+	<field name="partner_title" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/partner_title]]></fieldDescription>
 	</field>
 	<field name="address" class="java.lang.String">
 		<fieldDescription><![CDATA[partner_id/address_full]]></fieldDescription>
@@ -214,7 +217,13 @@
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{cust_name}]]></textFieldExpression>
+				<!-- <textFieldExpression class="java.lang.String"><![CDATA[$F{cust_name}]]></textFieldExpression> -->
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{partner_title} == "mr" ? "นาย" : (
+    $F{partner_title} == "mrs" ? "นาง" : (
+	$F{partner_title} == "miss" ? "นางสาว" : (
+	$F{partner_title} == "company" ? "บริษัท" : (
+	$F{partner_title} == "partnership" ? "ห้างหุ้นส่วน" : ""))))
+) + " " + $F{partner_name}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement mode="Transparent" x="24" y="171" width="99" height="15" backcolor="#B5E7D3"/>

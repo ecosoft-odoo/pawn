@@ -187,7 +187,7 @@
                     			attrs="{'invisible': ['|', '|', ('extended', '=', True), ('state', 'not in', ('for_sale')), ('type', '!=', 'pawn_asset')]}" />
                     	<button name="%(action_item_split)d" string="Split Item" type="action" class="oe_highlight"
                     			attrs="{'invisible': ['|', '|', ('type', '=', 'pawn_asset'), ('product_qty','&lt;',2), ('state','!=','for_sale')]}" />
-                    	<field name="state" widget="statusbar" statusbar_visible="draft,pawn,expire,for_sale" readonly="1" />
+                    	<field name="state" widget="statusbar" statusbar_visible="draft,pawn,expire,for_sale,sold" readonly="1" />
 	                </header>
                     <sheet>
                         <field name="image_medium" widget="image" class="oe_avatar oe_left"/>
@@ -530,11 +530,15 @@
                 	<xpath expr="/search/field[@name='number']" position="before">
                     	<filter string="Receipt" domain="[('is_refund','!=',True)]" help="Sales Receipt"/>
                     	<filter string="Refund" domain="[('is_refund','=',True)]" help="Sales Refund"/>
+                        <filter string="Redeem Sale Income" domain="[('invoice_category','=','redeem_sale')]" help="Redeem Sale Income"/>
+                    	<filter string="Rental Fee Income" domain="[('invoice_category','=','rental_fee')]" help="Rental Fee Income"/>
+                        <filter string="Other Income" domain="[('invoice_category','=','other')]" help="Other Income"/>
                 	    <separator/>
                 	</xpath>
                 	<xpath expr="/search/group" position="inside">
                         <filter string="Shop" domain="[]" context="{'group_by':'pawn_shop_id'}"/>
                         <filter string="product_journal_id" domain="[]" context="{'group_by':'product_journal_id'}"/>
+                        <filter string="Income Category" domain="[]" context="{'group_by':'invoice_category'}"/>
 	                </xpath>
 	            </data>
 	         </field>

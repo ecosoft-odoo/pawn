@@ -37,7 +37,11 @@ class pawn_interest_report(osv.osv):
             ('05', 'May'), ('06', 'June'), ('07', 'July'), ('08', 'August'), ('09', 'September'),
             ('10', 'October'), ('11', 'November'), ('12', 'December')], 'Month', readonly=True),
         'day': fields.char('Day', size=128, readonly=True),
-        'day_redeem': fields.char('Day Reem', size=128, readonly=True),
+        'year_redeem': fields.char('Year', size=4, readonly=True),
+        'month_redeem': fields.selection([('01', 'January'), ('02', 'February'), ('03', 'March'), ('04', 'April'),
+            ('05', 'May'), ('06', 'June'), ('07', 'July'), ('08', 'August'), ('09', 'September'),
+            ('10', 'October'), ('11', 'November'), ('12', 'December')], 'Month Redeem', readonly=True),
+        'day_redeem': fields.char('Day Redeem', size=128, readonly=True),
         'journal_id': fields.many2one('account.journal', 'Journal', readonly=True),
         'pawn_shop_id': fields.many2one('pawn.shop', 'Shop', readonly=True),
         'user_id': fields.many2one('res.users', 'Responsible', readonly=True),
@@ -49,6 +53,7 @@ class pawn_interest_report(osv.osv):
         'percent_interest': fields.char('Net Interest (%)', readonly=True),  # Make it char field to not displayed as sum in group by
         'description': fields.char('Description', readonly=True),
         'quantity': fields.float('Quantity', readonly=True),
+        'extended': fields.boolean('Extended', readonly=True),
     }
     _order = 'name'
 
@@ -71,6 +76,8 @@ class pawn_interest_report(osv.osv):
                     to_char(pawn.date_order, 'YYYY') as year,
                     to_char(pawn.date_order, 'MM') as month,
                     to_char(pawn.date_order, 'YYYY-MM-DD') as day,
+                    to_char(pawn.date_redeem, 'YYYY') as year_redeem,
+                    to_char(pawn.date_redeem, 'MM') as month_redeem,
                     to_char(pawn.date_redeem, 'YYYY-MM-DD') as day_redeem,
                     product_template.description,
                     pawn_line.quantity,
@@ -86,6 +93,7 @@ class pawn_interest_report(osv.osv):
                     po.date_redeem,
                     po.date_expired,
                     po.date_due,
+                    po.extended,
                     po.amount_total as amount_estimated,
                     po.amount_pawned,
                     sum(coalesce(am_line.amount_interest, 0.0) + coalesce(am_line.discount, 0.0) - coalesce(am_line.addition, 0.0)) as original_interest,
@@ -114,6 +122,7 @@ class pawn_interest_report(osv.osv):
                     po.date_redeem,
                     po.date_expired,
                     po.date_due,
+                    po.extended,
                     po.amount_pawned) pawn
                 left outer join
                 (select pt.order_id, pp.item_description as description

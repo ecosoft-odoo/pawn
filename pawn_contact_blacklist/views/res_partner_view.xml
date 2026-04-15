@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_res_partner_filter_blacklist" model="ir.ui.view">
+            <field name="name">view.res.partner.filter</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter" />
+            <field name="arch" type="xml">
+                <field name="category_id" position="before">
+                    <filter string="Blacklist Customer" name="blacklist_customer" domain="[('blacklist_customer', '=', True)]"/>
+                    <separator/>
+                </field>
+            </field>
+        </record>
+
+    	<record id="view_partner_form" model="ir.ui.view">
+            <field name="name">res.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="pawnshop.view_partner_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='regular_customer']/.." position="after">
+                    <div>
+                        <field name="blacklist_customer"/>
+                        <label string="Blacklist Customer"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>
