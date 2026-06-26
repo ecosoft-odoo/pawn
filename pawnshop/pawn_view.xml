@@ -140,6 +140,11 @@
                             </field>
                             <group>
                             	<group>
+                                    <div class="oe_clear">
+                                        <h2 style="color:red">
+                                            <field name="notes" class="oe_inline" placeholder="Terms and conditions..."/>
+                                        </h2>
+                                    </div>
                             		<field name="is_lost" invisible="1" />
                                     <field name="renewal_transfer_pawn" attrs="{'invisible': [('renewal_transfer_pawn', '=', False)]}"/>
                                     <field name="renewal_transfer_redeem" attrs="{'invisible': [('renewal_transfer_redeem', '=', False)]}"/>
@@ -152,8 +157,6 @@
 		                        	<h2><field name="monthly_interest"  widget='monetary' nolabel="1" options="{'currency_field': 'currency_id'}" class="oe_left"/></h2>
 	                            </group>
 							</group>
-							<div class="oe_clear"/>
-                            <field name="notes" class="oe_inline" placeholder="Terms and conditions..."/>
                         </page>
                         <page string="Accrued Interest" groups="pawnshop.group_pawn_accountant">
                             <field name="accrued_interest_ids">
